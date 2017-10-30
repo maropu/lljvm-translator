@@ -1,0 +1,30 @@
+Copyright 2017 Takeshi Yamamuro
+
+========================
+This product contains a modified version of 'lljvm', which provides
+a set of tools and libraries for running comparatively
+low level languages (such as C) on the JVM:
+
+  * LICENSE:
+    * license/COPYING (MIT License)
+  * HOMEPAGE:
+    * https://github.com/davidar/lljvm
+
+This product depends on 'LLVM' (formerly Low Level Virtual Machine),
+which is a collection of modular and reusable compiler and toolchain technologies
+used to develop compiler front ends and back ends:
+
+  * LICENSE:
+    * license/LICENSE.TXT (UIUC BSD-Style License)
+  * HOMEPAGE:
+    * https://llvm.org/
+
+This product depends on 'Jasmin', a Java assembler to create class files
+from human readable assembler-like syntax
+using the Java Virtual Machine instruction sets:
+
+  * LICENSE:
+    * license/license-jasmin.txt (BSD License)
+  * HOMEPAGE:
+    * http://jasmin.sourceforge.net/
+

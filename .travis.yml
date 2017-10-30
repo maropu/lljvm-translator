@@ -1,0 +1,19 @@
+language: scala
+
+jdk:
+  - oraclejdk8
+  - openjdk8
+
+branches:
+  only:
+    - master
+
+notifications:
+  email: false
+
+script:
+  - ./build/mvn -q scalastyle:check test
+
+after_success:
+  - ./build/mvn clean
+

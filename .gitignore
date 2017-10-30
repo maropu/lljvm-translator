@@ -1,0 +1,13 @@
+*.iml
+.idea/
+.idea_modules/
+build/*.jar
+build/apache-maven*
+build/scala*
+build/zinc*
+dependency-reduced-pom.xml
+scalastyle-on-compile.generated.xml
+scalastyle-output.xml
+scalastyle.txt
+target/
+
