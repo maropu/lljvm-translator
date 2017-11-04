@@ -1,16 +1,15 @@
-CXX := c++
-# CFLAGS := $(shell llvm-config --cxxflags --ldflags)
-CFLAGS1 := $(shell llvm-config --cxxflags)
-# CFLAGS2 := $(shell llvm-config --cxxflags)
-# CFLAGS2 := $(shell llvm-config --cxxflags --ldflags llvm-config --system-libs --libs bitreader codegen selectiondag)
-CFLAGS2 := $(shell llvm-config --cxxflags --ldflags --system-libs --libs all)
-# CFLAGS2 := $(shell llvm-config --cxxflags --ldflags --system-libs)
-# CFLAGS2 := $(shell llvm-config --cxxflags --system-libs)
-# CFLAGS := $(shell llvm-config --cxxflags --ldflags --libs bitreader codegen selectiondag)
-# CFLAGS := $(shell llvm-config --cxxflags --ldflags --libs all)
-# CFLAGS := $(shell llvm-config --cxxflags --ldflags --libsfiles)
+CXX := clang++
 
-EXTRAFLAGS := -I../../../../include/inc_mac
+CFLAGS1 := $(shell llvm-config --cxxflags)
+CFLAGS2 := $(shell llvm-config --cxxflags --ldflags --system-libs --libs all)
+
+ifeq (${shell uname}, Darwin)
+  EXTRAFLAGS := -I../../../../include/inc_mac
+  SUFFIX := .dylib
+else
+  EXTRAFLAGS := -I../../../../include/inc_linux
+  SUFFIX := .so
+endif
 
 OBJS := \
     lljvm.o \
@@ -31,10 +30,7 @@ OBJS := \
 all: lljvm-backend
 
 lljvm-backend: ${OBJS}
-	# $(CXX) ${EXTRAFLAGS} ${OBJS} ${CFLAGS2} -o lljvm-backend
-	$(CXX) -shared ${EXTRAFLAGS} ${OBJS} ${CFLAGS2} -o liblljvm.dylib
-	# $(CXX) -shared -static-libstdc++ ${EXTRAFLAGS} ${OBJS} ${CFLAGS2} -o lljvm-backend.so
-	# $(CXX) -shared ${EXTRAFLAGS} ${OBJS} ${CFLAGS2} -o lljvm-backend.so /usr/local/Cellar/llvm/5.0.0/lib/*.a
+	$(CXX) -shared ${EXTRAFLAGS} ${OBJS} ${CFLAGS2} -o liblljvm.${SUFFIX}
 
 doc:
 	doxygen
