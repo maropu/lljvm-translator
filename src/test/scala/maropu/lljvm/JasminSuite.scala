@@ -57,8 +57,6 @@ class JasminSuite extends FunSuite {
          |.method public static __ZN8__main__11pyfunc1_241Eii(IIIII)I
          |        iconst_0
          |        istore 5
-         |begin_method:
-         |        invokestatic lljvm/runtime/Memory/createStackFrame()V
          |label1:
          |;  %.17 = add i32 %arg.y, %arg.x
          |        iload 4 ; _arg_y
@@ -70,7 +68,6 @@ class JasminSuite extends FunSuite {
          |        iload 5 ; __17
          |        invokestatic lljvm/runtime/Memory/store(II)V
          |;  ret i32 0
-         |        invokestatic lljvm/runtime/Memory/destroyStackFrame()V
          |        iconst_0
          |        ireturn
          |        .limit stack 16
@@ -81,8 +78,6 @@ class JasminSuite extends FunSuite {
          |.method public static _cfunc__ZN8__main__11pyfunc1_241Eii(II)I
          |        iconst_0
          |        istore 2
-         |begin_method:
-         |        invokestatic lljvm/runtime/Memory/createStackFrame()V
          |label2:
          |;  %.17.i = add i32 %.2, %.1
          |        iload_1 ; __2
@@ -90,7 +85,6 @@ class JasminSuite extends FunSuite {
          |        iadd
          |        istore_2 ; __17_i
          |;  ret i32 %.17.i
-         |        invokestatic lljvm/runtime/Memory/destroyStackFrame()V
          |        iload_2 ; __17_i
          |        ireturn
          |        .limit stack 16

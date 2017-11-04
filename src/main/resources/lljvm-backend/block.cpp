@@ -71,8 +71,8 @@ void JVMWriter::printInstruction(const Instruction *inst) {
     if(inst->getNumOperands() >= 2) right = inst->getOperand(1);
     switch(inst->getOpcode()) {
     case Instruction::Ret:
-        printSimpleInstruction("invokestatic",
-                               "lljvm/runtime/Memory/destroyStackFrame()V");
+        // printSimpleInstruction("invokestatic",
+        //                        "lljvm/runtime/Memory/destroyStackFrame()V");
         if(inst->getNumOperands() >= 1) {
             printValueLoad(left);
             printSimpleInstruction(
