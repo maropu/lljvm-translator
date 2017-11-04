@@ -140,12 +140,23 @@ public final class GeneratedClass {
 }
 ```
 
+## Example: inject python UDFs into Spark gen'd code
+
+Python UDFs in [Spark](https://spark.apache.org/) have well-known overheads and the recent work of
+[Vectorized UDFs](https://issues.apache.org/jira/browse/SPARK-21190) in the community
+significantly improves the performance. But, Python UDFs still incur
+[large performance gaps](https://gist.github.com/maropu/9f995f65b1cb160865e79e14e5216320) against Scala UDFs.
+If we could safely inject python UDFs into Spark gen'd code, we would make the Python UDF overheads close to zero.
+Here are [a sample patch](https://github.com/apache/spark/compare/master...maropu:LLJVMSpike) and benchmark results below:
+
+![Python UDF benchmark results](resources/udf_benchmark_results.png)
+
 ## TODO
 
+ * Fix many bugs in `lljvm-backend` and add tests
+ * Add more platform-dependent binaries in `src/main/resources/native`
+ * Make less dependencies in the native binaries
  * Register this library in the Maven Central Repository
- * Add a section "How to depend on this library"
- * Add a section "Supported platforms"
- * Add an example "Example: injects a python UDF function into Spark gen'd code"
 
 ## Bug reports
 
