@@ -17,12 +17,12 @@
 
 package maropu.lljvm
 
-import org.scalatest.FunSuite
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader}
 import java.util.{HashMap => jMap}
 
 import jasmin.ClassFile
 import org.codehaus.janino.ClassBodyEvaluator
+import org.scalatest.FunSuite
 
 abstract class JaninoClass {
    def plus(a: Int, b: Int): Int

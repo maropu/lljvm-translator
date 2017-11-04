@@ -22,9 +22,8 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 
-import org.scalatest.FunSuite
-
 import jasmin.ClassFile
+import org.scalatest.FunSuite
 
 object TestUtils extends FunSuite {
 

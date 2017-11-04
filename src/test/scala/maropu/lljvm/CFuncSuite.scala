@@ -19,9 +19,8 @@ package maropu.lljvm
 
 import java.lang.{Double => jDouble, Integer => jInt, Long => jLong}
 
-import org.scalatest.FunSuite
-
 import maropu.lljvm.unsafe.Platform
+import org.scalatest.FunSuite
 
 class CFuncSuite extends FunSuite {
 

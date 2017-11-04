@@ -17,7 +17,7 @@
 
 package maropu.lljvm
 
-import java.lang.{Double => jDouble, Float => jFloat, Long => jLong, Integer => jInt}
+import java.lang.{Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
 
 import org.scalatest.FunSuite
 
