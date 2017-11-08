@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/maropu/spark-sql-server.svg?branch=master)](https://travis-ci.org/maropu/lljvm-as)
+[![Build Status](https://travis-ci.org/maropu/spark-sql-server.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
 
-This is an experimental assembler to build JVM bytecode from LLVM bitcode.
+This is an experimental translator to build JVM bytecode from LLVM bitcode.
 Since some existing tools can generate LLVM bitcode from functions written in other languages,
 e.g.,  [Numba](https://numba.pydata.org/) for python functions and [clang](https://clang.llvm.org/) for C/C++ functions,
 this library targets at easily injecting the bitcode into JVMs.
@@ -29,7 +29,7 @@ with open("pyfunc.bc", "wb") as out:
 
 Finally, you get a JVM class file for `plus`:
 
-    $ ./bin/lljvm-as pyfunc.bc
+    $ ./bin/lljvm-translator pyfunc.bc
 
 To check gen'd bytecode, you can use `javap`:
 
@@ -97,7 +97,7 @@ You can use `clang` to get LLVM bitcode for C/C++ functions:
     }
 
     $ clang -c -O2 -emit-llvm -o cfunc.bc cfunc.c
-    $ ./bin/lljvm-as cfunc.bc
+    $ ./bin/lljvm-translator cfunc.bc
 
 Then, you dump gen'd bytecode:
 

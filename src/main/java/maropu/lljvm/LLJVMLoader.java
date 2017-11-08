@@ -161,7 +161,7 @@ public class LLJVMLoader {
   }
 
   private static String getVersion() {
-    // TODO: Get the versin of lljvm-as
+    // TODO: Get the versin of lljvm-translator
     return "0.1.0";
   }
 }
