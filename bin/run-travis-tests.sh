@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +17,19 @@
 # limitations under the License.
 #
 
-import os
+#
+# Shell script for running unit tests in travis CI
 
-# Mainly used for travis CI
-LLVM_CONFIG = os.getenv('LLVM_CONFIG', 'llvm-config')
+set -e -o pipefail
 
-# Package root dir
-BASE_DIR = '../../../..'
+# Determine the current working directory
+_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# dependency list
-JAVAH_DIR = '%s/include/inc_' % BASE_DIR
-GTEST_DIR = '%s/lib/googletest-release-1.8.0/googletest' % BASE_DIR
+# Run tests for lljvm-backend code
+cd ${_DIR}/../src/main/resources/lljvm-backend
+./waf configure && ./waf
+
+# Run tests for java code
+cd ${_DIR}/..
+./build/mvn -q scalastyle:check test
 

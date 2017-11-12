@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/maropu/spark-sql-server.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
+[![Build Status](https://travis-ci.org/maropu/lljvm-translator.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
 
 This is an experimental translator to build JVM bytecode from LLVM bitcode.
 Since some existing tools can generate LLVM bitcode from functions written in other languages,
