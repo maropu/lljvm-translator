@@ -15,10 +15,8 @@
 # limitations under the License.
 #
 
-from waflib.Task import Task
-from waflib.TaskGen import extension
 from waflib.Tools import waf_unit_test
-from waflib.Configure import conf
+from env import *
 
 def options(opt):
   opt.load('compiler_cxx waf_unit_test')
@@ -37,46 +35,23 @@ def configure(ctx):
                 mandatory = True,
                 uselib_store = 'LLVM')
 
-  # When static libraries are used, filenames lays before -lxx
-  # http://stackoverflow.com/questions/6183899/undefined-reference-to-dlopen
-  # ctx.env.append_value('LIB_LLVM', ['tinfo', 'dl'])
-
-  ctx.write_config_header('config.h')
-  # print ctx.env.
-  # ctx.recurse('src')
-
-  # ctx.env.append_value('CXXFLAGS', ['-O0', '-g', '-std=gnu++0x', '-fPIC', '-I.', '-I..'])
-  # ctx.env.append_value('LIB', ['z', 'm', 'curses'])
-  # ctx.env.append_value('LINKFLAGS', ['-Wl,-no-as-needed', '-pthread'])
-  # ctx.env.append_value('DEFINES', ['NDEBUG'])
-
 def build(bld):
 
-  # Builds a shared library of hypersonic
-  bld.shlib(source = 'backend.cc \
-              block.cc \
-              branch.cc \
-              const.cc \
-              function.cc \
-              instruction.cc \
-              lljvm.cc \
-              loadstore.cc \
-              name.cc \
-              printinst.cc \
-              sections.cc \
-              types.cc',
+  # Builds a shared library of LLJVM
+  bld.shlib(source = 'backend.cc block.cc branch.cc const.cc function.cc instruction.cc lljvm.cc loadstore.cc \
+              name.cc printinst.cc sections.cc types.cc',
             target = 'lljvm',
-            includes = '../../../../include/inc_mac',
+            includes = JAVAH_DIR,
             use = 'LLVM')
 
   # For unit tests
-  bld.objects(source = '../../../../lib/googletest-release-1.8.0/googletest/src/gtest-all.cc',
+  bld.objects(source = '{0}/src/gtest-all.cc {0}/src/gtest_main.cc'.format(GTEST_DIR),
               target = 'gtest',
-              includes = '../../../../lib/googletest-release-1.8.0/googletest/include ../../../../lib/googletest-release-1.8.0/googletest')
+              includes = '{0}/include {0}'.format(GTEST_DIR))
 
   bld.program(features='test',
               source='lljvm_unittest.cc',
-              includes = '../../../../lib/googletest-release-1.8.0/googletest/include',
+              includes = '{0}/include'.format(GTEST_DIR),
               target = 'lljvm_unittest',
               use = 'gtest')
 
