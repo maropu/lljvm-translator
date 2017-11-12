@@ -1,0 +1,73 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+from waflib.Task import Task
+from waflib.TaskGen import extension
+from waflib.Tools import waf_unit_test
+from waflib.Configure import conf
+
+def options(opt):
+  opt.load('compiler_cxx waf_unit_test')
+
+def configure(ctx):
+  ctx.load('compiler_cxx waf_unit_test')
+
+  ctx.check_cxx(lib = 'z')
+  ctx.check_cxx(lib = 'm')
+  ctx.check_cxx(lib = 'curses')
+
+  # TODO: Needs to check installed LLVM version
+  ctx.check_cfg(path = 'llvm-config',
+                args = '--cxxflags --ldflags --system-libs --libs all',
+                package = '',
+                mandatory = True,
+                uselib_store = 'LLVM')
+
+  # When static libraries are used, filenames lays before -lxx
+  # http://stackoverflow.com/questions/6183899/undefined-reference-to-dlopen
+  # ctx.env.append_value('LIB_LLVM', ['tinfo', 'dl'])
+
+  ctx.write_config_header('config.h')
+  # print ctx.env.
+  # ctx.recurse('src')
+
+  # ctx.env.append_value('CXXFLAGS', ['-O0', '-g', '-std=gnu++0x', '-fPIC', '-I.', '-I..'])
+  # ctx.env.append_value('LIB', ['z', 'm', 'curses'])
+  # ctx.env.append_value('LINKFLAGS', ['-Wl,-no-as-needed', '-pthread'])
+  # ctx.env.append_value('DEFINES', ['NDEBUG'])
+
+def build(bld):
+
+  # Builds a shared library of hypersonic
+  bld.shlib(source = 'backend.cpp \
+              block.cpp \
+              branch.cpp \
+              const.cpp \
+              function.cpp \
+              instruction.cpp \
+              lljvm.cpp \
+              loadstore.cpp \
+              name.cpp \
+              printinst.cpp \
+              sections.cpp \
+              types.cpp',
+            target = 'lljvm',
+            includes = '../../../../include/inc_mac',
+            use = 'LLVM')
+
+  bld.add_post_fun(waf_unit_test.summary)
+

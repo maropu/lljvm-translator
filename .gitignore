@@ -11,3 +11,7 @@ scalastyle-output.xml
 scalastyle.txt
 target/
 
+# For waf
+.waf-*
+src/main/resources/lljvm-backend/build
+.lock-waf_darwin_build
