@@ -53,21 +53,32 @@ def configure(ctx):
 def build(bld):
 
   # Builds a shared library of hypersonic
-  bld.shlib(source = 'backend.cpp \
-              block.cpp \
-              branch.cpp \
-              const.cpp \
-              function.cpp \
-              instruction.cpp \
-              lljvm.cpp \
-              loadstore.cpp \
-              name.cpp \
-              printinst.cpp \
-              sections.cpp \
-              types.cpp',
+  bld.shlib(source = 'backend.cc \
+              block.cc \
+              branch.cc \
+              const.cc \
+              function.cc \
+              instruction.cc \
+              lljvm.cc \
+              loadstore.cc \
+              name.cc \
+              printinst.cc \
+              sections.cc \
+              types.cc',
             target = 'lljvm',
             includes = '../../../../include/inc_mac',
             use = 'LLVM')
+
+  # For unit tests
+  bld.objects(source = '../../../../lib/googletest-release-1.8.0/googletest/src/gtest-all.cc',
+              target = 'gtest',
+              includes = '../../../../lib/googletest-release-1.8.0/googletest/include ../../../../lib/googletest-release-1.8.0/googletest')
+
+  bld.program(features='test',
+              source='lljvm_unittest.cc',
+              includes = '../../../../lib/googletest-release-1.8.0/googletest/include',
+              target = 'lljvm_unittest',
+              use = 'gtest')
 
   bld.add_post_fun(waf_unit_test.summary)
 
