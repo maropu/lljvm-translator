@@ -21,6 +21,7 @@
 */
 
 #include "backend.h"
+#include "lljvm-internals.h"
 
 #include <iostream>
 #include <fstream>
@@ -57,39 +58,6 @@ cl::opt<DebugLevel> debugLevel(cl::desc("Debugging level:"), cl::init(g1),
     clEnumVal(g1, "Source file and line number information (default)"),
     clEnumVal(g2, "-g1 + Local variable information"),
     clEnumVal(g3, "-g2 + Commented LLVM assembly")));
-
-std::string parseBitcode(const char *bitcode, size_t size) {
-    LLVMContext context;
-    auto buf = MemoryBuffer::getMemBuffer(StringRef(bitcode, size));
-    auto mod = parseBitcodeFile(buf.get()->getMemBufferRef(), context);
-    // if(check if error happens) {
-    //     std::cerr << "Unable to parse bitcode file" << std::endl;
-    //     return 1;
-    // }
-
-    // errs() << "Here's the assembly:\n" << *mod.get();
-
-    std::string out;
-    raw_string_ostream strbuf(out);
-
-    llvm::legacy::PassManager pm;
-    // PassManager pm;
-    DataLayout td("e-p:32:32:32"
-                  "-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64"
-                  "-f32:32:32-f64:64:64");
-    // pm.add(new DataLayoutPass(td));
-    pm.add(createVerifierPass());
-    pm.add(createGCLoweringPass());
-    // TODO: fix switch generation so the following pass is not needed
-    pm.add(createLowerSwitchPass());
-    pm.add(createCFGSimplificationPass());
-
-    pm.add(new JVMWriter(&td, strbuf, classname, debugLevel));
-    // pm.add(createGCInfoDeleter());
-    pm.run(*mod.get());
-    strbuf.flush();
-    return out;
-}
 
 int main(int argc, char** argv) {
     std::string filename = argv[1];

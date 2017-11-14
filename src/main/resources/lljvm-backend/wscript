@@ -68,7 +68,13 @@ def build(bld):
               name.cc printinst.cc sections.cc types.cc',
             target = 'lljvm',
             includes = JAVAH_DIR + bld.env.LLJVM_COMPILE_OS,
-            use = 'llvm')
+            use = 'llvm',
+            uselib_store = 'lljvm')
+
+  # Builds an executable LLJVM program for tests
+  bld.program(source = 'main.cc',
+              target = 'lljvm-backend-test',
+              use = 'llvm lljvm')
 
   # For unit tests
   bld.objects(source = '{0}/src/gtest-all.cc {0}/src/gtest_main.cc'.format(GTEST_DIR),
