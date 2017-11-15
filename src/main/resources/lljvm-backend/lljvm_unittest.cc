@@ -20,4 +20,3 @@
 GTEST_TEST(LLJVMUnitTest, SimpleTest) {
   EXPECT_EQ(1, 1);
 }
-

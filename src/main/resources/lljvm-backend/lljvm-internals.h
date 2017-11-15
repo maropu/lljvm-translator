@@ -20,6 +20,6 @@
 
 #include <string>
 
-extern const std::string parseBitcode(const char *bitcode, size_t size);
+extern const std::string parseBitcode(const char *bitcode, size_t size, unsigned int dbg);
 
 #endif

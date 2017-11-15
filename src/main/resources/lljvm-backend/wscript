@@ -90,4 +90,3 @@ def build(bld):
 
   bld.add_post_fun(waf_unit_test.summary)
   bld.add_post_fun(waf_unit_test.set_exit_code)
-
