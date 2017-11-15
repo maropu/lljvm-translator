@@ -24,6 +24,6 @@ LLVM_CONFIG = os.getenv('LLVM_CONFIG', 'llvm-config')
 BASE_DIR = '../../../..'
 
 # dependency list
-JAVAH_DIR = '%s/include/inc_' % BASE_DIR
+JAVAH_DIR = '%s/include' % BASE_DIR
 GTEST_DIR = '%s/lib/googletest-release-1.8.0/googletest' % BASE_DIR
 

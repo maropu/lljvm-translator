@@ -39,11 +39,16 @@ def configure(ctx):
 
   # Checks if this platform supported
   if platform == 'linux' or platform == 'linux2':
-    ctx.env['LLJVM_COMPILE_OS'] = 'linux'
+    ctx.env['LLJVM_COMPILE_OS'] = 'Linux'
+    ctx.env['LLJVM_COMPILE_SHLIB_SUFFIX'] = 'so'
   elif platform == 'darwin':
-    ctx.env['LLJVM_COMPILE_OS'] = 'mac'
+    ctx.env['LLJVM_COMPILE_OS'] = 'Mac'
+    ctx.env['LLJVM_COMPILE_SHLIB_SUFFIX'] = 'dylib'
   else:
     ctx.fatal('OS must be linux or darwin, but %s found' % platform)
+
+  # Currently, it only support x86_64 platforms
+  ctx.env['LLJVM_COMPILE_ARCH'] = 'x86_64'
 
   LLVM_VERSION = llvm_config('--version')[0]
   if StrictVersion(LLVM_VERSION) < StrictVersion('5.0.0'):
@@ -67,9 +72,14 @@ def build(bld):
   bld.shlib(source = 'backend.cc block.cc branch.cc const.cc function.cc instruction.cc lljvm.cc loadstore.cc \
               name.cc printinst.cc sections.cc types.cc',
             target = 'lljvm',
-            includes = JAVAH_DIR + bld.env.LLJVM_COMPILE_OS,
+            includes = '%s/%s' % (JAVAH_DIR, bld.env.LLJVM_COMPILE_OS),
             use = 'llvm',
             uselib_store = 'lljvm')
+
+  # Copys the built library into src/main/java/native/
+  bld(rule = 'cp ${SRC} ${TGT}',
+      source = 'liblljvm.%s' % bld.env.LLJVM_COMPILE_SHLIB_SUFFIX,
+      target = '../../native/%s/%s/' % (bld.env.LLJVM_COMPILE_OS, bld.env.LLJVM_COMPILE_ARCH))
 
   # Builds an executable LLJVM program for tests
   bld.program(source = 'main.cc',
