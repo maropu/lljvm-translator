@@ -147,7 +147,9 @@ Python UDFs in [Spark](https://spark.apache.org/) have well-known overheads and 
 significantly improves the performance. But, Python UDFs still incur
 [large performance gaps](https://gist.github.com/maropu/9f995f65b1cb160865e79e14e5216320) against Scala UDFs.
 If we could safely inject python UDFs into Spark gen'd code, we would make the Python UDF overheads close to zero.
-Here are [a sample patch](https://github.com/apache/spark/compare/master...maropu:LLJVMSpike) and benchmark results below:
+Here is [a sample patch](https://github.com/apache/spark/compare/master...maropu:LLJVMSpike) and
+a quick benchmark below shows that the injection could make it around 50x faster than
+the performance of the Vectorized UDFs:
 
 ![Python UDF benchmark results](resources/udf_benchmark_results.png)
 
