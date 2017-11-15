@@ -96,7 +96,7 @@ def build(bld):
               includes = '{0}/include'.format(GTEST_DIR),
               target = 'lljvm_unittest',
               linkflags = '-pthread',
-              use = 'gtest')
+              use = 'gtest llvm')
 
   bld.add_post_fun(waf_unit_test.summary)
   bld.add_post_fun(waf_unit_test.set_exit_code)

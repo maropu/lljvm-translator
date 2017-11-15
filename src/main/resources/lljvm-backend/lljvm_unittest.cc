@@ -17,6 +17,8 @@
 
 #include "gtest/gtest.h"
 
+#include <llvm/Config/llvm-config.h>
+
 GTEST_TEST(LLJVMUnitTest, SimpleTest) {
-  EXPECT_EQ(1, 1);
+  EXPECT_EQ(LLVM_VERSION_STRING, "5.0.0");
 }
