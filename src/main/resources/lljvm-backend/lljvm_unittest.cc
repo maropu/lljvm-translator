@@ -19,6 +19,25 @@
 
 #include <llvm/Config/llvm-config.h>
 
+#include <cstdio>
+#include <string>
+
+struct Version {
+  int major = 0, minor = 0, revision = 0;
+
+  Version(std::string version) {
+    std::sscanf(version.c_str(), "%d.%d.%d", &major, &minor, &revision);
+  }
+
+  bool operator <=(const Version& other) {
+    if (major <= other.major) return true;
+    if (minor <= other.minor) return true;
+    if (revision <= other.revision) return true;
+    return false;
+  }
+};
+
 GTEST_TEST(LLJVMUnitTest, SimpleTest) {
-  EXPECT_EQ(LLVM_VERSION_STRING, "5.0.0");
+  EXPECT_TRUE(Version("5.0.0") <= Version(LLVM_VERSION_STRING));
 }
+
