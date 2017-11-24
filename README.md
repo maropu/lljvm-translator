@@ -1,8 +1,9 @@
 [![Build Status](https://travis-ci.org/maropu/lljvm-translator.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
 
 This is an experimental translator to build JVM bytecode from LLVM bitcode.
-Since some existing tools can generate LLVM bitcode from functions written in other languages,
-e.g.,  [Numba](https://numba.pydata.org/) for python functions and [clang](https://clang.llvm.org/) for C/C++ functions,
+Since some existing tools can generate LLVM bitcode from functions written in other languages
+(e.g.,  [Numba](https://numba.pydata.org/) for python functions,
+[clang](https://clang.llvm.org/) for C/C++ functions, and [DragonEgg](https://dragonegg.llvm.org/) for Fortran/Go functions),
 this library targets at easily injecting the bitcode into JVMs.
 
 ## Python functions to JVM class methods
