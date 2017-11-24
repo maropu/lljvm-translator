@@ -60,7 +60,7 @@ const std::string parseBitcode(const char *bitcode, size_t size, unsigned int db
   pm.add(createLowerSwitchPass());
   pm.add(createCFGSimplificationPass());
 
-  pm.add(new JVMWriter(&td, strbuf, "GeneratedClass", 0));
+  pm.add(new JVMWriter(&td, strbuf, "GeneratedClass", dbg));
   // pm.add(createGCInfoDeleter());
   pm.run(*mod.get());
   strbuf.flush();
