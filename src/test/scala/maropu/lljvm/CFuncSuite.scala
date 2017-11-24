@@ -26,7 +26,7 @@ class CFuncSuite extends FunSuite {
 
   test("x + y") {
     TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc.bc",
+      id = "llvm-cfunc-bitcode/cfunc1.bc",
       f = "_cfunc1",
       sig = Seq(jInt.TYPE, jInt.TYPE),
       args = Seq(new jInt(4), new jInt(5)),
@@ -36,7 +36,7 @@ class CFuncSuite extends FunSuite {
 
   test("pow(x, y)") {
     TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc.bc",
+      id = "llvm-cfunc-bitcode/cfunc2.bc",
       f = "_cfunc2",
       sig = Seq(jDouble.TYPE, jDouble.TYPE),
       args = Seq(new jDouble(2.0), new jDouble(3.0)),
@@ -46,7 +46,7 @@ class CFuncSuite extends FunSuite {
 
   test("2 * y + pow(y, x)") {
     TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc.bc",
+      id = "llvm-cfunc-bitcode/cfunc3.bc",
       f = "_cfunc3",
       sig = Seq(jDouble.TYPE, jDouble.TYPE),
       args = Seq(new jDouble(100.0), new jDouble(1.0)),
@@ -59,7 +59,7 @@ class CFuncSuite extends FunSuite {
     val basePtr = Platform.allocateMemory(8 * arraySize)
     (0 until arraySize).foreach { i => Platform.putDouble(null, basePtr + 8 * i, 1.0) }
     TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc.bc",
+      id = "llvm-cfunc-bitcode/cfunc4.bc",
       f = "_cfunc4",
       sig = Seq(jInt.TYPE, jLong.TYPE),
       args = Seq(new jInt(basePtr.toInt), new jLong(arraySize)),
@@ -69,7 +69,7 @@ class CFuncSuite extends FunSuite {
 
   test("simple if") {
      TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc.bc",
+      id = "llvm-cfunc-bitcode/cfunc5.bc",
       f = "_cfunc5",
       sig = Seq(jInt.TYPE),
       args = Seq(new jInt(0)),
@@ -79,7 +79,7 @@ class CFuncSuite extends FunSuite {
 
   test("ternary operator") {
     TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc.bc",
+      id = "llvm-cfunc-bitcode/cfunc5.bc",
       f = "_cfunc5",
       sig = Seq(jInt.TYPE),
       args = Seq(new jInt(1)),
