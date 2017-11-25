@@ -58,3 +58,13 @@ def pyfunc5(x):
   return value
 
 write_pyfunc_as_bitcode(pyfunc5, "int32(int32)", "-int32")
+
+def pyfunc6(x, s):
+  sum = 0
+  for i in range(s):
+    sum += x[i]
+  return sum
+
+write_pyfunc_as_bitcode(pyfunc6, "float32(float32[:], int32)", "-float32")
+write_pyfunc_as_bitcode(pyfunc6, "float64(float64[:], int32)", "-float64")
+
