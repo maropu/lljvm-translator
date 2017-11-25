@@ -29,8 +29,16 @@ object TestUtils extends FunSuite {
 
   def doTest(id: String, f: String, sig: Seq[Class[_]], args: Seq[AnyRef], expected: Any): Unit = {
     val clazz = TestUtils.loadClassFromResource(id)
-    val method = clazz.newInstance.getClass.getMethod(f, sig: _*)
-    assert(method.invoke(null, args: _*) === expected)
+    try {
+      val method = clazz.newInstance.getClass.getMethod(f, sig: _*)
+      assert(method.invoke(null, args: _*) === expected)
+    } catch {
+      case e: Throwable =>
+        fail(
+          s"""Illegal bytecode found: ${e.getMessage}
+             |${LLJVMUtils.asBytecode(TestUtils.resourceToBytes(id))}
+           """.stripMargin)
+    }
   }
 
   def compareCode(actual: String, expected: String): Unit = {

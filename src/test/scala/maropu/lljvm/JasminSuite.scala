@@ -20,8 +20,6 @@ package maropu.lljvm
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader}
 import java.lang.{Double => jDouble, Integer => jInt}
 
-import scala.collection.JavaConverters._
-
 import jasmin.ClassFile
 import org.scalatest.FunSuite
 

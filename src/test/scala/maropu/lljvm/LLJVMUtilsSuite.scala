@@ -17,10 +17,12 @@
 
 package maropu.lljvm
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader}
 import java.lang.{Double => jDouble, Integer => jInt}
 
 import scala.collection.JavaConverters._
 
+import jasmin.ClassFile
 import org.scalatest.FunSuite
 
 class TestClass {
@@ -64,5 +66,56 @@ class LLJVMUtilsSuite extends FunSuite {
   test("findMethods") {
     val methods = LLJVMUtils.findMethods(classOf[TestClass], "method", classOf[String])
     assert(methods.asScala.map(_.getName()).toSet === Set("methodY", "methodZ"))
+  }
+
+  test("throw exceptions if illegal bytecode found") {
+    val illegalCode =
+      s""".class public final GeneratedClass
+         |.super java/lang/Object
+         |
+         |.method public <init>()V
+         |        aload_0
+         |        invokenonvirtual java/lang/Object/<init>()V
+         |        return
+         |.end method
+         |
+         |.method public static plus(II)I
+         |.limit stack 2
+         |.limit locals 2
+         |        lload_0 ; Push wrong type data onto the operand stack
+         |        iload_1
+         |        iadd
+         |        ireturn
+         |
+         |.end method
+       """.stripMargin
+
+    val classFile = new ClassFile()
+    val in = new InputStreamReader(new ByteArrayInputStream(illegalCode.getBytes))
+    classFile.readJasmin(in, "GeneratedClass", true)
+
+    val out = new ByteArrayOutputStream()
+    classFile.write(out)
+    assert(out.size > 0)
+
+    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
+
+    val expectedErrMsg = "Illegal bytecode found: " +
+      "(class: GeneratedClass, method: plus signature: (II)I)"
+
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      LLJVMUtils.getAllMethods(clazz)
+    }.getMessage
+    assert(errMsg1.contains(expectedErrMsg))
+
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      LLJVMUtils.getMethod(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
+    }.getMessage
+    assert(errMsg2.contains(expectedErrMsg))
+
+    val errMsg3 = intercept[LLJVMRuntimeException] {
+      LLJVMUtils.findMethods(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
+    }.getMessage
+    assert(errMsg3.contains(expectedErrMsg))
   }
 }

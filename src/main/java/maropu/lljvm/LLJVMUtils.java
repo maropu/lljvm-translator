@@ -63,12 +63,16 @@ public class LLJVMUtils {
     return bytecode;
   }
 
-  public static List<Method> getAllMethods(Class<?> clazz) {
+  public static List<Method> getAllMethods(Class<?> clazz) throws LLJVMRuntimeException {
     List<Method> methods = new ArrayList<>();
-    for (Method m : clazz.getDeclaredMethods()) {
-      if (Modifier.isPublic(m.getModifiers())) {
-        methods.add(m);
+    try {
+      for (Method m : clazz.getDeclaredMethods()) {
+        if (Modifier.isPublic(m.getModifiers())) {
+          methods.add(m);
+        }
       }
+    } catch (Throwable e) { // All the error states caught here
+      throw new LLJVMRuntimeException("Illegal bytecode found: " + e.getMessage());
     }
     return methods;
   }
@@ -87,11 +91,15 @@ public class LLJVMUtils {
 
   public static Method getMethod(Class<?> clazz, String methodName, Class<?>... signature)
       throws LLJVMRuntimeException {
-    for (Method m : clazz.getDeclaredMethods()) {
-      if (Modifier.isPublic(m.getModifiers()) &&
-          m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), signature)) {
-        return m;
+    try {
+      for (Method m : clazz.getDeclaredMethods()) {
+        if (Modifier.isPublic(m.getModifiers()) &&
+            m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), signature)) {
+          return m;
+        }
       }
+    } catch (Throwable e) { // All the error states caught here
+      throw new LLJVMRuntimeException("Illegal bytecode found: " + e.getMessage());
     }
     String notFoundMethod = String.format("%s(%s)", methodName, joinString(signature, ", "));
     throw new LLJVMRuntimeException("Method not found: " + notFoundMethod);
@@ -99,11 +107,15 @@ public class LLJVMUtils {
 
   public static List<Method> findMethods(Class<?> clazz, String methodName, Class<?>... signature) {
     List<Method> methods = new ArrayList<>();
-    for (Method m : clazz.getDeclaredMethods()) {
-      if (Modifier.isPublic(m.getModifiers()) &&
-          m.getName().contains(methodName) && Arrays.equals(m.getParameterTypes(), signature)) {
-        methods.add(m);
+    try {
+      for (Method m : clazz.getDeclaredMethods()) {
+        if (Modifier.isPublic(m.getModifiers()) &&
+            m.getName().contains(methodName) && Arrays.equals(m.getParameterTypes(), signature)) {
+          methods.add(m);
+        }
       }
+    } catch (Throwable e) { // All the error states caught here
+      throw new LLJVMRuntimeException("Illegal bytecode found: " + e.getMessage());
     }
     return methods;
   }
