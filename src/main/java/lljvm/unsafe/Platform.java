@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package maropu.lljvm.unsafe;
+package lljvm.unsafe;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
