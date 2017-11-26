@@ -54,15 +54,15 @@ class CFuncSuite extends FunSuite {
     )
   }
 
-  ignore("sum by simple loop") {
+  test("sum by simple loop") {
     val arraySize = 10
     val basePtr = Platform.allocateMemory(8 * arraySize)
     (0 until arraySize).foreach { i => Platform.putDouble(null, basePtr + 8 * i, 1.0) }
     TestUtils.doTest(
       id = "llvm-cfunc-bitcode/cfunc4.bc",
       f = "_cfunc4",
-      sig = Seq(jInt.TYPE, jLong.TYPE),
-      args = Seq(new jInt(basePtr.toInt), new jLong(arraySize)),
+      sig = Seq(jLong.TYPE, jLong.TYPE),
+      args = Seq(new jLong(basePtr), new jLong(arraySize)),
       expected = 1.0 * arraySize
     )
   }

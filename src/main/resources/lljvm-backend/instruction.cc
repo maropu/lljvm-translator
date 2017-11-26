@@ -202,7 +202,7 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v,
                                  getTypePrefix(srcTy, true));
         break;
     case Instruction::IntToPtr:
-        printCastInstruction("i", getTypePrefix(srcTy, true)); break;
+        printCastInstruction("l", getTypePrefix(srcTy, true)); break;
     case Instruction::PtrToInt:
         printCastInstruction(getTypePrefix(ty), "i"); break;
     case Instruction::ZExt:
