@@ -118,7 +118,7 @@ void JVMWriter::printIndirectLoad(const Value *v) {
  * @param ty  the type of the value
  */
 void JVMWriter::printIndirectLoad(const Type *ty) {
-    printSimpleInstruction("invokestatic", "lljvm/runtime/Memory/load_"
+    printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/load_"
         + getTypePostfix(ty) + "(J)" + getTypeDescriptor(ty));
 }
 
@@ -141,5 +141,5 @@ void JVMWriter::printIndirectStore(const Value *ptr, const Value *val) {
  */
 void JVMWriter::printIndirectStore(const Type *ty) {
     printSimpleInstruction("invokestatic",
-        "lljvm/runtime/Memory/store(J" + getTypeDescriptor(ty) + ")V");
+        "lljvm/runtime/VMemory/store(J" + getTypeDescriptor(ty) + ")V");
 }

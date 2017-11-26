@@ -64,7 +64,7 @@ class JasminSuite extends FunSuite {
          |;  store i32 %.17, i32* %retptr, align 4
          |        lload_0 ; _retptr
          |        iload 8 ; __17
-         |        invokestatic lljvm/runtime/Memory/store(JI)V
+         |        invokestatic lljvm/runtime/VMemory/store(JI)V
          |;  ret i32 0
          |        iconst_0
          |        ireturn

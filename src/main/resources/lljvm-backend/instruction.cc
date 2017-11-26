@@ -300,7 +300,7 @@ void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
         printSimpleInstruction("imul");
     }
     printSimpleInstruction("invokestatic",
-                           "lljvm/runtime/Memory/allocateStack(I)J");
+                           "lljvm/runtime/VMemory/allocateStack(I)J");
 }
 
 

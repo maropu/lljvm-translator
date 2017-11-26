@@ -73,7 +73,7 @@ void JVMWriter::printOperandPack(const Instruction *inst,
 
     printSimpleInstruction("bipush", utostr(size));
     printSimpleInstruction("invokestatic",
-                           "lljvm/runtime/Memory/allocateStack(I)J");
+                           "lljvm/runtime/VMemory/allocateStack(I)J");
     printSimpleInstruction("dup");
 
     for(unsigned int i = minOperand; i < maxOperand; i++) {
