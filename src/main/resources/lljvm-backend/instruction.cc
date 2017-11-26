@@ -26,7 +26,7 @@
 
 /**
  * Align the given offset.
- * 
+ *
  * @param offset  the offset
  * @param align   the required alignment
  */
@@ -36,7 +36,7 @@ static unsigned int alignOffset(unsigned int offset, unsigned int align) {
 
 /**
  * Print an icmp/fcmp instruction.
- * 
+ *
  * @param predicate  the predicate for the instruction
  * @param left       the first operand of the instruction
  * @param right      the second operand of the instruction
@@ -83,7 +83,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate,
 
 /**
  * Print an arithmetic instruction.
- * 
+ *
  * @param op     the opcode for the instruction
  * @param left   the first operand of the instruction
  * @param right  the second operand of the instruction
@@ -139,7 +139,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op,
 
 /**
  * Print a bitcast instruction.
- * 
+ *
  * @param ty     the destination type
  * @param srcTy  the source type
  */
@@ -162,7 +162,7 @@ void JVMWriter::printBitCastInstruction(const Type *ty, const Type *srcTy) {
 
 /**
  * Print a cast instruction.
- * 
+ *
  * @param typePrefix     the type prefix of the destination type
  * @param srcTypePrefix  the type prefix of the source type
  */
@@ -174,7 +174,7 @@ void JVMWriter::printCastInstruction(const std::string &typePrefix,
 
 /**
  * Print a cast instruction.
- * 
+ *
  * @param op    the opcode for the instruction
  * @param v     the value to be casted
  * @param ty    the destination type
@@ -230,7 +230,7 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v,
 
 /**
  * Print a getelementptr instruction.
- * 
+ *
  * @param v  the aggregate data structure to index
  * @param i  an iterator to the first type indexed by the instruction
  * @param e  an iterator specifying the upper bound on the types indexed by the
@@ -241,61 +241,62 @@ void JVMWriter::printGepInstruction(const Value *v,
                                     gep_type_iterator e) {
     // load address
     printCastInstruction(Instruction::IntToPtr, v, NULL, v->getType());
-    
+
     // calculate offset
     for(; i != e; i++){
         unsigned int size = 0;
         const Value *indexValue = i.getOperand();
-        
-        // if(const StructType *structTy = dyn_cast<StructType>(&*i)) {
-        //     for(unsigned int f = 0,
-        //             fieldIndex = cast<ConstantInt>(indexValue)->getZExtValue();
-        //         f < fieldIndex; f++)
-        //         size = alignOffset(
-        //             size + targetData->getTypeAllocSize(
-        //                 structTy->getContainedType(f)),
-        //             targetData->getABITypeAlignment(
-        //                 structTy->getContainedType(f + 1)));
-        //     printPtrLoad(size);
-        //     printSimpleInstruction("iadd");
-        // } else {
-        //     if(const SequentialType *seqTy = dyn_cast<SequentialType>(&*i))
-        //         size = targetData->getTypeAllocSize(seqTy->getElementType());
-        //     else
-        //         size = targetData->getTypeAllocSize(*i);
-        //     
-        //     if(const ConstantInt *c = dyn_cast<ConstantInt>(indexValue)) {
-        //         // constant optimisation
-        //         if(c->isNullValue()) {
-        //             // do nothing
-        //         } else if(c->getValue().isNegative()) {
-        //             printPtrLoad(c->getValue().abs().getZExtValue() * size);
-        //             printSimpleInstruction("isub");
-        //         } else {
-        //             printPtrLoad(c->getZExtValue() * size);
-        //             printSimpleInstruction("iadd");
-        //         }
-        //     } else {
-        //         printPtrLoad(size);
-        //         printCastInstruction(Instruction::IntToPtr, indexValue,
-        //                              NULL, indexValue->getType());
-        //         printSimpleInstruction("imul");
-        //         printSimpleInstruction("iadd");
-        //     }
-        // }
+
+        if(const StructType *structTy = i.getStructTypeOrNull()) {
+            for(unsigned int f = 0,
+                    fieldIndex = cast<ConstantInt>(indexValue)->getZExtValue();
+                f < fieldIndex; f++)
+                size = alignOffset(
+                    size + targetData->getTypeAllocSize(
+                        structTy->getContainedType(f)),
+                    targetData->getABITypeAlignment(
+                        structTy->getContainedType(f + 1)));
+            printPtrLoad(size);
+            printSimpleInstruction("ladd");
+        } else {
+            if(const SequentialType *seqTy = dyn_cast<SequentialType>(i.getIndexedType()))
+                size = targetData->getTypeAllocSize(seqTy->getElementType());
+            else
+                size = targetData->getTypeAllocSize(i.getIndexedType());
+
+            if(const ConstantInt *c = dyn_cast<ConstantInt>(indexValue)) {
+                // constant optimisation
+                if(c->isNullValue()) {
+                    // do nothing
+                } else if(c->getValue().isNegative()) {
+                    printPtrLoad(c->getValue().abs().getZExtValue() * size);
+                    printSimpleInstruction("lsub");
+                } else {
+                    printPtrLoad(c->getZExtValue() * size);
+                    printSimpleInstruction("ladd");
+                }
+            } else {
+                printPtrLoad(size);
+                printCastInstruction(Instruction::IntToPtr, indexValue,
+                                     NULL, indexValue->getType());
+                printSimpleInstruction("lmul");
+                printSimpleInstruction("ladd");
+            }
+        }
     }
 }
 
 /**
  * Print an alloca instruction.
- * 
+ *
  * @param inst  the instruction
  */
 void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
     uint64_t size = targetData->getTypeAllocSize(inst->getAllocatedType());
     if(const ConstantInt *c = dyn_cast<ConstantInt>(inst->getOperand(0))) {
         // constant optimization
-        printPtrLoad(c->getZExtValue() * size);
+        // printPtrLoad(c->getZExtValue() * size);
+        printSimpleInstruction("bipush", utostr(c->getZExtValue() * size));
     } else {
         printPtrLoad(size);
         printValueLoad(inst->getOperand(0));
@@ -308,7 +309,7 @@ void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
 
 /**
  * Print a va_arg instruction.
- * 
+ *
  * @param inst  the instruction
  */
 void JVMWriter::printVAArgInstruction(const VAArgInst *inst) {
@@ -326,7 +327,7 @@ void JVMWriter::printVAArgInstruction(const VAArgInst *inst) {
 
 /**
  * Print a vararg intrinsic function.
- * 
+ *
  * @param inst  the instruction
  */
 void JVMWriter::printVAIntrinsic(const IntrinsicInst *inst) {

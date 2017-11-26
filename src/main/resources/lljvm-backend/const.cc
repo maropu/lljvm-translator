@@ -24,14 +24,13 @@
 
 /**
  * Load the given pointer.
- * 
+ *
  * @param n  the value of the pointer
  */
 void JVMWriter::printPtrLoad(uint64_t n) {
-    // if(targetData->getPointerSize() != Module::Pointer32)
-    if(targetData->getPointerSize() != 32)
-        llvm_unreachable("Only 32-bit pointers are allowed");
-    printConstLoad(APInt(32, n, false));
+    // Only 64bit pointers are allowed
+    assert(targetData->getPointerSize() == 8);
+    printConstLoad(APInt(64, n, false));
 }
 
 /**
