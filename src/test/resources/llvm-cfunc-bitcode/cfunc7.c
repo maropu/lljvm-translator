@@ -21,7 +21,7 @@
 #include "cfunc2.c"
 #include "cfunc3.c"
 
-int cfunc7(double x, double y) {
+double cfunc7(double x, double y) {
   return cfunc2(x, y) + cfunc3(x, y);
 }
 

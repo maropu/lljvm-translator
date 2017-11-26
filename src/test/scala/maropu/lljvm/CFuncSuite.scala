@@ -99,4 +99,14 @@ class CFuncSuite extends FunSuite {
       expected = 0
     )
   }
+
+  ignore("function call chains") {
+    TestUtils.doTest(
+      id = "llvm-cfunc-bitcode/cfunc7.bc",
+      f = "_cfunc7",
+      sig = Seq(jDouble.TYPE, jDouble.TYPE),
+      args = Seq(new jDouble(4.0), new jDouble(1.0)),
+      expected = 0.0
+    )
+  }
 }
