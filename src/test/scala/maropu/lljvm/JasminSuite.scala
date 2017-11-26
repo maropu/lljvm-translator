@@ -52,24 +52,24 @@ class JasminSuite extends FunSuite {
          |.end method
          |
          |
-         |.method public static __ZN8__main__11pyfunc1_241Eii(IIIII)I
+         |.method public static __ZN8__main__11pyfunc1_241Eii(JJJII)I
          |        iconst_0
-         |        istore 5
+         |        istore 8
          |label1:
          |;  %.17 = add i32 %arg.y, %arg.x
-         |        iload 4 ; _arg_y
-         |        iload_3 ; _arg_x
+         |        iload 7 ; _arg_y
+         |        iload 6 ; _arg_x
          |        iadd
-         |        istore 5 ; __17
+         |        istore 8 ; __17
          |;  store i32 %.17, i32* %retptr, align 4
-         |        iload_0 ; _retptr
-         |        iload 5 ; __17
-         |        invokestatic lljvm/runtime/Memory/store(II)V
+         |        lload_0 ; _retptr
+         |        iload 8 ; __17
+         |        invokestatic lljvm/runtime/Memory/store(JI)V
          |;  ret i32 0
          |        iconst_0
          |        ireturn
          |        .limit stack 16
-         |        .limit locals 6
+         |        .limit locals 9
          |end_method:
          |.end method
          |

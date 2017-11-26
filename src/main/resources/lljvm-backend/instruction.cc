@@ -300,7 +300,7 @@ void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
         printSimpleInstruction("imul");
     }
     printSimpleInstruction("invokestatic",
-                           "lljvm/runtime/Memory/allocateStack(I)I");
+                           "lljvm/runtime/Memory/allocateStack(I)J");
 }
 
 
@@ -366,13 +366,13 @@ void JVMWriter::printMemIntrinsic(const MemIntrinsic *inst) {
     switch(inst->getIntrinsicID()) {
     case Intrinsic::memcpy:
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Memory/memcpy(II" + lenDescriptor + "I)V"); break;
+            "lljvm/runtime/Memory/memcpy(JJ" + lenDescriptor + "I)V"); break;
     case Intrinsic::memmove:
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Memory/memmove(II" + lenDescriptor + "I)V"); break;
+            "lljvm/runtime/Memory/memmove(JJ" + lenDescriptor + "I)V"); break;
     case Intrinsic::memset:
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Memory/memset(IB" + lenDescriptor + "I)V"); break;
+            "lljvm/runtime/Memory/memset(JB" + lenDescriptor + "I)V"); break;
     }
 }
 

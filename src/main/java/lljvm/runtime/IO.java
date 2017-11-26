@@ -318,7 +318,7 @@ public final class IO {
      * @param size  the size of the buffer
      * @return      buf on success, NULL on error
      */
-    public static int getcwd(int buf, int size) {
+    public static long getcwd(int buf, int size) {
         return Memory.store(buf, fileSystem.getcwd(), size);
     }
 }

@@ -24,16 +24,18 @@
 
 /**
  * Return the bit width of the given type.
- * 
+ *
  * @param ty      the type
  * @param expand  specifies whether to expand the type to 32 bits
  * @return        the bit width
  */
 unsigned int JVMWriter::getBitWidth(const Type *ty, bool expand) {
+    if(ty->getTypeID() == Type::PointerTyID)
+        return 64;
+
     if(ty->getTypeID() == Type::ArrayTyID
     || ty->getTypeID() == Type::VectorTyID
-    || ty->getTypeID() == Type::StructTyID
-    || ty->getTypeID() == Type::PointerTyID)
+    || ty->getTypeID() == Type::StructTyID)
         return 32;
 
     unsigned int n = ty->getPrimitiveSizeInBits();
@@ -51,7 +53,7 @@ unsigned int JVMWriter::getBitWidth(const Type *ty, bool expand) {
 
 /**
  * Return the ID of the given type.
- * 
+ *
  * @param ty      the type
  * @param expand  specifies whether to expand the type to 32 bits
  * @return        the type ID
@@ -73,6 +75,7 @@ char JVMWriter::getTypeID(const Type *ty, bool expand) {
     case Type::DoubleTyID:
         return 'D';
     case Type::PointerTyID:
+        return 'J';
     case Type::StructTyID:
     case Type::ArrayTyID:
     case Type::VectorTyID:
@@ -84,7 +87,7 @@ char JVMWriter::getTypeID(const Type *ty, bool expand) {
 }
 /**
  * Return the name of the given type.
- * 
+ *
  * @param ty      the type
  * @param expand  specifies whether to expand the type to 32 bits
  * @return        the type name
@@ -104,7 +107,7 @@ std::string JVMWriter::getTypeName(const Type *ty, bool expand) {
 
 /**
  * Return the type descriptor of the given type.
- * 
+ *
  * @param ty      the type
  * @param expand  specifies whether to expand the type to 32 bits
  * @return        the type descriptor
@@ -115,7 +118,7 @@ std::string JVMWriter::getTypeDescriptor(const Type *ty, bool expand) {
 
 /**
  * Return the type postfix of the given type.
- * 
+ *
  * @param ty      the type
  * @param expand  specifies whether to expand the type to 32 bits
  * @return        the type postfix
@@ -131,6 +134,7 @@ std::string JVMWriter::getTypePostfix(const Type *ty, bool expand) {
     case Type::DoubleTyID:
         return "f64";
     case Type::PointerTyID:
+        return "i64";
     case Type::StructTyID:
     case Type::ArrayTyID:
     case Type::VectorTyID:
@@ -143,7 +147,7 @@ std::string JVMWriter::getTypePostfix(const Type *ty, bool expand) {
 
 /**
  * Return the type prefix of the given type.
- * 
+ *
  * @param ty      the type
  * @param expand  specifies whether to expand the type to 32 bits
  * @return        the type prefix

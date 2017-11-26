@@ -73,15 +73,15 @@ void JVMWriter::printOperandPack(const Instruction *inst,
 
     printSimpleInstruction("bipush", utostr(size));
     printSimpleInstruction("invokestatic",
-                           "lljvm/runtime/Memory/allocateStack(I)I");
+                           "lljvm/runtime/Memory/allocateStack(I)J");
     printSimpleInstruction("dup");
 
     for(unsigned int i = minOperand; i < maxOperand; i++) {
         const Value *v = inst->getOperand(i);
         printValueLoad(v);
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Memory/pack(I"
-            + getTypeDescriptor(v->getType()) + ")I");
+            "lljvm/runtime/Memory/pack(J"
+            + getTypeDescriptor(v->getType()) + ")J");
     }
     printSimpleInstruction("pop");
 }

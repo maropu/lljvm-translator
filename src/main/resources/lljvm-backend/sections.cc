@@ -103,7 +103,7 @@ void JVMWriter::printClInit() {
             printConstLoad(
                 APInt(32, targetData->getTypeAllocSize(c->getType()), false));
             printSimpleInstruction("invokestatic",
-                                   "lljvm/runtime/Memory/allocateData(I)I");
+                                   "lljvm/runtime/Memory/allocateData(I)J");
             printSimpleInstruction("putstatic",
                 classname + "/" + getValueName(g) + " I");
         }
@@ -150,7 +150,7 @@ void JVMWriter::printMainMethod() {
         printSimpleInstruction("arraylength");
         printSimpleInstruction("aload_0");
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Memory/storeStack([Ljava/lang/String;)I");
+            "lljvm/runtime/Memory/storeStack([Ljava/lang/String;)J");
         printSimpleInstruction("invokestatic", classname + "/main("
             + getTypeDescriptor(arg1->getType())
             + getTypeDescriptor(arg2->getType()) + ")I");

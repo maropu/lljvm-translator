@@ -50,18 +50,18 @@ public final class Memory {
     private static final ByteBuffer[] pages =
         new ByteBuffer[MEM_SIZE>>>PAGE_SHIFT];
     /** Current end of Data+BSS */
-    private static int dataEnd = 0;
+    private static long dataEnd = 0;
     /** Current end of the heap */
-    private static int heapEnd = DATA_SIZE;
+    private static long heapEnd = DATA_SIZE;
     /** Current frame pointer */
-    private static int framePointer = MEM_SIZE;
+    private static long framePointer = MEM_SIZE;
     /** Current stack pointer */
-    private static int stackPointer = framePointer;
+    private static long stackPointer = framePointer;
     /** Current number of frames on the stack */
     private static int stackDepth = 0;
     
     /** The null pointer */
-    public static final int NULL = allocateData();
+    public static final long NULL = allocateData();
     
     static {
         final int DATA_BOTTOM = 0>>>PAGE_SHIFT;
@@ -80,8 +80,8 @@ public final class Memory {
      */
     @SuppressWarnings("serial")
     public static class SegmentationFault extends IllegalArgumentException {
-        public SegmentationFault(int addr) {
-            super("Address = "+addr+" (0x"+Integer.toHexString(addr)+")");
+        public SegmentationFault(long addr) {
+            super("Address = "+addr+" (0x"+Long.toHexString(addr)+")");
         }
     }
 
@@ -104,9 +104,10 @@ public final class Memory {
      * @param addr  the virtual memory address
      * @return      the page of the given virtual memory address
      */
-    private static ByteBuffer getPage(int addr) {
+    private static ByteBuffer getPage(long addr) {
         try {
-            return pages[addr>>>PAGE_SHIFT];
+            // TODO: Support 64bit addresses
+            return pages[(int)addr >>> PAGE_SHIFT];
         } catch(ArrayIndexOutOfBoundsException e) {
             throw new SegmentationFault(addr);
         }
@@ -118,7 +119,7 @@ public final class Memory {
      * @param addr  the virtual memory address
      * @return      the offset of the given virtual memory address
      */
-    private static int getOffset(int addr) {
+    private static long getOffset(long addr) {
         return addr & (PAGE_SIZE - 1);
     }
     
@@ -130,7 +131,7 @@ public final class Memory {
      * @param align   the required alignment. Must be a power of two.
      * @return        the aligned offset
      */
-    private static int alignOffsetUp(int offset, int align) {
+    private static long alignOffsetUp(long offset, int align) {
         return ((offset-1) & ~(align-1)) + align;
     }
 
@@ -142,7 +143,7 @@ public final class Memory {
      * @param align   the required alignment. Must be a power of two.
      * @return        the aligned offset
      */
-    private static int alignOffsetDown(int offset, int align) {
+    private static long alignOffsetDown(long offset, int align) {
         return offset & ~(align-1);
     }
     
@@ -150,7 +151,7 @@ public final class Memory {
      * Create a new stack frame, storing the current frame pointer.
      */
     public static void createStackFrame() {
-        final int prevFramePointer = framePointer;
+        final long prevFramePointer = framePointer;
         framePointer = stackPointer;
         storeStack(prevFramePointer);
         stackDepth++;
@@ -190,8 +191,8 @@ public final class Memory {
      * @param size  the size of the block to allocate
      * @return      a pointer to the allocated block
      */
-    public static int allocateData(int size) {
-        final int addr = dataEnd;
+    public static long allocateData(int size) {
+        final long addr = dataEnd;
         dataEnd = alignOffsetUp(dataEnd + size, ALIGNMENT);
         return addr;
     }
@@ -201,7 +202,7 @@ public final class Memory {
      * 
      * @return  a pointer to the allocated byte
      */
-    public static int allocateData() {
+    public static long allocateData() {
         return allocateData(1);
     }
     
@@ -211,7 +212,7 @@ public final class Memory {
      * @param size  the size of the block to allocate
      * @return      a pointer to the allocated block
      */
-    public static int allocateStack(int size) {
+    public static long allocateStack(int size) {
         stackPointer = alignOffsetDown(stackPointer - size, ALIGNMENT);
         return stackPointer;
     }
@@ -221,7 +222,7 @@ public final class Memory {
      * 
      * @return  a pointer to the allocated byte
      */
-    public static int allocateStack() {
+    public static long allocateStack() {
         return allocateStack(1);
     }
     
@@ -232,17 +233,18 @@ public final class Memory {
      * @return           a pointer to the previous end of the heap on success,
      *                   -1 on error
      */
-    public static int sbrk(int increment) {
-        final int prevHeapEnd = heapEnd;
+    public static long sbrk(int increment) {
+        final long prevHeapEnd = heapEnd;
         if(heapEnd + increment > MEM_SIZE - STACK_SIZE
         || heapEnd + increment < DATA_SIZE)
             return Error.errno(Error.ENOMEM);
         heapEnd += increment;
-        final int HEAP_BOTTOM = prevHeapEnd>>>PAGE_SHIFT;
-        final int HEAP_END = (heapEnd - 1)>>>PAGE_SHIFT;
-        for(int i = HEAP_BOTTOM; i <= HEAP_END; i++)
-            if(pages[i] == null)
-                pages[i] = createPage();
+        final long HEAP_BOTTOM = prevHeapEnd>>>PAGE_SHIFT;
+        final long HEAP_END = (heapEnd - 1)>>>PAGE_SHIFT;
+        for(long i = HEAP_BOTTOM; i <= HEAP_END; i++)
+            // TODO: Support 64bit addresses
+            if(pages[(int)i] == null)
+                pages[(int)i] = createPage();
         // TODO: destroy pages if increment < 0
         return prevHeapEnd;
     }
@@ -253,9 +255,10 @@ public final class Memory {
      * @param addr   the address at which to store the value
      * @param value  the value to be stored
      */
-    public static void store(int addr, boolean value) {
+    public static void store(long addr, boolean value) {
         try {
-            getPage(addr).put(getOffset(addr), (byte) (value ? 1 : 0));
+            // TODO: Support 64bit addresses
+            getPage(addr).put((int)getOffset(addr), (byte) (value ? 1 : 0));
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -267,9 +270,10 @@ public final class Memory {
      * @param addr   the address at which to store the value
      * @param value  the value to be stored
      */
-    public static void store(int addr, byte value) {
+    public static void store(long addr, byte value) {
         try {
-            getPage(addr).put(getOffset(addr), value);
+            // TODO: Support 64bit addresses
+            getPage(addr).put((int)getOffset(addr), value);
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -281,9 +285,10 @@ public final class Memory {
      * @param addr   the address at which to store the value
      * @param value  the value to be stored
      */
-    public static void store(int addr, short value) {
+    public static void store(long addr, short value) {
         try {
-            getPage(addr).putShort(getOffset(addr), value);
+            // TODO: Support 64bit addresses
+            getPage(addr).putShort((int)getOffset(addr), value);
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -295,9 +300,10 @@ public final class Memory {
      * @param addr   the address at which to store the value
      * @param value  the value to be stored
      */
-    public static void store(int addr, int value) {
+    public static void store(long addr, int value) {
         try {
-            getPage(addr).putInt(getOffset(addr), value);
+            // TODO: Support 64bit addresses
+            getPage(addr).putInt((int)getOffset(addr), value);
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -309,9 +315,10 @@ public final class Memory {
      * @param addr   the address at which to store the value
      * @param value  the value to be stored
      */
-    public static void store(int addr, long value) {
+    public static void store(long addr, long value) {
         try {
-            getPage(addr).putLong(getOffset(addr), value);
+            // TODO: Support 64bit addresses
+            getPage(addr).putLong((int)getOffset(addr), value);
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -323,9 +330,10 @@ public final class Memory {
      * @param addr   the address at which to store the value
      * @param value  the value to be stored
      */
-    public static void store(int addr, float value) {
+    public static void store(long addr, float value) {
         try {
-            getPage(addr).putFloat(getOffset(addr), value);
+            // TODO: Support 64bit addresses
+            getPage(addr).putFloat((int)getOffset(addr), value);
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -337,9 +345,10 @@ public final class Memory {
      * @param addr   the address at which to store the value
      * @param value  the value to be stored
      */
-    public static void store(int addr, double value) {
+    public static void store(long addr, double value) {
         try {
-            getPage(addr).putDouble(getOffset(addr), value);
+            // TODO: Support 64bit addresses
+            getPage(addr).putDouble((int)getOffset(addr), value);
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -351,7 +360,7 @@ public final class Memory {
      * @param addr   the address at which to store the bytes
      * @param bytes  the bytes to be stored
      */
-    public static void store(int addr, byte[] bytes) {
+    public static void store(long addr, byte[] bytes) {
         // TODO: make more efficient by using put(byte[])
         for(int i = 0; i < bytes.length; i++)
             store(addr + i, bytes[i]);
@@ -363,7 +372,7 @@ public final class Memory {
      * @param addr    the address at which to store the string
      * @param string  the string to be stored
      */
-    public static void store(int addr, String string) {
+    public static void store(long addr, String string) {
         final byte[] bytes = string.getBytes();
         store(addr, bytes);
         Memory.store(addr + bytes.length, (byte) 0);
@@ -378,7 +387,7 @@ public final class Memory {
      * @param size    the maximum size of the string
      * @return        addr on success, NULL on error
      */
-    public static int store(int addr, String string, int size) {
+    public static long store(long addr, String string, int size) {
         final byte[] bytes = string.getBytes();
         if(bytes.length + 1 > size) {
             Error.errno(Error.ERANGE);
@@ -396,8 +405,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeData(boolean value) {
-        final int addr = allocateData(1);
+    public static long storeData(boolean value) {
+        final long addr = allocateData(1);
         store(addr, value);
         return addr;
     }
@@ -408,8 +417,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeData(byte value) {
-        final int addr = allocateData(1);
+    public static long storeData(byte value) {
+        final long addr = allocateData(1);
         store(addr, value);
         return addr;
     }
@@ -421,8 +430,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeData(short value) {
-        final int addr = allocateData(2);
+    public static long storeData(short value) {
+        final long addr = allocateData(2);
         store(addr, value);
         return addr;
     }
@@ -434,8 +443,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeData(int value) {
-        final int addr = allocateData(4);
+    public static long storeData(int value) {
+        final long addr = allocateData(4);
         store(addr, value);
         return addr;
     }
@@ -447,8 +456,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeData(long value) {
-        final int addr = allocateData(8);
+    public static long storeData(long value) {
+        final long addr = allocateData(8);
         store(addr, value);
         return addr;
     }
@@ -460,8 +469,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeData(float value) {
-        final int addr = allocateData(4);
+    public static long storeData(float value) {
+        final long addr = allocateData(4);
         store(addr, value);
         return addr;
     }
@@ -473,8 +482,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeData(double value) {
-        final int addr = allocateData(8);
+    public static long storeData(double value) {
+        final long addr = allocateData(8);
         store(addr, value);
         return addr;
     }
@@ -486,8 +495,8 @@ public final class Memory {
      * @param bytes  the bytes to be stored
      * @return       a pointer to the bytes
      */
-    public static int storeData(byte[] bytes) {
-        final int addr = allocateData(bytes.length);
+    public static long storeData(byte[] bytes) {
+        final long addr = allocateData(bytes.length);
         store(addr, bytes);
         return addr;
     }
@@ -498,9 +507,9 @@ public final class Memory {
      * @param string  the string to be stored
      * @return        a pointer to the string
      */
-    public static int storeData(String string) {
+    public static long storeData(String string) {
         final byte[] bytes = string.getBytes();
-        final int addr = allocateData(bytes.length+1);
+        final long addr = allocateData(bytes.length+1);
         store(addr, bytes);
         Memory.store(addr + bytes.length, (byte) 0);
         return addr;
@@ -512,8 +521,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeStack(boolean value) {
-        final int addr = allocateStack(1);
+    public static long storeStack(boolean value) {
+        final long addr = allocateStack(1);
         store(addr, value);
         return addr;
     }
@@ -524,8 +533,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeStack(byte value) {
-        final int addr = allocateStack(1);
+    public static long storeStack(byte value) {
+        final long addr = allocateStack(1);
         store(addr, value);
         return addr;
     }
@@ -536,8 +545,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeStack(short value) {
-        final int addr = allocateStack(2);
+    public static long storeStack(short value) {
+        final long addr = allocateStack(2);
         store(addr, value);
         return addr;
     }
@@ -548,8 +557,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeStack(int value) {
-        final int addr = allocateStack(4);
+    public static long storeStack(int value) {
+        final long addr = allocateStack(4);
         store(addr, value);
         return addr;
     }
@@ -560,8 +569,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeStack(long value) {
-        final int addr = allocateStack(8);
+    public static long storeStack(long value) {
+        final long addr = allocateStack(8);
         store(addr, value);
         return addr;
     }
@@ -573,8 +582,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeStack(float value) {
-        final int addr = allocateStack(4);
+    public static long storeStack(float value) {
+        final long addr = allocateStack(4);
         store(addr, value);
         return addr;
     }
@@ -586,8 +595,8 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       a pointer to the value
      */
-    public static int storeStack(double value) {
-        final int addr = allocateStack(8);
+    public static long storeStack(double value) {
+        final long addr = allocateStack(8);
         store(addr, value);
         return addr;
     }
@@ -598,8 +607,8 @@ public final class Memory {
      * @param bytes  the bytes to be stored
      * @return       a pointer to the bytes
      */
-    public static int storeStack(byte[] bytes) {
-        final int addr = allocateStack(bytes.length);
+    public static long storeStack(byte[] bytes) {
+        final long addr = allocateStack(bytes.length);
         store(addr, bytes);
         return addr;
     }
@@ -610,8 +619,8 @@ public final class Memory {
      * @param strings  the array of strings to be stored
      * @return         a pointer to the array
      */
-    public static int storeStack(String[] strings) {
-        final int addr = allocateStack(strings.length * 4 + 4);
+    public static long storeStack(String[] strings) {
+        final long addr = allocateStack(strings.length * 4 + 4);
         for(int i = 0; i < strings.length; i++)
             store(addr + i * 4, storeStack(strings[i]));
         store(addr + strings.length * 4, NULL);
@@ -624,9 +633,9 @@ public final class Memory {
      * @param string  the string to be stored
      * @return        a pointer to the string
      */
-    public static int storeStack(String string) {
+    public static long storeStack(String string) {
         final byte[] bytes = string.getBytes();
-        final int addr = allocateStack(bytes.length+1);
+        final long addr = allocateStack(bytes.length+1);
         store(addr, bytes);
         Memory.store(addr + bytes.length, (byte) 0);
         return addr;
@@ -638,9 +647,10 @@ public final class Memory {
      * @param addr  the address from which to load the value
      * @return      the value at the given address
      */
-    public static boolean load_i1(int addr) {
+    public static boolean load_i1(long addr) {
         try {
-            return getPage(addr).get(getOffset(addr)) != 0;
+            // TODO: Support 64bit addresses
+            return getPage(addr).get((int)getOffset(addr)) != 0;
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -652,9 +662,10 @@ public final class Memory {
      * @param addr  the address from which to load the value
      * @return      the value at the given address
      */
-    public static byte load_i8(int addr) {
+    public static byte load_i8(long addr) {
         try {
-            return getPage(addr).get(getOffset(addr));
+            // TODO: Support 64bit addresses
+            return getPage(addr).get((int)getOffset(addr));
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -666,9 +677,10 @@ public final class Memory {
      * @param addr  the address from which to load the value
      * @return      the value at the given address
      */
-    public static short load_i16(int addr) {
+    public static short load_i16(long addr) {
         try {
-            return getPage(addr).getShort(getOffset(addr));
+            // TODO: Support 64bit addresses
+            return getPage(addr).getShort((int)getOffset(addr));
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -680,9 +692,10 @@ public final class Memory {
      * @param addr  the address from which to load the value
      * @return      the value at the given address
      */
-    public static int load_i32(int addr) {
+    public static int load_i32(long addr) {
         try {
-            return getPage(addr).getInt(getOffset(addr));
+            // TODO: Support 64bit addresses
+            return getPage(addr).getInt((int)getOffset(addr));
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -694,9 +707,10 @@ public final class Memory {
      * @param addr  the address from which to load the value
      * @return      the value at the given address
      */
-    public static long load_i64(int addr) {
+    public static long load_i64(long addr) {
         try {
-            return getPage(addr).getLong(getOffset(addr));
+            // TODO: Support 64bit addresses
+            return getPage(addr).getLong((int)getOffset(addr));
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -708,9 +722,10 @@ public final class Memory {
      * @param addr  the address from which to load the value
      * @return      the value at the given address
      */
-    public static float load_f32(int addr) {
+    public static float load_f32(long addr) {
         try {
-            return getPage(addr).getFloat(getOffset(addr));
+            // TODO: Support 64bit addresses
+            return getPage(addr).getFloat((int)getOffset(addr));
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -722,9 +737,10 @@ public final class Memory {
      * @param addr  the address from which to load the value
      * @return      the value at the given address
      */
-    public static double load_f64(int addr) {
+    public static double load_f64(long addr) {
         try {
-            return getPage(addr).getDouble(getOffset(addr));
+            // TODO: Support 64bit addresses
+            return getPage(addr).getDouble((int)getOffset(addr));
         } catch(NullPointerException e) {
             throw new SegmentationFault(addr);
         }
@@ -736,7 +752,7 @@ public final class Memory {
      * @param addr  the address from which to load the string
      * @return      the string at the given address
      */
-    public static String load_string(int addr) {
+    public static String load_string(long addr) {
         byte[] bytes = new byte[16];
         int i = 0;
         while((bytes[i++] = load_i8(addr++)) != 0)
@@ -752,7 +768,7 @@ public final class Memory {
      *              than char.
      * @return      the value at the given address
      */
-    public static Object load(int addr, Class<?> type) {
+    public static Object load(long addr, Class<?> type) {
         if(type == boolean.class) return load_i1(addr);
         if(type == byte.class)    return load_i8(addr);
         if(type == short.class)   return load_i16(addr);
@@ -772,7 +788,7 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       the first address following the value
      */
-    public static int pack(int addr, boolean value) {
+    public static long pack(long addr, boolean value) {
         addr = alignOffsetUp(addr, 1);
         store(addr, value);
         return addr + 1;
@@ -786,7 +802,7 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       the first address following the value
      */
-    public static int pack(int addr, byte value) {
+    public static long pack(long addr, byte value) {
         addr = alignOffsetUp(addr, 1);
         store(addr, value);
         return addr + 1;
@@ -801,7 +817,7 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       the first address following the value
      */
-    public static int pack(int addr, short value) {
+    public static long pack(long addr, short value) {
         addr = alignOffsetUp(addr, 2);
         store(addr, value);
         return addr + 2;
@@ -816,7 +832,7 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       the first address following the value
      */
-    public static int pack(int addr, int value) {
+    public static long pack(long addr, int value) {
         addr = alignOffsetUp(addr, 4);
         store(addr, value);
         return addr + 4;
@@ -831,7 +847,7 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       the first address following the value
      */
-    public static int pack(int addr, long value) {
+    public static long pack(long addr, long value) {
         addr = alignOffsetUp(addr, 8);
         store(addr, value);
         return addr + 8;
@@ -846,7 +862,7 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       the first address following the value
      */
-    public static int pack(int addr, float value) {
+    public static long pack(long addr, float value) {
         addr = alignOffsetUp(addr, 4);
         store(addr, value);
         return addr + 4;
@@ -861,7 +877,7 @@ public final class Memory {
      * @param value  the value to be stored
      * @return       the first address following the value
      */
-    public static int pack(int addr, double value) {
+    public static long pack(long addr, double value) {
         addr = alignOffsetUp(addr, 8);
         store(addr, value);
         return addr + 8;
@@ -875,7 +891,7 @@ public final class Memory {
      * @param string  the string to be stored
      * @return        the first address following the null terminator
      */
-    public static int pack(int addr, String string) {
+    public static long pack(long addr, String string) {
         final byte[] bytes = string.getBytes();
         store(addr, bytes);
         Memory.store(addr + bytes.length, (byte) 0);
@@ -890,7 +906,7 @@ public final class Memory {
      * @param chars  the array of chars
      * @return       the first address following the stored array
      */
-    public static int pack(int addr, char[] chars) {
+    public static long pack(long addr, char[] chars) {
         for(int i = 0; i < chars.length; i++)
             Memory.store(addr + i, (byte) chars[i]);
         return addr + chars.length;
@@ -906,8 +922,8 @@ public final class Memory {
      * @return       the address of the first naturally-aligned value of the
      *               given size following the given address
      */
-    public static int unpack(int addrp, int size) {
-        int addr = Memory.load_i32(addrp);
+    public static long unpack(long addrp, int size) {
+        long addr = Memory.load_i32(addrp);
         addr = alignOffsetUp(addr, size);
         Memory.store(addrp, addr + size);
         return addr;
@@ -922,7 +938,7 @@ public final class Memory {
      *               other than char.
      * @return       an array of unpacked values
      */
-    public static Object[] unpack(int addr, Class<?>[] types) {
+    public static Object[] unpack(long addr, Class<?>[] types) {
         Object[] values = new Object[types.length];
         for(int i = 0; i < types.length; i++) {
             final Class<?> type = types[i];
@@ -944,7 +960,7 @@ public final class Memory {
      * @param align  the alignment of the source and destination pointers,
      *               unless align is equal to 0 or 1
      */
-    public static void memcpy(int dest, int src, int len, int align) {
+    public static void memcpy(long dest, long src, int len, int align) {
         // TODO: make more efficient by using put(ByteBuffer)
         for(int i = 0; i < len; i++)
             store(dest + i, load_i8(src + i));
@@ -960,7 +976,7 @@ public final class Memory {
      * @param align  the alignment of the source and destination pointers,
      *               unless align is equal to 0 or 1
      */
-    public static void memcpy(int dest, int src, long len, int align) {
+    public static void memcpy(long dest, long src, long len, int align) {
         memcpy(dest, src, (int) len, align);
     }
     
@@ -974,7 +990,7 @@ public final class Memory {
      * @param align  the alignment of the source and destination pointers,
      *               unless align is equal to 0 or 1
      */
-    public static void memmove(int dest, int src, int len, int align) {
+    public static void memmove(long dest, long src, int len, int align) {
         // TODO: make more efficient by using put(ByteBuffer)
         if(dest < src)
             for(int i = 0; i < len; i++)
@@ -994,7 +1010,7 @@ public final class Memory {
      * @param align  the alignment of the source and destination pointers,
      *               unless align is equal to 0 or 1
      */
-    public static void memmove(int dest, int src, long len, int align) {
+    public static void memmove(long dest, long src, long len, int align) {
         memmove(dest, src, (int) len, align);
     }
     
@@ -1007,9 +1023,9 @@ public final class Memory {
      * @param align  the alignment of the source and destination pointers,
      *               unless align is equal to 0 or 1
      */
-    public static void memset(int dest, byte val, int len, int align) {
+    public static void memset(long dest, byte val, int len, int align) {
         // TODO: make more efficient by setting larger blocks at a time
-        for(int i = dest; i < dest + len; i++)
+        for(long i = dest; i < dest + len; i++)
             store(i, val);
     }
     
@@ -1022,7 +1038,7 @@ public final class Memory {
      * @param align  the alignment of the source and destination pointers,
      *               unless align is equal to 0 or 1
      */
-    public static void memset(int dest, byte val, long len, int align) {
+    public static void memset(long dest, byte val, long len, int align) {
         memset(dest, val, (int) len, align);
     }
     
@@ -1033,7 +1049,7 @@ public final class Memory {
      * @param len   the number of bytes to set
      * @return      the address of the first byte following the block
      */
-    public static int zero(int dest, int len) {
+    public static long zero(long dest, long len) {
         memset(dest, (byte) 0, len, 1);
         return dest + len;
     }

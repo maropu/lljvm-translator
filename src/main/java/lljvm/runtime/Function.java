@@ -40,11 +40,11 @@ public final class Function {
     /** Set of registered classes */
     private static Set<String> registeredClasses = new HashSet<String>();
     /** Map of function signatures to function pointers */
-    private static Map<String, Integer> functionPointers
-        = new HashMap<String, Integer>();
+    private static Map<String, Long> functionPointers
+        = new HashMap<String, Long>();
     /** Map of function pointers to Method objects */
-    private static Map<Integer, Method> functionObjects
-        = new HashMap<Integer, Method>();
+    private static Map<Long, Method> functionObjects
+        = new HashMap<Long, Method>();
     
     /**
      * Prevent this class from being instantiated.
@@ -66,7 +66,7 @@ public final class Function {
             return;
         Class<?> cls = ReflectionUtils.getClass(classname);
         for(Method method : ReflectionUtils.getStaticMethods(cls)) {
-            final int addr = Memory.allocateData();
+            final long addr = Memory.allocateData();
             final String sig = ReflectionUtils.getQualifiedSignature(method);
             functionPointers.put(sig, addr);
             functionObjects.put(addr, method);
@@ -83,7 +83,7 @@ public final class Function {
      * @param methodSignature  the signature of the method
      * @return                 a function pointer for the specified method
      */
-    public static int getFunctionPointer(String classname,
+    public static long getFunctionPointer(String classname,
                                          String methodSignature) {
         try {
             registerClass(classname);

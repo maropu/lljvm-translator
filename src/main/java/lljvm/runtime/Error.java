@@ -281,7 +281,7 @@ public final class Error {
     public static final int EOWNERDEAD = 142;
     
     /** Pointer to errno */
-    public static int errno = Memory.allocateData(4);
+    public static long errno = Memory.allocateData(4);
     
     /**
      * Prevent this class from being instantiated.
