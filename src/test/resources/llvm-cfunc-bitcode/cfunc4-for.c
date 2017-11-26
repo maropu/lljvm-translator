@@ -18,7 +18,7 @@
 #include <math.h>
 #include <stdio.h>
 
-double cfunc4(double x[], size_t s) {
+double cfunc4_for(double x[], size_t s) {
   double sum = 0.0;
   for (int i = 0; i < s; i++) {
     sum += x[i];

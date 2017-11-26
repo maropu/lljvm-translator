@@ -59,8 +59,8 @@ class CFuncSuite extends FunSuite {
     val basePtr = Platform.allocateMemory(8 * arraySize)
     (0 until arraySize).foreach { i => Platform.putDouble(null, basePtr + 8 * i, 1.0) }
     TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc4.bc",
-      f = "_cfunc4",
+      id = "llvm-cfunc-bitcode/cfunc4-for.bc",
+      f = "_cfunc4_for",
       sig = Seq(jLong.TYPE, jLong.TYPE),
       args = Seq(new jLong(basePtr), new jLong(arraySize)),
       expected = 1.0 * arraySize
