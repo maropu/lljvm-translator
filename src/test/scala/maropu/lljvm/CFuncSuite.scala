@@ -79,8 +79,8 @@ class CFuncSuite extends FunSuite {
 
   test("ternary operator") {
     TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc5.bc",
-      f = "_cfunc5",
+      id = "llvm-cfunc-bitcode/cfunc6.bc",
+      f = "_cfunc6",
       sig = Seq(jInt.TYPE),
       args = Seq(new jInt(1)),
       expected = 0
