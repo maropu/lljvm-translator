@@ -212,6 +212,18 @@ public final class Platform {
     }
   }
 
+  public static long objectFieldOffset(Field var1) {
+    return _UNSAFE.objectFieldOffset(var1);
+  }
+
+  public static int arrayBaseOffset(Class<?> var1) {
+    return _UNSAFE.arrayBaseOffset(var1);
+  }
+
+  public static int addressSize() {
+    return _UNSAFE.addressSize();
+  }
+
   /**
    * Raises an exception bypassing compiler checks for checked exceptions.
    */

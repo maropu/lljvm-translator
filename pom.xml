@@ -277,7 +277,7 @@
           <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
           <junitxml>.</junitxml>
           <filereports>TestSuite.txt</filereports>
-          <argLine>-ea -Xmx3g</argLine>
+          <argLine>-ea -Xmx3g -XX:+UseCompressedOops</argLine>
           <stderr/>
           <environmentVariables>
             <JAVA_HOME>${test.java.home}</JAVA_HOME>

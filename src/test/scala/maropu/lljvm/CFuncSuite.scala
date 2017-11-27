@@ -19,7 +19,6 @@ package maropu.lljvm
 
 import java.lang.{Double => jDouble, Integer => jInt, Long => jLong}
 
-import lljvm.unsafe.Platform
 import org.scalatest.FunSuite
 
 class CFuncSuite extends FunSuite {
@@ -55,28 +54,24 @@ class CFuncSuite extends FunSuite {
   }
 
   test("sum by simple for") {
-    val arraySize = 10
-    val basePtr = Platform.allocateMemory(8 * arraySize)
-    (0 until arraySize).foreach { i => Platform.putDouble(null, basePtr + 8 * i, i) }
+    val doubleArray = Array(0.1, 3.9, 5.0, 8.3, 0.7, 5.0, 9.9, 1.1)
     TestUtils.doTest(
       id = "llvm-cfunc-bitcode/cfunc4-for.bc",
       f = "_cfunc4_for",
       sig = Seq(jLong.TYPE, jLong.TYPE),
-      args = Seq(new jLong(basePtr), new jLong(arraySize)),
-      expected = 45
+      args = Seq(new jLong(ArrayUtils.addressOf(doubleArray)), new jLong(doubleArray.size)),
+      expected = 34.0
     )
   }
 
   test("sum by simple while") {
-    val arraySize = 13
-    val basePtr = Platform.allocateMemory(4 * arraySize)
-    (0 until arraySize).foreach { i => Platform.putInt(null, basePtr + 4 * i, i) }
+    val intArray = Array(3, 1, 2, 8, 7, 2, 8, 9, 1, 3, 5, 8)
     TestUtils.doTest(
       id = "llvm-cfunc-bitcode/cfunc4-while.bc",
       f = "_cfunc4_while",
       sig = Seq(jLong.TYPE, jLong.TYPE),
-      args = Seq(new jLong(basePtr), new jLong(arraySize)),
-      expected = 78
+      args = Seq(new jLong(ArrayUtils.addressOf(intArray)), new jLong(intArray.size)),
+      expected = 57
     )
   }
 
