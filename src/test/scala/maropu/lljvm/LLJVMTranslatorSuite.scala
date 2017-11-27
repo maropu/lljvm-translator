@@ -25,7 +25,7 @@ import scala.collection.JavaConverters._
 
 import org.scalatest.FunSuite
 
-class LLJVMAssemblerSuite extends FunSuite {
+class LLJVMTranslatorSuite extends FunSuite {
 
   test("simple test") {
     val file = TestUtils.createTempDir()
@@ -35,7 +35,7 @@ class LLJVMAssemblerSuite extends FunSuite {
     os.write(bitcode)
     os.close()
 
-    LLJVMAssembler.main(Array(inputFile.getAbsolutePath))
+    LLJVMTranslator.main(Array(inputFile.getAbsolutePath))
     val outputFile = new File(file, "code.class")
     val classLoader = new LLJVMClassLoader()
     val clazz = classLoader.loadClassFromBytecodeFile("GeneratedClass", outputFile.getAbsolutePath)

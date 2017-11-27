@@ -39,5 +39,5 @@ function find_resource {
 find_resource
 
 # Invoke the LLJVM assembler
-java -cp ${RESOURCE} maropu.lljvm.LLJVMAssembler "$@"
+java -cp ${RESOURCE} maropu.lljvm.LLJVMTranslator "$@"
 

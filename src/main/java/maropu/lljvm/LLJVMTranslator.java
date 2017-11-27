@@ -23,9 +23,9 @@ import java.nio.file.Files;
 import jasmin.ClassFile;
 
 /**
- * A driver code to assemble JVM bytecode from LLVM bitcode.
+ * A driver code to translate LLVM bitcode to JVM bytecode.
  */
-public class LLJVMAssembler {
+public class LLJVMTranslator {
 
   public static void main(String args[]) {
     // Validate an input file name
