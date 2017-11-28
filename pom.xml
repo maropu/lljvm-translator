@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.openjdk.jol</groupId>
       <artifactId>jol-core</artifactId>
-      <version>0.3</version>
+      <version>0.4</version>
       <scope>compile</scope>
     </dependency>
 
@@ -283,7 +283,7 @@
           <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
           <junitxml>.</junitxml>
           <filereports>TestSuite.txt</filereports>
-          <argLine>-ea -Xmx3g -XX:+UseCompressedOops</argLine>
+          <argLine>-ea -Xmx3g -XX:+UseCompressedOops -Djol.tryWithSudo=true</argLine>
           <stderr/>
           <environmentVariables>
             <JAVA_HOME>${test.java.home}</JAVA_HOME>
