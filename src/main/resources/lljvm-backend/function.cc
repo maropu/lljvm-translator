@@ -68,22 +68,21 @@ void JVMWriter::printOperandPack(const Instruction *inst,
                                  unsigned int maxOperand) {
     unsigned int size = 0;
     for(unsigned int i = minOperand; i < maxOperand; i++)
-        size += targetData->getTypeAllocSize(
-            inst->getOperand(i)->getType());
+        size += targetData->getTypeAllocSize(inst->getOperand(i)->getType());
 
     printSimpleInstruction("bipush", utostr(size));
     printSimpleInstruction("invokestatic",
                            "lljvm/runtime/VMemory/allocateStack(I)J");
-    printSimpleInstruction("dup");
+    printSimpleInstruction("dup2");
 
     for(unsigned int i = minOperand; i < maxOperand; i++) {
         const Value *v = inst->getOperand(i);
         printValueLoad(v);
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Memory/pack(J"
+            "lljvm/runtime/VMemory/pack(J"
             + getTypeDescriptor(v->getType()) + ")J");
     }
-    printSimpleInstruction("pop");
+    printSimpleInstruction("pop2");
 }
 
 /**
@@ -121,13 +120,17 @@ void JVMWriter::printFunctionCall(const Value *functionVal,
             printLabel("setjmp$" + utostr(varNum));
         }
     } else { // indirect call
-        printValueLoad(functionVal);
-        const Type *pt = cast<PointerType>(functionVal->getType())->getElementType();
-        printOperandPack(inst, origin, inst->getNumOperands());
+        // printValueLoad(functionVal);
+        printValueLoad(inst->getOperand(inst->getNumOperands() - 1));
+        // TODO: Is `origin` is correct?
+        printOperandPack(inst, origin - 1, inst->getNumOperands() - 1);
+
         // TODO: Reconsider this
         std::string funcName;
         raw_string_ostream strbuf(funcName);
-        strbuf << "lljvm/runtime/Function/invoke_" << (*pt) << "(II)" << getTypeDescriptor(pt);
+        // const Type *pt = cast<PointerType>(functionVal->getType())->getElementType();
+        const Type *pt = functionVal->getType();
+        strbuf << "lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
         strbuf.flush();
         printSimpleInstruction("invokestatic", funcName);
     }

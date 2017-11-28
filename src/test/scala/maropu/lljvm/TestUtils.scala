@@ -22,7 +22,6 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 
-import jasmin.ClassFile
 import org.scalatest.FunSuite
 
 object TestUtils extends FunSuite {
@@ -48,14 +47,18 @@ object TestUtils extends FunSuite {
   }
 
   def loadClassFromBytecode(className: String, bytecode: Array[Byte]): Class[_] = {
-    val clazz = new LLJVMClassLoader().loadClassFromBytecode(className, bytecode)
+    val classLoader = new LLJVMClassLoader()
+    LLJVMClassLoader.currentClassLoader.set(classLoader)
+    val clazz = classLoader.loadClassFromBytecode(className, bytecode)
     assert(clazz.getCanonicalName === className)
     clazz
   }
 
   def loadClassFromResource(location: String): Class[_] = {
     val bitcode = TestUtils.resourceToBytes(location)
-    val clazz = new LLJVMClassLoader().loadClassFromBitcode("GeneratedClass", bitcode)
+    val classLoader = new LLJVMClassLoader()
+    LLJVMClassLoader.currentClassLoader.set(classLoader)
+    val clazz = classLoader.loadClassFromBitcode("GeneratedClass", bitcode)
     assert(clazz.getCanonicalName === "GeneratedClass")
     clazz
   }

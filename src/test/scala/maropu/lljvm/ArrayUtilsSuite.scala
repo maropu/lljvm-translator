@@ -31,7 +31,7 @@ class ArrayUtilsSuite extends FunSuite {
   }
 
   test("byte") {
-    val byteArray = Array(1, 3, 8, 3 , 2, 5, 2, 8, 1, 1, 4).map(_.toByte)
+    val byteArray = Array(1, 3, 8, 3, 2, 5, 2, 8, 1, 1, 4).map(_.toByte)
     val baseAddr = ArrayUtils.addressOf(byteArray)
     (0 until byteArray.size).foreach { i =>
       assert(byteArray(i) === Platform.getByte(null, baseAddr + i))

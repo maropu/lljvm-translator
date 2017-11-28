@@ -24,7 +24,7 @@
 
 /**
  * Load the given value.
- * 
+ *
  * @param v  the value to load
  */
 void JVMWriter::printValueLoad(const Value *v) {
@@ -38,7 +38,7 @@ void JVMWriter::printValueLoad(const Value *v) {
         printSimpleInstruction("ldc", '"' + sig + '"');
         printSimpleInstruction("invokestatic",
             "lljvm/runtime/Function/getFunctionPointer"
-            "(Ljava/lang/String;Ljava/lang/String;)I");
+            "(Ljava/lang/String;Ljava/lang/String;)J");
     } else if(isa<GlobalVariable>(v)) {
         const Type *ty = cast<PointerType>(v->getType())->getElementType();
         if(externRefs.count(v))

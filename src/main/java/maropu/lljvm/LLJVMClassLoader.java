@@ -31,6 +31,13 @@ import jasmin.ClassFile;
  */
 public class LLJVMClassLoader extends ClassLoader {
 
+  // This class is possibly accessed by `ReflectionUtils`
+  public static ThreadLocal<LLJVMClassLoader> currentClassLoader = new ThreadLocal<>();
+
+  static {
+    currentClassLoader.set(new LLJVMClassLoader());
+  }
+
   private final Map<String, Class<?>> generatedClassMap;
   private ClassLoader parent;
 

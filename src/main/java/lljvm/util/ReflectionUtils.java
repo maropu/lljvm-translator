@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import maropu.lljvm.LLJVMClassLoader;
+
 /**
  * Provides methods for obtaining reflective information about classes.
  * 
@@ -59,12 +61,15 @@ public final class ReflectionUtils {
         name = name.replace('/', '.');
         ClassLoader classLoader;
         try {
-            classLoader = new URLClassLoader(
-                    new URL[] { new File(".").toURI().toURL() });
+            classLoader = new URLClassLoader(new URL[] { new File(".").toURI().toURL() });
         } catch(MalformedURLException e) {
             classLoader = ClassLoader.getSystemClassLoader();
         }
-        return classLoader.loadClass(name);
+        try {
+            return classLoader.loadClass(name);
+        } catch (Exception e) {
+            return LLJVMClassLoader.currentClassLoader.get().loadClass(name);
+        }
     }
     
     /**

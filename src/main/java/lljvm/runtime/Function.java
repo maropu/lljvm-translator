@@ -66,7 +66,7 @@ public final class Function {
             return;
         Class<?> cls = ReflectionUtils.getClass(classname);
         for(Method method : ReflectionUtils.getStaticMethods(cls)) {
-            final long addr = Memory.allocateData();
+            final long addr = VMemory.allocateStack(1);
             final String sig = ReflectionUtils.getQualifiedSignature(method);
             functionPointers.put(sig, addr);
             functionObjects.put(addr, method);
@@ -105,12 +105,12 @@ public final class Function {
      * @param args  a pointer to the packed list of arguments
      * @return      the return value of the method
      */
-    private static Object invoke(int f, int args) {
+    private static Object invoke(long f, long args) {
         final Method method = functionObjects.get(f);
         if(method == null)
             throw new IllegalArgumentException("Invalid function pointer: "+f);
         final Class<?>[] paramTypes = method.getParameterTypes();
-        final Object[] params = Memory.unpack(args, paramTypes);
+        final Object[] params = VMemory.unpack(args, paramTypes);
         try {
             return method.invoke(null, params);
         } catch(IllegalAccessException e) {
@@ -130,7 +130,7 @@ public final class Function {
      * @param f     the function pointer
      * @param args  a pointer to the packed list of arguments
      */
-    public static void invoke_void(int f, int args) {
+    public static void invoke_void(long f, long args) {
         invoke(f, args);
     }
     
@@ -142,7 +142,7 @@ public final class Function {
      * @param args  a pointer to the packed list of arguments
      * @return      the return value of the method
      */
-    public static boolean invoke_i1(int f, int args) {
+    public static boolean invoke_i1(long f, long args) {
         return (Boolean) invoke(f, args);
     }
     
@@ -154,7 +154,7 @@ public final class Function {
      * @param args  a pointer to the packed list of arguments
      * @return      the return value of the method
      */
-    public static byte invoke_i8(int f, int args) {
+    public static byte invoke_i8(long f, long args) {
         return (Byte) invoke(f, args);
     }
     
@@ -166,7 +166,7 @@ public final class Function {
      * @param args  a pointer to the packed list of arguments
      * @return      the return value of the method
      */
-    public static short invoke_i16(int f, int args) {
+    public static short invoke_i16(long f, long args) {
         return (Short) invoke(f, args);
     }
     
@@ -178,7 +178,7 @@ public final class Function {
      * @param args  a pointer to the packed list of arguments
      * @return      the return value of the method
      */
-    public static int invoke_i32(int f, int args) {
+    public static int invoke_i32(long f, long args) {
         return (Integer) invoke(f, args);
     }
     
@@ -190,7 +190,7 @@ public final class Function {
      * @param args  a pointer to the packed list of arguments
      * @return      the return value of the method
      */
-    public static long invoke_i64(int f, int args) {
+    public static long invoke_i64(long f, long args) {
         return (Long) invoke(f, args);
     }
     
@@ -202,7 +202,7 @@ public final class Function {
      * @param args  a pointer to the packed list of arguments
      * @return      the return value of the method
      */
-    public static float invoke_f32(int f, int args) {
+    public static float invoke_f32(long f, long args) {
         return (Float) invoke(f, args);
     }
     
@@ -214,7 +214,7 @@ public final class Function {
      * @param args  a pointer to the packed list of arguments
      * @return      the return value of the method
      */
-    public static double invoke_f64(int f, int args) {
+    public static double invoke_f64(long f, long args) {
         return (Double) invoke(f, args);
     }
 }

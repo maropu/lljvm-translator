@@ -20,6 +20,7 @@ package lljvm.runtime;
 import java.lang.System;
 
 import lljvm.unsafe.Platform;
+import lljvm.util.ReflectionUtils;
 
 /**
  * Virtual memory for storing/loading values to/from specified 64bit addresses. This class should
@@ -56,7 +57,7 @@ public class VMemory {
     assert(vmem.get() != null);
     VMemFragment vm = vmem.get();
     if (vm.getRemainingBytes() > size) {
-      long addr = vm.getCurrentOffset();
+      long addr = alignOffsetUp(vm.getCurrentOffset(), ALIGNMENT);
       long nextOffset = alignOffsetUp(addr + size, ALIGNMENT);
       if (nextOffset < vm.getBase() + vm.getNumBytes()) {
         vm.setCurrentOffset(nextOffset);
@@ -79,72 +80,6 @@ public class VMemory {
   public static class SegmentationFault extends IllegalArgumentException {
     public SegmentationFault(long addr) {
       super("Address = " + addr + " (0x" + Long.toHexString(addr) + ")");
-    }
-  }
-
-  /**
-   * Store a boolean value at the given address.
-   */
-  public static void store(long addr, boolean value) {
-    try {
-      Platform.putBoolean(null, addr, value);
-    } catch(NullPointerException e) {
-      throw new SegmentationFault(addr);
-    }
-  }
-
-  /**
-   * Store a byte at the given address.
-   */
-  public static void store(long addr, byte value) {
-    try {
-      Platform.putByte(null, addr, value);
-    } catch(NullPointerException e) {
-      throw new SegmentationFault(addr);
-    }
-  }
-
-  /**
-   * Store a 16-bit integer at the given address.
-   */
-  public static void store(long addr, short value) {
-    try {
-      Platform.putShort(null, addr, value);
-    } catch(NullPointerException e) {
-      throw new SegmentationFault(addr);
-    }
-  }
-
-  /**
-   * Store a 32-bit integer at the given address.
-   */
-  public static void store(long addr, int value) {
-    try {
-      Platform.putInt(null, addr, value);
-    } catch(NullPointerException e) {
-      throw new SegmentationFault(addr);
-    }
-  }
-
-  /**
-   * Store a 64-bit integer at the given address.
-   */
-  public static void store(long addr, long value) {
-    try {
-      Platform.putLong(null, addr, value);
-    } catch(NullPointerException e) {
-      throw new SegmentationFault(addr);
-    }
-  }
-
-  /**
-   * Store a single precision floating point number at the given address.
-   */
-  public static void store(long addr, float value) {
-    try {
-      Platform.putFloat(null, addr, value);
-    } catch(NullPointerException e) {
-      throw new SegmentationFault(addr);
     }
   }
 
@@ -234,5 +169,178 @@ public class VMemory {
     } catch(NullPointerException e) {
       throw new SegmentationFault(addr);
     }
+  }
+
+  /**
+   * Load a value of the given type from the given address.
+   */
+  public static Object load(long addr, Class<?> type) {
+    if (type == boolean.class) {
+      return load_i1(addr);
+    } else if (type == byte.class) {
+      return load_i8(addr);
+    } else if (type == short.class) {
+      return load_i16(addr);
+    } else if (type == int.class) {
+      return load_i32(addr);
+    } else if (type == long.class) {
+      return load_i64(addr);
+    } else if (type == float.class) {
+      return load_f32(addr);
+    } else if (type == double.class) {
+      return load_f64(addr);
+    }
+    throw new IllegalArgumentException("Unknown type");
+  }
+
+  /**
+   * Store a boolean value at the given address.
+   */
+  public static void store(long addr, boolean value) {
+    try {
+      Platform.putBoolean(null, addr, value);
+    } catch(NullPointerException e) {
+      throw new SegmentationFault(addr);
+    }
+  }
+
+  /**
+   * Store a byte at the given address.
+   */
+  public static void store(long addr, byte value) {
+    try {
+      Platform.putByte(null, addr, value);
+    } catch(NullPointerException e) {
+      throw new SegmentationFault(addr);
+    }
+  }
+
+  /**
+   * Store a 16-bit integer at the given address.
+   */
+  public static void store(long addr, short value) {
+    try {
+      Platform.putShort(null, addr, value);
+    } catch(NullPointerException e) {
+      throw new SegmentationFault(addr);
+    }
+  }
+
+  /**
+   * Store a 32-bit integer at the given address.
+   */
+  public static void store(long addr, int value) {
+    try {
+      Platform.putInt(null, addr, value);
+    } catch(NullPointerException e) {
+      throw new SegmentationFault(addr);
+    }
+  }
+
+  /**
+   * Store a 64-bit integer at the given address.
+   */
+  public static void store(long addr, long value) {
+    try {
+      Platform.putLong(null, addr, value);
+    } catch(NullPointerException e) {
+      throw new SegmentationFault(addr);
+    }
+  }
+
+  /**
+   * Store a single precision floating point number at the given address.
+   */
+  public static void store(long addr, float value) {
+    try {
+      Platform.putFloat(null, addr, value);
+    } catch(NullPointerException e) {
+      throw new SegmentationFault(addr);
+    }
+  }
+
+  /**
+   * Store a boolean value at the given address, inserting any required padding before the value,
+   * returning the first address following the value.
+   */
+  public static long pack(long addr, boolean value) {
+    addr = alignOffsetUp(addr, 1);
+    store(addr, value);
+    return addr + 1;
+  }
+
+  /**
+   * Store a byte at the given address, inserting any required padding before the value,
+   * returning the first address following the value.
+   */
+  public static long pack(long addr, byte value) {
+    addr = alignOffsetUp(addr, 1);
+    store(addr, value);
+    return addr + 1;
+  }
+
+  /**
+   * Store a 16-bit integer at the given address, inserting any required padding before the value,
+   * returning the first address following the value.
+   */
+  public static long pack(long addr, short value) {
+    addr = alignOffsetUp(addr, 2);
+    store(addr, value);
+    return addr + 2;
+  }
+
+  /**
+   * Store a 32-bit integer at the given address, inserting any required padding before the value,
+   * returning the first address following the value.
+   */
+  public static long pack(long addr, int value) {
+    addr = alignOffsetUp(addr, 4);
+    store(addr, value);
+    return addr + 4;
+  }
+
+  /**
+   * Store a 64-bit integer at the given address, inserting any required padding before the value,
+   * returning the first address following the value.
+   */
+  public static long pack(long addr, long value) {
+    addr = alignOffsetUp(addr, 8);
+    store(addr, value);
+    return addr + 8;
+  }
+
+  /**
+   * Store a single precision floating point number at the given address, inserting any required
+   * padding before the value, returning the first address following the value.
+   */
+  public static long pack(long addr, float value) {
+    addr = alignOffsetUp(addr, 4);
+    store(addr, value);
+    return addr + 4;
+  }
+
+  /**
+   * Store a double precision floating point number at the given address, inserting any required
+   * padding before the value, returning the first address following the value.
+   */
+  public static long pack(long addr, double value) {
+    addr = alignOffsetUp(addr, 8);
+    store(addr, value);
+    return addr + 8;
+  }
+
+  /**
+   * Unpack a packed list of values from the given address, according to the given list of types.
+   */
+  public static Object[] unpack(long addr, Class<?>[] types) {
+    Object[] values = new Object[types.length];
+    for (int i = 0; i < types.length; i++) {
+      final Class<?> type = types[i];
+      final int size = ReflectionUtils.sizeOf(type);
+      addr = alignOffsetUp(addr, size);
+      values[i] = load(addr, type);
+      addr += size;
+    }
+    return values;
   }
 }
