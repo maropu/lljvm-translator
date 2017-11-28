@@ -48,12 +48,13 @@ public class ArrayUtils {
         // In 32bit JVMs, addresses are stored as they are
         return Platform.getInt(holder, baseOffset);
       case 8:
-        long oop = Platform.getLong(holder, baseOffset);
         // In 64bit JVMs, we need to check if compressed OOPs enabled
         if (isCompressedOop()) {
-          return (oop & 0xFFFFFFFF) << 3;
+          // Decompress a compressed oop here
+          //  - https://wiki.openjdk.java.net/display/HotSpot/CompressedOops
+          return (Platform.getInt(holder, baseOffset) & 0x00000000FFFFFFFFL) << 3;
         } else {
-          return oop;
+          return Platform.getLong(holder, baseOffset);
         }
       default:
         throw new LLJVMRuntimeException("Unsupported address size: " + addressSize);
