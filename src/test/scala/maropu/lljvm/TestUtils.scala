@@ -17,25 +17,71 @@
 
 package maropu.lljvm
 
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
+import java.io.{PrintWriter, StringWriter}
+import java.io.{ByteArrayOutputStream, File, IOException}
+import java.nio.charset.StandardCharsets
 import java.util.UUID
 
 import org.scalatest.FunSuite
 
 object TestUtils extends FunSuite {
 
-  def doTest(id: String, f: String, sig: Seq[Class[_]], args: Seq[AnyRef], expected: Any): Unit = {
-    val clazz = TestUtils.loadClassFromResource(id)
+  /**
+   * Return a nice string representation of the exception. It will call "printStackTrace" to
+   * recursively generate the stack trace including the exception and its causes.
+   */
+  def exceptionString(e: Throwable): String = {
+    if (e == null) {
+      ""
+    } else {
+      // Use e.printStackTrace here because e.getStackTrace doesn't include the cause
+      val stringWriter = new StringWriter()
+      e.printStackTrace(new PrintWriter(stringWriter))
+      stringWriter.toString
+    }
+  }
+
+  def doTest(
+      bitcode: String,
+      functionName: String,
+      signature: Seq[Class[_]],
+      arguments: Seq[AnyRef],
+      expected: Any): Unit = {
+    val clazz = TestUtils.loadClassFromResource(bitcode)
     try {
-      val method = clazz.newInstance.getClass.getMethod(f, sig: _*)
-      assert(method.invoke(null, args: _*) === expected)
+      val method = clazz.newInstance.getClass.getMethod(functionName, signature: _*)
+      assert(method.invoke(null, arguments: _*) === expected)
     } catch {
       case e: Throwable =>
         fail(
-          s"""Illegal bytecode found: ${e.getMessage}
-             |${LLJVMUtils.asBytecode(TestUtils.resourceToBytes(id))}
+          s"""Test failed because: ${e.getMessage}
+             |${exceptionString(e)}
+             |========== LLVM Bitcode =========
+             |${LLJVMUtils.asBytecode(TestUtils.resourceToBytes(bitcode))}
+           """.stripMargin)
+    }
+  }
+
+  def doTest(
+      bitcode: String,
+      source: String,
+      functionName: String,
+      signature: Seq[Class[_]],
+      arguments: Seq[AnyRef],
+      expected: Any): Unit = {
+    val clazz = TestUtils.loadClassFromResource(bitcode)
+    try {
+      val method = clazz.newInstance.getClass.getMethod(functionName, signature: _*)
+      assert(method.invoke(null, arguments: _*) === expected)
+    } catch {
+      case e: Throwable =>
+        fail(
+          s"""Test failed because: ${e.getMessage}
+             |${exceptionString(e)}
+             |========== Source Code ==========
+             |${new String(TestUtils.resourceToBytes(source), StandardCharsets.UTF_8)}
+             |========== LLVM Bitcode =========
+             |${LLJVMUtils.asBytecode(TestUtils.resourceToBytes(bitcode))}
            """.stripMargin)
     }
   }
