@@ -13,8 +13,7 @@ scalastyle.txt
 target/
 
 # For waf
-*.pyc
-.waf-*
+src/main/resources/lljvm-backend/*.pyc
+src/main/resources/lljvm-backend/.waf-*
 src/main/resources/lljvm-backend/build
-.lock-waf_darwin_build
-
+src/main/resources/lljvm-backend/.lock-waf_linux2_build
