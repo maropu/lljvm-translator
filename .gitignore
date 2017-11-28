@@ -1,4 +1,5 @@
 *.iml
+hs_err_pid*
 .idea/
 .idea_modules/
 build/*.jar
