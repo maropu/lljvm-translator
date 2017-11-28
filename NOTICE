@@ -28,3 +28,19 @@ using the Java Virtual Machine instruction sets:
   * HOMEPAGE:
     * http://jasmin.sourceforge.net/
 
+This product depends on 'zlib', which is a library used for data compression and
+it employs the DEFLATE compression algorithm used in their gzip file compression program:
+
+  * LICENSE:
+    * https://zlib.net/zlib_license.html (zlib License)
+  * HOMEPAGE:
+    * https://zlib.net/
+
+This product depends on 'ncurses', which is a library providing an application programming interface (API)
+that allows the programmer to write text-based user interfaces in a terminal-independent manner:
+
+  * LICENSE:
+    * http://invisible-island.net/ncurses/ncurses-license.html
+  * HOMEPAGE:
+    * http://invisible-island.net/ncurses/
+
