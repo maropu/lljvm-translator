@@ -16,4 +16,4 @@ target/
 src/main/resources/lljvm-backend/*.pyc
 src/main/resources/lljvm-backend/.waf-*
 src/main/resources/lljvm-backend/build
-src/main/resources/lljvm-backend/.lock-waf_linux2_build
+src/main/resources/lljvm-backend/.lock-waf*
