@@ -1,7 +1,7 @@
 dist: trusty
 
 # TODO: Some tests for Compressed OOPs fail if sudo=false
-# sudo: true
+sudo: true
 
 language: java
 
