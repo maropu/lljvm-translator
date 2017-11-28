@@ -66,7 +66,7 @@ def configure(ctx):
     ctx.fatal('LLVM version must be 5.0+, but LLVM %s found' % LLVM_VERSION)
 
   LLVM_CXXFLAGS = llvm_config('--cxxflags')
-  LLVM_LINKFLAGS = llvm_config('--ldflags --system-libs --libs all')
+  LLVM_LINKFLAGS = llvm_config('--system-libs --libfiles engine')
   ctx.check_cxx(msg = 'Checking for LLVM configurations',
                 cxxflags = LLVM_CXXFLAGS,
                 linkflags = LLVM_LINKFLAGS,
@@ -79,6 +79,7 @@ def build(bld):
               name.cc printinst.cc sections.cc types.cc',
             target = 'lljvm',
             includes = '%s/%s' % (JAVAH_DIR, bld.env.LLJVM_COMPILE_OS),
+            linkflags = '-static',
             use = 'llvm',
             uselib_store = 'lljvm')
 
