@@ -20,6 +20,8 @@ package maropu.lljvm;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 
+import org.openjdk.jol.util.VMSupport;
+
 import lljvm.unsafe.Platform;
 
 public class ArrayUtils {
@@ -50,9 +52,14 @@ public class ArrayUtils {
       case 8:
         // In 64bit JVMs, we need to check if compressed OOPs enabled
         if (isCompressedOop()) {
+          long coop = Platform.getInt(holder, baseOffset) & 0x00000000FFFFFFFFL;
+          // TODO: In JDK9, we can use `HotSpot Serviceability Agent`:
+          //  - https://stackoverflow.com/questions/46597668/how-to-determine-if-java-heap-is-using-compressed-pointers-and-whether-or-not-re/46600331
+          long narrowBase = VMSupport.COMPRESSED_OOP_BASE;
+          long narrowShift = VMSupport.COMPRESSED_OOP_SHIFT;
           // Decompress a compressed oop here
           //  - https://wiki.openjdk.java.net/display/HotSpot/CompressedOops
-          return (Platform.getInt(holder, baseOffset) & 0x00000000FFFFFFFFL) << 3;
+          return narrowBase + (coop << narrowShift);
         } else {
           return Platform.getLong(holder, baseOffset);
         }
