@@ -54,13 +54,22 @@ class CFuncSuite extends FunSuite {
   }
 
   test("sum by simple for") {
-    val doubleArray = Array(0.1, 3.9, 5.0, 8.3, 0.7, 5.0, 9.9, 1.1)
+    val longArray = Array(3, 5, 8, 2, 1).map(_.toLong)
     TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc4-for.bc",
-      f = "_cfunc4_for",
+      id = "llvm-cfunc-bitcode/cfunc4-for1.bc",
+      f = "_cfunc4_for1",
+      sig = Seq(jLong.TYPE, jLong.TYPE),
+      args = Seq(new jLong(ArrayUtils.addressOf(longArray)), new jLong(longArray.size)),
+      expected = 19
+    )
+
+    val doubleArray = Array(2.0, 1.0)
+    TestUtils.doTest(
+      id = "llvm-cfunc-bitcode/cfunc4-for2.bc",
+      f = "_cfunc4_for2",
       sig = Seq(jLong.TYPE, jLong.TYPE),
       args = Seq(new jLong(ArrayUtils.addressOf(doubleArray)), new jLong(doubleArray.size)),
-      expected = 34.0
+      expected = 84.0
     )
   }
 
