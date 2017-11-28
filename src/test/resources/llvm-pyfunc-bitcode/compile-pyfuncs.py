@@ -28,43 +28,27 @@ def write_pyfunc_as_bitcode(pyfunc, sig, filename_suffix=""):
 def pyfunc1(x, y):
   return x + y
 
+from pyfunc1 import *
 write_pyfunc_as_bitcode(pyfunc1, "int32(int32, int32)", "-int32")
 write_pyfunc_as_bitcode(pyfunc1, "int64(int64, int64)", "-int64")
 write_pyfunc_as_bitcode(pyfunc1, "float32(float32, float32)", "-float32")
 write_pyfunc_as_bitcode(pyfunc1, "float64(float64, float64)", "-float64")
 
-def pyfunc2(x, y):
-  return math.pow(x, y)
-
+from pyfunc2 import *
 write_pyfunc_as_bitcode(pyfunc2, "float32(float32, float32)", "-float32")
 write_pyfunc_as_bitcode(pyfunc2, "float64(float64, float64)", "-float64")
 
-def pyfunc3(x, y):
-  return 2 * y + math.log10(x)
-
+from pyfunc3 import *
 write_pyfunc_as_bitcode(pyfunc3, "float32(float32, float32)", "-float32")
 write_pyfunc_as_bitcode(pyfunc3, "float64(float64, float64)", "-float64")
 
-def pyfunc4(x):
-  if x > 0:
-    return 0
-  else:
-    return 1
-
+from pyfunc4 import *
 write_pyfunc_as_bitcode(pyfunc4, "int32(int32)", "-int32")
 
-def pyfunc5(x):
-  value = x > 0 if 0 else 1
-  return value
-
+from pyfunc5 import *
 write_pyfunc_as_bitcode(pyfunc5, "int32(int32)", "-int32")
 
-def pyfunc6(x, s):
-  sum = 0
-  for i in range(s):
-    sum += x[i]
-  return sum
-
+from pyfunc6 import *
 write_pyfunc_as_bitcode(pyfunc6, "float32(float32[:], int32)", "-float32")
 write_pyfunc_as_bitcode(pyfunc6, "float64(float64[:], int32)", "-float64")
 

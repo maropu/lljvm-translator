@@ -23,31 +23,37 @@ import org.scalatest.FunSuite
 
 class PyFuncSuite extends FunSuite {
 
+  val basePath = "llvm-pyfunc-bitcode"
+
   test("x + y") {
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc1-int32.bc",
-      functionName = "_cfunc__ZN8__main__11pyfunc1_241Eii",
+      bitcode = s"$basePath/pyfunc1-int32.bc",
+      source = s"$basePath/pyfunc1.py",
+      functionName = "_cfunc__ZN7pyfunc111pyfunc1_241Eii",
       signature = Seq(jInt.TYPE, jInt.TYPE),
       arguments = Seq(new jInt(4), new jInt(5)),
       expected = 9
     )
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc1-int64.bc",
-      functionName = "_cfunc__ZN8__main__11pyfunc1_242Exx",
+      bitcode = s"$basePath/pyfunc1-int64.bc",
+      source = s"$basePath/pyfunc1.py",
+      functionName = "_cfunc__ZN7pyfunc111pyfunc1_242Exx",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(3), new jLong(2)),
       expected = 5
     )
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc1-float32.bc",
-      functionName = "_cfunc__ZN8__main__11pyfunc1_243Eff",
+      bitcode = s"$basePath/pyfunc1-float32.bc",
+      source = s"$basePath/pyfunc1.py",
+      functionName = "_cfunc__ZN7pyfunc111pyfunc1_243Eff",
       signature = Seq(jFloat.TYPE, jFloat.TYPE),
       arguments = Seq(new jFloat(1.0f), new jFloat(7.0f)),
       expected = 8.0f
     )
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc1-float64.bc",
-      functionName = "_cfunc__ZN8__main__11pyfunc1_244Edd",
+      bitcode = s"$basePath/pyfunc1-float64.bc",
+      source = s"$basePath/pyfunc1.py",
+      functionName = "_cfunc__ZN7pyfunc111pyfunc1_244Edd",
       signature = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(2.0), new jDouble(2.0)),
       expected = 4.0
@@ -56,15 +62,17 @@ class PyFuncSuite extends FunSuite {
 
   test("math.pow(x, y)") {
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc2-float32.bc",
-      functionName = "_cfunc__ZN8__main__11pyfunc2_245Eff",
+      bitcode = s"$basePath/pyfunc2-float32.bc",
+      source = s"$basePath/pyfunc2.py",
+      functionName = "_cfunc__ZN7pyfunc211pyfunc2_245Eff",
       signature = Seq(jFloat.TYPE, jFloat.TYPE),
       arguments = Seq(new jFloat(1.0f), new jFloat(4.0f)),
       expected = 1.0f
     )
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc2-float64.bc",
-      functionName = "_cfunc__ZN8__main__11pyfunc2_246Edd",
+      bitcode = s"$basePath/pyfunc2-float64.bc",
+      source = s"$basePath/pyfunc2.py",
+      functionName = "_cfunc__ZN7pyfunc211pyfunc2_246Edd",
       signature = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(3.0), new jDouble(2.0)),
       expected = 9.0
@@ -73,15 +81,17 @@ class PyFuncSuite extends FunSuite {
 
   test("2 * y + math.log10(x)") {
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc3-float32.bc",
-      functionName = "_cfunc__ZN8__main__11pyfunc3_247Eff",
+      bitcode = s"$basePath/pyfunc3-float32.bc",
+      source = s"$basePath/pyfunc3.py",
+      functionName = "_cfunc__ZN7pyfunc311pyfunc3_247Eff",
       signature = Seq(jFloat.TYPE, jFloat.TYPE),
       arguments = Seq(new jFloat(100.0f), new jFloat(1.0f)),
       expected = 4.0f
     )
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc3-float64.bc",
-      functionName = "_cfunc__ZN8__main__11pyfunc3_248Edd",
+      bitcode = s"$basePath/pyfunc3-float64.bc",
+      source = s"$basePath/pyfunc3.py",
+      functionName = "_cfunc__ZN7pyfunc311pyfunc3_248Edd",
       signature = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(1000.0), new jDouble(3.0)),
       expected = 9.0
@@ -90,8 +100,9 @@ class PyFuncSuite extends FunSuite {
 
   test("simple if") {
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc4-int32.bc",
-      functionName = "_cfunc__ZN8__main__11pyfunc4_249Ei",
+      bitcode = s"$basePath/pyfunc4-int32.bc",
+      source = s"$basePath/pyfunc4.py",
+      functionName = "_cfunc__ZN7pyfunc411pyfunc4_249Ei",
       signature = Seq(jInt.TYPE),
       arguments = Seq(new jInt(1)),
       expected = 0
@@ -100,8 +111,9 @@ class PyFuncSuite extends FunSuite {
 
   test("ternary operator") {
     TestUtils.doTest(
-      bitcode = "llvm-pyfunc-bitcode/pyfunc5-int32.bc",
-      functionName = "_cfunc__ZN8__main__12pyfunc5_2410Ei",
+      bitcode = s"$basePath/pyfunc5-int32.bc",
+      source = s"$basePath/pyfunc5.py",
+      functionName = "_cfunc__ZN7pyfunc512pyfunc5_2410Ei",
       signature = Seq(jInt.TYPE),
       arguments = Seq(new jInt(0)),
       expected = 1

@@ -26,7 +26,7 @@ import org.scalatest.FunSuite
 class JasminSuite extends FunSuite {
 
   test("asBytecode") {
-    val bitcode = TestUtils.resourceToBytes("llvm-pyfunc-bitcode/pyfunc1-int32.bc")
+    val bitcode = TestUtils.resourceToBytes("llvm-cfunc-bitcode/cfunc1.bc")
     TestUtils.compareCode(LLJVMUtils.asBytecode(bitcode),
       s""".class public final GeneratedClass
          |.super java/lang/Object
@@ -52,41 +52,52 @@ class JasminSuite extends FunSuite {
          |.end method
          |
          |
-         |.method public static __ZN8__main__11pyfunc1_241Eii(JJJII)I
+         |.method public static _cfunc1(II)I
+         |        lconst_0
+         |        lstore 2
+         |        lconst_0
+         |        lstore 4
+         |        iconst_0
+         |        istore 6
+         |        iconst_0
+         |        istore 7
          |        iconst_0
          |        istore 8
          |label1:
-         |;  %.17 = add i32 %arg.y, %arg.x
-         |        iload 7 ; _arg_y
-         |        iload 6 ; _arg_x
-         |        iadd
-         |        istore 8 ; __17
-         |;  store i32 %.17, i32* %retptr, align 4
-         |        lload_0 ; _retptr
-         |        iload 8 ; __17
+         |;  %1 = alloca i32, align 4
+         |        bipush 4
+         |        invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+         |        lstore_2 ; _2
+         |;  %2 = alloca i32, align 4
+         |        bipush 4
+         |        invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+         |        lstore 4 ; _4
+         |;  store i32 %x, i32* %1, align 4
+         |        lload_2 ; _2
+         |        iload_0 ; _x
          |        invokestatic lljvm/runtime/VMemory/store(JI)V
-         |;  ret i32 0
-         |        iconst_0
+         |;  store i32 %y, i32* %2, align 4
+         |        lload 4 ; _4
+         |        iload_1 ; _y
+         |        invokestatic lljvm/runtime/VMemory/store(JI)V
+         |;  %3 = load i32, i32* %1, align 4
+         |        lload_2 ; _2
+         |        invokestatic lljvm/runtime/VMemory/load_i32(J)I
+         |        istore 6 ; _6
+         |;  %4 = load i32, i32* %2, align 4
+         |        lload 4 ; _4
+         |        invokestatic lljvm/runtime/VMemory/load_i32(J)I
+         |        istore 7 ; _7
+         |;  %5 = add nsw i32 %3, %4
+         |        iload 6 ; _6
+         |        iload 7 ; _7
+         |        iadd
+         |        istore 8 ; _8
+         |;  ret i32 %5
+         |        iload 8 ; _8
          |        ireturn
          |        .limit stack 16
          |        .limit locals 9
-         |end_method:
-         |.end method
-         |
-         |.method public static _cfunc__ZN8__main__11pyfunc1_241Eii(II)I
-         |        iconst_0
-         |        istore 2
-         |label2:
-         |;  %.17.i = add i32 %.2, %.1
-         |        iload_1 ; __2
-         |        iload_0 ; __1
-         |        iadd
-         |        istore_2 ; __17_i
-         |;  ret i32 %.17.i
-         |        iload_2 ; __17_i
-         |        ireturn
-         |        .limit stack 16
-         |        .limit locals 3
          |end_method:
          |.end method
        """.stripMargin)

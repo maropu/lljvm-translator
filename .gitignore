@@ -1,5 +1,6 @@
 *.iml
 hs_err_pid*
+*.pyc
 .idea/
 .idea_modules/
 build/*.jar
@@ -13,7 +14,7 @@ scalastyle.txt
 target/
 
 # For waf
-src/main/resources/lljvm-backend/*.pyc
-src/main/resources/lljvm-backend/.waf-*
+.lock-waf*
+.waf-*
 src/main/resources/lljvm-backend/build
-src/main/resources/lljvm-backend/.lock-waf*
+

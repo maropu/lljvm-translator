@@ -43,27 +43,6 @@ object TestUtils extends FunSuite {
 
   def doTest(
       bitcode: String,
-      functionName: String,
-      signature: Seq[Class[_]],
-      arguments: Seq[AnyRef],
-      expected: Any): Unit = {
-    val clazz = TestUtils.loadClassFromResource(bitcode)
-    try {
-      val method = clazz.newInstance.getClass.getMethod(functionName, signature: _*)
-      assert(method.invoke(null, arguments: _*) === expected)
-    } catch {
-      case e: Throwable =>
-        fail(
-          s"""Test failed because: ${e.getMessage}
-             |${exceptionString(e)}
-             |========== LLVM Bitcode =========
-             |${LLJVMUtils.asBytecode(TestUtils.resourceToBytes(bitcode))}
-           """.stripMargin)
-    }
-  }
-
-  def doTest(
-      bitcode: String,
       source: String,
       functionName: String,
       signature: Seq[Class[_]],
