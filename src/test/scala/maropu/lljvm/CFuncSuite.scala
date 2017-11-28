@@ -67,11 +67,20 @@ class CFuncSuite extends FunSuite {
   test("sum by simple while") {
     val intArray = Array(3, 1, 2, 8, 7, 2, 8, 9, 1, 3, 5, 8)
     TestUtils.doTest(
-      id = "llvm-cfunc-bitcode/cfunc4-while.bc",
-      f = "_cfunc4_while",
+      id = "llvm-cfunc-bitcode/cfunc4-while1.bc",
+      f = "_cfunc4_while1",
       sig = Seq(jLong.TYPE, jLong.TYPE),
       args = Seq(new jLong(ArrayUtils.addressOf(intArray)), new jLong(intArray.size)),
       expected = 57
+    )
+
+    val floatArray = Array(5, 1, 1, 0, 3, 2, 9, 1, 2, 3).map(_.toFloat)
+    TestUtils.doTest(
+      id = "llvm-cfunc-bitcode/cfunc4-while2.bc",
+      f = "_cfunc4_while2",
+      sig = Seq(jLong.TYPE, jLong.TYPE),
+      args = Seq(new jLong(ArrayUtils.addressOf(floatArray)), new jLong(floatArray.size)),
+      expected = 27.0
     )
   }
 
