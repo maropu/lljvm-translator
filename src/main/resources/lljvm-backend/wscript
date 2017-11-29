@@ -85,7 +85,7 @@ def build(bld):
               name.cc printinst.cc sections.cc types.cc',
             target = 'lljvm',
             includes = '%s/%s' % (JAVAH_DIR, bld.env.LLJVM_COMPILE_OS),
-            linkflags = '-static',
+            # linkflags = '-static',
             use = 'llvm',
             uselib_store = 'lljvm')
 
