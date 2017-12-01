@@ -48,7 +48,11 @@ write_pyfunc_as_bitcode(pyfunc4, "int32(int32)", "-int32")
 from pyfunc5 import *
 write_pyfunc_as_bitcode(pyfunc5, "int32(int32)", "-int32")
 
-from pyfunc6 import *
-write_pyfunc_as_bitcode(pyfunc6, "float32(float32[:], int32)", "-float32")
-write_pyfunc_as_bitcode(pyfunc6, "float64(float64[:], int32)", "-float64")
+from pyfunc6_for1 import *
+write_pyfunc_as_bitcode(pyfunc6_for1, "float32(float32[:], int32)", "-float32")
+write_pyfunc_as_bitcode(pyfunc6_for1, "float64(float64[:], int32)", "-float64")
+
+from pyfunc6_for2 import *
+write_pyfunc_as_bitcode(pyfunc6_for2, "float32(float32[:])", "-float32")
+write_pyfunc_as_bitcode(pyfunc6_for2, "float64(float64[:])", "-float64")
 
