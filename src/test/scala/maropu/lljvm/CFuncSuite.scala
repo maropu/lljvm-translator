@@ -61,8 +61,8 @@ class CFuncSuite extends FunSuite {
   test("sum by simple for") {
     val longArray = Array(3, 5, 8, 2, 1).map(_.toLong)
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc4-for1.bc",
-      source = s"$basePath/cfunc4-for1.c",
+      bitcode = s"$basePath/cfunc4_for1.bc",
+      source = s"$basePath/cfunc4_for1.c",
       functionName = "_cfunc4_for1",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(longArray)), new jLong(longArray.size)),
@@ -71,8 +71,8 @@ class CFuncSuite extends FunSuite {
 
     val doubleArray = Array(2.0, 1.0)
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc4-for2.bc",
-      source = s"$basePath/cfunc4-for2.c",
+      bitcode = s"$basePath/cfunc4_for2.bc",
+      source = s"$basePath/cfunc4_for2.c",
       functionName = "_cfunc4_for2",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(doubleArray)), new jLong(doubleArray.size)),
@@ -83,8 +83,8 @@ class CFuncSuite extends FunSuite {
   test("sum by simple while") {
     val intArray = Array(3, 1, 2, 8, 7, 2, 8, 9, 1, 3, 5, 8)
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc4-while1.bc",
-      source = s"$basePath/cfunc4-while1.c",
+      bitcode = s"$basePath/cfunc4_while1.bc",
+      source = s"$basePath/cfunc4_while1.c",
       functionName = "_cfunc4_while1",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(intArray)), new jLong(intArray.size)),
@@ -93,8 +93,8 @@ class CFuncSuite extends FunSuite {
 
     val floatArray = Array(5, 1, 1, 0, 3, 2, 9, 1, 2, 3).map(_.toFloat)
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc4-while2.bc",
-      source = s"$basePath/cfunc4-while2.c",
+      bitcode = s"$basePath/cfunc4_while2.bc",
+      source = s"$basePath/cfunc4_while2.c",
       functionName = "_cfunc4_while2",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(floatArray)), new jLong(floatArray.size)),
