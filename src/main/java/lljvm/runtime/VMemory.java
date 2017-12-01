@@ -33,15 +33,15 @@ public class VMemory {
   public static final int ALIGNMENT = 8; // 8-byte alignment
 
   // We assume multiple threads possibly access this
-  private static ThreadLocal<VMemFragment> vmem = new ThreadLocal<>();
-
-  static {
-    long stackSize = Integer.parseInt(
-      System.getProperty(KEY_LLJVM_RUNTIME_VMEM_STACKSIZE, DEFAULT_STACKSIZE));
-    // TODO: How we do we release the allocated memory?
-    long base = Platform.allocateMemory(stackSize + ALIGNMENT);
-    vmem.set(new VMemFragment(alignOffsetUp(base, ALIGNMENT), stackSize));
-  }
+  private static ThreadLocal<VMemFragment> vmem = new ThreadLocal<VMemFragment>() {
+    @Override public VMemFragment initialValue() {
+      long stackSize = Integer.parseInt(
+        System.getProperty(KEY_LLJVM_RUNTIME_VMEM_STACKSIZE, DEFAULT_STACKSIZE));
+      // TODO: How we do we release the allocated memory?
+      long base = Platform.allocateMemory(stackSize + ALIGNMENT);
+      return new VMemFragment(alignOffsetUp(base, ALIGNMENT), stackSize);
+    }
+  };
 
   /**
    * Return the least address greater than offset which is a multiple of align.
