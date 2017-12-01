@@ -23,6 +23,7 @@ public class PyArrayHolder {
   // TODO: Need to free memory below
   private final long holderAddr;
   private final long arrayAddr;
+  private final long shapeHolderAddr;
   private final long strideHolderAddr;
 
   public PyArrayHolder() {
@@ -30,8 +31,10 @@ public class PyArrayHolder {
     // `{ i8*, i8*, i64, i64, double*, [1 x i64], [1 x i64] }`.
     int elemNumInAggType = 7;
     this.holderAddr = Platform.allocateMemory(elemNumInAggType * 8);
+    this.shapeHolderAddr = Platform.allocateMemory(8);
     this.strideHolderAddr = Platform.allocateMemory(8);
     this.arrayAddr = holderAddr + 4 * 8;
+    Platform.putLong(null, holderAddr + 5 * 8, shapeHolderAddr);
     Platform.putLong(null, holderAddr + 6 * 8, strideHolderAddr);
   }
 
@@ -41,6 +44,10 @@ public class PyArrayHolder {
 
   public long getArrayAddr() {
     return arrayAddr;
+  }
+
+  public long getShapeHolderAddr() {
+    return shapeHolderAddr;
   }
 
   public long getStrideHolderAddr() {
