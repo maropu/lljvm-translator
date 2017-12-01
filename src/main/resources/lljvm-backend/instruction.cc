@@ -326,6 +326,43 @@ void JVMWriter::printVAArgInstruction(const VAArgInst *inst) {
 }
 
 /**
+ * Print an extractvalue instruction.
+ *
+ * @param inst  the instruction
+ */
+void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
+    const Value *v = inst->getAggregateOperand();
+    const Type *aggType = v->getType();
+
+    // load address
+    printCastInstruction(Instruction::IntToPtr, v, NULL, aggType);
+
+    // calculate offset
+    for (unsigned i = 0; i < inst->getNumIndices(); i++) {
+        unsigned fieldIndex = inst->getIndices()[i];
+        int size = 0;
+        if(const StructType *structTy = dyn_cast<StructType>(aggType)) {
+            for(unsigned int f = 0; f < fieldIndex; f++) {
+                size = alignOffset(
+                    size + targetData->getTypeAllocSize(structTy->getContainedType(f)),
+                    targetData->getABITypeAlignment(structTy->getContainedType(f + 1))
+                );
+            }
+            printPtrLoad(size);
+            printSimpleInstruction("ladd");
+            printIndirectLoad(aggType);
+        } else if(const SequentialType *seqTy = dyn_cast<SequentialType>(aggType)) {
+            size = targetData->getTypeAllocSize(seqTy->getElementType());
+            printPtrLoad(fieldIndex * size);
+            printSimpleInstruction("ladd");
+            printIndirectLoad(aggType);
+        } else {
+            llvm_unreachable("Invalid type");
+        }
+    }
+}
+
+/**
  * Print a vararg intrinsic function.
  *
  * @param inst  the instruction

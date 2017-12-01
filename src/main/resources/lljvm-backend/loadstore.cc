@@ -53,16 +53,17 @@ void JVMWriter::printValueLoad(const Value *v) {
     } else if(const Constant *c = dyn_cast<Constant>(v)) {
         printConstLoad(c);
     } else {
-        if(getLocalVarNumber(v) <= 3)
+        if(getLocalVarNumber(v) <= 3) {
             printSimpleInstruction(
                 getTypePrefix(v->getType(), true) + "load_"
                 + utostr(getLocalVarNumber(v))
                 + " ; " + getValueName(v));
-        else
+        } else {
             printSimpleInstruction(
                 getTypePrefix(v->getType(), true) + "load",
                 utostr(getLocalVarNumber(v))
                 + " ; " + getValueName(v));
+        }
     }
 }
 
@@ -76,6 +77,7 @@ void JVMWriter::printValueStore(const Value *v) {
         errs() << "Value  = " << *v << '\n';
         llvm_unreachable("Invalid value");
     }
+
     unsigned int bitWidth = getBitWidth(v->getType());
     // truncate int
     if(bitWidth == 16)
@@ -86,16 +88,17 @@ void JVMWriter::printValueStore(const Value *v) {
         printSimpleInstruction("iconst_1");
         printSimpleInstruction("iand");
     }
-    if(getLocalVarNumber(v) <= 3)
+    if(getLocalVarNumber(v) <= 3) {
         printSimpleInstruction(
             getTypePrefix(v->getType(), true) + "store_"
             + utostr(getLocalVarNumber(v))
             + " ; " + getValueName(v));
-    else
+    } else {
         printSimpleInstruction(
             getTypePrefix(v->getType(), true) + "store",
             utostr(getLocalVarNumber(v))
             + " ; " + getValueName(v));
+    }
 }
 
 /**

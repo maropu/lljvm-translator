@@ -150,11 +150,12 @@ private:
                              gep_type_iterator e);
     void printAllocaInstruction(const AllocaInst *inst);
     void printVAArgInstruction(const VAArgInst *inst);
+    void printExtractValue(const ExtractValueInst *inst);
     void printVAIntrinsic(const IntrinsicInst *inst);
     void printMemIntrinsic(const MemIntrinsic *inst);
     void printMathIntrinsic(const IntrinsicInst *inst);
     void printBitIntrinsic(const IntrinsicInst *inst);
-    
+
     // loadstore.cpp
     void printValueLoad(const Value *v);
     void printValueStore(const Value *v);

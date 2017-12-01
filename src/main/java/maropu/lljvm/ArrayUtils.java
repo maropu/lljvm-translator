@@ -24,6 +24,13 @@ import lljvm.unsafe.Platform;
 
 public class ArrayUtils {
 
+  // We assume multiple threads possibly access this
+  private static ThreadLocal<PyArrayHolder> pyArrayHolderAddr = new ThreadLocal<PyArrayHolder>() {
+    @Override public PyArrayHolder initialValue() {
+      return new PyArrayHolder();
+    }
+  };
+
   // TODO: In JDK8, we can use `VMSupport` in JOL v0.4 or earlier versions? Otherwise,
   // we can use `HotSpot Serviceability Agent` in JDK9?
   //  - https://stackoverflow.com/questions/46597668/how-to-determine-if-java-heap-is-using-compressed-pointers-and-whether-or-not-re/46600331
@@ -96,5 +103,41 @@ public class ArrayUtils {
 
   public static long addressOf(double[] ar) {
     return _addressOf(ar) + Platform.DOUBLE_ARRAY_OFFSET;
+  }
+
+  private static long _pyArray(long arrayAddr, long stride) {
+    PyArrayHolder holder = pyArrayHolderAddr.get();
+    Platform.putLong(null, holder.getArrayAddr(), arrayAddr);
+    Platform.putLong(null, holder.getStrideHolderAddr(), stride);
+    return holder.getHolderAddr();
+  }
+
+  // For python arrays
+  public static long pyAyray(boolean[] ar) {
+    return _pyArray(addressOf(ar), 1);
+  }
+
+  public static long pyAyray(byte[] ar) {
+    return _pyArray(addressOf(ar), 1);
+  }
+
+  public static long pyAyray(short[] ar) {
+    return _pyArray(addressOf(ar), 2);
+  }
+
+  public static long pyAyray(int[] ar) {
+    return _pyArray(addressOf(ar), 4);
+  }
+
+  public static long pyAyray(long[] ar) {
+    return _pyArray(addressOf(ar), 8);
+  }
+
+  public static long pyAyray(float[] ar) {
+    return _pyArray(addressOf(ar), 4);
+  }
+
+  public static long pyAyray(double[] ar) {
+    return _pyArray(addressOf(ar), 8);
   }
 }

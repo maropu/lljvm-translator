@@ -157,6 +157,8 @@ void JVMWriter::printInstruction(const Instruction *inst) {
         printAllocaInstruction(cast<AllocaInst>(inst)); break;
     case Instruction::VAArg:
         printVAArgInstruction(cast<VAArgInst>(inst)); break;
+    case  Instruction::ExtractValue:
+        printExtractValue(cast<ExtractValueInst>(inst)); break;
     default:
         errs() << "Instruction = " << *inst << '\n';
         llvm_unreachable("Unsupported instruction");

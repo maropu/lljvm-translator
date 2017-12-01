@@ -119,4 +119,25 @@ class PyFuncSuite extends FunSuite {
       expected = 1
     )
   }
+
+  test("sum by simple for") {
+    val floatArray = Array(1.0, 8.0, 2.0, 3.0, 4.0, 1.0, 1.0, 2.0).map(_.toFloat)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc6-float32.bc",
+      source = s"$basePath/pyfunc6.py",
+      functionName = "_cfunc__ZN7pyfunc612pyfunc6_2411E5ArrayIfLi1E1A7mutable7alignedEi",
+      signature = Seq(jLong.TYPE, jInt.TYPE),
+      arguments = Seq(new jLong(ArrayUtils.pyAyray(floatArray)), new jInt(floatArray.size)),
+      expected = 22.0
+    )
+    val doubleArray = Array(2.0, 1.0, 5.0, 13.0, 4.0)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc6-float64.bc",
+      source = s"$basePath/pyfunc6.py",
+      functionName = "_cfunc__ZN7pyfunc612pyfunc6_2412E5ArrayIdLi1E1A7mutable7alignedEi",
+      signature = Seq(jLong.TYPE, jInt.TYPE),
+      arguments = Seq(new jLong(ArrayUtils.pyAyray(doubleArray)), new jInt(doubleArray.size)),
+      expected = 25.0
+    )
+  }
 }

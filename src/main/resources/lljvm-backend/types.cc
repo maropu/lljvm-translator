@@ -30,13 +30,11 @@
  * @return        the bit width
  */
 unsigned int JVMWriter::getBitWidth(const Type *ty, bool expand) {
-    if(ty->getTypeID() == Type::PointerTyID)
-        return 64;
-
     if(ty->getTypeID() == Type::ArrayTyID
     || ty->getTypeID() == Type::VectorTyID
-    || ty->getTypeID() == Type::StructTyID)
-        return 32;
+    || ty->getTypeID() == Type::StructTyID
+    || ty->getTypeID() == Type::PointerTyID)
+        return 64;
 
     unsigned int n = ty->getPrimitiveSizeInBits();
     switch(n) {
@@ -74,12 +72,11 @@ char JVMWriter::getTypeID(const Type *ty, bool expand) {
         return 'F';
     case Type::DoubleTyID:
         return 'D';
-    case Type::PointerTyID:
-        return 'J';
     case Type::StructTyID:
     case Type::ArrayTyID:
     case Type::VectorTyID:
-        return 'I';
+    case Type::PointerTyID:
+        return 'J';
     default:
         // errs() << "Type = " << *ty << '\n';
         llvm_unreachable("Invalid type");
@@ -133,12 +130,11 @@ std::string JVMWriter::getTypePostfix(const Type *ty, bool expand) {
         return "f32";
     case Type::DoubleTyID:
         return "f64";
-    case Type::PointerTyID:
-        return "i64";
     case Type::StructTyID:
     case Type::ArrayTyID:
     case Type::VectorTyID:
-        return "i32";
+    case Type::PointerTyID:
+        return "i64";
     default:
         errs() << "TypeID = " << ty->getTypeID() << '\n';
         llvm_unreachable("Invalid type");
