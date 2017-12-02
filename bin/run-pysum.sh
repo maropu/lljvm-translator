@@ -34,7 +34,7 @@ fi
 
 # If `ENABLE_PRINT_ASSEMBLY` defined, prints compiled assembly
 if [ ! -z "${ENABLE_PRINT_ASSEMBLY}" ]; then
-  JVM_OPTONS="-XX:+UseSuperWord -XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=print,*PySum.run -XX:PrintAssemblyOptions=intel"
+  JVM_OPTONS="-XX:+UseSuperWord -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly -XX:PrintAssemblyOptions=intel"
   LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${_DIR}/../lib java ${JVM_OPTONS} -cp ${_BUILT_JAR} maropu.lljvm.benchmark.PySum
 else
   java -cp ${_BUILT_JAR} maropu.lljvm.benchmark.PySum
