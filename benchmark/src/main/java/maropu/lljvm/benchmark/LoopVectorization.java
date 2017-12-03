@@ -54,7 +54,7 @@ import maropu.lljvm.LLJVMUtils;
 @Warmup(iterations = 5)
 @Measurement(iterations = 10)
 public class LoopVectorization {
-  final static int SIZE = 1024;
+  final static int SIZE = 4 * 1024 * 1024;
 
   @State(Scope.Thread)
   public static class Context {
@@ -139,7 +139,7 @@ public class LoopVectorization {
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE)
-  public double heapBuf(Context context) {
+  public double heapBufSum(Context context) {
     double sum = 0;
     for (int i = 0; i < SIZE; i++) {
       sum += context.heapBuf.getDouble(8 * i);
@@ -149,7 +149,7 @@ public class LoopVectorization {
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE)
-  public double directBuf(Context context) {
+  public double directBufSum(Context context) {
     double sum = 0;
     for (int i = 0; i < SIZE; i++) {
       sum += context.directBuf.getDouble(8 * i);
@@ -159,7 +159,7 @@ public class LoopVectorization {
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE)
-  public double unsafeBuf(Context context) {
+  public double unsafeBufSum(Context context) {
     double sum = 0;
     for (int i = 0; i < SIZE; i++) {
       sum += Platform.getDouble(null, context.unsafeBuf + 8 * i);
