@@ -129,6 +129,16 @@ public class LoopVectorization {
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE)
+  public double javaSum(Context context) {
+    double sum = 0;
+    for (int i = 0; i < SIZE; i++) {
+      sum += context.javaArray[i];
+    }
+    return sum;
+  }
+
+  @Benchmark
+  @CompilerControl(CompilerControl.Mode.DONT_INLINE)
   public double heapBuf(Context context) {
     double sum = 0;
     for (int i = 0; i < SIZE; i++) {
