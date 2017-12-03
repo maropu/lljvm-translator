@@ -26,7 +26,7 @@ set -e -o pipefail
 _DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Run tests for lljvm-backend code
-cd ${_DIR}/../src/main/resources/lljvm-backend
+cd ${_DIR}/../core/src/main/resources/lljvm-backend
 ./waf configure && ./waf
 
 # Run tests for java code

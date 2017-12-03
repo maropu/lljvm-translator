@@ -18,5 +18,5 @@ target/
 # For waf
 .lock-waf*
 .waf-*
-src/main/resources/lljvm-backend/build
+core/src/main/resources/lljvm-backend/build
 

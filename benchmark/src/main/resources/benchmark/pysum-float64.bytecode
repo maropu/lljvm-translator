@@ -1,0 +1,220 @@
+Compiled from "GeneratedClass"
+public final class GeneratedClass {
+  public GeneratedClass();
+    descriptor: ()V
+    Code:
+       0: aload_0
+       1: invokespecial #30                 // Method java/lang/Object."<init>":()V
+       4: return
+
+  public {};
+    descriptor: ()V
+    Code:
+       0: return
+
+  public static int __ZN8__main__9pySum_241E5ArrayIdLi1E1A7mutable7alignedEi(long, long, long, long, long, long, long, long, long, long, int);
+    descriptor: (JJJJJJJJJJI)I
+    Code:
+       0: iconst_0
+       1: istore        21
+       3: lconst_0
+       4: lstore        22
+       6: iconst_0
+       7: istore        24
+       9: iconst_0
+      10: istore        25
+      12: lconst_0
+      13: lstore        26
+      15: dconst_0
+      16: dstore        28
+      18: lconst_0
+      19: lstore        30
+      21: dconst_0
+      22: dstore        32
+      24: dconst_0
+      25: dstore        34
+      27: lconst_0
+      28: lstore        36
+      30: iconst_0
+      31: istore        38
+      33: iconst_0
+      34: istore        39
+      36: dconst_0
+      37: dstore        40
+      39: iload         20
+      41: iconst_0
+      42: invokestatic  #3                  // Method lljvm/runtime/Instruction.icmp_sgt:(II)Z
+      45: iconst_1
+      46: iand
+      47: istore        21
+      49: iload         21
+      51: ifne          60
+      54: dconst_0
+      55: dstore        40
+      57: goto          152
+      60: lload         14
+      62: lstore        22
+      64: iload         20
+      66: iconst_1
+      67: iadd
+      68: istore        24
+      70: iload         24
+      72: istore        25
+      74: lload         22
+      76: lstore        26
+      78: dconst_0
+      79: dstore        28
+      81: goto          84
+      84: lload         26
+      86: lstore        30
+      88: lload         30
+      90: invokestatic  #20                 // Method lljvm/runtime/VMemory.load_f64:(J)D
+      93: dstore        32
+      95: dload         28
+      97: dload         32
+      99: dadd
+     100: dstore        34
+     102: lload         26
+     104: lload         18
+     106: ladd
+     107: lstore        36
+     109: iload         25
+     111: iconst_m1
+     112: iadd
+     113: istore        38
+     115: iload         38
+     117: iconst_1
+     118: invokestatic  #3                  // Method lljvm/runtime/Instruction.icmp_sgt:(II)Z
+     121: iconst_1
+     122: iand
+     123: istore        39
+     125: iload         39
+     127: ifne          137
+     130: dload         34
+     132: dstore        40
+     134: goto          152
+     137: iload         38
+     139: istore        25
+     141: lload         36
+     143: lstore        26
+     145: dload         34
+     147: dstore        28
+     149: goto          84
+     152: lload_0
+     153: dload         40
+     155: invokestatic  #14                 // Method lljvm/runtime/VMemory.store:(JD)V
+     158: iconst_0
+     159: ireturn
+
+  public static double _cfunc__ZN8__main__9pySum_241E5ArrayIdLi1E1A7mutable7alignedEi(long, int);
+    descriptor: (JI)D
+    Code:
+       0: lconst_0
+       1: lstore        3
+       3: lconst_0
+       4: lstore        5
+       6: iconst_0
+       7: istore        7
+       9: lconst_0
+      10: lstore        8
+      12: lconst_0
+      13: lstore        10
+      15: iconst_0
+      16: istore        12
+      18: iconst_0
+      19: istore        13
+      21: lconst_0
+      22: lstore        14
+      24: dconst_0
+      25: dstore        16
+      27: lconst_0
+      28: lstore        18
+      30: dconst_0
+      31: dstore        20
+      33: dconst_0
+      34: dstore        22
+      36: lconst_0
+      37: lstore        24
+      39: iconst_0
+      40: istore        26
+      42: iconst_0
+      43: istore        27
+      45: dconst_0
+      46: dstore        28
+      48: lload_0
+      49: ldc2_w        #36                 // long 48l
+      52: ladd
+      53: invokestatic  #25                 // Method lljvm/runtime/VMemory.load_i64:(J)J
+      56: lstore_3
+      57: lload_3
+      58: lconst_0
+      59: ladd
+      60: invokestatic  #25                 // Method lljvm/runtime/VMemory.load_i64:(J)J
+      63: lstore        5
+      65: iload_2
+      66: iconst_0
+      67: invokestatic  #3                  // Method lljvm/runtime/Instruction.icmp_sgt:(II)Z
+      70: iconst_1
+      71: iand
+      72: istore        7
+      74: iload         7
+      76: ifne          85
+      79: dconst_0
+      80: dstore        28
+      82: goto          186
+      85: lload_0
+      86: ldc2_w        #11                 // long 32l
+      89: ladd
+      90: invokestatic  #25                 // Method lljvm/runtime/VMemory.load_i64:(J)J
+      93: lstore        8
+      95: lload         8
+      97: lstore        10
+      99: iload_2
+     100: iconst_1
+     101: iadd
+     102: istore        12
+     104: iload         12
+     106: istore        13
+     108: lload         10
+     110: lstore        14
+     112: dconst_0
+     113: dstore        16
+     115: goto          118
+     118: lload         14
+     120: lstore        18
+     122: lload         18
+     124: invokestatic  #20                 // Method lljvm/runtime/VMemory.load_f64:(J)D
+     127: dstore        20
+     129: dload         16
+     131: dload         20
+     133: dadd
+     134: dstore        22
+     136: lload         14
+     138: lload         5
+     140: ladd
+     141: lstore        24
+     143: iload         13
+     145: iconst_m1
+     146: iadd
+     147: istore        26
+     149: iload         26
+     151: iconst_1
+     152: invokestatic  #3                  // Method lljvm/runtime/Instruction.icmp_sgt:(II)Z
+     155: iconst_1
+     156: iand
+     157: istore        27
+     159: iload         27
+     161: ifne          171
+     164: dload         22
+     166: dstore        28
+     168: goto          186
+     171: iload         26
+     173: istore        13
+     175: lload         24
+     177: lstore        14
+     179: dload         22
+     181: dstore        16
+     183: goto          118
+     186: dload         28
+     188: dreturn
+}

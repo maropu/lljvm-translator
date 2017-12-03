@@ -1,0 +1,116 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+import re
+import subprocess
+
+from waflib.Tools import waf_unit_test
+from distutils.version import StrictVersion
+from env import *
+from sys import platform
+
+def command(cmd):
+  return subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
+
+def llvm_config(options):
+  return re.split("[\s\n]+", command('%s %s' % (LLVM_CONFIG, options)))
+
+def options(opt):
+  opt.load('compiler_cxx waf_unit_test');
+
+def configure(ctx):
+  ctx.load('compiler_cxx waf_unit_test');
+
+  ctx.find_program(LLVM_CONFIG)
+
+  # Checks if this platform supported
+  if platform == 'linux' or platform == 'linux2':
+    ctx.env['LLJVM_COMPILE_OS'] = 'Linux'
+    ctx.env['LLJVM_COMPILE_SHLIB_SUFFIX'] = 'so'
+  elif platform == 'darwin':
+    ctx.env['LLJVM_COMPILE_OS'] = 'Mac'
+    ctx.env['LLJVM_COMPILE_SHLIB_SUFFIX'] = 'dylib'
+  else:
+    ctx.fatal('OS must be linux or darwin, but %s found' % platform)
+
+  # Currently, it only support x86_64 platforms
+  ctx.env['LLJVM_COMPILE_ARCH'] = 'x86_64'
+
+  # Checks the LLVM version
+  LLVM_VERSION = re.findall("^(\d+.\d+.\d+)", llvm_config('--version')[0])[0]
+  if StrictVersion(LLVM_VERSION) < StrictVersion('5.0.0'):
+    ctx.fatal('LLVM version must be 5.0+, but LLVM %s found' % LLVM_VERSION)
+
+  # We assume 'llvm-config --system-libs' returns libs below
+  ctx.check_cxx(lib = 'm')
+  # We need to check the libs below in Linux only
+  if ctx.env['LLJVM_COMPILE_OS'] == 'Linux':
+    ctx.check_cxx(lib = 'pthread')
+    ctx.check_cxx(lib = 'tinfo')
+    ctx.check_cxx(lib = 'dl')
+    ctx.check_cxx(lib = 'rt')
+
+  LLVM_LINKFLAGS = llvm_config('--libfiles engine')
+
+  if ctx.env['LLJVM_COMPILE_OS'] == 'Linux':
+    LLVM_LINKFLAGS += ['-lm', '-lz', '-pthread', '-ltinfo', '-ldl', '-lrt']
+  else: # For Mac
+    LLVM_LINKFLAGS += [ctx.find_file('libncursesw.a', ['/opt/local/lib'])]
+    LLVM_LINKFLAGS += [ctx.find_file('libz.a', ['/opt/local/lib'])]
+    LLVM_LINKFLAGS += ['-lm']
+
+  ctx.check_cxx(msg = 'Checking for LLVM configurations',
+                cxxflags = llvm_config('--cxxflags'),
+                linkflags = LLVM_LINKFLAGS,
+                uselib_store = 'llvm')
+
+def build(bld):
+
+  # Builds a shared library of LLJVM
+  bld.shlib(source = 'backend.cc block.cc branch.cc const.cc function.cc instruction.cc lljvm.cc loadstore.cc \
+              name.cc printinst.cc sections.cc types.cc',
+            target = 'lljvm',
+            includes = '%s/%s' % (JAVAH_DIR, bld.env.LLJVM_COMPILE_OS),
+            # linkflags = '-static',
+            use = 'llvm',
+            uselib_store = 'lljvm')
+
+  # Copys the built library into src/main/java/native/
+  bld(rule = 'cp ${SRC} ${TGT}',
+      source = 'liblljvm.%s' % bld.env.LLJVM_COMPILE_SHLIB_SUFFIX,
+      target = '../../native/%s/%s/' % (bld.env.LLJVM_COMPILE_OS, bld.env.LLJVM_COMPILE_ARCH))
+
+  # Builds an executable LLJVM program for tests
+  bld.program(source = 'main.cc',
+              target = 'lljvm-backend-test',
+              use = 'llvm lljvm')
+
+  # For unit tests
+  bld.objects(source = '{0}/src/gtest-all.cc {0}/src/gtest_main.cc'.format(GTEST_DIR),
+              target = 'gtest',
+              includes = '{0}/include {0}'.format(GTEST_DIR))
+
+  bld.program(features='test',
+              source='lljvm_unittest.cc',
+              includes = '{0}/include'.format(GTEST_DIR),
+              target = 'lljvm_unittest',
+              linkflags = bld.env.LLVM_SLIBS,
+              use = 'gtest llvm')
+
+  bld.add_post_fun(waf_unit_test.summary)
+  bld.add_post_fun(waf_unit_test.set_exit_code)
+
