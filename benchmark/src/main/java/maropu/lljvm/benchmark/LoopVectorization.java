@@ -15,15 +15,17 @@
  * limitations under the License.
  */
 
-package maropu.lljvm.benchmark.vectorization;
+package maropu.lljvm.benchmark;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import lljvm.unsafe.Platform;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.CompilerControl;
@@ -46,18 +48,22 @@ import maropu.lljvm.LLJVMUtils;
 @Fork(value = 1, jvmArgsAppend = {
   "-XX:+UseSuperWord",
   "-XX:+UnlockDiagnosticVMOptions",
-  "-XX:CompileCommand=print,*PySum.run",
+  "-XX:CompileCommand=print,*LoopVectorization.*",
   // "-XX:PrintAssembly", // Print all the assembly
   "-XX:PrintAssemblyOptions=intel"})
 @Warmup(iterations = 5)
 @Measurement(iterations = 10)
-public class PySum {
+public class LoopVectorization {
   final static int SIZE = 1024;
 
   @State(Scope.Thread)
   public static class Context {
-    public final double[] values = new double[SIZE];
+    public final double[] javaArray = new double[SIZE];
+    public final ByteBuffer heapBuf = ByteBuffer.allocate(8 * SIZE);
+    public final ByteBuffer directBuf = ByteBuffer.allocateDirect(8 * SIZE);
+    public final long unsafeBuf = Platform.allocateMemory(8 * SIZE);
 
+    // For pySum
     public Method method;
 
     private byte[] resourceToBytes(String resource) {
@@ -82,10 +88,17 @@ public class PySum {
 
     @Setup
     public void setup() {
+      // Initialize the input with the same data
       Random random = new Random();
-      for (int i = 0; i < values.length; i++) {
-        values[i] = random.nextDouble() % 32;
+      for (int i = 0; i < SIZE; i++) {
+        double value = random.nextDouble() % 32;
+        javaArray[i] = value;
+        heapBuf.putDouble(8 * i, value);
+        directBuf.putDouble(8 * i, value);
+        Platform.putDouble(null, unsafeBuf + 8 * i, value);
       }
+
+      // For pySum
       try {
         final byte[] bitcode = resourceToBytes("benchmark/pysum-float64.bc");
         Class<?> clazz = new LLJVMClassLoader().loadClassFromBitcode("GeneratedClass", bitcode);
@@ -100,13 +113,48 @@ public class PySum {
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE) // This makes looking at assembly easier
-  public double run(Context context) {
+  public double pySum(Context context) {
     try {
+      // def pySum(x, s):
+      // sum = 0
+      // for i in range(s):
+      // sum += x[i]
+      // return sum
       return (double) context.method.invoke(
-        null, ArrayUtils.pyAyray(context.values), context.values.length);
+        null, ArrayUtils.pyAyray(context.javaArray), context.javaArray.length);
     } catch (Exception e) {
       e.printStackTrace();
     }
     return 0.0;
+  }
+
+  @Benchmark
+  @CompilerControl(CompilerControl.Mode.DONT_INLINE)
+  public double heapBuf(Context context) {
+    double sum = 0;
+    for (int i = 0; i < SIZE; i++) {
+      sum += context.heapBuf.getDouble(8 * i);
+    }
+    return sum;
+  }
+
+  @Benchmark
+  @CompilerControl(CompilerControl.Mode.DONT_INLINE)
+  public double directBuf(Context context) {
+    double sum = 0;
+    for (int i = 0; i < SIZE; i++) {
+      sum += context.directBuf.getDouble(8 * i);
+    }
+    return sum;
+  }
+
+  @Benchmark
+  @CompilerControl(CompilerControl.Mode.DONT_INLINE)
+  public double unsafeBuf(Context context) {
+    double sum = 0;
+    for (int i = 0; i < SIZE; i++) {
+      sum += Platform.getDouble(null, context.unsafeBuf + 8 * i);
+    }
+    return sum;
   }
 }
