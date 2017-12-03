@@ -25,7 +25,6 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import lljvm.unsafe.Platform;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.CompilerControl;
@@ -38,10 +37,26 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import maropu.lljvm.ArrayUtils;
+import lljvm.unsafe.Platform;
 import maropu.lljvm.LLJVMClassLoader;
 import maropu.lljvm.LLJVMUtils;
 
+// -- c4.2xlarge:
+// -- openjdk 1.8.0_151
+// Benchmark             Mode  Cnt     Score    Error  Units
+// LoopAdd.pyAdd         avgt   10  6592.447 ? 49.295  ns/op
+// LoopAdd.javaAdd       avgt   10   216.251 ?  0.226  ns/op
+// LoopAdd.heapBufAdd    avgt   10  4865.125 ?  0.702  ns/op
+// LoopAdd.directBufAdd  avgt   10  1236.636 ?  1.683  ns/op
+// LoopAdd.unsafeBufAdd  avgt   10   369.959 ?  0.020  ns/op
+//
+// -- openjdk 9.0.1
+// Benchmark             Mode  Cnt     Score     Error  Units
+// LoopAdd.pyAdd         avgt   10  6744.503 ? 126.727  ns/op
+// LoopAdd.javaAdd       avgt   10   165.704 ?   0.020  ns/op
+// LoopAdd.heapBufAdd    avgt   10  1040.211 ?   0.665  ns/op
+// LoopAdd.directBufAdd  avgt   10  1220.033 ?   1.314  ns/op
+// LoopAdd.unsafeBufAdd  avgt   10   370.250 ?   0.367  ns/op
 @State(Scope.Thread)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)

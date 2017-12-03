@@ -25,7 +25,6 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import lljvm.unsafe.Platform;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.CompilerControl;
@@ -38,10 +37,29 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
+import lljvm.unsafe.Platform;
 import maropu.lljvm.ArrayUtils;
 import maropu.lljvm.LLJVMClassLoader;
 import maropu.lljvm.LLJVMUtils;
 
+// -- c4.2xlarge:
+// -- openjdk 1.8.0_151
+// Benchmark             Mode  Cnt     Score    Error  Units
+// LoopSum.pySum1        avgt   10  5213.111 ? 61.576  ns/op
+// LoopSum.pySum2        avgt   10  1013.178 ?  1.960  ns/op
+// LoopSum.javaSum       avgt   10   940.134 ?  0.041  ns/op
+// LoopSum.heapBufSum    avgt   10  1864.531 ?  1.131  ns/op
+// LoopSum.directBufSum  avgt   10   964.012 ?  0.133  ns/op
+// LoopSum.unsafeBufSum  avgt   10   938.124 ?  0.104  ns/op
+//
+// -- openjdk 9.0.1
+// Benchmark             Mode  Cnt     Score     Error  Units
+// LoopSum.pySum1        avgt   10  5852.799 ?  32.757  ns/op
+// LoopSum.pySum2        avgt   10  1008.902 ?   3.445  ns/op
+// LoopSum.javaSum       avgt   10   938.333 ?   0.133  ns/op
+// LoopSum.heapBufSum    avgt   10   966.682 ?   0.077  ns/op
+// LoopSum.directBufSum  avgt   10   964.405 ?   0.176  ns/op
+// LoopSum.unsafeBufSum  avgt   10   934.953 ?   0.069  ns/op
 @State(Scope.Thread)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
