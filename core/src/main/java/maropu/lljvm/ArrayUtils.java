@@ -108,6 +108,7 @@ public class ArrayUtils {
   private static long _pyArray(long arrayAddr, long shape, long stride) {
     PyArrayHolder holder = pyArrayHolderAddr.get();
     Platform.putLong(null, holder.getArrayAddr(), arrayAddr);
+    Platform.putLong(null, holder.getShapeHolderAddr(), shape);
     Platform.putLong(null, holder.getStrideHolderAddr(), stride);
     return holder.getHolderAddr();
   }

@@ -139,25 +139,25 @@ class PyFuncSuite extends FunSuite {
       arguments = Seq(new jLong(ArrayUtils.pyAyray(doubleArray1)), new jInt(doubleArray1.size)),
       expected = 25.0
     )
-    // val floatArray2 = Array(3.0, -5.0, 2.0, 8.0).map(_.toFloat)
-    // TestUtils.doTest(
-    //   bitcode = s"$basePath/pyfunc6_for2-float32.bc",
-    //   source = s"$basePath/pyfunc6_for2.py",
-    //   functionName =
-    //     "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2413E5ArrayIfLi1E1A7mutable7alignedE",
-    //   signature = Seq(jLong.TYPE),
-    //   arguments = Seq(new jLong(ArrayUtils.pyAyray(floatArray2))),
-    //   expected = 22.0
-    // )
-    // val doubleArray2 = Array(5.0, 3.0, -9.0, 5.0, 1.0, 2.0, 2.0, 9.0, 1.0, 3.0)
-    // TestUtils.doTest(
-    //   bitcode = s"$basePath/pyfunc6_for2-float64.bc",
-    //   source = s"$basePath/pyfunc6_for2.py",
-    //   functionName =
-    //     "_cfunc__ZN12pyfunc6_for117pyfunc6_for1_2412E5ArrayIdLi1E1A7mutable7alignedEi",
-    //   signature = Seq(jLong.TYPE),
-    //   arguments = Seq(new jLong(ArrayUtils.pyAyray(doubleArray2))),
-    //   expected = 25.0
-    // )
+    val floatArray2 = Array(4.0, -5.0, 2.0, 8.0).map(_.toFloat)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc6_for2-float32.bc",
+      source = s"$basePath/pyfunc6_for2.py",
+      functionName =
+        "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2413E5ArrayIfLi1E1A7mutable7alignedE",
+      signature = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(ArrayUtils.pyAyray(floatArray2))),
+      expected = 9.0
+    )
+    val doubleArray2 = Array(5.0, 3.0, -9.0, 5.0, 1.0, 2.0, 2.0, 9.0, 1.0, 3.0)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc6_for2-float64.bc",
+      source = s"$basePath/pyfunc6_for2.py",
+      functionName =
+        "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2414E5ArrayIdLi1E1A7mutable7alignedE",
+      signature = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(ArrayUtils.pyAyray(doubleArray2))),
+      expected = 22.0
+    )
   }
 }
