@@ -23,9 +23,6 @@ import java.lang.reflect.Method;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import maropu.lljvm.ArrayUtils;
-import maropu.lljvm.LLJVMClassLoader;
-import maropu.lljvm.LLJVMUtils;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.CompilerControl;
@@ -38,23 +35,26 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
+import maropu.lljvm.ArrayUtils;
+import maropu.lljvm.LLJVMClassLoader;
+import maropu.lljvm.LLJVMUtils;
+
 @State(Scope.Thread)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @Fork(value = 1, jvmArgsAppend = {
   "-XX:+UseSuperWord",
   "-XX:+UnlockDiagnosticVMOptions",
-  "-XX:CompileCommand=print,*LoopVectorizationBenchmark.pySum",
+  "-XX:CompileCommand=print,*PySum.pySum",
+  // "-XX:PrintAssembly", // Print all the assembly
   "-XX:PrintAssemblyOptions=intel"})
 @Warmup(iterations = 5)
 @Measurement(iterations = 10)
-public class LoopVectorizationBenchmark {
-  public static final int SIZE = 1024;
-
+public class PySum {
 
   @State(Scope.Thread)
   public static class Context {
-    public final int[] values = new int[SIZE];
+    public final int[] values = new int[1024];
 
     public Method method;
 
@@ -81,7 +81,7 @@ public class LoopVectorizationBenchmark {
     @Setup
     public void setup() {
       Random random = new Random();
-      for (int i = 0; i < SIZE; i++) {
+      for (int i = 0; i < values.length; i++) {
         values[i] = random.nextInt(Integer.MAX_VALUE / 32);
       }
       final byte[] bytecode = resourceToBytes("benchmark/pysum-float64.class");
@@ -96,7 +96,8 @@ public class LoopVectorizationBenchmark {
   @CompilerControl(CompilerControl.Mode.DONT_INLINE) // This makes looking at assembly easier
   public double pySum(Context context) {
     try {
-      return (double) context.method.invoke(null, ArrayUtils.pyAyray(context.values), SIZE);
+      return (double) context.method.invoke(
+        null, ArrayUtils.pyAyray(context.values), context.values.length);
     } catch (Exception e) {
       e.printStackTrace();
     }
