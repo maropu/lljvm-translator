@@ -120,8 +120,7 @@ public class LoopVectorization {
       // for i in range(s):
       // sum += x[i]
       // return sum
-      return (double) context.method.invoke(
-        null, ArrayUtils.pyAyray(context.javaArray), context.javaArray.length);
+      return (double) context.method.invoke(null, ArrayUtils.pyAyray(context.javaArray), SIZE);
     } catch (Exception e) {
       e.printStackTrace();
     }
