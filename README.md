@@ -30,7 +30,7 @@ with open("pyfunc.bc", "wb") as out:
 
 Finally, you get a JVM class file for `plus`:
 
-    $ ./bin/lljvm-translator pyfunc.bc
+    $ ./bin/lljvm-translator ./pyfunc.bc
 
 To check gen'd bytecode, you can use `javap`:
 
@@ -48,21 +48,19 @@ public final class GeneratedClass {
        4: dstore        6
        6: dconst_0
        7: dstore        8
-       9: invokestatic  #28                 // Method lljvm/runtime/Memory.createStackFrame:()V
-      12: dload_0
-      13: ldc2_w        #30                 // double 2.0d
-      16: dmul
-      17: dstore        4
-      19: dload         4
-      21: invokestatic  #9                  // Method java/lang/Math.log10:(D)D
-      24: dstore        6
-      26: dload         6
-      28: dload_2
-      29: dadd
-      30: dstore        8
-      32: invokestatic  #8                  // Method lljvm/runtime/Memory.destroyStackFrame:()V
-      35: dload         8
-      37: dreturn
+       9: dload_0
+      10: ldc2_w        #26                 // double 2.0d
+      13: dmul
+      14: dstore        4
+      16: dload         4
+      18: invokestatic  #8                  // Method java/lang/Math.log10:(D)D
+      21: dstore        6
+      23: dload         6
+      25: dload_2
+      26: dadd
+      27: dstore        8
+      29: dload         8
+      31: dreturn
 }
 ```
 
@@ -78,7 +76,7 @@ public class LLJVMTest {
   public static void main(String[] args) {
     try {
       Class<?> clazz = (new LLJVMClassLoader()).loadClassFromBytecodeFile("GeneratedClass", "pyfunc.class");
-      Method pyfunc = clazz.getMethod("_cfunc__ZN8__main__10pyfunc_241Edd", new Class[] {double.class, double.class});
+      Method pyfunc = clazz.getMethod("_cfunc__ZN8__main__10pyfunc_241Edd", Double.TYPE, Double.TYPE);
       System.out.println(pyfunc.invoke(null, 3, 6));
     } catch (Exception e) {
       e.printStackTrace();
@@ -98,7 +96,7 @@ You can use `clang` to get LLVM bitcode for C/C++ functions:
     }
 
     $ clang -c -O2 -emit-llvm -o cfunc.bc cfunc.c
-    $ ./bin/lljvm-translator cfunc.bc
+    $ ./bin/lljvm-translator ./cfunc.bc
 
 Then, you dump gen'd bytecode:
 
@@ -107,7 +105,7 @@ Then, you dump gen'd bytecode:
 ```java
 public final class GeneratedClass {
   ...
-  public static double _cfunc(double, double);
+  public static double __Z5cfuncdd(double, double);
     descriptor: (DD)D
     Code:
        0: dconst_0
@@ -118,26 +116,24 @@ public final class GeneratedClass {
        7: dstore        8
        9: dconst_0
       10: dstore        10
-      12: invokestatic  #20                 // Method lljvm/runtime/Memory.createStackFrame:()V
-      15: dload_0
-      16: ldc2_w        #12                 // double 3.0d
-      19: dmul
-      20: dstore        4
-      22: dload         4
-      24: dload         4
-      26: dmul
-      27: dstore        6
-      29: dload_2
-      30: ldc2_w        #23                 // double 4.0d
-      33: dmul
-      34: dstore        8
-      36: dload         6
-      38: dload         8
-      40: dadd
-      41: dstore        10
-      43: invokestatic  #6                  // Method lljvm/runtime/Memory.destroyStackFrame:()V
-      46: dload         10
-      48: dreturn
+      12: dload_0
+      13: ldc2_w        #8                  // double 3.0d
+      16: dmul
+      17: dstore        4
+      19: dload         4
+      21: dload         4
+      23: dmul
+      24: dstore        6
+      26: dload_2
+      27: ldc2_w        #13                 // double 4.0d
+      30: dmul
+      31: dstore        8
+      33: dload         6
+      35: dload         8
+      37: dadd
+      38: dstore        10
+      40: dload         10
+      42: dreturn
 }
 ```
 
