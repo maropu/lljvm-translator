@@ -53,19 +53,20 @@ import maropu.lljvm.LLJVMUtils;
   "-XX:PrintAssemblyOptions=intel"})
 @Warmup(iterations = 5)
 @Measurement(iterations = 10)
-public class LoopVectorization {
+public class LoopSum {
   // Set a small value for CPU-intensive tests
   final static int SIZE = 1024;
 
   @State(Scope.Thread)
   public static class Context {
-    public final double[] javaArray = new double[SIZE];
-    public final ByteBuffer heapBuf = ByteBuffer.allocate(8 * SIZE);
-    public final ByteBuffer directBuf = ByteBuffer.allocateDirect(8 * SIZE);
-    public final long unsafeBuf = Platform.allocateMemory(8 * SIZE);
+    public final float[] javaArray = new float[SIZE];
+    public final ByteBuffer heapBuf = ByteBuffer.allocate(4 * SIZE);
+    public final ByteBuffer directBuf = ByteBuffer.allocateDirect(4 * SIZE);
+    public final long unsafeBuf = Platform.allocateMemory(4 * SIZE);
 
-    // For pySum
-    public Method method;
+    // For python functions
+    public Method pyAdd;
+    public Method pySum;
 
     private byte[] resourceToBytes(String resource) {
       ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -92,19 +93,24 @@ public class LoopVectorization {
       // Initialize the input with the same data
       Random random = new Random();
       for (int i = 0; i < SIZE; i++) {
-        double value = random.nextDouble() % 32;
+        float value = random.nextFloat() % 32;
         javaArray[i] = value;
-        heapBuf.putDouble(8 * i, value);
-        directBuf.putDouble(8 * i, value);
-        Platform.putDouble(null, unsafeBuf + 8 * i, value);
+        heapBuf.putFloat(4 * i, value);
+        directBuf.putFloat(4 * i, value);
+        Platform.putFloat(null, unsafeBuf + 4 * i, value);
       }
 
-      // For pySum
+      // For python functions
       try {
-        final byte[] bitcode = resourceToBytes("benchmark/pysum-float64.bc");
-        Class<?> clazz = new LLJVMClassLoader().loadClassFromBitcode("GeneratedClass", bitcode);
-        this.method = LLJVMUtils.getMethod(
-          clazz, "_cfunc__ZN8__main__9pySum_241E5ArrayIdLi1E1A7mutable7alignedEi",
+        Class<?> clazz1 = new LLJVMClassLoader()
+          .loadClassFromBitcode("GeneratedClass", resourceToBytes("benchmark/pyAdd-float32.bc"));
+        this.pyAdd = LLJVMUtils.getMethod(
+          clazz1, "_cfunc__ZN8__main__9pyAdd_241Eff",
+          Float.TYPE, Float.TYPE);
+        Class<?> clazz2 = new LLJVMClassLoader()
+          .loadClassFromBitcode("GeneratedClass", resourceToBytes("benchmark/pySum-float32.bc"));
+        this.pySum = LLJVMUtils.getMethod(
+          clazz2, "_cfunc__ZN8__main__9pySum_242E5ArrayIfLi1E1A7mutable7alignedEi",
           Long.TYPE, Integer.TYPE);
       } catch (IOException e) {
         throw new RuntimeException(e.getMessage());
@@ -114,24 +120,41 @@ public class LoopVectorization {
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE) // This makes looking at assembly easier
-  public double pySum(Context context) {
+  public float pySum1(Context context) {
+    try {
+      // def pyAdd(a, b):
+      // return a + b
+      float sum = 0;
+      for (int i = 0; i < SIZE; i++) {
+        sum = (float) context.pyAdd.invoke(null, sum, context.javaArray[i]);
+      }
+    return sum;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return 0.0f;
+  }
+
+  @Benchmark
+  @CompilerControl(CompilerControl.Mode.DONT_INLINE)
+  public float pySum2(Context context) {
     try {
       // def pySum(x, s):
       // sum = 0
       // for i in range(s):
       // sum += x[i]
       // return sum
-      return (double) context.method.invoke(null, ArrayUtils.pyAyray(context.javaArray), SIZE);
+      return (float) context.pySum.invoke(null, ArrayUtils.pyAyray(context.javaArray), SIZE);
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return 0.0;
+    return 0.0f;
   }
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE)
-  public double javaSum(Context context) {
-    double sum = 0;
+  public float javaSum(Context context) {
+    float sum = 0;
     for (int i = 0; i < SIZE; i++) {
       sum += context.javaArray[i];
     }
@@ -140,30 +163,30 @@ public class LoopVectorization {
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE)
-  public double heapBufSum(Context context) {
-    double sum = 0;
+  public float heapBufSum(Context context) {
+    float sum = 0;
     for (int i = 0; i < SIZE; i++) {
-      sum += context.heapBuf.getDouble(8 * i);
+      sum += context.heapBuf.getFloat(4 * i);
     }
     return sum;
   }
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE)
-  public double directBufSum(Context context) {
-    double sum = 0;
+  public float directBufSum(Context context) {
+    float sum = 0;
     for (int i = 0; i < SIZE; i++) {
-      sum += context.directBuf.getDouble(8 * i);
+      sum += context.directBuf.getFloat(4 * i);
     }
     return sum;
   }
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE)
-  public double unsafeBufSum(Context context) {
-    double sum = 0;
+  public float unsafeBufSum(Context context) {
+    float sum = 0;
     for (int i = 0; i < SIZE; i++) {
-      sum += Platform.getDouble(null, context.unsafeBuf + 8 * i);
+      sum += Platform.getFloat(null, context.unsafeBuf + 4 * i);
     }
     return sum;
   }
