@@ -128,8 +128,8 @@ public class LoopSum {
         Class<?> clazz2 = new LLJVMClassLoader()
           .loadClassFromBitcode("GeneratedClass", resourceToBytes("benchmark/pySum-float32.bc"));
         this.pySum = LLJVMUtils.getMethod(
-          clazz2, "_cfunc__ZN8__main__9pySum_242E5ArrayIfLi1E1A7mutable7alignedEi",
-          Long.TYPE, Integer.TYPE);
+          clazz2, "_cfunc__ZN8__main__9pySum_242E5ArrayIfLi1E1A7mutable7alignedE",
+          Long.TYPE);
       } catch (IOException e) {
         throw new RuntimeException(e.getMessage());
       }
@@ -141,7 +141,7 @@ public class LoopSum {
   public float pySum1(Context context) {
     try {
       // def pyAdd(a, b):
-      // return a + b
+      //   return a + b
       float sum = 0;
       for (int i = 0; i < SIZE; i++) {
         sum = (float) context.pyAdd.invoke(null, sum, context.javaArray[i]);
@@ -157,12 +157,13 @@ public class LoopSum {
   @CompilerControl(CompilerControl.Mode.DONT_INLINE)
   public float pySum2(Context context) {
     try {
-      // def pySum(x, s):
-      // sum = 0
-      // for i in range(s):
-      // sum += x[i]
-      // return sum
-      return (float) context.pySum.invoke(null, ArrayUtils.pyAyray(context.javaArray), SIZE);
+      // def pySum(x):
+      //   (s, ) = x.shape
+      //   sum = 0.0
+      //   for i in range(s):
+      //     sum += x[i]
+      //   return sum
+      return (float) context.pySum.invoke(null, ArrayUtils.pyAyray(context.javaArray));
     } catch (Exception e) {
       e.printStackTrace();
     }

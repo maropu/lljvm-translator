@@ -26,12 +26,13 @@ def write_pyfunc_as_bitcode(pyfunc, sig, filename_suffix=""):
 def pyAdd(a, b):
   return a + b;
 
-def pySum(x, s):
-  sum = 0
+def pySum(x):
+  (s, ) = x.shape
+  sum = 0.0
   for i in range(s):
     sum += x[i]
   return sum
 
 write_pyfunc_as_bitcode(pyAdd, "float32(float32, float32)", "-float32")
-write_pyfunc_as_bitcode(pySum, "float32(float32[:], int32)", "-float32")
+write_pyfunc_as_bitcode(pySum, "float32(float32[:])", "-float32")
 
