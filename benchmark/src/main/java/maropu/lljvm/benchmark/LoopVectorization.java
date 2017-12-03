@@ -54,7 +54,8 @@ import maropu.lljvm.LLJVMUtils;
 @Warmup(iterations = 5)
 @Measurement(iterations = 10)
 public class LoopVectorization {
-  final static int SIZE = 4 * 1024 * 1024;
+  // Set a small value for CPU-intensive tests
+  final static int SIZE = 1024;
 
   @State(Scope.Thread)
   public static class Context {
