@@ -37,7 +37,9 @@ public class ArrayUtils {
   private static final long COMPRESSED_OOP_BASE = 0L;
   private static final int COMPRESSED_OOP_SHIFT = 3;
 
-  private static boolean isCompressedOop() {
+  private static boolean isCompressedOop = false;
+
+  static {
     try {
       final Class<?> beanClazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
       final Object hotSpotBean = ManagementFactory.newPlatformMXBeanProxy(
@@ -46,9 +48,9 @@ public class ArrayUtils {
         beanClazz);
       final Method getVMOption = hotSpotBean.getClass().getMethod("getVMOption", String.class);
       final Object vmOption = getVMOption.invoke(hotSpotBean, "UseCompressedOops");
-      return Boolean.valueOf(vmOption.getClass().getMethod("getValue").invoke(vmOption).toString());
+      isCompressedOop = Boolean.valueOf(vmOption.getClass().getMethod("getValue").invoke(vmOption).toString());
     } catch (Exception e) {
-      return false;
+      // Just ignore it
     }
   }
 
@@ -62,7 +64,7 @@ public class ArrayUtils {
         return Platform.getInt(holder, baseOffset);
       case 8:
         // In 64bit JVMs, we need to check if compressed OOPs enabled
-        if (isCompressedOop()) {
+        if (isCompressedOop) {
           long coop = Platform.getInt(holder, baseOffset) & 0x00000000FFFFFFFFL;
           long narrowBase = COMPRESSED_OOP_BASE;
           long narrowShift = COMPRESSED_OOP_SHIFT;
