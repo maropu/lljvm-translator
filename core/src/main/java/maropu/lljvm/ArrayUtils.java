@@ -23,17 +23,7 @@ import java.lang.reflect.Method;
 import lljvm.unsafe.Platform;
 
 public class ArrayUtils {
-
-  // We assume multiple threads possibly access this
-  private static ThreadLocal<PyArrayHolder> pyArrayHolderAddr = new ThreadLocal<PyArrayHolder>() {
-    @Override public PyArrayHolder initialValue() {
-      return new PyArrayHolder();
-    }
-  };
-
-  // TODO: In JDK8, we can use `VMSupport` in JOL v0.4 or earlier versions? Otherwise,
-  // we can use `HotSpot Serviceability Agent` in JDK9?
-  //  - https://stackoverflow.com/questions/46597668/how-to-determine-if-java-heap-is-using-compressed-pointers-and-whether-or-not-re/46600331
+  // TODO: We need to set the values below from JVM runtime
   private static final long COMPRESSED_OOP_BASE = 0L;
   private static final int COMPRESSED_OOP_SHIFT = 3;
 
@@ -48,11 +38,19 @@ public class ArrayUtils {
         beanClazz);
       final Method getVMOption = hotSpotBean.getClass().getMethod("getVMOption", String.class);
       final Object vmOption = getVMOption.invoke(hotSpotBean, "UseCompressedOops");
-      isCompressedOop = Boolean.valueOf(vmOption.getClass().getMethod("getValue").invoke(vmOption).toString());
+      isCompressedOop = Boolean.valueOf(
+        vmOption.getClass().getMethod("getValue").invoke(vmOption).toString());
     } catch (Exception e) {
       // Just ignore it
     }
   }
+
+  // We assume multiple threads possibly access this
+  private static ThreadLocal<PyArrayHolder> pyArrayHolderAddr = new ThreadLocal<PyArrayHolder>() {
+    @Override public PyArrayHolder initialValue() {
+      return new PyArrayHolder();
+    }
+  };
 
   private static long _addressOf(Object o) {
     final Object[] holder = new Object[]{ o };
