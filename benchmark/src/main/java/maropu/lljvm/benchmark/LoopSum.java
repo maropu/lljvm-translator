@@ -66,7 +66,7 @@ import maropu.lljvm.LLJVMUtils;
 @Fork(value = 1, jvmArgsAppend = {
   "-XX:+UseSuperWord",
   "-XX:+UnlockDiagnosticVMOptions",
-  "-XX:CompileCommand=print,*LoopVectorization.*",
+  "-XX:CompileCommand=print,*LoopSum.*",
   // "-XX:PrintAssembly", // Print all the assembly
   "-XX:PrintAssemblyOptions=intel"})
 @Warmup(iterations = 5)
