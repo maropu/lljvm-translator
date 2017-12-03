@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 
-package maropu.lljvm.benchmark;
+package maropu.lljvm.benchmark.vectorization;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -35,72 +33,40 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import maropu.lljvm.ArrayUtils;
-import maropu.lljvm.LLJVMClassLoader;
-import maropu.lljvm.LLJVMUtils;
-
 @State(Scope.Thread)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @BenchmarkMode(Mode.AverageTime)
 @Fork(value = 1, jvmArgsAppend = {
   "-XX:+UseSuperWord",
   "-XX:+UnlockDiagnosticVMOptions",
-  "-XX:CompileCommand=print,*PySum.pySum",
+  "-XX:CompileCommand=print,*ByteBuffer.run",
   // "-XX:PrintAssembly", // Print all the assembly
   "-XX:PrintAssemblyOptions=intel"})
 @Warmup(iterations = 5)
 @Measurement(iterations = 10)
-public class PySum {
+public class HeapByteBuffer {
+  final static int SIZE = 1024;
 
   @State(Scope.Thread)
   public static class Context {
-    public final int[] values = new int[1024];
-
-    public Method method;
-
-    private byte[] resourceToBytes(String resource) {
-      ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-      try (InputStream inStream = Thread.currentThread().getContextClassLoader()
-          .getResourceAsStream(resource)) {
-        boolean reading = true;
-        while (reading) {
-          int in = inStream.read();
-          if (in == -1) {
-            reading = false;
-          } else {
-            outStream.write(in);
-          }
-        }
-        outStream.flush();
-      } catch (Exception e) {
-        throw new RuntimeException(e.getMessage());
-      }
-      return outStream.toByteArray();
-    }
+    public final ByteBuffer values = ByteBuffer.allocate(8 * SIZE);
 
     @Setup
     public void setup() {
       Random random = new Random();
-      for (int i = 0; i < values.length; i++) {
-        values[i] = random.nextInt(Integer.MAX_VALUE / 32);
+      for (int i = 0; i < SIZE; i++) {
+        values.putDouble(8 * i, random.nextDouble() % 32);
       }
-      final byte[] bytecode = resourceToBytes("benchmark/pysum-float64.class");
-      Class<?> clazz = new LLJVMClassLoader().loadClassFromBytecode("GeneratedClass", bytecode);
-      this.method = LLJVMUtils.getMethod(
-        clazz, "_cfunc__ZN8__main__9pySum_241E5ArrayIdLi1E1A7mutable7alignedEi",
-        Long.TYPE, Integer.TYPE);
     }
   }
 
   @Benchmark
   @CompilerControl(CompilerControl.Mode.DONT_INLINE) // This makes looking at assembly easier
-  public double pySum(Context context) {
-    try {
-      return (double) context.method.invoke(
-        null, ArrayUtils.pyAyray(context.values), context.values.length);
-    } catch (Exception e) {
-      e.printStackTrace();
+  public double run(Context context) {
+    double sum = 0.0;
+    for (int i = 0; i < SIZE; i++) {
+      sum += context.values.getDouble(8 * i);
     }
-    return 0.0;
+    return sum;
   }
 }
