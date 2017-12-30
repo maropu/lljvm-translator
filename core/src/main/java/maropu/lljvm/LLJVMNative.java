@@ -24,6 +24,11 @@ import java.io.IOException;
  */
 class LLJVMNative {
 
+  // To decompress compressed OOPs, get variables from JVM runtime
+  public native boolean isCompressedOop() throws LLJVMRuntimeException;
+  public native long getNarrowOffsetBase () throws LLJVMRuntimeException;
+  public native int getNarrowOffsetShift() throws LLJVMRuntimeException;
+
   // Parse an input LLVM bitcode and transform it to JVM bytecode
   public native String parseBitcode(byte[] bitcode) throws IOException;
 
@@ -34,7 +39,7 @@ class LLJVMNative {
   public native String asBitcode(byte[] bitcode) throws IOException;
 
   // This exception is mainly used in native code
-  public void throwException(String message) throws IOException {
+  public void throwException(String message) throws LLJVMRuntimeException {
       throw new LLJVMRuntimeException(message);
   }
 }

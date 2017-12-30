@@ -89,10 +89,10 @@ def build(bld):
             use = 'llvm',
             uselib_store = 'lljvm')
 
-  # Copys the built library into src/main/java/native/
+  # Copys the built library into src/main/java/lib/
   bld(rule = 'cp ${SRC} ${TGT}',
       source = 'liblljvm.%s' % bld.env.LLJVM_COMPILE_SHLIB_SUFFIX,
-      target = '../../native/%s/%s/' % (bld.env.LLJVM_COMPILE_OS, bld.env.LLJVM_COMPILE_ARCH))
+      target = '../../lib/%s/%s/' % (bld.env.LLJVM_COMPILE_OS, bld.env.LLJVM_COMPILE_ARCH))
 
   # Builds an executable LLJVM program for tests
   bld.program(source = 'main.cc',

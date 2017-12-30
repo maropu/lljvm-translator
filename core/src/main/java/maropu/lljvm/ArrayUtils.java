@@ -17,31 +17,38 @@
 
 package maropu.lljvm;
 
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-
 import lljvm.unsafe.Platform;
 
 public class ArrayUtils {
-  // TODO: We need to set the values below from JVM runtime
-  private static final long COMPRESSED_OOP_BASE = 0L;
-  private static final int COMPRESSED_OOP_SHIFT = 3;
-
-  private static boolean isCompressedOop = false;
+  // Variables below are used to decompress COOPs in JDKs
+  //  - https://wiki.openjdk.java.net/display/HotSpot/CompressedOops
+  private static long narrowOffsetBase;
+  private static int narrowOffsetShift;
+  private static boolean isCompressedOop;
+  private static boolean isJavaArrayAddrSupported;
+  private static String jvmName;
 
   static {
+    final String jvmVendor = System.getProperty("java.vendor");
+    final int addrSize = Platform.addressSize() * 8;
+    // TODO: OpenJDK/Oracle JDKs are only supported now
+    if (jvmVendor.contains("Oracle")) {
+      jvmName = String.format("OpenJDK/Oracle %d-bit JDK", addrSize);
+      // Only support 64-bit JDKs
+      isJavaArrayAddrSupported = (addrSize == 64);
+    } else {
+      jvmName = String.format("Unknown %d-bit JDK (vendor=%s)", addrSize, jvmVendor);
+      isJavaArrayAddrSupported = false;
+    }
     try {
-      final Class<?> beanClazz = Class.forName("com.sun.management.HotSpotDiagnosticMXBean");
-      final Object hotSpotBean = ManagementFactory.newPlatformMXBeanProxy(
-        ManagementFactory.getPlatformMBeanServer(),
-        "com.sun.management:type=HotSpotDiagnostic",
-        beanClazz);
-      final Method getVMOption = hotSpotBean.getClass().getMethod("getVMOption", String.class);
-      final Object vmOption = getVMOption.invoke(hotSpotBean, "UseCompressedOops");
-      isCompressedOop = Boolean.valueOf(
-        vmOption.getClass().getMethod("getValue").invoke(vmOption).toString());
+      if (isJavaArrayAddrSupported) {
+        final LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
+        narrowOffsetBase = lljvmApi.getNarrowOffsetBase();
+        narrowOffsetShift = lljvmApi.getNarrowOffsetShift();
+        isCompressedOop = lljvmApi.isCompressedOop();
+      }
     } catch (Exception e) {
-      // Just ignore it
+      isJavaArrayAddrSupported = false;
     }
   }
 
@@ -53,28 +60,28 @@ public class ArrayUtils {
   };
 
   private static long _addressOf(Object o) {
+    // If not supported, just throws an exception
+    if (!isJavaArrayAddrSupported) {
+      throw new LLJVMRuntimeException(
+        String.format("Java array addressing is not supported in %s", jvmName));
+    }
+
     final Object[] holder = new Object[]{ o };
     long baseOffset = Platform.arrayBaseOffset(Object[].class);
-    int addressSize = Platform.addressSize();
-    switch (addressSize) {
-      case 4:
-        // In 32bit JVMs, addresses are stored as they are
-        return Platform.getInt(holder, baseOffset);
-      case 8:
-        // In 64bit JVMs, we need to check if compressed OOPs enabled
-        if (isCompressedOop) {
-          long coop = Platform.getInt(holder, baseOffset) & 0x00000000FFFFFFFFL;
-          long narrowBase = COMPRESSED_OOP_BASE;
-          long narrowShift = COMPRESSED_OOP_SHIFT;
-          // Decompress a compressed oop here
-          //  - https://wiki.openjdk.java.net/display/HotSpot/CompressedOops
-          return narrowBase + (coop << narrowShift);
-        } else {
-          return Platform.getLong(holder, baseOffset);
-        }
-      default:
-        throw new LLJVMRuntimeException("Unsupported address size: " + addressSize);
+    // In 64-bit JVMs, we need to check if compressed OOPs enabled
+    if (isCompressedOop) {
+      long coop = Platform.getInt(holder, baseOffset) & 0x00000000FFFFFFFFL;
+      long narrowBase = narrowOffsetBase;
+      long narrowShift = narrowOffsetShift;
+      // Decompress the compressed OOP here
+      return narrowBase + (coop << narrowShift);
+    } else {
+      return Platform.getLong(holder, baseOffset);
     }
+  }
+
+  public static boolean isIsJavaArrayAddrSupported() {
+    return isJavaArrayAddrSupported;
   }
 
   public static long addressOf(boolean[] ar) {

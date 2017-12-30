@@ -9,6 +9,30 @@ extern "C" {
 #endif
 /*
  * Class:     maropu_lljvm_LLJVMNative
+ * Method:    isCompressedOop
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_maropu_lljvm_LLJVMNative_isCompressedOop
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     maropu_lljvm_LLJVMNative
+ * Method:    getNarrowOffsetBase
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL Java_maropu_lljvm_LLJVMNative_getNarrowOffsetBase
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     maropu_lljvm_LLJVMNative
+ * Method:    getNarrowOffsetShift
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_maropu_lljvm_LLJVMNative_getNarrowOffsetShift
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     maropu_lljvm_LLJVMNative
  * Method:    parseBitcode
  * Signature: ([B)Ljava/lang/String;
  */

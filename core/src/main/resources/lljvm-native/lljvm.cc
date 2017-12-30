@@ -35,6 +35,21 @@ inline void throw_exception(JNIEnv *env, jobject self, const std::string& err_ms
   env->CallVoidMethod(self, mth_throwex, env->NewStringUTF(err_msg.c_str()));
 }
 
+JNIEXPORT jboolean JNICALL Java_maropu_lljvm_LLJVMNative_isCompressedOop
+  (JNIEnv *env, jobject self) {
+  return true;
+}
+
+JNIEXPORT jlong JNICALL Java_maropu_lljvm_LLJVMNative_getNarrowOffsetBase
+  (JNIEnv *, jobject) {
+  return 0L;
+}
+
+JNIEXPORT jint JNICALL Java_maropu_lljvm_LLJVMNative_getNarrowOffsetShift
+  (JNIEnv *, jobject) {
+  return 3;
+}
+
 const std::string parseBitcode(const char *bitcode, size_t size, unsigned int dbg) {
   LLVMContext context;
   auto buf = MemoryBuffer::getMemBuffer(StringRef((const char *)bitcode, size));
