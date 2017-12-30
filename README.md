@@ -152,7 +152,7 @@ the performance of the Vectorized UDFs:
 
 ## TODO
 
- * Fix many bugs in `lljvm-backend` and add tests
+ * Fix many bugs in `lljvm-native` and add tests
  * Add more platform-dependent binaries in `src/main/resources/native`
  * Make less dependencies in the native binaries
  * Register this library in the Maven Central Repository

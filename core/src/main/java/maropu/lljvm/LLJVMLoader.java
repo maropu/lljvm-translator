@@ -135,7 +135,7 @@ public class LLJVMLoader {
   private static File findNativeLibrary() {
     // Load an OS-dependent native library inside a jar file
     String lljvmNativeLibraryName = System.mapLibraryName("lljvm");
-    String lljvmNativeLibraryPath = "/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
+    String lljvmNativeLibraryPath = "/lib/" + OSInfo.getNativeLibFolderPathForCurrentOS();
     boolean hasNativeLib = hasResource(lljvmNativeLibraryPath + "/" + lljvmNativeLibraryName);
     if (!hasNativeLib) {
       String errorMessage = String.format(

@@ -25,8 +25,8 @@ set -e -o pipefail
 # Determine the current working directory
 _DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Run tests for lljvm-backend code
-cd ${_DIR}/../core/src/main/resources/lljvm-backend
+# Run tests for lljvm-native code
+cd ${_DIR}/../core/src/main/resources/lljvm-native
 ./waf configure && ./waf
 
 # Run tests for java code
