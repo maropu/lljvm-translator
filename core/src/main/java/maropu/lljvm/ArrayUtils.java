@@ -22,9 +22,9 @@ import lljvm.unsafe.Platform;
 public class ArrayUtils {
   // Variables below are used to decompress COOPs in JDKs
   //  - https://wiki.openjdk.java.net/display/HotSpot/CompressedOops
-  private static long narrowOffsetBase;
-  private static int narrowOffsetShift;
-  private static boolean isCompressedOop;
+  private static long narrowOffsetBase = 0L;
+  private static int narrowOffsetShift = 0;
+  private static boolean isCompressedOop = false;
   private static boolean isJavaArrayAddrSupported;
   private static String jvmName;
 
@@ -43,9 +43,18 @@ public class ArrayUtils {
     try {
       if (isJavaArrayAddrSupported) {
         final LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
-        narrowOffsetBase = lljvmApi.getNarrowOffsetBase();
-        narrowOffsetShift = lljvmApi.getNarrowOffsetShift();
-        isCompressedOop = lljvmApi.isCompressedOop();
+        final byte[] byteArray = "".getBytes();
+        final long rawAddr = lljvmApi.addressOf(byteArray) - Platform.BYTE_ARRAY_OFFSET;
+        final long jvmAddr = _addressOf(byteArray);
+        // If OOPs compressed, we turn on a compressed mode here
+        isCompressedOop = rawAddr != jvmAddr;
+        if (isCompressedOop) {
+          final long rt = rawAddr / jvmAddr;
+          // Must be an exponent of 2
+          assert(Long.bitCount(rt) == 1);
+          narrowOffsetShift = Long.numberOfTrailingZeros(rt);
+          narrowOffsetBase = rawAddr - (jvmAddr << narrowOffsetShift);
+        }
       }
     } catch (Exception e) {
       isJavaArrayAddrSupported = false;
