@@ -20,40 +20,36 @@ import math
 from numba import cfunc
 
 # A helper function to write a python function as LLVM bitcode
-def write_pyfunc_as_bitcode(pyfunc, sig, filename_suffix=""):
+def write_bitcode_with_cfunc(pyfunc, sig, filename_suffix=""):
   with open(pyfunc.__name__ + filename_suffix + ".bc", "wb") as fout:
     f = cfunc(sig)(pyfunc)
     fout.write(f._library._final_module.as_bitcode())
 
 from pyfunc1 import *
-write_pyfunc_as_bitcode(pyfunc1, "int32(int32, int32)", "-int32")
-write_pyfunc_as_bitcode(pyfunc1, "int64(int64, int64)", "-int64")
-write_pyfunc_as_bitcode(pyfunc1, "float32(float32, float32)", "-float32")
-write_pyfunc_as_bitcode(pyfunc1, "float64(float64, float64)", "-float64")
+write_bitcode_with_cfunc(pyfunc1, "int32(int32, int32)", "-cfunc-int32")
+write_bitcode_with_cfunc(pyfunc1, "int64(int64, int64)", "-cfunc-int64")
+write_bitcode_with_cfunc(pyfunc1, "float32(float32, float32)", "-cfunc-float32")
+write_bitcode_with_cfunc(pyfunc1, "float64(float64, float64)", "-cfunc-float64")
 
 from pyfunc2 import *
-write_pyfunc_as_bitcode(pyfunc2, "float32(float32, float32)", "-float32")
-write_pyfunc_as_bitcode(pyfunc2, "float64(float64, float64)", "-float64")
+write_bitcode_with_cfunc(pyfunc2, "float32(float32, float32)", "-cfunc-float32")
+write_bitcode_with_cfunc(pyfunc2, "float64(float64, float64)", "-cfunc-float64")
 
 from pyfunc3 import *
-write_pyfunc_as_bitcode(pyfunc3, "float32(float32, float32)", "-float32")
-write_pyfunc_as_bitcode(pyfunc3, "float64(float64, float64)", "-float64")
+write_bitcode_with_cfunc(pyfunc3, "float32(float32, float32)", "-cfunc-float32")
+write_bitcode_with_cfunc(pyfunc3, "float64(float64, float64)", "-cfunc-float64")
 
 from pyfunc4 import *
-write_pyfunc_as_bitcode(pyfunc4, "int32(int32)", "-int32")
+write_bitcode_with_cfunc(pyfunc4, "int32(int32)", "-cfunc-int32")
 
 from pyfunc5 import *
-write_pyfunc_as_bitcode(pyfunc5, "int32(int32)", "-int32")
+write_bitcode_with_cfunc(pyfunc5, "int32(int32)", "-cfunc-int32")
 
 from pyfunc6_for1 import *
-write_pyfunc_as_bitcode(pyfunc6_for1, "float32(float32[:], int32)", "-float32")
-write_pyfunc_as_bitcode(pyfunc6_for1, "float64(float64[:], int32)", "-float64")
+write_bitcode_with_cfunc(pyfunc6_for1, "float32(float32[:], int32)", "-cfunc-float32")
+write_bitcode_with_cfunc(pyfunc6_for1, "float64(float64[:], int32)", "-cfunc-float64")
 
 from pyfunc6_for2 import *
-write_pyfunc_as_bitcode(pyfunc6_for2, "float32(float32[:])", "-float32")
-write_pyfunc_as_bitcode(pyfunc6_for2, "float64(float64[:])", "-float64")
-
-from pyfunc7 import *
-write_pyfunc_as_bitcode(pyfunc7, "float32(float32[:])", "-float32")
-write_pyfunc_as_bitcode(pyfunc7, "float64(float64[:])", "-float64")
+write_bitcode_with_cfunc(pyfunc6_for2, "float32(float32[:])", "-cfunc-float32")
+write_bitcode_with_cfunc(pyfunc6_for2, "float64(float64[:])", "-cfunc-float64")
 

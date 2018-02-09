@@ -33,7 +33,7 @@ class LLJVMNativeSuite extends FunSuite {
   }
 
   test("asBitcode") {
-    val bitcode = TestUtils.resourceToBytes("llvm-pyfunc-bitcode/pyfunc1-int32.bc")
+    val bitcode = TestUtils.resourceToBytes("llvm-pyfunc-bitcode/pyfunc1-cfunc-int32.bc")
     val lljvmApi = LLJVMLoader.loadLLJVMApi()
     // scalastyle:off line.size.limit
     TestUtils.compareCode(lljvmApi.asBitcode(bitcode),
