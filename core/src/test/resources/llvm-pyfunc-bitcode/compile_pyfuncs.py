@@ -20,10 +20,19 @@ import math
 from numba import cfunc
 
 # A helper function to write a python function as LLVM bitcode
+# by using the `cfunc` decorator.
 def write_bitcode_with_cfunc(pyfunc, sig, filename_suffix=""):
   with open(pyfunc.__name__ + filename_suffix + ".bc", "wb") as fout:
     f = cfunc(sig)(pyfunc)
+    # print f.inspect_llvm()
     fout.write(f._library._final_module.as_bitcode())
+
+# TODO: Gen'd LLVM bitcode by the `jit` decorator is not supported yet
+def write_bitcode_with_jit(pyfunc, sig, filename_suffix=""):
+  with open(pyfunc.__name__ + filename_suffix + ".bc", "wb") as fout:
+    f = jit(sig)(pyfunc)
+    # print f.inspect_llvm()
+    fout.write(f.overloads[f.signatures[0]].library._final_module.as_bitcode())
 
 from pyfunc1 import *
 write_bitcode_with_cfunc(pyfunc1, "int32(int32, int32)", "-cfunc-int32")
