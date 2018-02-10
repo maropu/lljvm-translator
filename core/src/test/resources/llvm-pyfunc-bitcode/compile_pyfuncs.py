@@ -17,7 +17,7 @@
 
 import math
 
-from numba import cfunc
+from numba import cfunc, jit
 
 # A helper function to write a python function as LLVM bitcode
 # by using the `cfunc` decorator.
@@ -28,6 +28,7 @@ def write_bitcode_with_cfunc(pyfunc, sig, filename_suffix=""):
     fout.write(f._library._final_module.as_bitcode())
 
 # TODO: Gen'd LLVM bitcode by the `jit` decorator is not supported yet
+# because we cannot resolve external references in it.
 def write_bitcode_with_jit(pyfunc, sig, filename_suffix=""):
   with open(pyfunc.__name__ + filename_suffix + ".bc", "wb") as fout:
     f = jit(sig)(pyfunc)
@@ -61,4 +62,8 @@ write_bitcode_with_cfunc(pyfunc6_for1, "float64(float64[:], int32)", "-cfunc-flo
 from pyfunc6_for2 import *
 write_bitcode_with_cfunc(pyfunc6_for2, "float32(float32[:])", "-cfunc-float32")
 write_bitcode_with_cfunc(pyfunc6_for2, "float64(float64[:])", "-cfunc-float64")
+
+# TODO: We cannot resolve function chains in gen'd class files
+# from pyfunc7 import *
+# write_bitcode_with_cfunc(pyfunc7, "float32(float32, float32)", "-cfunc-float32")
 
