@@ -30,7 +30,7 @@ using namespace llvm;
 inline void throw_exception(JNIEnv *env, jobject self, const std::string& err_msg) {
   jclass c = env->FindClass("maropu/lljvm/LLJVMNative");
   assert(c != 0);
-  jmethodID mth_throwex = env->GetMethodID(c, "throwException", "(Ljava/lang/String)V");
+  jmethodID mth_throwex = env->GetMethodID(c, "throwException", "(Ljava/lang/String;)V");
   assert(mth_throwex != 0);
   env->CallVoidMethod(self, mth_throwex, env->NewStringUTF(err_msg.c_str()));
 }
@@ -79,8 +79,13 @@ JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_parseBitcode
     (JNIEnv *env, jobject self, jbyteArray bitcode) {
   const jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);
-  const std::string out = parseBitcode((const char *)src, size, 0);
-  return env->NewStringUTF(out.c_str());
+  try {
+    const std::string out = parseBitcode((const char *)src, size, 0);
+    return env->NewStringUTF(out.c_str());
+  } catch (const std::string& e) {
+    throw_exception(env, self, e);
+    return env->NewStringUTF("");
+  }
 }
 
 JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode

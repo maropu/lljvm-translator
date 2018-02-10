@@ -22,13 +22,13 @@ import java.io.IOException;
 /**
  * A JNI interface of the LLJVM implementation.
  */
-class LLJVMNative {
+public class LLJVMNative {
 
   // Calculate the memory address of a given array
   public native long addressOf(byte[] ar) throws LLJVMRuntimeException;
 
   // Parse an input LLVM bitcode and transform it to JVM bytecode
-  public native String parseBitcode(byte[] bitcode) throws IOException;
+  public native String parseBitcode(byte[] bitcode) throws IOException, LLJVMRuntimeException;
 
   // Return a human-readable LLVM bitcode
   public native void veryfyBitcode(byte[] bitcode) throws IOException, LLJVMRuntimeException;

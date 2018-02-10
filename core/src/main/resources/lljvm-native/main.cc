@@ -50,7 +50,12 @@ int main(int argc, char** argv) {
     return -1;
   }
   std::string str((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
-  std::string bytecode = parseBitcode(str.c_str(), str.size(), debugLevel);
-  std::cout << bytecode << "\n";
+  try {
+    std::string bytecode = parseBitcode(str.c_str(), str.size(), debugLevel);
+    std::cout << bytecode << "\n";
+  } catch (const char *e) {
+    std::cerr << e << std::endl;
+    return -1;
+  }
   return 0;
 }
