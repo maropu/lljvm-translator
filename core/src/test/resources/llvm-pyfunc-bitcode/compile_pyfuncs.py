@@ -67,3 +67,7 @@ write_bitcode_with_cfunc(pyfunc6_for2, "float64(float64[:])", "-cfunc-float64")
 # from pyfunc7 import *
 # write_bitcode_with_cfunc(pyfunc7, "float32(float32, float32)", "-cfunc-float32")
 
+from pyfunc8 import *
+write_bitcode_with_cfunc(pyfunc8, "float32[:](float32[:], float32[:])", "-cfunc-float32")
+write_bitcode_with_cfunc(pyfunc8, "float64[:](float64[:], float64[:])", "-cfunc-float64")
+

@@ -25,6 +25,8 @@ class PyFuncSuite extends FunSuite {
 
   val basePath = "llvm-pyfunc-bitcode"
 
+  // scalastyle:off line.size.limit
+
   test("x + y") {
     TestUtils.doTest(
       bitcode = s"$basePath/pyfunc1-cfunc-int32.bc",
@@ -160,4 +162,29 @@ class PyFuncSuite extends FunSuite {
       expected = 22.0
     )
   }
+
+  ignore("numpy.exp") {
+    val floatX = Array(1.0f, 2.0f, 3.0f, 4.0f)
+    val floatY = Array(2.0f, 4.0f, 8.0f, 1.0f)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc8-cfunc-float32.bc",
+      source = s"$basePath/pyfunc8.py",
+      functionName = "cfunc._ZN7pyfunc812pyfunc8$2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE",
+      signature = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(new jLong(ArrayUtils.pyAyray(floatX)), new jLong(ArrayUtils.pyAyray(floatY))),
+      expected = null
+    )
+    val doubleX = Array(1.0, 2.0, 3.0, 4.0)
+    val doubleY = Array(2.0, 4.0, 8.0, 1.0)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc8-cfunc-float64.bc",
+      source = s"$basePath/pyfunc8.py",
+      functionName = "cfunc._ZN7pyfunc812pyfunc8$2418E5ArrayIdLi1E1A7mutable7alignedE5ArrayIdLi1E1A7mutable7alignedE",
+      signature = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(new jLong(ArrayUtils.pyAyray(doubleX)), new jLong(ArrayUtils.pyAyray(doubleY))),
+      expected = null
+    )
+  }
+
+  // scalastyle:on line.size.limit
 }
