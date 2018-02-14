@@ -163,6 +163,7 @@ class PyFuncSuite extends FunSuite {
     )
   }
 
+  // TODO: Currently, we cannot resolve external references in the gen'd code
   ignore("numpy.exp") {
     val floatX = Array(1.0f, 2.0f, 3.0f, 4.0f)
     val floatY = Array(2.0f, 4.0f, 8.0f, 1.0f)
@@ -185,6 +186,9 @@ class PyFuncSuite extends FunSuite {
       expected = null
     )
   }
+
+  // TODO: Currently, we cannot use 2-d arrays in the gen'd code
+  ignore("logistic regression") {}
 
   // scalastyle:on line.size.limit
 }
