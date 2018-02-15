@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javafx.util.Pair;
 
 import lljvm.util.ReflectionUtils;
 
@@ -38,14 +39,15 @@ import lljvm.util.ReflectionUtils;
  */
 public final class Function {
     /** Set of registered classes */
-    private static Set<String> registeredClasses = new HashSet<String>();
+    private static Set<String> registeredClasses = new HashSet<>();
     /** Map of function signatures to function pointers */
-    private static Map<String, Long> functionPointers
-        = new HashMap<String, Long>();
+    private static Map<String, Long> functionPointers = new HashMap<>();
     /** Map of function pointers to Method objects */
-    private static Map<Long, Method> functionObjects
-        = new HashMap<Long, Method>();
-    
+    private static Map<Long, Method> functionObjects = new HashMap<>();
+
+    /** Map of external functions to Method objects */
+    private static Map<String, Pair<Long, Method>> externalFunctions = new HashMap<>();
+
     /**
      * Prevent this class from being instantiated.
      */
@@ -83,8 +85,7 @@ public final class Function {
      * @param methodSignature  the signature of the method
      * @return                 a function pointer for the specified method
      */
-    public static long getFunctionPointer(String classname,
-                                         String methodSignature) {
+    public static long getFunctionPointer(String classname, String methodSignature) {
         try {
             registerClass(classname);
         } catch(ClassNotFoundException e) {
@@ -96,7 +97,20 @@ public final class Function {
                     "Unable to get function pointer for "+sig);
         return functionPointers.get(sig);
     }
-    
+
+    public static long getExternalFunctionPointer(String methodSignature) {
+        if (externalFunctions.containsKey(methodSignature)) {
+            final Pair<Long, Method> func = externalFunctions.get(methodSignature);
+            if (!functionObjects.containsKey(func.getKey())) {
+                functionObjects.put(func.getKey(), func.getValue());
+            }
+            return func.getKey();
+        } else {
+            throw new IllegalArgumentException(
+                    "Unable to get function pointer for " + methodSignature);
+        }
+    }
+
     /**
      * Invoke the method pointed to by the given function pointer with the
      * given arguments.

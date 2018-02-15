@@ -31,14 +31,18 @@ void JVMWriter::printValueLoad(const Value *v) {
     if(const Function *f = dyn_cast<Function>(v)) {
         std::string sig = getValueName(f)
                         + getCallSignature(f->getFunctionType());
-        if(externRefs.count(v))
-            printSimpleInstruction("CLASSFORMETHOD", sig);
-        else
+        if(externRefs.count(v)) {
+            printSimpleInstruction("ldc", '"' + sig + '"');
+            printSimpleInstruction("invokestatic",
+                "lljvm/runtime/Function/getExternalFunctionPointer"
+                "(Ljava/lang/String;)J");
+        } else {
             printSimpleInstruction("ldc", '"' + classname + '"');
-        printSimpleInstruction("ldc", '"' + sig + '"');
-        printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Function/getFunctionPointer"
-            "(Ljava/lang/String;Ljava/lang/String;)J");
+            printSimpleInstruction("ldc", '"' + sig + '"');
+            printSimpleInstruction("invokestatic",
+                "lljvm/runtime/Function/getFunctionPointer"
+                "(Ljava/lang/String;Ljava/lang/String;)J");
+        }
     } else if(isa<GlobalVariable>(v)) {
         const Type *ty = cast<PointerType>(v->getType())->getElementType();
         if(externRefs.count(v))

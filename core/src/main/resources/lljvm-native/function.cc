@@ -69,8 +69,11 @@ void JVMWriter::printOperandPack(const Instruction *inst,
     unsigned int size = 0;
     for(unsigned int i = minOperand; i < maxOperand; i++)
         size += targetData->getTypeAllocSize(inst->getOperand(i)->getType());
+    if (size <= 0 || size > 32767) {
+        throw "Stack size must be higher than 0 and smaller than 32768";
+    }
 
-    printSimpleInstruction("bipush", utostr(size));
+    printSimpleInstruction("sipush", utostr(size));
     printSimpleInstruction("invokestatic",
                            "lljvm/runtime/VMemory/allocateStack(I)J");
     printSimpleInstruction("dup2");
