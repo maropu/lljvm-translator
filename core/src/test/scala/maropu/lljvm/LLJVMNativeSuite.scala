@@ -62,13 +62,4 @@ class LLJVMNativeSuite extends FunSuite {
        """.stripMargin)
     // scalastyle:on line.size.limit
   }
-
-  test("external methods not supported") {
-    val bitcode = TestUtils.resourceToBytes("bitcode-has-external-methods.bc")
-    val lljvmApi = LLJVMLoader.loadLLJVMApi()
-    val errMsg = intercept[LLJVMRuntimeException] {
-      lljvmApi.parseBitcode(bitcode)
-    }.getMessage
-    assert(errMsg.contains("External references are not supported yet:"))
-  }
 }

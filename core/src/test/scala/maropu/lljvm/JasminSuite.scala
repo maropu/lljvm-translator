@@ -33,6 +33,8 @@ class JasminSuite extends FunSuite {
          |
          |; Fields
          |
+         |; External methods
+         |
          |; Constructor
          |.method public <init>()V
          |        aload_0

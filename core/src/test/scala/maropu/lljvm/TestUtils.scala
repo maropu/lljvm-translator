@@ -47,22 +47,20 @@ object TestUtils extends FunSuite {
       functionName: String,
       signature: Seq[Class[_]],
       arguments: Seq[AnyRef],
-      expected: Any): Unit = {
+      expected: Any): Unit = try {
     val clazz = TestUtils.loadClassFromResource(bitcode)
-    try {
-      val method = clazz.newInstance.getClass.getMethod(functionName, signature: _*)
-      assert(method.invoke(null, arguments: _*) === expected)
-    } catch {
-      case e: Throwable =>
-        fail(
-          s"""Test failed because: ${e.getMessage}
-             |${exceptionString(e)}
-             |========== Source Code ==========
-             |${new String(TestUtils.resourceToBytes(source), StandardCharsets.UTF_8)}
-             |========== LLVM Bitcode =========
-             |${LLJVMUtils.asBytecode(TestUtils.resourceToBytes(bitcode))}
-           """.stripMargin)
-    }
+    val method = clazz.newInstance.getClass.getMethod(functionName, signature: _*)
+    assert(method.invoke(null, arguments: _*) === expected)
+  } catch {
+    case e: Throwable =>
+      fail(
+        s"""Test failed because: ${e.getMessage}
+           |${exceptionString(e)}
+           |========== Source Code ==========
+           |${new String(TestUtils.resourceToBytes(source), StandardCharsets.UTF_8)}
+           |========== LLVM Bitcode =========
+           |${LLJVMUtils.asBytecode(TestUtils.resourceToBytes(bitcode))}
+         """.stripMargin)
   }
 
   def compareCode(actual: String, expected: String): Unit = {

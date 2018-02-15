@@ -41,7 +41,9 @@ void JVMWriter::printFields() {
     for(Module::global_iterator i = module->global_begin(),
                                 e = module->global_end(); i != e; i++) {
         if(i->isDeclaration()) {
-            out << ".extern field ";
+             // Since the directives for external references are pseudo-ones,
+             // we need to comment out them here.
+            out << "; .extern field ";
             externRefs.insert(&*i);
         } else
             out << ".field "
@@ -60,42 +62,22 @@ void JVMWriter::printFields() {
  * Print the list of external methods.
  */
 void JVMWriter::printExternalMethods() {
-    for (Module::const_iterator i = module->begin(), e = module->end(); i != e; i++) {
-        if (i->isDeclaration() && !i->isIntrinsic()) {
-            externRefs.insert((const Function *)&*i);
-        }
-    }
-    if (!externRefs.empty()) {
-      std::stringstream err_msg;
-      err_msg << "External references are not supported yet: ";
-      for (DenseSet<const Value *>::const_iterator i = externRefs.begin(), e = externRefs.end(); i != e; i++) {
-        if (i != externRefs.begin()) {
-          err_msg << ", ";
-        }
-        err_msg << getValueName(*i);
-      }
-      throw err_msg.str();
-    }
-    /**
-     * TODO: Currently, external methods are not supported:
-     *
-     * out << "; External methods\n";
-     *
-     * for(Module::const_iterator i = module->begin(),
-     *                            e = module->end(); i != e; i++) {
-     *     if(i->isDeclaration() && !i->isIntrinsic()) {
-     *         const Function *f = &*i;
-     *         const FunctionType *ty = f->getFunctionType();
-     *         out << ".extern method "
-     *             << getValueName(f) << getCallSignature(ty);
-     *         if(debug >= 3)
-     *             out << " ; " << *ty;
-     *         out << '\n';
-     *         externRefs.insert(f);
-     *     }
-     * }
-     * out << '\n';
-     */
+     out << "; External methods\n";
+     for(Module::const_iterator i = module->begin(), e = module->end(); i != e; i++) {
+         if(i->isDeclaration() && !i->isIntrinsic()) {
+             const Function *f = &*i;
+             const FunctionType *ty = f->getFunctionType();
+             // Since the directives for external references are pseudo-ones,
+             // we need to comment out them here.
+             out << "; .extern method "
+                 << getValueName(f) << getCallSignature(ty);
+             if(debug >= 3)
+                 out << " ; " << *ty;
+             out << '\n';
+             externRefs.insert(f);
+         }
+     }
+     out << '\n';
 }
 
 /**
