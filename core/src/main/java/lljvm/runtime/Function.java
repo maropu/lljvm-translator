@@ -48,6 +48,9 @@ public final class Function {
     /** Map of external functions to Method objects */
     private static Map<String, Pair<Long, Method>> externalFunctions = new HashMap<>();
 
+    /** Map of external fields to getter Method objects */
+    private static Map<String, Pair<Long, Method>> externalFieldGetters = new HashMap<>();
+
     /**
      * Prevent this class from being instantiated.
      */
@@ -107,7 +110,20 @@ public final class Function {
             return func.getKey();
         } else {
             throw new IllegalArgumentException(
-                    "Unable to get function pointer for " + methodSignature);
+                    "Cannot resolve an external function for " + methodSignature);
+        }
+    }
+
+    public static long getExternalFieldGetterPointer(String fieldName) {
+        if (externalFieldGetters.containsKey(fieldName)) {
+            final Pair<Long, Method> func = externalFieldGetters.get(fieldName);
+            if (!functionObjects.containsKey(func.getKey())) {
+                functionObjects.put(func.getKey(), func.getValue());
+            }
+            return func.getKey();
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot resolve an external field for" + fieldName);
         }
     }
 

@@ -240,4 +240,18 @@ class JasminSuite extends FunSuite {
     val args = Seq(new jDouble(100.0), new jDouble(2.0))
     assert(method.invoke(obj, args: _*) === 6.0)
   }
+
+  ignore("jasmin assembly tests from resources") {
+    val code = TestUtils.resourceToBytes("test.jasmin")
+    val classFile = new ClassFile()
+    val in = new InputStreamReader(new ByteArrayInputStream(code))
+    classFile.readJasmin(in, "GeneratedClass", true)
+    val out = new ByteArrayOutputStream()
+    classFile.write(out)
+    assert(out.size > 0)
+
+    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
+    val obj = clazz.newInstance()
+    assert(obj.getClass.getSimpleName === "")
+  }
 }

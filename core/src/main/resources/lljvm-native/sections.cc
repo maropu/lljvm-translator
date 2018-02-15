@@ -110,7 +110,7 @@ void JVMWriter::printClInit() {
             printSimpleInstruction("invokestatic",
                                    "lljvm/runtime/Memory/allocateData(I)J");
             printSimpleInstruction("putstatic",
-                classname + "/" + getValueName(g) + " I");
+                classname + "/" + getValueName(g) + " J");
         }
     }
     
@@ -121,7 +121,7 @@ void JVMWriter::printClInit() {
             const GlobalVariable *g = &*i;
             const Constant *c = g->getInitializer();
             printSimpleInstruction("getstatic",
-                classname + "/" + getValueName(g) + " I");
+                classname + "/" + getValueName(g) + " J");
             printStaticConstant(c);
             printSimpleInstruction("pop");
             out << '\n';

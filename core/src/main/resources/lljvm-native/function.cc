@@ -281,14 +281,14 @@ void JVMWriter::printCatchJump(unsigned int numJumps) {
     printLabel("catch_jump");
     printSimpleInstruction("astore", utostr(jumpVarNum));
     printSimpleInstruction("aload", utostr(jumpVarNum));
-    printSimpleInstruction("getfield", "lljvm/runtime/Jump/value I");
+    printSimpleInstruction("getfield", "lljvm/runtime/Jump/value J");
     for(unsigned int i = usedRegisters-1 - numJumps,
                      e = usedRegisters-1; i < e; i++) {
         if(debug >= 2)
             printSimpleInstruction(".var " + utostr(i) + " is setjmp_id_"
-                + utostr(i) + " I from begin_method to end_method");
+                + utostr(i) + " J from begin_method to end_method");
         printSimpleInstruction("aload", utostr(jumpVarNum));
-        printSimpleInstruction("getfield", "lljvm/runtime/Jump/id I");
+        printSimpleInstruction("getfield", "lljvm/runtime/Jump/id J");
         printSimpleInstruction("iload", utostr(i));
         printSimpleInstruction("if_icmpeq", "setjmp$" + utostr(i));
     }
@@ -332,7 +332,7 @@ void JVMWriter::printFunction(const Function &f) {
         vaArgNum = usedRegisters++;
         if(debug >= 2)
             printSimpleInstruction(".var " + utostr(vaArgNum)
-                + " is varargptr I from begin_method to end_method");
+                + " is varargptr J from begin_method to end_method");
     }
 
     // TODO: better stack depth analysis

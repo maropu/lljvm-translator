@@ -45,11 +45,24 @@ void JVMWriter::printValueLoad(const Value *v) {
         }
     } else if(isa<GlobalVariable>(v)) {
         const Type *ty = cast<PointerType>(v->getType())->getElementType();
-        if(externRefs.count(v))
-            printSimpleInstruction("getstatic", getValueName(v) + " I");
-        else
+        if(externRefs.count(v)) {
+            // printSimpleInstruction("getstatic", getValueName(v) + " I");
+            printSimpleInstruction("ldc", '"' + getValueName(v) + '"');
+            printSimpleInstruction("invokestatic",
+                "lljvm/runtime/Function/getExternalFieldGetterPointer"
+                "(Ljava/lang/String;)J");
+
+            std::string funcName;
+            raw_string_ostream strbuf(funcName);
+            const Type *pt = v->getType();
+            strbuf << "lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
+            strbuf.flush();
+            printSimpleInstruction("lconst_0");
+            printSimpleInstruction("invokestatic", funcName);
+        } else {
             printSimpleInstruction("getstatic",
-                classname + "/" + getValueName(v) + " I");
+                classname + "/" + getValueName(v) + " J");
+        }
     } else if(isa<ConstantPointerNull>(v)) {
         printPtrLoad(0);
     } else if(const ConstantExpr *ce = dyn_cast<ConstantExpr>(v)) {
@@ -73,7 +86,7 @@ void JVMWriter::printValueLoad(const Value *v) {
 
 /**
  * Store the value currently on top of the stack to the given local variable.
- * 
+ *
  * @param v  the Value representing the local variable
  */
 void JVMWriter::printValueStore(const Value *v) {
@@ -92,6 +105,7 @@ void JVMWriter::printValueStore(const Value *v) {
         printSimpleInstruction("iconst_1");
         printSimpleInstruction("iand");
     }
+
     if(getLocalVarNumber(v) <= 3) {
         printSimpleInstruction(
             getTypePrefix(v->getType(), true) + "store_"
