@@ -50,6 +50,7 @@ public class LLJVMUtils {
     }
   }
 
+  // TODO: We sould rename `asBytecode` to `asJvmAssemby`
   public static String asBytecode(byte[] bitcode) throws LLJVMRuntimeException {
     checkLLVMBitcodeFormat(bitcode);
     String bytecode = null;
