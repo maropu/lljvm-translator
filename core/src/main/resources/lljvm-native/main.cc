@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
   try {
     std::string bytecode = parseBitcode(str.c_str(), str.size(), debugLevel);
     std::cout << bytecode << "\n";
-  } catch (const char *e) {
+  } catch (const std::string& e) {
     std::cerr << e << std::endl;
     return -1;
   }

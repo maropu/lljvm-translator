@@ -22,6 +22,8 @@
 
 #include "backend.h"
 
+#include <sstream>
+
 /**
  * Print the given basic block.
  * 
@@ -160,7 +162,8 @@ void JVMWriter::printInstruction(const Instruction *inst) {
     case Instruction::ExtractValue:
         printExtractValue(cast<ExtractValueInst>(inst)); break;
     default:
-        errs() << "Instruction = " << *inst << '\n';
-        llvm_unreachable("Unsupported instruction");
+        std::stringstream err_msg;
+        err_msg << "Unsupported Instruction: " << inst->getOpcodeName() << " (Opcode=" << inst->getOpcode() << ")\n";
+        throw err_msg.str();
     }
 }
