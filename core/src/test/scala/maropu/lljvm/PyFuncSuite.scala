@@ -170,7 +170,7 @@ class PyFuncSuite extends FunSuite {
     TestUtils.doTest(
       bitcode = s"$basePath/pyfunc8-cfunc-float32.bc",
       source = s"$basePath/pyfunc8.py",
-      functionName = "cfunc._ZN7pyfunc812pyfunc8$2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE",
+      functionName = "_cfunc__ZN7pyfunc812pyfunc8_2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.pyAyray(floatX)), new jLong(ArrayUtils.pyAyray(floatY))),
       expected = null

@@ -116,7 +116,7 @@ std::string JVMWriter::getTypeDescriptor(const Type *ty, bool expand) {
 /**
  * Return the type postfix of the given type.
  *
- * @param ty      the type
+ *pt * @param ty      the type
  * @param expand  specifies whether to expand the type to 32 bits
  * @return        the type postfix
  */

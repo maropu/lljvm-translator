@@ -73,6 +73,28 @@ public class VMemory {
   }
 
   /**
+   * Allocate a memory block of the given size within the stack.
+   */
+  public static long allocateData(int size) {
+    assert(vmem.get() != null);
+    VMemFragment vm = vmem.get();
+    if (vm.getRemainingBytes() > size) {
+      long addr = alignOffsetUp(vm.getCurrentOffset(), ALIGNMENT);
+      long nextOffset = alignOffsetUp(addr + size, ALIGNMENT);
+      if (nextOffset < vm.getBase() + vm.getNumBytes()) {
+        vm.setCurrentOffset(nextOffset);
+      } else {
+        vm.setCurrentOffset(vm.getBase());
+      }
+      return addr;
+    }
+    long addr = vm.getBase();
+    long nextOffset = alignOffsetUp(addr + size, ALIGNMENT);
+    vm.setCurrentOffset(nextOffset);
+    return addr;
+  }
+
+  /**
    * Thrown if an application tries to access an invalid memory address, or
    * tries to write to a read-only location.
    */
@@ -92,6 +114,15 @@ public class VMemory {
     } catch(NullPointerException e) {
       throw new SegmentationFault(addr);
     }
+  }
+
+  /**
+   * Store an array of bytes at the given address.
+   */
+  public static void store(long addr, byte[] bytes) {
+    // TODO: make more efficient by using put(byte[])
+    for (int i = 0; i < bytes.length; i++)
+      store(addr + i, bytes[i]);
   }
 
   /**
@@ -330,6 +361,27 @@ public class VMemory {
   }
 
   /**
+   * Store a string at the given address, returning the first address
+   * following the null terminator.
+   */
+  public static long pack(long addr, String string) {
+      final byte[] bytes = string.getBytes();
+      store(addr, bytes);
+      store(addr + bytes.length, (byte) 0);
+      return addr + bytes.length + 1;
+  }
+
+  /**
+   * Store an array of chars at the given address, treating it as an array of
+   * bytes i.e. each char is cast to a byte before being stored.
+   */
+  public static long pack(long addr, char[] value) {
+    for(int i = 0; i < value.length; i++)
+      store(addr + i, (byte) value[i]);
+    return addr + value.length;
+  }
+
+  /**
    * Unpack a packed list of values from the given address, according to the given list of types.
    */
   public static Object[] unpack(long addr, Class<?>[] types) {
@@ -342,5 +394,21 @@ public class VMemory {
       addr += size;
     }
     return values;
+  }
+
+  /**
+   * Fill the first len bytes of memory area dest with the constant byte val.
+   */
+  public static void memset(long dest, byte val, int len, int align) {
+    // TODO: make more efficient by setting larger blocks at a time
+    for(long i = dest; i < dest + len; i++)
+      store(i, val);
+  }
+
+  /**
+   * Fill the first len bytes of memory area dest with the constant byte val.
+   */
+  public static void memset(long dest, byte val, long len, int align) {
+    memset(dest, val, (int) len, align);
   }
 }

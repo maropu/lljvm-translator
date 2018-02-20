@@ -18,10 +18,12 @@
 package maropu.lljvm
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader}
-import java.lang.{Double => jDouble, Integer => jInt}
+import java.lang.{Double => jDouble, Integer => jInt, Long => jLong}
 
 import jasmin.ClassFile
 import org.scalatest.FunSuite
+
+import lljvm.unsafe.Platform
 
 class JasminSuite extends FunSuite {
 
@@ -251,7 +253,16 @@ class JasminSuite extends FunSuite {
     assert(out.size > 0)
 
     val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
+    val method = LLJVMUtils.getMethod(clazz, "_cfunc__ZN7pyfunc812pyfunc8_2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE", Seq(jLong.TYPE, jLong.TYPE): _*)
     val obj = clazz.newInstance()
-    assert(obj.getClass.getSimpleName === "")
+    assert(obj.getClass.getSimpleName === "GeneratedClass")
+    val floatX = Array(1.0f, 2.0f, 3.0f, 4.0f)
+    val floatY = Array(2.0f, 4.0f, 8.0f, 1.0f)
+    val args = Seq(new jLong(ArrayUtils.pyAyray(floatX)), new jLong(ArrayUtils.pyAyray(floatY)))
+    val result = method.invoke(obj, args: _*).asInstanceOf[Long]
+    assert(Platform.getFloat(null, result) === 1.0f)
+    assert(Platform.getFloat(null, result + 4) === 1.0f)
+    assert(Platform.getFloat(null, result + 8) === 1.0f)
+    assert(Platform.getFloat(null, result + 12) === 1.0f)
   }
 }

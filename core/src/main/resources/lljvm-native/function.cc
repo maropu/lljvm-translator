@@ -58,7 +58,7 @@ std::string JVMWriter::getCallSignature(const FunctionType *ty) {
 /**
  * Pack the specified operands of the given instruction into memory. The
  * address of the packed values is left on the top of the stack.
- * 
+ *
  * @param inst        the given instruction
  * @param minOperand  the lower bound on the operands to pack (inclusive)
  * @param maxOperand  the upper bound on the operands to pack (exclusive)
@@ -99,23 +99,45 @@ void JVMWriter::printFunctionCall(const Value *functionVal,
     unsigned int origin = isa<InvokeInst>(inst) ? 3 : 1;
     if(const Function *f = dyn_cast<Function>(functionVal)) { // direct call
         const FunctionType *ty = f->getFunctionType();
+        if(externRefs.count(f)) {
+            // printSimpleInstruction("invokestatic",
+            //     getValueName(f) + getCallSignature(ty));
 
-        for(unsigned int i = origin, e = inst->getNumOperands(); i < e; i++)
-            printValueLoad(inst->getOperand(i));
+            printValueLoad(inst->getOperand(inst->getNumOperands() - 1));
+            // TODO: Is `origin` is correct?
+            if (inst->getNumOperands() > 1) {
+                printOperandPack(inst, origin - 1, inst->getNumOperands() - 1);
+            }
 
-        for(unsigned int i = 0, e = ty->getNumParams(); i < e; i++)
-            printValueLoad(inst->getOperand(i + origin));
-        if(ty->isVarArg() && inst)
-            printOperandPack(inst, ty->getNumParams() + origin,
-                                   inst->getNumOperands());
-        
-        if(externRefs.count(f))
-            printSimpleInstruction("invokestatic",
-                getValueName(f) + getCallSignature(ty));
-        else
+            // TODO: Reconsider this
+            std::string funcName;
+            raw_string_ostream strbuf(funcName);
+            // const Type *pt = cast<PointerType>(functionVal->getType())->getElementType();
+            // const FunctionType *fTy = cast<CallInst>(inst)->getFunctionType();
+            // const Type *pt = functionVal->getType();
+            const Type *pt = ty->getReturnType();
+            if (inst->getNumOperands() > 1) {
+                strbuf << "lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
+            } else {
+                // Case for no argument
+                strbuf << "lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(J)" << getTypeDescriptor(pt);
+            }
+            strbuf.flush();
+            printSimpleInstruction("invokestatic", funcName);
+        } else {
+            for(unsigned int i = origin, e = inst->getNumOperands(); i < e; i++)
+                printValueLoad(inst->getOperand(i));
+
+            for(unsigned int i = 0, e = ty->getNumParams(); i < e; i++)
+                printValueLoad(inst->getOperand(i + origin));
+            if(ty->isVarArg() && inst)
+                printOperandPack(inst, ty->getNumParams() + origin,
+                                       inst->getNumOperands());
+
             printSimpleInstruction("invokestatic",
                 classname + "/" + getValueName(f) + getCallSignature(ty));
-        
+        }
+
         if(getValueName(f) == "setjmp") {
             unsigned int varNum = usedRegisters++;
             printSimpleInstruction("istore", utostr(varNum));
@@ -126,14 +148,23 @@ void JVMWriter::printFunctionCall(const Value *functionVal,
         // printValueLoad(functionVal);
         printValueLoad(inst->getOperand(inst->getNumOperands() - 1));
         // TODO: Is `origin` is correct?
-        printOperandPack(inst, origin - 1, inst->getNumOperands() - 1);
+        if (inst->getNumOperands() > 1) {
+            printOperandPack(inst, origin - 1, inst->getNumOperands() - 1);
+        }
 
         // TODO: Reconsider this
         std::string funcName;
         raw_string_ostream strbuf(funcName);
         // const Type *pt = cast<PointerType>(functionVal->getType())->getElementType();
-        const Type *pt = functionVal->getType();
-        strbuf << "lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
+        const FunctionType *fTy = cast<CallInst>(inst)->getFunctionType();
+        // const Type *pt = functionVal->getType();
+        const Type *pt = fTy->getReturnType();
+        if (inst->getNumOperands() > 1) {
+            strbuf << "lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
+        } else {
+            // Case for no argument
+            strbuf << "lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(J)" << getTypeDescriptor(pt);
+        }
         strbuf.flush();
         printSimpleInstruction("invokestatic", funcName);
     }

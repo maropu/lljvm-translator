@@ -24,6 +24,8 @@
 
 #include <assert.h>
 
+#include <sstream>
+
 /**
  * Align the given offset.
  *
@@ -91,49 +93,128 @@ void JVMWriter::printCmpInstruction(unsigned int predicate,
 void JVMWriter::printArithmeticInstruction(unsigned int op,
                                            const Value *left,
                                            const Value *right) {
-    printValueLoad(left);
-    printValueLoad(right);
-    std::string typePrefix = getTypePrefix(left->getType(), true);
-    std::string typeDescriptor = getTypeDescriptor(left->getType());
-    switch(op) {
-    case Instruction::Add:
-    case Instruction::FAdd:
-        printSimpleInstruction(typePrefix + "add"); break;
-    case Instruction::Sub:
-    case Instruction::FSub:
-        printSimpleInstruction(typePrefix + "sub"); break;
-    case Instruction::Mul:
-    case Instruction::FMul:
-        printSimpleInstruction(typePrefix + "mul"); break;
-    case Instruction::SDiv:
-    case Instruction::FDiv:
-        printSimpleInstruction(typePrefix + "div"); break;
-    case Instruction::SRem:
-    case Instruction::FRem:
-        printSimpleInstruction(typePrefix + "rem"); break;
-    case Instruction::And:
-        printSimpleInstruction(typePrefix + "and"); break;
-    case Instruction::Or:
-        printSimpleInstruction(typePrefix + "or"); break;
-    case Instruction::Xor:
-        printSimpleInstruction(typePrefix + "xor"); break;
-    case Instruction::Shl:
-        if(getBitWidth(right->getType()) == 64) printSimpleInstruction("l2i");
-        printSimpleInstruction(typePrefix + "shl"); break;
-    case Instruction::LShr:
-        if(getBitWidth(right->getType()) == 64) printSimpleInstruction("l2i");
-        printSimpleInstruction(typePrefix + "ushr"); break;
-    case Instruction::AShr:
-        if(getBitWidth(right->getType()) == 64) printSimpleInstruction("l2i");
-        printSimpleInstruction(typePrefix + "shr"); break;
-    case Instruction::UDiv:
-        printVirtualInstruction(
-            "udiv(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
-        break;
-    case Instruction::URem:
-        printVirtualInstruction(
-            "urem(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
-        break;
+    // First, we need to check if the input is a vector type or not.
+    if(const SequentialType *seqTy = dyn_cast<SequentialType>(left->getType())) {
+        std::string typePrefix = getTypePrefix(seqTy->getElementType(), true);
+        std::string typeDescriptor = getTypeDescriptor(seqTy->getElementType());
+        int size = targetData->getTypeAllocSize(seqTy->getElementType());
+
+        printSimpleInstruction("sipush", utostr(seqTy->getNumElements() * size));
+        printSimpleInstruction("invokestatic",
+                               "lljvm/runtime/VMemory/allocateStack(I)J");
+
+        // TODO: Need to support vector computation?
+        for (int i = 0; i < seqTy->getNumElements(); i++) {
+            printSimpleInstruction("dup2");
+            printSimpleInstruction("ldc2_w", utostr(i * size));
+            printSimpleInstruction("ladd");
+
+            if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
+                printValueLoad(vec->getElementAsConstant(i));
+            } else {
+                printValueLoad(left);
+                printSimpleInstruction("ldc2_w", utostr(i * size));
+                printSimpleInstruction("ladd");
+                printIndirectLoad(seqTy->getElementType());
+            }
+
+            if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
+                printValueLoad(vec->getElementAsConstant(i));
+            } else {
+                printValueLoad(right);
+                printSimpleInstruction("ldc2_w", utostr(i * size));
+                printSimpleInstruction("ladd");
+                printIndirectLoad(seqTy->getElementType());
+            }
+
+            switch(op) {
+            case Instruction::Add:
+            case Instruction::FAdd:
+                printSimpleInstruction(typePrefix + "add"); break;
+            case Instruction::Sub:
+            case Instruction::FSub:
+                printSimpleInstruction(typePrefix + "sub"); break;
+            case Instruction::Mul:
+            case Instruction::FMul:
+                printSimpleInstruction(typePrefix + "mul"); break;
+            case Instruction::SDiv:
+            case Instruction::FDiv:
+                printSimpleInstruction(typePrefix + "div"); break;
+            case Instruction::SRem:
+            case Instruction::FRem:
+                printSimpleInstruction(typePrefix + "rem"); break;
+            case Instruction::And:
+                printSimpleInstruction(typePrefix + "and"); break;
+            case Instruction::Or:
+                printSimpleInstruction(typePrefix + "or"); break;
+            case Instruction::Xor:
+                printSimpleInstruction(typePrefix + "xor"); break;
+            case Instruction::Shl:
+                if(getBitWidth(right->getType()) == 64) printSimpleInstruction("l2i");
+                printSimpleInstruction(typePrefix + "shl"); break;
+            case Instruction::LShr:
+                if(getBitWidth(right->getType()) == 64) printSimpleInstruction("l2i");
+                printSimpleInstruction(typePrefix + "ushr"); break;
+            case Instruction::AShr:
+                if(getBitWidth(right->getType()) == 64) printSimpleInstruction("l2i");
+                printSimpleInstruction(typePrefix + "shr"); break;
+            case Instruction::UDiv:
+                printVirtualInstruction(
+                    "udiv(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
+                break;
+            case Instruction::URem:
+                printVirtualInstruction(
+                    "urem(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
+                break;
+            }
+
+            printIndirectStore(seqTy->getElementType());
+        }
+    } else {
+        printValueLoad(left);
+        printValueLoad(right);
+        std::string typePrefix = getTypePrefix(left->getType(), true);
+        std::string typeDescriptor = getTypeDescriptor(left->getType());
+        switch(op) {
+        case Instruction::Add:
+        case Instruction::FAdd:
+            printSimpleInstruction(typePrefix + "add"); break;
+        case Instruction::Sub:
+        case Instruction::FSub:
+            printSimpleInstruction(typePrefix + "sub"); break;
+        case Instruction::Mul:
+        case Instruction::FMul:
+            printSimpleInstruction(typePrefix + "mul"); break;
+        case Instruction::SDiv:
+        case Instruction::FDiv:
+            printSimpleInstruction(typePrefix + "div"); break;
+        case Instruction::SRem:
+        case Instruction::FRem:
+            printSimpleInstruction(typePrefix + "rem"); break;
+        case Instruction::And:
+            printSimpleInstruction(typePrefix + "and"); break;
+        case Instruction::Or:
+            printSimpleInstruction(typePrefix + "or"); break;
+        case Instruction::Xor:
+            printSimpleInstruction(typePrefix + "xor"); break;
+        case Instruction::Shl:
+            if(getBitWidth(right->getType()) == 64) printSimpleInstruction("l2i");
+            printSimpleInstruction(typePrefix + "shl"); break;
+        case Instruction::LShr:
+            if(getBitWidth(right->getType()) == 64) printSimpleInstruction("l2i");
+            printSimpleInstruction(typePrefix + "ushr"); break;
+        case Instruction::AShr:
+            if(getBitWidth(right->getType()) == 64) printSimpleInstruction("l2i");
+            printSimpleInstruction(typePrefix + "shr"); break;
+        case Instruction::UDiv:
+            printVirtualInstruction(
+                "udiv(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
+            break;
+        case Instruction::URem:
+            printVirtualInstruction(
+                "urem(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
+            break;
+        }
     }
 }
 
@@ -350,7 +431,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
             }
             printPtrLoad(size);
             printSimpleInstruction("ladd");
-            printIndirectLoad(aggType);
+            printIndirectLoad(structTy->getContainedType(fieldIndex));
         } else if(const SequentialType *seqTy = dyn_cast<SequentialType>(aggType)) {
             size = targetData->getTypeAllocSize(seqTy->getElementType());
             printPtrLoad(fieldIndex * size);
@@ -372,6 +453,7 @@ void JVMWriter::printInsertElement(const InsertElementInst *inst) {
     } else {
         printValueLoad(vec);
     }
+    printSimpleInstruction("dup2");
     printSimpleInstruction("ldc2_w", utostr(vecSize));
     printValueLoad(inst->getOperand(2));
     printCastInstruction("l", getTypePrefix(inst->getOperand(2)->getType(), true));
@@ -415,16 +497,27 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
 
 void JVMWriter::printAtomicRMW(const AtomicRMWInst *inst) {
     // TODO: Implement this
-    printValueLoad(inst->getPointerOperand());
+    const Value *ptr = inst->getPointerOperand();
+    printValueLoad(ptr);
+    printSimpleInstruction("dup2");
+    printSimpleInstruction("dup2");
+    printIndirectLoad(cast<PointerType>(ptr->getType())->getElementType());
     printValueLoad(inst->getValOperand());
-    std::string typePrefix = getTypePrefix(inst->getPointerOperand()->getType(), true);
+    std::string typePrefix = getTypePrefix(inst->getValOperand()->getType(), true);
     switch (inst->getOperation()) {
         case AtomicRMWInst::Add:
             printSimpleInstruction(typePrefix + "add"); break;
             break;
+        case AtomicRMWInst::Sub:
+            printSimpleInstruction(typePrefix + "sub"); break;
+            break;
         default:
-            llvm_unreachable("TODO: Non-implemented atomic op instruction");
+            std::stringstream err_msg;
+            err_msg << "Unsupported Atomic operation: " << inst->getOperation();
+            throw err_msg.str();
     }
+    printIndirectStore(inst->getValOperand()->getType());
+    printIndirectLoad(cast<PointerType>(ptr->getType())->getElementType());
 }
 
 /**
@@ -471,13 +564,13 @@ void JVMWriter::printMemIntrinsic(const MemIntrinsic *inst) {
     switch(inst->getIntrinsicID()) {
     case Intrinsic::memcpy:
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Memory/memcpy(JJ" + lenDescriptor + "I)V"); break;
+            "lljvm/runtime/VMemory/memcpy(JJ" + lenDescriptor + "I)V"); break;
     case Intrinsic::memmove:
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Memory/memmove(JJ" + lenDescriptor + "I)V"); break;
+            "lljvm/runtime/VMemory/memmove(JJ" + lenDescriptor + "I)V"); break;
     case Intrinsic::memset:
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/Memory/memset(JB" + lenDescriptor + "I)V"); break;
+            "lljvm/runtime/VMemory/memset(JB" + lenDescriptor + "I)V"); break;
     }
 }
 
@@ -488,40 +581,107 @@ void JVMWriter::printMemIntrinsic(const MemIntrinsic *inst) {
  */
 void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
    assert(inst->getNumOperands() >= 2 && inst->getNumOperands() <= 3);
-   bool f32 = false;
-   if (inst->getNumOperands() == 2) {
-     f32 = (getBitWidth(inst->getOperand(0)->getType()) == 32);
-     printValueLoad(inst->getOperand(0));
-     if(f32) printSimpleInstruction("f2d");
-   } else {
-     // For pow()
-     f32 = (getBitWidth(inst->getOperand(0)->getType()) == 32);
-     printValueLoad(inst->getOperand(0));
-     if(f32) printSimpleInstruction("f2d");
+   // First, we need to check if the input is a vector type or not.
+   if(const SequentialType *seqTy = dyn_cast<SequentialType>(inst->getOperand(0)->getType())) {
+       bool f32 = false;
+       bool f32_2nd = false;
+       if (inst->getNumOperands() == 2) {
+         f32 = (getBitWidth(seqTy->getElementType()) == 32);
+       } else {
+         // For pow()
+         f32 = (getBitWidth(seqTy->getElementType()) == 32);
 
-     // TODO: The return type depends on the 1st type
-     bool f32_2nd = (getBitWidth(inst->getOperand(1)->getType()) == 32);
-     printValueLoad(inst->getOperand(1));
-     if(f32_2nd) printSimpleInstruction("f2d");
-   }
-    switch(inst->getIntrinsicID()) {
-    case Intrinsic::exp:
-        printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
-        break;
-    case Intrinsic::log:
-        printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
-        break;
-    case Intrinsic::log10:
-        printSimpleInstruction("invokestatic", "java/lang/Math/log10(D)D");
-        break;
-    case Intrinsic::sqrt:
-        printSimpleInstruction("invokestatic", "java/lang/Math/sqrt(D)D");
-        break;
-    case Intrinsic::pow:
-        printSimpleInstruction("invokestatic", "java/lang/Math/pow(DD)D");
-        break;
+         // TODO: The return type depends on the 1st type
+         f32_2nd = (getBitWidth(inst->getOperand(1)->getType()) == 32);
+       }
+
+        int size = targetData->getTypeAllocSize(seqTy->getElementType());
+
+        printSimpleInstruction("sipush", utostr(seqTy->getNumElements() * size));
+        printSimpleInstruction("invokestatic",
+                               "lljvm/runtime/VMemory/allocateStack(I)J");
+
+        // TODO: Need to support vector computation?
+        for (int i = 0; i < seqTy->getNumElements(); i++) {
+            printSimpleInstruction("dup2");
+            printSimpleInstruction("ldc2_w", utostr(i * size));
+            printSimpleInstruction("ladd");
+
+           if (inst->getNumOperands() == 2) {
+                printValueLoad(inst->getOperand(0));
+                printSimpleInstruction("ldc2_w", utostr(i * size));
+                printSimpleInstruction("ladd");
+                printIndirectLoad(seqTy->getElementType());
+                if(f32) printSimpleInstruction("f2d");
+           } else {
+                // For pow()
+                printValueLoad(inst->getOperand(0));
+                printSimpleInstruction("ldc2_w", utostr(i * size));
+                printSimpleInstruction("ladd");
+                printIndirectLoad(seqTy->getElementType());
+                if(f32) printSimpleInstruction("f2d");
+
+                printValueLoad(inst->getOperand(1));
+                if(f32_2nd) printSimpleInstruction("f2d");
+           }
+
+            switch(inst->getIntrinsicID()) {
+            case Intrinsic::exp:
+                printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
+                break;
+            case Intrinsic::log:
+                printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
+                break;
+            case Intrinsic::log10:
+                printSimpleInstruction("invokestatic", "java/lang/Math/log10(D)D");
+                break;
+            case Intrinsic::sqrt:
+                printSimpleInstruction("invokestatic", "java/lang/Math/sqrt(D)D");
+                break;
+            case Intrinsic::pow:
+                printSimpleInstruction("invokestatic", "java/lang/Math/pow(DD)D");
+                break;
+            }
+
+            if(f32) printSimpleInstruction("d2f");
+            printIndirectStore(seqTy->getElementType());
+        }
+   } else {
+       bool f32 = false;
+       if (inst->getNumOperands() == 2) {
+         f32 = (getBitWidth(inst->getOperand(0)->getType()) == 32);
+         printValueLoad(inst->getOperand(0));
+         if(f32) printSimpleInstruction("f2d");
+       } else {
+         // For pow()
+         f32 = (getBitWidth(inst->getOperand(0)->getType()) == 32);
+         printValueLoad(inst->getOperand(0));
+         if(f32) printSimpleInstruction("f2d");
+
+         // TODO: The return type depends on the 1st type
+         bool f32_2nd = (getBitWidth(inst->getOperand(1)->getType()) == 32);
+         printValueLoad(inst->getOperand(1));
+         if(f32_2nd) printSimpleInstruction("f2d");
+       }
+        switch(inst->getIntrinsicID()) {
+        case Intrinsic::exp:
+            printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
+            break;
+        case Intrinsic::log:
+            printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
+            break;
+        case Intrinsic::log10:
+            printSimpleInstruction("invokestatic", "java/lang/Math/log10(D)D");
+            break;
+        case Intrinsic::sqrt:
+            printSimpleInstruction("invokestatic", "java/lang/Math/sqrt(D)D");
+            break;
+        case Intrinsic::pow:
+            printSimpleInstruction("invokestatic", "java/lang/Math/pow(DD)D");
+            break;
+        }
+        if(f32) printSimpleInstruction("d2f");
     }
-    if(f32) printSimpleInstruction("d2f");
 }
 
 /**

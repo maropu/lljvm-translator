@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import javafx.util.Pair;
 
+import lljvm.util.NumbaFunctions;
 import lljvm.util.ReflectionUtils;
 
 /**
@@ -37,7 +38,7 @@ import lljvm.util.ReflectionUtils;
  * 
  * @author  David Roberts
  */
-public final class Function {
+public class Function {
     /** Set of registered classes */
     private static Set<String> registeredClasses = new HashSet<>();
     /** Map of function signatures to function pointers */
@@ -50,6 +51,16 @@ public final class Function {
 
     /** Map of external fields to getter Method objects */
     private static Map<String, Pair<Long, Method>> externalFieldGetters = new HashMap<>();
+
+    static {
+        for(Method method : ReflectionUtils.getStaticMethods(NumbaFunctions.class)) {
+            // TODO: Reconsider this
+            final long addr = method.hashCode();
+            final String sig = ReflectionUtils.getSignature(method);
+            method.setAccessible(true);
+            externalFunctions.put(sig, new Pair<>(addr, method));
+        }
+    }
 
     /**
      * Prevent this class from being instantiated.
@@ -140,9 +151,13 @@ public final class Function {
         if(method == null)
             throw new IllegalArgumentException("Invalid function pointer: "+f);
         final Class<?>[] paramTypes = method.getParameterTypes();
-        final Object[] params = VMemory.unpack(args, paramTypes);
         try {
-            return method.invoke(null, params);
+            if (args != 0) {
+                final Object[] params = VMemory.unpack(args, paramTypes);
+                return method.invoke(null, params);
+            } else {
+                return method.invoke(null, null);
+            }
         } catch(IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch(InvocationTargetException e) {
@@ -163,7 +178,10 @@ public final class Function {
     public static void invoke_void(long f, long args) {
         invoke(f, args);
     }
-    
+    public static void invoke_void(long f) {
+        invoke(f, 0);
+    }
+
     /**
      * Invoke the method pointed to by the given function pointer with the
      * given arguments.
