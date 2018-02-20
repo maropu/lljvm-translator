@@ -345,7 +345,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
             for(unsigned int f = 0; f < fieldIndex; f++) {
                 size = alignOffset(
                     size + targetData->getTypeAllocSize(structTy->getContainedType(f)),
-                    targetData->getABITypeAlignment(structTy->getContainedType(f + 1))
+                    targetData->getABITypeAlignment(structTy->getContainedType(f))
                 );
             }
             printPtrLoad(size);
@@ -379,6 +379,27 @@ void JVMWriter::printInsertElement(const InsertElementInst *inst) {
     printSimpleInstruction("ladd");
     printValueLoad(inst->getOperand(1));
     printIndirectStore(inst->getOperand(1)->getType());
+}
+
+void JVMWriter::printInsertValue(const InsertValueInst *inst) {
+    // TODO: Implement this
+    const Value *v = inst->getAggregateOperand();
+    const Type *aggType = v->getType();
+    int aggSize = 0;
+    if(const StructType *structTy = dyn_cast<StructType>(aggType)) {
+        for(unsigned int f = 0; f < structTy->getNumElements(); f++) {
+            aggSize = alignOffset(
+                aggSize + targetData->getTypeAllocSize(structTy->getContainedType(f)),
+                targetData->getABITypeAlignment(structTy->getContainedType(f))
+            );
+        }
+    } else if(const SequentialType *seqTy = dyn_cast<SequentialType>(aggType)) {
+        aggSize = targetData->getTypeAllocSize(seqTy->getElementType());
+    } else {
+        llvm_unreachable("Invalid type");
+    }
+    printSimpleInstruction("bipush", utostr(aggSize));
+    printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
 }
 
 void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {

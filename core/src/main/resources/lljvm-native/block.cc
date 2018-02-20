@@ -163,6 +163,8 @@ void JVMWriter::printInstruction(const Instruction *inst) {
         printExtractValue(cast<ExtractValueInst>(inst)); break;
     case Instruction::InsertElement:
         printInsertElement(cast<InsertElementInst>(inst)); break;
+    case Instruction::InsertValue:
+        printInsertValue(cast<InsertValueInst>(inst)); break;
     case Instruction::ShuffleVector:
         printShuffleVector(cast<ShuffleVectorInst>(inst)); break;
     default:

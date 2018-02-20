@@ -152,6 +152,7 @@ private:
     void printVAArgInstruction(const VAArgInst *inst);
     void printExtractValue(const ExtractValueInst *inst);
     void printInsertElement(const InsertElementInst *inst);
+    void printInsertValue(const InsertValueInst *inst);
     void printShuffleVector(const ShuffleVectorInst *inst);
     void printVAIntrinsic(const IntrinsicInst *inst);
     void printMemIntrinsic(const MemIntrinsic *inst);
