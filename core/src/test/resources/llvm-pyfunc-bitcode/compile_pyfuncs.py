@@ -23,7 +23,7 @@ from numba import cfunc, jit
 # by using the `cfunc` decorator.
 def write_bitcode_with_cfunc(pyfunc, sig, filename_suffix=""):
   with open(pyfunc.__name__ + filename_suffix + ".bc", "wb") as fout:
-    f = cfunc(sig)(pyfunc)
+    f = cfunc(sig, nopython=False, cache=False)(pyfunc)
     # print f.inspect_llvm()
     fout.write(f._library._final_module.as_bitcode())
 

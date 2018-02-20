@@ -362,6 +362,26 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
     }
 }
 
+void JVMWriter::printInsertElement(const InsertElementInst *inst) {
+    const Value *vec = inst->getOperand(0);
+    const SequentialType *vecTy = cast<SequentialType>(vec->getType());
+    uint64_t size = targetData->getTypeAllocSize(vecTy->getElementType());
+    if (const UndefValue *undef = dyn_cast<UndefValue>(vec)) {
+        printSimpleInstruction("bipush", utostr(size * undef->getNumElements()));
+        printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
+    } else {
+        // TODO: Recheck this
+        printValueLoad(vec);
+    }
+    printSimpleInstruction("ldc2_w", utostr(size));
+    printValueLoad(inst->getOperand(2));
+    printCastInstruction("l", getTypePrefix(inst->getOperand(2)->getType(), true));
+    printSimpleInstruction("lmul");
+    printSimpleInstruction("ladd");
+    printValueLoad(inst->getOperand(1));
+    printIndirectStore(inst->getOperand(1)->getType());
+}
+
 /**
  * Print a vararg intrinsic function.
  *
@@ -461,7 +481,7 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
 
 /**
  * Print a bit manipulation intrinsic function.
- * 
+ *
  * @param inst  the instruction
  */
 void JVMWriter::printBitIntrinsic(const IntrinsicInst *inst) {

@@ -161,9 +161,11 @@ void JVMWriter::printInstruction(const Instruction *inst) {
         printVAArgInstruction(cast<VAArgInst>(inst)); break;
     case Instruction::ExtractValue:
         printExtractValue(cast<ExtractValueInst>(inst)); break;
+    case Instruction::InsertElement:
+        printInsertElement(cast<InsertElementInst>(inst)); break;
     default:
         std::stringstream err_msg;
-        err_msg << "Unsupported Instruction: " << inst->getOpcodeName() << " (Opcode=" << inst->getOpcode() << ")\n";
+        err_msg << "Unsupported Instruction: " << inst->getOpcodeName() << " (Opcode=" << inst->getOpcode() << ")";
         throw err_msg.str();
     }
 }
