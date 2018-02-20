@@ -158,6 +158,7 @@ private:
     void printMemIntrinsic(const MemIntrinsic *inst);
     void printMathIntrinsic(const IntrinsicInst *inst);
     void printBitIntrinsic(const IntrinsicInst *inst);
+    void printAtomicRMW(const AtomicRMWInst *inst);
 
     // loadstore.cpp
     void printValueLoad(const Value *v);

@@ -167,6 +167,8 @@ void JVMWriter::printInstruction(const Instruction *inst) {
         printInsertValue(cast<InsertValueInst>(inst)); break;
     case Instruction::ShuffleVector:
         printShuffleVector(cast<ShuffleVectorInst>(inst)); break;
+    case Instruction::AtomicRMW:
+        printAtomicRMW(cast<AtomicRMWInst>(inst)); break;
     default:
         std::stringstream err_msg;
         err_msg << "Unsupported Instruction: " << inst->getOpcodeName() << " (Opcode=" << inst->getOpcode() << ")";

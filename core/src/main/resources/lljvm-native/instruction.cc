@@ -413,6 +413,20 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
     printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
 }
 
+void JVMWriter::printAtomicRMW(const AtomicRMWInst *inst) {
+    // TODO: Implement this
+    printValueLoad(inst->getPointerOperand());
+    printValueLoad(inst->getValOperand());
+    std::string typePrefix = getTypePrefix(inst->getPointerOperand()->getType(), true);
+    switch (inst->getOperation()) {
+        case AtomicRMWInst::Add:
+            printSimpleInstruction(typePrefix + "add"); break;
+            break;
+        default:
+            llvm_unreachable("TODO: Non-implemented atomic op instruction");
+    }
+}
+
 /**
  * Print a vararg intrinsic function.
  *
