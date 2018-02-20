@@ -365,21 +365,31 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
 void JVMWriter::printInsertElement(const InsertElementInst *inst) {
     const Value *vec = inst->getOperand(0);
     const SequentialType *vecTy = cast<SequentialType>(vec->getType());
-    uint64_t size = targetData->getTypeAllocSize(vecTy->getElementType());
+    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
     if (const UndefValue *undef = dyn_cast<UndefValue>(vec)) {
-        printSimpleInstruction("bipush", utostr(size * undef->getNumElements()));
+        printSimpleInstruction("bipush", utostr(vecSize * undef->getNumElements()));
         printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
     } else {
-        // TODO: Recheck this
         printValueLoad(vec);
     }
-    printSimpleInstruction("ldc2_w", utostr(size));
+    printSimpleInstruction("ldc2_w", utostr(vecSize));
     printValueLoad(inst->getOperand(2));
     printCastInstruction("l", getTypePrefix(inst->getOperand(2)->getType(), true));
     printSimpleInstruction("lmul");
     printSimpleInstruction("ladd");
     printValueLoad(inst->getOperand(1));
     printIndirectStore(inst->getOperand(1)->getType());
+}
+
+void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
+    // TODO: Implement this
+    const Value *vec1 = inst->getOperand(0);
+    const Value *vec2 = inst->getOperand(1);
+    const SequentialType *vecTy = cast<SequentialType>(vec1->getType());
+    const ConstantAggregateZero *mask = dyn_cast<ConstantAggregateZero>(inst->getOperand(2));
+    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
+    printSimpleInstruction("bipush", utostr(vecSize * mask->getNumElements()));
+    printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
 }
 
 /**
