@@ -25,7 +25,7 @@ import lljvm.unsafe.Platform
 
 class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
-  private val basePath = "llvm-pyfunc-bitcode"
+  private val basePath = "pyfunc"
 
   // scalastyle:off line.size.limit
 

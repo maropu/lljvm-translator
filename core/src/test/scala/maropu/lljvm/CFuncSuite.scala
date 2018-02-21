@@ -23,7 +23,7 @@ import org.scalatest.FunSuite
 
 class CFuncSuite extends FunSuite {
 
-  val basePath = "llvm-cfunc-bitcode"
+  val basePath = "cfunc"
 
   test("x + y") {
     TestUtils.doTest(
