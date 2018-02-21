@@ -480,6 +480,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
         } else {
             printValueLoad(aggValue);
         }
+        printSimpleInstruction("dup2");
 
         // calculate offset
         for (unsigned i = 0; i < inst->getNumIndices(); i++) {
@@ -493,7 +494,6 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
             }
             printPtrLoad(size);
             printSimpleInstruction("ladd");
-            printSimpleInstruction("dup2");
             printValueLoad(inst->getOperand(1));
             printIndirectStore(inst->getOperand(1)->getType());
         }
@@ -505,6 +505,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
         } else {
             printValueLoad(aggValue);
         }
+        printSimpleInstruction("dup2");
 
         // calculate offset
         for (unsigned i = 0; i < inst->getNumIndices(); i++) {
@@ -512,7 +513,6 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
             int size = targetData->getTypeAllocSize(seqTy->getElementType());
             printPtrLoad(fieldIndex * size);
             printSimpleInstruction("ladd");
-            printSimpleInstruction("dup2");
             printIndirectLoad(aggType);
         }
     } else {

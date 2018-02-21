@@ -32,7 +32,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc1",
       signature = Seq(jInt.TYPE, jInt.TYPE),
       arguments = Seq(new jInt(4), new jInt(5)),
-      expected = 9
+      expected = Some(9)
     )
   }
 
@@ -43,7 +43,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc2",
       signature = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(2.0), new jDouble(3.0)),
-      expected = 8.0
+      expected = Some(8.0)
     )
   }
 
@@ -54,7 +54,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc3",
       signature = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(100.0), new jDouble(1.0)),
-      expected = 3.0
+      expected = Some(3.0)
     )
   }
 
@@ -66,7 +66,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc4_for1",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(longArray)), new jLong(longArray.size)),
-      expected = 19
+      expected = Some(19)
     )
 
     val doubleArray = Array(2.0, 1.0)
@@ -76,7 +76,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc4_for2",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(doubleArray)), new jLong(doubleArray.size)),
-      expected = 84.0
+      expected = Some(84.0)
     )
   }
 
@@ -88,7 +88,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc4_while1",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(intArray)), new jLong(intArray.size)),
-      expected = 57
+      expected = Some(57)
     )
 
     val floatArray = Array(5, 1, 1, 0, 3, 2, 9, 1, 2, 3).map(_.toFloat)
@@ -98,7 +98,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc4_while2",
       signature = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(floatArray)), new jLong(floatArray.size)),
-      expected = 27.0
+      expected = Some(27.0)
     )
   }
 
@@ -109,7 +109,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc5",
       signature = Seq(jInt.TYPE),
       arguments = Seq(new jInt(0)),
-      expected = 1
+      expected = Some(1)
     )
   }
 
@@ -120,7 +120,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc6",
       signature = Seq(jInt.TYPE),
       arguments = Seq(new jInt(1)),
-      expected = 0
+      expected = Some(0)
     )
   }
 
@@ -131,7 +131,7 @@ class CFuncSuite extends FunSuite {
       functionName = "_cfunc7",
       signature = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(4.0), new jDouble(1.0)),
-      expected = 7.0
+      expected = Some(7.0)
     )
   }
 }

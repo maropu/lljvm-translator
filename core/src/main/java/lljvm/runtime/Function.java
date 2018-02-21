@@ -78,8 +78,8 @@ public class Function {
      */
     private static void registerClass(String classname)
     throws ClassNotFoundException {
-        if(registeredClasses.contains(classname))
-            return;
+        // if(registeredClasses.contains(classname))
+        //     return;
         Class<?> cls = ReflectionUtils.getClass(classname);
         for(Method method : ReflectionUtils.getStaticMethods(cls)) {
             final long addr = VMemory.allocateStack(1);

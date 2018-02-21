@@ -243,7 +243,8 @@ class JasminSuite extends FunSuite {
     assert(method.invoke(obj, args: _*) === 6.0)
   }
 
-  ignore("jasmin assembly tests from resources") {
+  // scalastyle:off line.size.limit
+  test("jasmin assembly tests from resources") {
     val code = TestUtils.resourceToBytes("test.jasmin")
     val classFile = new ClassFile()
     val in = new InputStreamReader(new ByteArrayInputStream(code))
@@ -256,16 +257,6 @@ class JasminSuite extends FunSuite {
     val method = LLJVMUtils.getMethod(clazz, "_cfunc__ZN7pyfunc812pyfunc8_2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE", Seq(jLong.TYPE, jLong.TYPE): _*)
     val obj = clazz.newInstance()
     assert(obj.getClass.getSimpleName === "GeneratedClass")
-    val floatX = Array(1.0f, 2.0f, 3.0f, 4.0f)
-    val floatY = Array(1.0f, 2.0f, 3.0f, 4.0f)
-    val pyArrayX = new PyArrayHolder()
-    val pyArrayY = new PyArrayHolder()
-    val args = Seq(new jLong(pyArrayX.addressOf(floatX)), new jLong(pyArrayY.addressOf(floatY)))
-    val result = method.invoke(obj, args: _*).asInstanceOf[Long]
-    val resultData = Platform.getLong(null, result + 32)
-    assert(Platform.getFloat(null, resultData) === 1.0f)
-    assert(Platform.getFloat(null, resultData + 4) === 8.0f)
-    assert(Platform.getFloat(null, resultData + 8) === 27.0f)
-    assert(Platform.getFloat(null, resultData + 12) === 64.0f)
   }
+  // scalastyle:on line.size.limit
 }

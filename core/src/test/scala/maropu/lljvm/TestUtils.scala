@@ -41,16 +41,20 @@ object TestUtils extends FunSuite {
     }
   }
 
-  def doTest(
+  def doTest[T](
       bitcode: String,
       source: String,
       functionName: String,
       signature: Seq[Class[_]],
       arguments: Seq[AnyRef],
-      expected: Any): Unit = try {
+      expected: Option[T] = None): T = try {
     val clazz = TestUtils.loadClassFromResource(bitcode)
     val method = clazz.newInstance.getClass.getMethod(functionName, signature: _*)
-    assert(method.invoke(null, arguments: _*) === expected)
+    val actualResult = method.invoke(null, arguments: _*)
+    expected.foreach { expectedResult =>
+      assert(actualResult === expectedResult)
+    }
+    actualResult.asInstanceOf[T]
   } catch {
     case e: Throwable =>
       fail(
