@@ -263,8 +263,8 @@ class JasminSuite extends FunSuite {
     val args = Seq(new jLong(pyArrayX.addressOf(floatX)), new jLong(pyArrayY.addressOf(floatY)))
     val result = method.invoke(obj, args: _*).asInstanceOf[Long]
     assert(Platform.getFloat(null, result) === 1.0f)
-    assert(Platform.getFloat(null, result + 4) === 2.0f)
-    assert(Platform.getFloat(null, result + 8) === 3.0f)
-    assert(Platform.getFloat(null, result + 12) === 4.0f)
+    assert(Platform.getFloat(null, result + 4) === 8.0f)
+    assert(Platform.getFloat(null, result + 8) === 27.0f)
+    assert(Platform.getFloat(null, result + 12) === 64.0f)
   }
 }

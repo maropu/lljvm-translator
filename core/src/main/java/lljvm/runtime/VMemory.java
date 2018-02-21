@@ -185,7 +185,9 @@ public class VMemory {
    */
   public static float load_f32(long addr) {
     try {
-      return Platform.getFloat(null, addr);
+      float d = Platform.getFloat(null, addr);
+      return d;
+      // return Platform.getFloat(null, addr);
     } catch(NullPointerException e) {
       throw new SegmentationFault(addr);
     }

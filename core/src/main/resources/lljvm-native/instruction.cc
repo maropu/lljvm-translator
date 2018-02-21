@@ -592,7 +592,8 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
          f32 = (getBitWidth(seqTy->getElementType()) == 32);
 
          // TODO: The return type depends on the 1st type
-         f32_2nd = (getBitWidth(inst->getOperand(1)->getType()) == 32);
+         // f32_2nd = (getBitWidth(inst->getOperand(1)->getType()) == 32);
+         f32_2nd = f32;
        }
 
         int size = targetData->getTypeAllocSize(seqTy->getElementType());
@@ -621,7 +622,14 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
                 printIndirectLoad(seqTy->getElementType());
                 if(f32) printSimpleInstruction("f2d");
 
-                printValueLoad(inst->getOperand(1));
+                if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(inst->getOperand(1))) {
+                    printValueLoad(vec->getElementAsConstant(i));
+                } else {
+                    printValueLoad(inst->getOperand(1));
+                    printSimpleInstruction("ldc2_w", utostr(i * size));
+                    printSimpleInstruction("ladd");
+                    printIndirectLoad(vec->getElementType());
+                }
                 if(f32_2nd) printSimpleInstruction("f2d");
            }
 
