@@ -4496,6 +4496,11 @@ label41:
 	.line 440
 	bipush 56
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lconst_0
+	ladd
+	dup2
+	lload 66 ; __20_fca_0_load
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
 	lstore 68 ; __20_fca_0_insert
 ;  %.20.fca.1.load = load i8*, i8** %.fca.1.gep, align 8
 	.line 441
@@ -4504,8 +4509,12 @@ label41:
 	lstore 70 ; __20_fca_1_load
 ;  %.20.fca.1.insert = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.0.insert, i8* %.20.fca.1.load, 1
 	.line 442
-	bipush 56
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lload 68 ; __20_fca_0_insert
+	ldc2_w 8
+	ladd
+	dup2
+	lload 70 ; __20_fca_1_load
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
 	lstore 72 ; __20_fca_1_insert
 ;  %.20.fca.2.load = load i64, i64* %.fca.2.gep, align 8
 	.line 443
@@ -4514,8 +4523,12 @@ label41:
 	lstore 74 ; __20_fca_2_load
 ;  %.20.fca.2.insert = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.1.insert, i64 %.20.fca.2.load, 2
 	.line 444
-	bipush 56
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lload 72 ; __20_fca_1_insert
+	ldc2_w 16
+	ladd
+	dup2
+	lload 74 ; __20_fca_2_load
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
 	lstore 76 ; __20_fca_2_insert
 ;  %.20.fca.3.load = load i64, i64* %.fca.3.gep, align 8
 	.line 445
@@ -4524,8 +4537,12 @@ label41:
 	lstore 78 ; __20_fca_3_load
 ;  %.20.fca.3.insert = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.2.insert, i64 %.20.fca.3.load, 3
 	.line 446
-	bipush 56
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lload 76 ; __20_fca_2_insert
+	ldc2_w 24
+	ladd
+	dup2
+	lload 78 ; __20_fca_3_load
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
 	lstore 80 ; __20_fca_3_insert
 ;  %.20.fca.4.load = load float*, float** %.fca.4.gep, align 8
 	.line 447
@@ -4534,8 +4551,12 @@ label41:
 	lstore 82 ; __20_fca_4_load
 ;  %.20.fca.4.insert = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.3.insert, float* %.20.fca.4.load, 4
 	.line 448
-	bipush 56
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lload 80 ; __20_fca_3_insert
+	ldc2_w 32
+	ladd
+	dup2
+	lload 82 ; __20_fca_4_load
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
 	lstore 84 ; __20_fca_4_insert
 ;  %.20.fca.5.0.load = load i64, i64* %.fca.5.0.gep, align 8
 	.line 449
@@ -4551,21 +4572,37 @@ label41:
 	.line 451
 	bipush 8
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lconst_0
+	ladd
+	dup2
+	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 90 ; __26
 ;  %.27 = insertvalue [1 x i64] undef, i64 %.20.fca.6.0.load, 0
 	.line 452
 	bipush 8
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lconst_0
+	ladd
+	dup2
+	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 92 ; __27
 ;  %inserted.shape = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.4.insert, [1 x i64] %.26, 5
 	.line 453
-	bipush 56
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lload 84 ; __20_fca_4_insert
+	ldc2_w 40
+	ladd
+	dup2
+	lload 90 ; __26
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
 	lstore 94 ; _inserted_shape
 ;  %inserted.strides = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %inserted.shape, [1 x i64] %.27, 6
 	.line 454
-	bipush 56
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lload 94 ; _inserted_shape
+	ldc2_w 48
+	ladd
+	dup2
+	lload 92 ; __27
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
 	lstore 96 ; _inserted_strides
 ;  %.33 = alloca i32, align 4
 	.line 455

@@ -464,24 +464,60 @@ void JVMWriter::printInsertElement(const InsertElementInst *inst) {
 }
 
 void JVMWriter::printInsertValue(const InsertValueInst *inst) {
-    // TODO: Implement this
-    const Value *v = inst->getAggregateOperand();
-    const Type *aggType = v->getType();
-    int aggSize = 0;
+    const Value *aggValue = inst->getOperand(0);
+    const Type *aggType = aggValue->getType();
     if(const StructType *structTy = dyn_cast<StructType>(aggType)) {
+        int aggSize = 0;
         for(unsigned int f = 0; f < structTy->getNumElements(); f++) {
             aggSize = alignOffset(
                 aggSize + targetData->getTypeAllocSize(structTy->getContainedType(f)),
                 targetData->getABITypeAlignment(structTy->getContainedType(f))
             );
         }
+        if (const UndefValue *undef = dyn_cast<UndefValue>(aggValue)) {
+            printSimpleInstruction("bipush", utostr(aggSize));
+            printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
+        } else {
+            printValueLoad(aggValue);
+        }
+
+        // calculate offset
+        for (unsigned i = 0; i < inst->getNumIndices(); i++) {
+            unsigned fieldIndex = inst->getIndices()[i];
+            int size = 0;
+            for(unsigned int f = 0; f < fieldIndex; f++) {
+                size = alignOffset(
+                    size + targetData->getTypeAllocSize(structTy->getContainedType(f)),
+                    targetData->getABITypeAlignment(structTy->getContainedType(f))
+                );
+            }
+            printPtrLoad(size);
+            printSimpleInstruction("ladd");
+            printSimpleInstruction("dup2");
+            printValueLoad(inst->getOperand(1));
+            printIndirectStore(inst->getOperand(1)->getType());
+        }
     } else if(const SequentialType *seqTy = dyn_cast<SequentialType>(aggType)) {
-        aggSize = targetData->getTypeAllocSize(seqTy->getElementType());
+        int aggSize = targetData->getTypeAllocSize(seqTy->getElementType()) * seqTy->getNumElements();
+        if (const UndefValue *undef = dyn_cast<UndefValue>(aggValue)) {
+            printSimpleInstruction("bipush", utostr(aggSize));
+            printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
+        } else {
+            printValueLoad(aggValue);
+        }
+
+        // calculate offset
+        for (unsigned i = 0; i < inst->getNumIndices(); i++) {
+            unsigned fieldIndex = inst->getIndices()[i];
+            int size = targetData->getTypeAllocSize(seqTy->getElementType());
+            printPtrLoad(fieldIndex * size);
+            printSimpleInstruction("ladd");
+            printSimpleInstruction("dup2");
+            printIndirectLoad(aggType);
+        }
     } else {
         llvm_unreachable("Invalid type");
     }
-    printSimpleInstruction("bipush", utostr(aggSize));
-    printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
 }
 
 void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
