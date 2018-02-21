@@ -2,8 +2,8 @@
 .super java/lang/Object
 
 ; Fields
-.field private static final __const_picklebuf_4594083744 J
-.field private static final __const_pickledata_4594083744 J
+.field private static final __const_picklebuf_4394041640 J
+.field private static final __const_pickledata_4394041640 J
 .field private static final __const__Numba_C_callback__pyfunc8__ J
 ; .extern field _PyExc_StopIteration J
 ; .extern field _PyExc_SystemError J
@@ -36,10 +36,10 @@
 	; allocate global variables
 	bipush 16
 	invokestatic lljvm/runtime/VMemory/allocateData(I)J
-	putstatic GeneratedClass/__const_picklebuf_4594083744 J
+	putstatic GeneratedClass/__const_picklebuf_4394041640 J
 	sipush 200
 	invokestatic lljvm/runtime/VMemory/allocateData(I)J
-	putstatic GeneratedClass/__const_pickledata_4594083744 J
+	putstatic GeneratedClass/__const_pickledata_4394041640 J
 	bipush 29
 	invokestatic lljvm/runtime/VMemory/allocateData(I)J
 	putstatic GeneratedClass/__const__Numba_C_callback__pyfunc8__ J
@@ -48,14 +48,14 @@
 	putstatic GeneratedClass/__const_unknown_error_when_calling_native_function J
 
 	; initialise global variables
-	getstatic GeneratedClass/__const_picklebuf_4594083744 J
-	getstatic GeneratedClass/__const_pickledata_4594083744 J
+	getstatic GeneratedClass/__const_picklebuf_4394041640 J
+	getstatic GeneratedClass/__const_pickledata_4394041640 J
 	invokestatic lljvm/runtime/VMemory/pack(JJ)J
 	sipush 200
 	invokestatic lljvm/runtime/VMemory/pack(JI)J
 	pop2
 
-	getstatic GeneratedClass/__const_pickledata_4594083744 J
+	getstatic GeneratedClass/__const_pickledata_4394041640 J
 	ldc "\u0080\u0002\u0063\u0065\u0078\u0063\u0065\u0070\u0074\u0069\u006F\u006E\u0073\u000A\u0056\u0061\u006C\u0075\u0065\u0045\u0072\u0072\u006F\u0072\u000A\u0071\u0000\u0055\u00A2\u0075\u006E\u0061\u0062\u006C\u0065\u0020\u0074\u006F\u0020\u0062\u0072\u006F\u0061\u0064\u0063\u0061\u0073\u0074\u0020\u0061\u0072\u0067\u0075\u006D\u0065\u006E\u0074\u0020\u0031\u0020\u0074\u006F\u0020\u006F\u0075\u0074\u0070\u0075\u0074\u0020\u0061\u0072\u0072\u0061\u0079\u000A\u0046\u0069\u006C\u0065\u0020\u0022\u002F\u0055\u0073\u0065\u0072\u0073\u002F\u006D\u0061\u0072\u006F\u0070\u0075\u002F\u0049\u0064\u0065\u0061\u0050\u0072\u006F\u006A\u0065\u0063\u0074\u0073\u002F\u006C\u006C\u006A\u0076\u006D\u002D\u0074\u0072\u0061\u006E\u0073\u006C\u0061\u0074\u006F\u0072\u002F\u0063\u006F\u0072\u0065\u002F\u0073\u0072\u0063\u002F\u0074\u0065\u0073\u0074\u002F\u0072\u0065\u0073\u006F\u0075\u0072\u0063\u0065\u0073\u002F\u006C\u006C\u0076\u006D\u002D\u0070\u0079\u0066\u0075\u006E\u0063\u002D\u0062\u0069\u0074\u0063\u006F\u0064\u0065\u002F\u0070\u0079\u0066\u0075\u006E\u0063\u0038\u002E\u0070\u0079\u0022\u002C\u0020\u006C\u0069\u006E\u0065\u0020\u0035\u002C\u0020\u0071\u0001\u0085\u0071\u0002\u0086\u0071\u0003\u002E"
 	invokevirtual java/lang/String/toCharArray()[C
 	invokestatic lljvm/runtime/VMemory/pack(J[C)J
@@ -104,62 +104,54 @@
 	istore 52
 	lconst_0
 	lstore 53
-	iconst_0
-	istore 55
 	lconst_0
-	lstore 56
-	fconst_0
-	fstore 58
-	fconst_0
-	fstore 59
-	fconst_0
-	fstore 60
-	fconst_0
-	fstore 61
-	fconst_0
-	fstore 62
-	fconst_0
-	fstore 63
+	lstore 55
+	iconst_0
+	istore 57
+	lconst_0
+	lstore 58
+	lconst_0
+	lstore 60
+	lconst_0
+	lstore 62
 	lconst_0
 	lstore 64
+	lconst_0
+	lstore 66
+	fconst_0
+	fstore 68
+	fconst_0
+	fstore 69
+	fconst_0
+	fstore 70
+	fconst_0
+	fstore 71
+	lconst_0
+	lstore 72
+	lconst_0
+	lstore 74
+	lconst_0
+	lstore 76
 	iconst_0
-	istore 66
-	lconst_0
-	lstore 67
-	lconst_0
-	lstore 69
-	lconst_0
-	lstore 71
-	lconst_0
-	lstore 73
-	lconst_0
-	lstore 75
-	lconst_0
-	lstore 77
+	istore 78
 	lconst_0
 	lstore 79
-	lconst_0
-	lstore 81
-	lconst_0
-	lstore 83
-	lconst_0
-	lstore 85
-	fconst_0
-	fstore 87
-	fconst_0
-	fstore 88
-	fconst_0
-	fstore 89
-	fconst_0
-	fstore 90
-	fconst_0
-	fstore 91
-	fconst_0
-	fstore 92
-	lconst_0
-	lstore 93
 	iconst_0
-	istore 95
+	istore 81
+	lconst_0
+	lstore 82
+	lconst_0
+	lstore 84
+	lconst_0
+	lstore 86
+	lconst_0
+	lstore 88
+	lconst_0
+	lstore 90
+	lconst_0
+	lstore 92
+	lconst_0
+	lstore 94
 	lconst_0
 	lstore 96
 	lconst_0
@@ -174,16 +166,22 @@
 	lstore 106
 	lconst_0
 	lstore 108
+	iconst_0
+	istore 110
 	lconst_0
-	lstore 110
+	lstore 111
+	fconst_0
+	fstore 113
+	fconst_0
+	fstore 114
+	fconst_0
+	fstore 115
+	fconst_0
+	fstore 116
 	lconst_0
-	lstore 112
-	lconst_0
-	lstore 114
-	lconst_0
-	lstore 116
-	lconst_0
-	lstore 118
+	lstore 117
+	iconst_0
+	istore 119
 	lconst_0
 	lstore 120
 	lconst_0
@@ -200,108 +198,94 @@
 	lstore 132
 	lconst_0
 	lstore 134
-	fconst_0
-	fstore 136
 	lconst_0
-	lstore 137
+	lstore 136
 	lconst_0
-	lstore 139
-	fconst_0
-	fstore 141
-	fconst_0
-	fstore 142
-	fconst_0
-	fstore 143
-	fconst_0
-	fstore 144
-	fconst_0
-	fstore 145
+	lstore 138
+	lconst_0
+	lstore 140
+	lconst_0
+	lstore 142
+	lconst_0
+	lstore 144
 	lconst_0
 	lstore 146
 	lconst_0
 	lstore 148
 	lconst_0
 	lstore 150
-	fconst_0
-	fstore 152
 	lconst_0
-	lstore 153
+	lstore 152
 	lconst_0
-	lstore 155
-	fconst_0
-	fstore 157
-	fconst_0
-	fstore 158
-	fconst_0
-	fstore 159
+	lstore 154
+	lconst_0
+	lstore 156
+	lconst_0
+	lstore 158
 	fconst_0
 	fstore 160
+	lconst_0
+	lstore 161
+	lconst_0
+	lstore 163
 	fconst_0
-	fstore 161
-	lconst_0
-	lstore 162
-	lconst_0
-	lstore 164
-	lconst_0
-	lstore 166
+	fstore 165
+	fconst_0
+	fstore 166
+	fconst_0
+	fstore 167
 	lconst_0
 	lstore 168
-	iconst_0
-	istore 170
 	lconst_0
-	lstore 171
+	lstore 170
 	lconst_0
-	lstore 173
+	lstore 172
+	fconst_0
+	fstore 174
 	lconst_0
 	lstore 175
 	lconst_0
 	lstore 177
+	fconst_0
+	fstore 179
+	fconst_0
+	fstore 180
+	fconst_0
+	fstore 181
 	lconst_0
-	lstore 179
+	lstore 182
 	lconst_0
-	lstore 181
-	fconst_0
-	fstore 183
-	fconst_0
-	fstore 184
-	fconst_0
-	fstore 185
-	fconst_0
-	fstore 186
-	fconst_0
-	fstore 187
-	fconst_0
-	fstore 188
+	lstore 184
 	lconst_0
-	lstore 189
+	lstore 186
+	lconst_0
+	lstore 188
+	iconst_0
+	istore 190
 	lconst_0
 	lstore 191
 	lconst_0
 	lstore 193
-	fconst_0
-	fstore 195
-	fconst_0
-	fstore 196
-	fconst_0
-	fstore 197
-	fconst_0
-	fstore 198
-	fconst_0
-	fstore 199
-	fconst_0
-	fstore 200
+	lconst_0
+	lstore 195
+	lconst_0
+	lstore 197
+	lconst_0
+	lstore 199
 	lconst_0
 	lstore 201
+	fconst_0
+	fstore 203
+	fconst_0
+	fstore 204
+	fconst_0
+	fstore 205
+	fconst_0
+	fstore 206
 	lconst_0
-	lstore 203
+	lstore 207
 	lconst_0
-	lstore 205
-	iconst_0
-	istore 207
-	lconst_0
-	lstore 208
-	iconst_0
-	istore 210
+	lstore 209
 	lconst_0
 	lstore 211
 	fconst_0
@@ -312,52 +296,58 @@
 	fstore 215
 	fconst_0
 	fstore 216
-	fconst_0
-	fstore 217
-	fconst_0
-	fstore 218
+	lconst_0
+	lstore 217
 	lconst_0
 	lstore 219
-	iconst_0
-	istore 221
 	lconst_0
-	lstore 222
+	lstore 221
+	fconst_0
+	fstore 223
+	fconst_0
+	fstore 224
+	fconst_0
+	fstore 225
+	fconst_0
+	fstore 226
 	lconst_0
-	lstore 224
+	lstore 227
 	lconst_0
-	lstore 226
+	lstore 229
 	lconst_0
-	lstore 228
+	lstore 231
+	fconst_0
+	fstore 233
+	fconst_0
+	fstore 234
+	fconst_0
+	fstore 235
+	fconst_0
+	fstore 236
 	lconst_0
-	lstore 230
+	lstore 237
 	lconst_0
-	lstore 232
-	lconst_0
-	lstore 234
-	lconst_0
-	lstore 236
-	lconst_0
-	lstore 238
-	iconst_0
-	istore 240
+	lstore 239
 	lconst_0
 	lstore 241
+	iconst_0
+	istore 243
 	lconst_0
-	lstore 243
+	lstore 244
 	lconst_0
-	lstore 245
-	lconst_0
-	lstore 247
+	lstore 246
+	iconst_0
+	istore 248
 	lconst_0
 	lstore 249
-	iconst_0
-	istore 251
 	lconst_0
-	lstore 252
+	lstore 251
 	lconst_0
-	lstore 254
+	lstore 253
 	lconst_0
-	lstore 256
+	lstore 255
+	fconst_0
+	fstore 257
 	lconst_0
 	lstore 258
 	fconst_0
@@ -366,36 +356,32 @@
 	fstore 261
 	fconst_0
 	fstore 262
-	fconst_0
-	fstore 263
-	fconst_0
-	fstore 264
-	fconst_0
-	fstore 265
 	lconst_0
-	lstore 266
+	lstore 263
 	lconst_0
-	lstore 268
+	lstore 265
+	lconst_0
+	lstore 267
+	iconst_0
+	istore 269
 	lconst_0
 	lstore 270
 	iconst_0
 	istore 272
 	lconst_0
 	lstore 273
-	iconst_0
-	istore 275
 	lconst_0
-	lstore 276
+	lstore 275
 	lconst_0
-	lstore 278
+	lstore 277
 	lconst_0
-	lstore 280
+	lstore 279
 	lconst_0
-	lstore 282
+	lstore 281
 	lconst_0
-	lstore 284
-	iconst_0
-	istore 286
+	lstore 283
+	lconst_0
+	lstore 285
 	lconst_0
 	lstore 287
 	lconst_0
@@ -404,68 +390,64 @@
 	lstore 291
 	lconst_0
 	lstore 293
-	iconst_0
-	istore 295
-	iconst_0
-	istore 296
-	iconst_0
-	istore 297
 	lconst_0
-	lstore 298
+	lstore 295
+	lconst_0
+	lstore 297
+	iconst_0
+	istore 299
 	lconst_0
 	lstore 300
-	iconst_0
-	istore 302
-	iconst_0
-	istore 303
-	iconst_0
-	istore 304
-	iconst_0
-	istore 305
+	lconst_0
+	lstore 302
+	lconst_0
+	lstore 304
 	lconst_0
 	lstore 306
 	lconst_0
 	lstore 308
-	lconst_0
-	lstore 310
 	iconst_0
-	istore 312
+	istore 310
+	lconst_0
+	lstore 311
+	lconst_0
+	lstore 313
+	lconst_0
+	lstore 315
+	lconst_0
+	lstore 317
 	fconst_0
-	fstore 313
-	lconst_0
-	lstore 314
-	lconst_0
-	lstore 316
+	fstore 319
 	fconst_0
-	fstore 318
-	lconst_0
-	lstore 319
-	lconst_0
-	lstore 321
+	fstore 320
+	fconst_0
+	fstore 321
+	fconst_0
+	fstore 322
 	lconst_0
 	lstore 323
 	lconst_0
 	lstore 325
 	lconst_0
 	lstore 327
+	iconst_0
+	istore 329
 	lconst_0
-	lstore 329
-	lconst_0
-	lstore 331
+	lstore 330
+	iconst_0
+	istore 332
 	lconst_0
 	lstore 333
-	iconst_0
-	istore 335
-	fconst_0
-	fstore 336
+	lconst_0
+	lstore 335
 	lconst_0
 	lstore 337
 	lconst_0
 	lstore 339
-	fconst_0
-	fstore 341
 	lconst_0
-	lstore 342
+	lstore 341
+	iconst_0
+	istore 343
 	lconst_0
 	lstore 344
 	lconst_0
@@ -474,32 +456,40 @@
 	lstore 348
 	lconst_0
 	lstore 350
-	lconst_0
-	lstore 352
-	fconst_0
-	fstore 354
+	iconst_0
+	istore 352
+	iconst_0
+	istore 353
+	iconst_0
+	istore 354
 	lconst_0
 	lstore 355
 	lconst_0
 	lstore 357
+	iconst_0
+	istore 359
+	iconst_0
+	istore 360
+	iconst_0
+	istore 361
+	iconst_0
+	istore 362
+	lconst_0
+	lstore 363
+	lconst_0
+	lstore 365
+	lconst_0
+	lstore 367
+	lconst_0
+	lstore 369
+	iconst_0
+	istore 371
 	fconst_0
-	fstore 359
+	fstore 372
 	lconst_0
-	lstore 360
-	lconst_0
-	lstore 362
-	lconst_0
-	lstore 364
-	lconst_0
-	lstore 366
-	lconst_0
-	lstore 368
-	lconst_0
-	lstore 370
-	lconst_0
-	lstore 372
-	lconst_0
-	lstore 374
+	lstore 373
+	fconst_0
+	fstore 375
 	lconst_0
 	lstore 376
 	lconst_0
@@ -516,142 +506,240 @@
 	lstore 388
 	lconst_0
 	lstore 390
-	iconst_0
-	istore 392
-	iconst_0
-	istore 393
+	lconst_0
+	lstore 392
 	lconst_0
 	lstore 394
 	lconst_0
 	lstore 396
 	lconst_0
 	lstore 398
+	iconst_0
+	istore 400
 	lconst_0
-	lstore 400
+	lstore 401
+	iconst_0
+	istore 403
 	fconst_0
-	fstore 402
-	lconst_0
-	lstore 403
+	fstore 404
 	lconst_0
 	lstore 405
 	fconst_0
 	fstore 407
-	fconst_0
-	fstore 408
-	fconst_0
-	fstore 409
-	fconst_0
-	fstore 410
-	fconst_0
-	fstore 411
+	lconst_0
+	lstore 408
+	lconst_0
+	lstore 410
 	lconst_0
 	lstore 412
-	fconst_0
-	fstore 414
 	lconst_0
-	lstore 415
+	lstore 414
+	fconst_0
+	fstore 416
 	lconst_0
 	lstore 417
 	fconst_0
 	fstore 419
-	fconst_0
-	fstore 420
-	fconst_0
-	fstore 421
-	fconst_0
-	fstore 422
-	fconst_0
-	fstore 423
+	lconst_0
+	lstore 420
+	lconst_0
+	lstore 422
 	lconst_0
 	lstore 424
 	lconst_0
 	lstore 426
+	fconst_0
+	fstore 428
 	lconst_0
-	lstore 428
-	iconst_0
-	istore 430
+	lstore 429
+	fconst_0
+	fstore 431
 	lconst_0
-	lstore 431
+	lstore 432
 	lconst_0
-	lstore 433
+	lstore 434
 	lconst_0
-	lstore 435
+	lstore 436
 	lconst_0
-	lstore 437
-	lconst_0
-	lstore 439
+	lstore 438
+	fconst_0
+	fstore 440
 	lconst_0
 	lstore 441
+	fconst_0
+	fstore 443
 	lconst_0
-	lstore 443
+	lstore 444
 	lconst_0
-	lstore 445
+	lstore 446
 	lconst_0
-	lstore 447
+	lstore 448
 	lconst_0
-	lstore 449
+	lstore 450
 	lconst_0
-	lstore 451
-	fconst_0
-	fstore 453
-	fconst_0
-	fstore 454
-	fconst_0
-	fstore 455
-	fconst_0
-	fstore 456
-	fconst_0
-	fstore 457
-	fconst_0
-	fstore 458
+	lstore 452
 	lconst_0
-	lstore 459
-	fconst_0
-	fstore 461
-	fconst_0
-	fstore 462
-	fconst_0
-	fstore 463
-	fconst_0
-	fstore 464
-	fconst_0
-	fstore 465
-	fconst_0
-	fstore 466
+	lstore 454
 	lconst_0
-	lstore 467
-	fconst_0
-	fstore 469
-	fconst_0
-	fstore 470
-	fconst_0
-	fstore 471
-	fconst_0
-	fstore 472
-	fconst_0
-	fstore 473
-	fconst_0
-	fstore 474
+	lstore 456
 	lconst_0
-	lstore 475
-	fconst_0
-	fstore 477
-	fconst_0
-	fstore 478
-	fconst_0
-	fstore 479
-	fconst_0
-	fstore 480
-	fconst_0
-	fstore 481
-	fconst_0
-	fstore 482
+	lstore 458
 	lconst_0
-	lstore 483
+	lstore 460
 	lconst_0
-	lstore 485
+	lstore 462
+	lconst_0
+	lstore 464
+	lconst_0
+	lstore 466
+	lconst_0
+	lstore 468
+	lconst_0
+	lstore 470
+	lconst_0
+	lstore 472
+	lconst_0
+	lstore 474
 	iconst_0
-	istore 487
+	istore 476
+	iconst_0
+	istore 477
+	lconst_0
+	lstore 478
+	lconst_0
+	lstore 480
+	lconst_0
+	lstore 482
+	lconst_0
+	lstore 484
+	fconst_0
+	fstore 486
+	lconst_0
+	lstore 487
+	lconst_0
+	lstore 489
+	fconst_0
+	fstore 491
+	fconst_0
+	fstore 492
+	fconst_0
+	fstore 493
+	lconst_0
+	lstore 494
+	fconst_0
+	fstore 496
+	lconst_0
+	lstore 497
+	lconst_0
+	lstore 499
+	fconst_0
+	fstore 501
+	fconst_0
+	fstore 502
+	fconst_0
+	fstore 503
+	lconst_0
+	lstore 504
+	fconst_0
+	fstore 506
+	lconst_0
+	lstore 507
+	lconst_0
+	lstore 509
+	fconst_0
+	fstore 511
+	fconst_0
+	fstore 512
+	fconst_0
+	fstore 513
+	lconst_0
+	lstore 514
+	fconst_0
+	fstore 516
+	lconst_0
+	lstore 517
+	lconst_0
+	lstore 519
+	fconst_0
+	fstore 521
+	fconst_0
+	fstore 522
+	fconst_0
+	fstore 523
+	lconst_0
+	lstore 524
+	lconst_0
+	lstore 526
+	lconst_0
+	lstore 528
+	iconst_0
+	istore 530
+	lconst_0
+	lstore 531
+	lconst_0
+	lstore 533
+	lconst_0
+	lstore 535
+	lconst_0
+	lstore 537
+	lconst_0
+	lstore 539
+	lconst_0
+	lstore 541
+	lconst_0
+	lstore 543
+	lconst_0
+	lstore 545
+	lconst_0
+	lstore 547
+	lconst_0
+	lstore 549
+	lconst_0
+	lstore 551
+	fconst_0
+	fstore 553
+	fconst_0
+	fstore 554
+	fconst_0
+	fstore 555
+	fconst_0
+	fstore 556
+	lconst_0
+	lstore 557
+	fconst_0
+	fstore 559
+	fconst_0
+	fstore 560
+	fconst_0
+	fstore 561
+	fconst_0
+	fstore 562
+	lconst_0
+	lstore 563
+	fconst_0
+	fstore 565
+	fconst_0
+	fstore 566
+	fconst_0
+	fstore 567
+	fconst_0
+	fstore 568
+	lconst_0
+	lstore 569
+	fconst_0
+	fstore 571
+	fconst_0
+	fstore 572
+	fconst_0
+	fstore 573
+	fconst_0
+	fstore 574
+	lconst_0
+	lstore 575
+	lconst_0
+	lstore 577
+	iconst_0
+	istore 579
 label1:
 ;  tail call void @NRT_incref(i8* %arg.x.0)
 	.line 1
@@ -692,7 +780,7 @@ label1:
 	goto label3
 label2$phi1:
 	lload 30 ; _arg_y_5_0
-	lstore 38 ; __12380
+	lstore 38 ; __12378
 	goto label2
 label3:
 ;  %.131.i29 = icmp eq i64 %arg.x.5.0, %arg.y.5.0
@@ -726,24 +814,24 @@ label3:
 	goto label4
 label2$phi2:
 	lload 16 ; _arg_x_5_0
-	lstore 38 ; __12380
+	lstore 38 ; __12378
 	goto label2
 label4:
-;  store { i8*, i32 }* @.const.picklebuf.4594083744, { i8*, i32 }** %excinfo, align 8
+;  store { i8*, i32 }* @.const.picklebuf.4394041640, { i8*, i32 }** %excinfo, align 8
 	.line 9
 	lload_2 ; _excinfo
-	getstatic GeneratedClass/__const_picklebuf_4594083744 J
+	getstatic GeneratedClass/__const_picklebuf_4394041640 J
 	invokestatic lljvm/runtime/VMemory/store(JJ)V
 ;  ret i32 1
 	.line 10
 	iconst_1
 	ireturn
 label2:
-;  %.12380 = phi i64 [ %arg.x.5.0, %B79.i32 ], [ %arg.y.5.0, %B115.i ]
+;  %.12378 = phi i64 [ %arg.x.5.0, %B79.i32 ], [ %arg.y.5.0, %B115.i ]
 	.line 11
-;  %.127 = shl i64 %.12380, 2
+;  %.127 = shl i64 %.12378, 2
 	.line 12
-	lload 38 ; __12380
+	lload 38 ; __12378
 	ldc2_w 2
 	l2i
 	lshl
@@ -777,9 +865,9 @@ label2:
 	lload 46 ; _46
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 48 ; __6_i
-;  %.16549 = icmp sgt i64 %.12380, 0
+;  %.16549 = icmp sgt i64 %.12378, 0
 	.line 17
-	lload 38 ; __12380
+	lload 38 ; __12378
 	lconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_sgt(JJ)Z
 	iconst_1
@@ -813,2130 +901,1391 @@ label5:
 	ifne label7
 	goto label8
 label7:
-;  %xtraiter = and i64 %.12380, 1
-	.line 22
-	lload 38 ; __12380
-	lconst_1
-	land
-	lstore 53 ; _xtraiter
-;  %lcmp.mod = icmp eq i64 %xtraiter, 0
-	.line 23
-	lload 53 ; _xtraiter
-	lconst_0
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 55 ; _lcmp_mod
 ;  br i1 %1, label %for.body.endif.endif.endif.us.us.preheader, label %for.body.endif.endif.endif.us.preheader
-	.line 24
+	.line 22
 	iload 52 ; _52
 	ifne label9
 	goto label10
 label10:
-;  br i1 %lcmp.mod, label %for.body.endif.endif.endif.us.prol.loopexit, label %for.body.endif.endif.endif.us.prol
+;  %2 = add i64 %.12378, -1
+	.line 23
+	lload 38 ; __12378
+	ldc2_w -1
+	ladd
+	lstore 53 ; _53
+;  %xtraiter97 = and i64 %.12378, 3
+	.line 24
+	lload 38 ; __12378
+	ldc2_w 3
+	land
+	lstore 55 ; _xtraiter97
+;  %lcmp.mod98 = icmp eq i64 %xtraiter97, 0
 	.line 25
-	iload 55 ; _lcmp_mod
+	lload 55 ; _xtraiter97
+	lconst_0
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 57 ; _lcmp_mod98
+;  br i1 %lcmp.mod98, label %for.body.endif.endif.endif.us.prol.loopexit, label %for.body.endif.endif.endif.us.prol.preheader
+	.line 26
+	iload 57 ; _lcmp_mod98
 	ifne label11$phi3
 	goto label12
 label11$phi3:
 	lconst_0
-	lstore 64 ; _loop_index52_us_unr
+	lstore 79 ; _loop_index52_us_unr
 	goto label11
 label12:
-;  %2 = bitcast i8* %.6.i to float*
-	.line 26
-	lload 48 ; __6_i
-	lstore 56 ; _56
-;  %.176.us.prol = load float, float* %arg.x.4, align 4
+;  %3 = ptrtoint float* %arg.x.4 to i64
 	.line 27
 	lload 14 ; _arg_x_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 58 ; __176_us_prol
-;  %.186.us.prol = load float, float* %arg.y.4, align 4
+	lstore 58 ; _58
+;  br label %for.body.endif.endif.endif.us.prol
 	.line 28
-	lload 28 ; _arg_y_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 59 ; __186_us_prol
-;  %.17.i.us.prol = fsub float -0.000000e+00, %.176.us.prol
-	.line 29
-	fconst_0
-	fload 58 ; __176_us_prol
-	fsub
-	fstore 60 ; __17_i_us_prol
-;  %.29.le.i.us.prol = call float @llvm.exp.f32(float %.17.i.us.prol) #4
-	.line 30
-	fload 60 ; __17_i_us_prol
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 61 ; __29_le_i_us_prol
-;  %.46.i.us.prol = fmul float %.186.us.prol, %.186.us.prol
-	.line 31
-	fload 59 ; __186_us_prol
-	fload 59 ; __186_us_prol
-	fmul
-	fstore 62 ; __46_i_us_prol
-;  %.61.i.us.prol = fdiv float %.29.le.i.us.prol, %.46.i.us.prol
-	.line 32
-	fload 61 ; __29_le_i_us_prol
-	fload 62 ; __46_i_us_prol
-	fdiv
-	fstore 63 ; __61_i_us_prol
-;  store float %.61.i.us.prol, float* %2, align 4
-	.line 33
-	lload 56 ; _56
-	fload 63 ; __61_i_us_prol
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  br label %for.body.endif.endif.endif.us.prol.loopexit
-	.line 34
-	lconst_1
-	lstore 64 ; _loop_index52_us_unr
-	goto label11
-label11:
-;  %loop.index52.us.unr = phi i64 [ 0, %for.body.endif.endif.endif.us.preheader ], [ 1, %for.body.endif.endif.endif.us.prol ]
-	.line 35
-;  %3 = icmp eq i64 %.12380, 1
-	.line 36
-	lload 38 ; __12380
-	lconst_1
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 66 ; _66
-;  br i1 %3, label %for.end, label %for.body.endif.endif.endif.us.preheader.new
-	.line 37
-	iload 66 ; _66
-	ifne label6
+	lload 58 ; _58
+	lstore 60 ; _lsr_iv22
+	lconst_0
+	lstore 62 ; _loop_index52_us_prol
 	goto label13
 label13:
-;  %4 = ptrtoint float* %arg.x.4 to i64
+;  %lsr.iv22 = phi i64 [ %lsr.iv.next23, %for.body.endif.endif.endif.us.prol ], [ %3, %for.body.endif.endif.endif.us.prol.preheader ]
+	.line 29
+;  %loop.index52.us.prol = phi i64 [ %.207.us.prol, %for.body.endif.endif.endif.us.prol ], [ 0, %for.body.endif.endif.endif.us.prol.preheader ]
+	.line 30
+;  %4 = bitcast i8* %.6.i to float*
+	.line 31
+	lload 48 ; __6_i
+	lstore 64 ; _64
+;  %.175.us.prol = inttoptr i64 %lsr.iv22 to float*
+	.line 32
+	lload 60 ; _lsr_iv22
+	lstore 66 ; __175_us_prol
+;  %.176.us.prol = load float, float* %.175.us.prol, align 4
+	.line 33
+	lload 66 ; __175_us_prol
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 68 ; __176_us_prol
+;  %.186.us.prol = load float, float* %arg.y.4, align 4
+	.line 34
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 69 ; __186_us_prol
+;  %pow2.le.i.us.prol = fmul float %.176.us.prol, %.176.us.prol
+	.line 35
+	fload 68 ; __176_us_prol
+	fload 68 ; __176_us_prol
+	fmul
+	fstore 70 ; _pow2_le_i_us_prol
+;  %.54.i.us.prol = fdiv float %pow2.le.i.us.prol, %.186.us.prol
+	.line 36
+	fload 70 ; _pow2_le_i_us_prol
+	fload 69 ; __186_us_prol
+	fdiv
+	fstore 71 ; __54_i_us_prol
+;  %scevgep21 = getelementptr float, float* %4, i64 %loop.index52.us.prol
+	.line 37
+	lload 64 ; _64
+	ldc2_w 4
+	lload 62 ; _loop_index52_us_prol
+	lmul
+	ladd
+	lstore 72 ; _scevgep21
+;  store float %.54.i.us.prol, float* %scevgep21, align 4
 	.line 38
-	lload 14 ; _arg_x_4
-	lstore 67 ; _67
-;  %5 = sub i64 %.12380, %loop.index52.us.unr
+	lload 72 ; _scevgep21
+	fload 71 ; __54_i_us_prol
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %.207.us.prol = add nuw nsw i64 %loop.index52.us.prol, 1
 	.line 39
-	lload 38 ; __12380
-	lload 64 ; _loop_index52_us_unr
-	lsub
-	lstore 69 ; _69
-;  %6 = shl i64 %loop.index52.us.unr, 2
+	lload 62 ; _loop_index52_us_prol
+	lconst_1
+	ladd
+	lstore 74 ; __207_us_prol
+;  %lsr.iv.next23 = add i64 %lsr.iv22, %arg.x.6.0
 	.line 40
-	lload 64 ; _loop_index52_us_unr
-	ldc2_w 2
-	l2i
-	lshl
-	lstore 71 ; _71
-;  %7 = add i64 %6, 4
+	lload 60 ; _lsr_iv22
+	lload 18 ; _arg_x_6_0
+	ladd
+	lstore 76 ; _lsr_iv_next23
+;  %prol.iter.cmp = icmp eq i64 %xtraiter97, %.207.us.prol
 	.line 41
-	lload 71 ; _71
-	ldc2_w 4
-	ladd
-	lstore 73 ; _73
-;  %scevgep12 = getelementptr i8, i8* %.6.i, i64 %7
+	lload 55 ; _xtraiter97
+	lload 74 ; __207_us_prol
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 78 ; _prol_iter_cmp
+;  br i1 %prol.iter.cmp, label %for.body.endif.endif.endif.us.prol.loopexit, label %for.body.endif.endif.endif.us.prol, !llvm.loop !0
 	.line 42
-	lload 48 ; __6_i
-	lconst_1
-	lload 73 ; _73
-	lmul
-	ladd
-	lstore 75 ; _scevgep12
-;  %8 = add i64 %loop.index52.us.unr, 1
+	iload 78 ; _prol_iter_cmp
+	ifne label11$phi4
+	lload 76 ; _lsr_iv_next23
+	lstore 60 ; _lsr_iv22
+	lload 74 ; __207_us_prol
+	lstore 62 ; _loop_index52_us_prol
+	goto label13
+label11$phi4:
+	lload 74 ; __207_us_prol
+	lstore 79 ; _loop_index52_us_unr
+	goto label11
+label11:
+;  %loop.index52.us.unr = phi i64 [ 0, %for.body.endif.endif.endif.us.preheader ], [ %.207.us.prol, %for.body.endif.endif.endif.us.prol ]
 	.line 43
-	lload 64 ; _loop_index52_us_unr
-	lconst_1
-	ladd
-	lstore 77 ; _77
-;  %9 = mul i64 %arg.x.6.0, %8
+;  %5 = icmp ult i64 %2, 3
 	.line 44
-	lload 18 ; _arg_x_6_0
-	lload 77 ; _77
-	lmul
-	lstore 79 ; _79
-;  %10 = shl i64 %arg.x.6.0, 1
+	lload 53 ; _53
+	ldc2_w 3
+	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
+	iconst_1
+	iand
+	istore 81 ; _81
+;  br i1 %5, label %for.end, label %for.body.endif.endif.endif.us.preheader.new
 	.line 45
-	lload 18 ; _arg_x_6_0
-	lconst_1
-	l2i
-	lshl
-	lstore 81 ; _81
-;  %11 = mul i64 %loop.index52.us.unr, %arg.x.6.0
-	.line 46
-	lload 64 ; _loop_index52_us_unr
-	lload 18 ; _arg_x_6_0
-	lmul
-	lstore 83 ; _83
-;  br label %for.body.endif.endif.endif.us
-	.line 47
-	lload 67 ; _67
-	lstore 171 ; _lsr_iv17
-	lload 75 ; _scevgep12
-	lstore 173 ; _lsr_iv13
-	lload 69 ; _69
-	lstore 175 ; _lsr_iv10
+	iload 81 ; _81
+	ifne label6
 	goto label14
-label9:
-;  br i1 %lcmp.mod, label %for.body.endif.endif.endif.us.us.prol.loopexit, label %for.body.endif.endif.endif.us.us.prol
-	.line 48
-	iload 55 ; _lcmp_mod
-	ifne label15$phi4
-	goto label16
-label15$phi4:
-	lconst_0
-	lstore 93 ; _loop_index52_us_us_unr
-	goto label15
-label16:
-;  %12 = bitcast i8* %.6.i to float*
-	.line 49
-	lload 48 ; __6_i
-	lstore 85 ; _85
-;  %.176.us.us.prol = load float, float* %arg.x.4, align 4
-	.line 50
-	lload 14 ; _arg_x_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 87 ; __176_us_us_prol
-;  %.186.us.us.prol = load float, float* %arg.y.4, align 4
-	.line 51
-	lload 28 ; _arg_y_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 88 ; __186_us_us_prol
-;  %.17.i.us.us.prol = fsub float -0.000000e+00, %.176.us.us.prol
-	.line 52
-	fconst_0
-	fload 87 ; __176_us_us_prol
-	fsub
-	fstore 89 ; __17_i_us_us_prol
-;  %.29.le.i.us.us.prol = call float @llvm.exp.f32(float %.17.i.us.us.prol) #4
-	.line 53
-	fload 89 ; __17_i_us_us_prol
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 90 ; __29_le_i_us_us_prol
-;  %.46.i.us.us.prol = fmul float %.186.us.us.prol, %.186.us.us.prol
-	.line 54
-	fload 88 ; __186_us_us_prol
-	fload 88 ; __186_us_us_prol
-	fmul
-	fstore 91 ; __46_i_us_us_prol
-;  %.61.i.us.us.prol = fdiv float %.29.le.i.us.us.prol, %.46.i.us.us.prol
-	.line 55
-	fload 90 ; __29_le_i_us_us_prol
-	fload 91 ; __46_i_us_us_prol
-	fdiv
-	fstore 92 ; __61_i_us_us_prol
-;  store float %.61.i.us.us.prol, float* %12, align 4
-	.line 56
-	lload 85 ; _85
-	fload 92 ; __61_i_us_us_prol
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  br label %for.body.endif.endif.endif.us.us.prol.loopexit
-	.line 57
-	lconst_1
-	lstore 93 ; _loop_index52_us_us_unr
-	goto label15
-label15:
-;  %loop.index52.us.us.unr = phi i64 [ 0, %for.body.endif.endif.endif.us.us.preheader ], [ 1, %for.body.endif.endif.endif.us.us.prol ]
-	.line 58
-;  %13 = icmp eq i64 %.12380, 1
-	.line 59
-	lload 38 ; __12380
-	lconst_1
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 95 ; _95
-;  br i1 %13, label %for.end, label %for.body.endif.endif.endif.us.us.preheader.new
-	.line 60
-	iload 95 ; _95
-	ifne label6
-	goto label17
-label17:
-;  %14 = ptrtoint float* %arg.y.4 to i64
-	.line 61
-	lload 28 ; _arg_y_4
-	lstore 96 ; _96
-;  %15 = ptrtoint float* %arg.x.4 to i64
-	.line 62
-	lload 14 ; _arg_x_4
-	lstore 98 ; _98
-;  %16 = sub i64 %.12380, %loop.index52.us.us.unr
-	.line 63
-	lload 38 ; __12380
-	lload 93 ; _loop_index52_us_us_unr
-	lsub
-	lstore 100 ; _100
-;  %17 = shl i64 %loop.index52.us.us.unr, 2
-	.line 64
-	lload 93 ; _loop_index52_us_us_unr
-	ldc2_w 2
-	l2i
-	lshl
-	lstore 102 ; _102
-;  %18 = add i64 %17, 4
-	.line 65
-	lload 102 ; _102
-	ldc2_w 4
-	ladd
-	lstore 104 ; _104
-;  %scevgep1 = getelementptr i8, i8* %.6.i, i64 %18
-	.line 66
-	lload 48 ; __6_i
-	lconst_1
-	lload 104 ; _104
-	lmul
-	ladd
-	lstore 106 ; _scevgep1
-;  %19 = add i64 %loop.index52.us.us.unr, 1
-	.line 67
-	lload 93 ; _loop_index52_us_us_unr
-	lconst_1
-	ladd
-	lstore 108 ; _108
-;  %20 = mul i64 %arg.y.6.0, %19
-	.line 68
-	lload 32 ; _arg_y_6_0
-	lload 108 ; _108
-	lmul
-	lstore 110 ; _110
-;  %21 = shl i64 %arg.y.6.0, 1
-	.line 69
-	lload 32 ; _arg_y_6_0
-	lconst_1
-	l2i
-	lshl
-	lstore 112 ; _112
-;  %22 = mul i64 %arg.x.6.0, %19
-	.line 70
-	lload 18 ; _arg_x_6_0
-	lload 108 ; _108
-	lmul
-	lstore 114 ; _114
-;  %23 = shl i64 %arg.x.6.0, 1
-	.line 71
-	lload 18 ; _arg_x_6_0
-	lconst_1
-	l2i
-	lshl
-	lstore 116 ; _116
-;  %24 = mul i64 %loop.index52.us.us.unr, %arg.y.6.0
-	.line 72
-	lload 93 ; _loop_index52_us_us_unr
-	lload 32 ; _arg_y_6_0
-	lmul
-	lstore 118 ; _118
-;  %25 = mul i64 %loop.index52.us.us.unr, %arg.x.6.0
-	.line 73
-	lload 93 ; _loop_index52_us_us_unr
-	lload 18 ; _arg_x_6_0
-	lmul
-	lstore 120 ; _120
-;  br label %for.body.endif.endif.endif.us.us
-	.line 74
-	lload 98 ; _98
-	lstore 122 ; _lsr_iv8
-	lload 96 ; _96
-	lstore 124 ; _lsr_iv6
-	lload 106 ; _scevgep1
-	lstore 126 ; _lsr_iv2
-	lload 100 ; _100
-	lstore 128 ; _lsr_iv
-	goto label18
-label18:
-;  %lsr.iv8 = phi i64 [ %lsr.iv.next9, %for.body.endif.endif.endif.us.us ], [ %15, %for.body.endif.endif.endif.us.us.preheader.new ]
-	.line 75
-;  %lsr.iv6 = phi i64 [ %lsr.iv.next7, %for.body.endif.endif.endif.us.us ], [ %14, %for.body.endif.endif.endif.us.us.preheader.new ]
-	.line 76
-;  %lsr.iv2 = phi i8* [ %scevgep3, %for.body.endif.endif.endif.us.us ], [ %scevgep1, %for.body.endif.endif.endif.us.us.preheader.new ]
-	.line 77
-;  %lsr.iv = phi i64 [ %lsr.iv.next, %for.body.endif.endif.endif.us.us ], [ %16, %for.body.endif.endif.endif.us.us.preheader.new ]
-	.line 78
-;  %lsr.iv24 = bitcast i8* %lsr.iv2 to float*
-	.line 79
-	lload 126 ; _lsr_iv2
-	lstore 130 ; _lsr_iv24
-;  %26 = add i64 %25, %lsr.iv8
-	.line 80
-	lload 120 ; _120
-	lload 122 ; _lsr_iv8
-	ladd
-	lstore 132 ; _132
-;  %.175.us.us = inttoptr i64 %26 to float*
-	.line 81
-	lload 132 ; _132
-	lstore 134 ; __175_us_us
-;  %.176.us.us = load float, float* %.175.us.us, align 4
-	.line 82
-	lload 134 ; __175_us_us
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 136 ; __176_us_us
-;  %27 = add i64 %24, %lsr.iv6
-	.line 83
-	lload 118 ; _118
-	lload 124 ; _lsr_iv6
-	ladd
-	lstore 137 ; _137
-;  %.185.us.us = inttoptr i64 %27 to float*
-	.line 84
-	lload 137 ; _137
-	lstore 139 ; __185_us_us
-;  %.186.us.us = load float, float* %.185.us.us, align 4
-	.line 85
-	lload 139 ; __185_us_us
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 141 ; __186_us_us
-;  %.17.i.us.us = fsub float -0.000000e+00, %.176.us.us
-	.line 86
-	fconst_0
-	fload 136 ; __176_us_us
-	fsub
-	fstore 142 ; __17_i_us_us
-;  %.29.le.i.us.us = call float @llvm.exp.f32(float %.17.i.us.us) #4
-	.line 87
-	fload 142 ; __17_i_us_us
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 143 ; __29_le_i_us_us
-;  %.46.i.us.us = fmul float %.186.us.us, %.186.us.us
-	.line 88
-	fload 141 ; __186_us_us
-	fload 141 ; __186_us_us
-	fmul
-	fstore 144 ; __46_i_us_us
-;  %.61.i.us.us = fdiv float %.29.le.i.us.us, %.46.i.us.us
-	.line 89
-	fload 143 ; __29_le_i_us_us
-	fload 144 ; __46_i_us_us
-	fdiv
-	fstore 145 ; __61_i_us_us
-;  %scevgep5 = getelementptr float, float* %lsr.iv24, i64 -1
-	.line 90
-	lload 130 ; _lsr_iv24
-	ldc2_w 4
-	lsub
-	lstore 146 ; _scevgep5
-;  store float %.61.i.us.us, float* %scevgep5, align 4
-	.line 91
-	lload 146 ; _scevgep5
-	fload 145 ; __61_i_us_us
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  %28 = add i64 %22, %lsr.iv8
-	.line 92
-	lload 114 ; _114
-	lload 122 ; _lsr_iv8
-	ladd
-	lstore 148 ; _148
-;  %.175.us.us.1 = inttoptr i64 %28 to float*
-	.line 93
-	lload 148 ; _148
-	lstore 150 ; __175_us_us_1
-;  %.176.us.us.1 = load float, float* %.175.us.us.1, align 4
-	.line 94
-	lload 150 ; __175_us_us_1
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 152 ; __176_us_us_1
-;  %29 = add i64 %20, %lsr.iv6
-	.line 95
-	lload 110 ; _110
-	lload 124 ; _lsr_iv6
-	ladd
-	lstore 153 ; _153
-;  %.185.us.us.1 = inttoptr i64 %29 to float*
-	.line 96
-	lload 153 ; _153
-	lstore 155 ; __185_us_us_1
-;  %.186.us.us.1 = load float, float* %.185.us.us.1, align 4
-	.line 97
-	lload 155 ; __185_us_us_1
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 157 ; __186_us_us_1
-;  %.17.i.us.us.1 = fsub float -0.000000e+00, %.176.us.us.1
-	.line 98
-	fconst_0
-	fload 152 ; __176_us_us_1
-	fsub
-	fstore 158 ; __17_i_us_us_1
-;  %.29.le.i.us.us.1 = call float @llvm.exp.f32(float %.17.i.us.us.1) #4
-	.line 99
-	fload 158 ; __17_i_us_us_1
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 159 ; __29_le_i_us_us_1
-;  %.46.i.us.us.1 = fmul float %.186.us.us.1, %.186.us.us.1
-	.line 100
-	fload 157 ; __186_us_us_1
-	fload 157 ; __186_us_us_1
-	fmul
-	fstore 160 ; __46_i_us_us_1
-;  %.61.i.us.us.1 = fdiv float %.29.le.i.us.us.1, %.46.i.us.us.1
-	.line 101
-	fload 159 ; __29_le_i_us_us_1
-	fload 160 ; __46_i_us_us_1
-	fdiv
-	fstore 161 ; __61_i_us_us_1
-;  store float %.61.i.us.us.1, float* %lsr.iv24, align 4
-	.line 102
-	lload 130 ; _lsr_iv24
-	fload 161 ; __61_i_us_us_1
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  %lsr.iv.next = add i64 %lsr.iv, -2
-	.line 103
-	lload 128 ; _lsr_iv
-	ldc2_w -2
-	ladd
-	lstore 162 ; _lsr_iv_next
-;  %scevgep3 = getelementptr i8, i8* %lsr.iv2, i64 8
-	.line 104
-	lload 126 ; _lsr_iv2
-	ldc2_w 8
-	ladd
-	lstore 164 ; _scevgep3
-;  %lsr.iv.next7 = add i64 %lsr.iv6, %21
-	.line 105
-	lload 124 ; _lsr_iv6
-	lload 112 ; _112
-	ladd
-	lstore 166 ; _lsr_iv_next7
-;  %lsr.iv.next9 = add i64 %lsr.iv8, %23
-	.line 106
-	lload 122 ; _lsr_iv8
-	lload 116 ; _116
-	ladd
-	lstore 168 ; _lsr_iv_next9
-;  %exitcond.1 = icmp eq i64 %lsr.iv.next, 0
-	.line 107
-	lload 162 ; _lsr_iv_next
-	lconst_0
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 170 ; _exitcond_1
-;  br i1 %exitcond.1, label %for.end, label %for.body.endif.endif.endif.us.us
-	.line 108
-	iload 170 ; _exitcond_1
-	ifne label6
-	lload 168 ; _lsr_iv_next9
-	lstore 122 ; _lsr_iv8
-	lload 166 ; _lsr_iv_next7
-	lstore 124 ; _lsr_iv6
-	lload 164 ; _scevgep3
-	lstore 126 ; _lsr_iv2
-	lload 162 ; _lsr_iv_next
-	lstore 128 ; _lsr_iv
-	goto label18
 label14:
-;  %lsr.iv17 = phi i64 [ %lsr.iv.next18, %for.body.endif.endif.endif.us ], [ %4, %for.body.endif.endif.endif.us.preheader.new ]
-	.line 109
-;  %lsr.iv13 = phi i8* [ %scevgep14, %for.body.endif.endif.endif.us ], [ %scevgep12, %for.body.endif.endif.endif.us.preheader.new ]
-	.line 110
-;  %lsr.iv10 = phi i64 [ %lsr.iv.next11, %for.body.endif.endif.endif.us ], [ %5, %for.body.endif.endif.endif.us.preheader.new ]
-	.line 111
-;  %lsr.iv1315 = bitcast i8* %lsr.iv13 to float*
-	.line 112
-	lload 173 ; _lsr_iv13
-	lstore 177 ; _lsr_iv1315
-;  %30 = add i64 %11, %lsr.iv17
-	.line 113
-	lload 83 ; _83
-	lload 171 ; _lsr_iv17
-	ladd
-	lstore 179 ; _179
-;  %.175.us = inttoptr i64 %30 to float*
-	.line 114
-	lload 179 ; _179
-	lstore 181 ; __175_us
-;  %.176.us = load float, float* %.175.us, align 4
-	.line 115
-	lload 181 ; __175_us
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 183 ; __176_us
-;  %.186.us = load float, float* %arg.y.4, align 4
-	.line 116
-	lload 28 ; _arg_y_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 184 ; __186_us
-;  %.17.i.us = fsub float -0.000000e+00, %.176.us
-	.line 117
-	fconst_0
-	fload 183 ; __176_us
-	fsub
-	fstore 185 ; __17_i_us
-;  %.29.le.i.us = call float @llvm.exp.f32(float %.17.i.us) #4
-	.line 118
-	fload 185 ; __17_i_us
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 186 ; __29_le_i_us
-;  %.46.i.us = fmul float %.186.us, %.186.us
-	.line 119
-	fload 184 ; __186_us
-	fload 184 ; __186_us
-	fmul
-	fstore 187 ; __46_i_us
-;  %.61.i.us = fdiv float %.29.le.i.us, %.46.i.us
-	.line 120
-	fload 186 ; __29_le_i_us
-	fload 187 ; __46_i_us
-	fdiv
-	fstore 188 ; __61_i_us
-;  %scevgep16 = getelementptr float, float* %lsr.iv1315, i64 -1
-	.line 121
-	lload 177 ; _lsr_iv1315
-	ldc2_w 4
-	lsub
-	lstore 189 ; _scevgep16
-;  store float %.61.i.us, float* %scevgep16, align 4
-	.line 122
-	lload 189 ; _scevgep16
-	fload 188 ; __61_i_us
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  %31 = add i64 %9, %lsr.iv17
-	.line 123
-	lload 79 ; _79
-	lload 171 ; _lsr_iv17
-	ladd
-	lstore 191 ; _191
-;  %.175.us.1 = inttoptr i64 %31 to float*
-	.line 124
-	lload 191 ; _191
-	lstore 193 ; __175_us_1
-;  %.176.us.1 = load float, float* %.175.us.1, align 4
-	.line 125
-	lload 193 ; __175_us_1
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 195 ; __176_us_1
-;  %.186.us.1 = load float, float* %arg.y.4, align 4
-	.line 126
-	lload 28 ; _arg_y_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 196 ; __186_us_1
-;  %.17.i.us.1 = fsub float -0.000000e+00, %.176.us.1
-	.line 127
-	fconst_0
-	fload 195 ; __176_us_1
-	fsub
-	fstore 197 ; __17_i_us_1
-;  %.29.le.i.us.1 = call float @llvm.exp.f32(float %.17.i.us.1) #4
-	.line 128
-	fload 197 ; __17_i_us_1
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 198 ; __29_le_i_us_1
-;  %.46.i.us.1 = fmul float %.186.us.1, %.186.us.1
-	.line 129
-	fload 196 ; __186_us_1
-	fload 196 ; __186_us_1
-	fmul
-	fstore 199 ; __46_i_us_1
-;  %.61.i.us.1 = fdiv float %.29.le.i.us.1, %.46.i.us.1
-	.line 130
-	fload 198 ; __29_le_i_us_1
-	fload 199 ; __46_i_us_1
-	fdiv
-	fstore 200 ; __61_i_us_1
-;  store float %.61.i.us.1, float* %lsr.iv1315, align 4
-	.line 131
-	lload 177 ; _lsr_iv1315
-	fload 200 ; __61_i_us_1
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  %lsr.iv.next11 = add i64 %lsr.iv10, -2
-	.line 132
-	lload 175 ; _lsr_iv10
-	ldc2_w -2
-	ladd
-	lstore 201 ; _lsr_iv_next11
-;  %scevgep14 = getelementptr i8, i8* %lsr.iv13, i64 8
-	.line 133
-	lload 173 ; _lsr_iv13
-	ldc2_w 8
-	ladd
-	lstore 203 ; _scevgep14
-;  %lsr.iv.next18 = add i64 %lsr.iv17, %10
-	.line 134
-	lload 171 ; _lsr_iv17
-	lload 81 ; _81
-	ladd
-	lstore 205 ; _lsr_iv_next18
-;  %exitcond74.1 = icmp eq i64 %lsr.iv.next11, 0
-	.line 135
-	lload 201 ; _lsr_iv_next11
-	lconst_0
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 207 ; _exitcond74_1
-;  br i1 %exitcond74.1, label %for.end, label %for.body.endif.endif.endif.us
-	.line 136
-	iload 207 ; _exitcond74_1
-	ifne label6
-	lload 205 ; _lsr_iv_next18
-	lstore 171 ; _lsr_iv17
-	lload 203 ; _scevgep14
-	lstore 173 ; _lsr_iv13
-	lload 201 ; _lsr_iv_next11
-	lstore 175 ; _lsr_iv10
-	goto label14
-label8:
-;  br i1 %1, label %for.body.endif.endif.endif.us53.preheader, label %for.body.endif.endif.endif.preheader
-	.line 137
-	iload 52 ; _52
-	ifne label19
-	goto label20
-label19:
-;  %xtraiter101 = and i64 %.12380, 1
-	.line 138
-	lload 38 ; __12380
-	lconst_1
-	land
-	lstore 208 ; _xtraiter101
-;  %lcmp.mod102 = icmp eq i64 %xtraiter101, 0
-	.line 139
-	lload 208 ; _xtraiter101
-	lconst_0
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 210 ; _lcmp_mod102
-;  br i1 %lcmp.mod102, label %for.body.endif.endif.endif.us53.prol.loopexit, label %for.body.endif.endif.endif.us53.prol
-	.line 140
-	iload 210 ; _lcmp_mod102
-	ifne label21$phi5
-	goto label22
-label21$phi5:
-	lconst_0
-	lstore 219 ; _loop_index52_us54_unr
-	goto label21
-label22:
-;  %32 = bitcast i8* %.6.i to float*
-	.line 141
-	lload 48 ; __6_i
-	lstore 211 ; _211
-;  %.176.us56.prol = load float, float* %arg.x.4, align 4
-	.line 142
+;  %6 = ptrtoint float* %arg.x.4 to i64
+	.line 46
 	lload 14 ; _arg_x_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 213 ; __176_us56_prol
-;  %.186.us61.prol = load float, float* %arg.y.4, align 4
-	.line 143
-	lload 28 ; _arg_y_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 214 ; __186_us61_prol
-;  %.17.i.us62.prol = fsub float -0.000000e+00, %.176.us56.prol
-	.line 144
-	fconst_0
-	fload 213 ; __176_us56_prol
-	fsub
-	fstore 215 ; __17_i_us62_prol
-;  %.29.le.i.us63.prol = call float @llvm.exp.f32(float %.17.i.us62.prol) #4
-	.line 145
-	fload 215 ; __17_i_us62_prol
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 216 ; __29_le_i_us63_prol
-;  %.46.i.us64.prol = fmul float %.186.us61.prol, %.186.us61.prol
-	.line 146
-	fload 214 ; __186_us61_prol
-	fload 214 ; __186_us61_prol
-	fmul
-	fstore 217 ; __46_i_us64_prol
-;  %.61.i.us65.prol = fdiv float %.29.le.i.us63.prol, %.46.i.us64.prol
-	.line 147
-	fload 216 ; __29_le_i_us63_prol
-	fload 217 ; __46_i_us64_prol
-	fdiv
-	fstore 218 ; __61_i_us65_prol
-;  store float %.61.i.us65.prol, float* %32, align 4
-	.line 148
-	lload 211 ; _211
-	fload 218 ; __61_i_us65_prol
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  br label %for.body.endif.endif.endif.us53.prol.loopexit
-	.line 149
-	lconst_1
-	lstore 219 ; _loop_index52_us54_unr
-	goto label21
-label21:
-;  %loop.index52.us54.unr = phi i64 [ 0, %for.body.endif.endif.endif.us53.preheader ], [ 1, %for.body.endif.endif.endif.us53.prol ]
-	.line 150
-;  %33 = icmp eq i64 %.12380, 1
-	.line 151
-	lload 38 ; __12380
-	lconst_1
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 221 ; _221
-;  br i1 %33, label %for.end, label %for.body.endif.endif.endif.us53.preheader.new
-	.line 152
-	iload 221 ; _221
-	ifne label6
-	goto label23
-label23:
-;  %34 = ptrtoint float* %arg.y.4 to i64
-	.line 153
-	lload 28 ; _arg_y_4
-	lstore 222 ; _222
-;  %35 = sub i64 %.12380, %loop.index52.us54.unr
-	.line 154
-	lload 38 ; __12380
-	lload 219 ; _loop_index52_us54_unr
+	lstore 82 ; _82
+;  %7 = sub i64 %.12378, %loop.index52.us.unr
+	.line 47
+	lload 38 ; __12378
+	lload 79 ; _loop_index52_us_unr
 	lsub
-	lstore 224 ; _224
-;  %36 = shl i64 %loop.index52.us54.unr, 2
-	.line 155
-	lload 219 ; _loop_index52_us54_unr
+	lstore 84 ; _84
+;  %8 = shl i64 %loop.index52.us.unr, 2
+	.line 48
+	lload 79 ; _loop_index52_us_unr
 	ldc2_w 2
 	l2i
 	lshl
-	lstore 226 ; _226
-;  %37 = add i64 %36, 4
-	.line 156
-	lload 226 ; _226
-	ldc2_w 4
-	ladd
-	lstore 228 ; _228
-;  %scevgep21 = getelementptr i8, i8* %.6.i, i64 %37
-	.line 157
-	lload 48 ; __6_i
-	lconst_1
-	lload 228 ; _228
-	lmul
-	ladd
-	lstore 230 ; _scevgep21
-;  %38 = add i64 %loop.index52.us54.unr, 1
-	.line 158
-	lload 219 ; _loop_index52_us54_unr
-	lconst_1
-	ladd
-	lstore 232 ; _232
-;  %39 = mul i64 %arg.y.6.0, %38
-	.line 159
-	lload 32 ; _arg_y_6_0
-	lload 232 ; _232
-	lmul
-	lstore 234 ; _234
-;  %40 = shl i64 %arg.y.6.0, 1
-	.line 160
-	lload 32 ; _arg_y_6_0
-	lconst_1
-	l2i
-	lshl
-	lstore 236 ; _236
-;  %41 = mul i64 %loop.index52.us54.unr, %arg.y.6.0
-	.line 161
-	lload 219 ; _loop_index52_us54_unr
-	lload 32 ; _arg_y_6_0
-	lmul
-	lstore 238 ; _238
-;  br label %for.body.endif.endif.endif.us53
-	.line 162
-	lload 222 ; _222
-	lstore 394 ; _lsr_iv26
-	lload 230 ; _scevgep21
-	lstore 396 ; _lsr_iv22
-	lload 224 ; _224
-	lstore 398 ; _lsr_iv19
-	goto label24
-label20:
-;  %min.iters.check = icmp ult i64 %.12380, 8
-	.line 163
-	lload 38 ; __12380
-	ldc2_w 8
-	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
-	iconst_1
-	iand
-	istore 240 ; _min_iters_check
-;  br i1 %min.iters.check, label %for.body.endif.endif.endif.preheader97, label %min.iters.checked
-	.line 164
-	iload 240 ; _min_iters_check
-	ifne label25$phi6
-	goto label26
-label25$phi6:
-	lconst_0
-	lstore 241 ; _loop_index52_ph
-	goto label25
-label25:
-;  %loop.index52.ph = phi i64 [ 0, %vector.memcheck ], [ 0, %min.iters.checked ], [ 0, %for.body.endif.endif.endif.preheader ], [ %n.vec, %middle.block ]
-	.line 165
-;  %42 = sub i64 %.12380, %loop.index52.ph
-	.line 166
-	lload 38 ; __12380
-	lload 241 ; _loop_index52_ph
-	lsub
-	lstore 243 ; _243
-;  %43 = add i64 %.12380, -1
-	.line 167
-	lload 38 ; __12380
-	ldc2_w -1
-	ladd
-	lstore 245 ; _245
-;  %44 = sub i64 %43, %loop.index52.ph
-	.line 168
-	lload 245 ; _245
-	lload 241 ; _loop_index52_ph
-	lsub
-	lstore 247 ; _247
-;  %xtraiter103 = and i64 %42, 3
-	.line 169
-	lload 243 ; _243
-	ldc2_w 3
-	land
-	lstore 249 ; _xtraiter103
-;  %lcmp.mod104 = icmp eq i64 %xtraiter103, 0
-	.line 170
-	lload 249 ; _xtraiter103
-	lconst_0
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 251 ; _lcmp_mod104
-;  br i1 %lcmp.mod104, label %for.body.endif.endif.endif.prol.loopexit, label %for.body.endif.endif.endif.prol.preheader
-	.line 171
-	iload 251 ; _lcmp_mod104
-	ifne label27$phi7
-	goto label28
-label27$phi7:
-	lload 241 ; _loop_index52_ph
-	lstore 273 ; _loop_index52_unr
-	goto label27
-label28:
-;  %45 = sub i64 0, %xtraiter103
-	.line 172
-	lconst_0
-	lload 249 ; _xtraiter103
-	lsub
-	lstore 252 ; _252
-;  br label %for.body.endif.endif.endif.prol
-	.line 173
-	lload 252 ; _252
-	lstore 254 ; _lsr_iv38
-	lload 241 ; _loop_index52_ph
-	lstore 256 ; _loop_index52_prol
-	goto label29
-label29:
-;  %lsr.iv38 = phi i64 [ %lsr.iv.next39, %for.body.endif.endif.endif.prol ], [ %45, %for.body.endif.endif.endif.prol.preheader ]
-	.line 174
-;  %loop.index52.prol = phi i64 [ %.207.prol, %for.body.endif.endif.endif.prol ], [ %loop.index52.ph, %for.body.endif.endif.endif.prol.preheader ]
-	.line 175
-;  %46 = bitcast i8* %.6.i to float*
-	.line 176
-	lload 48 ; __6_i
-	lstore 258 ; _258
-;  %.176.prol = load float, float* %arg.x.4, align 4
-	.line 177
-	lload 14 ; _arg_x_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 260 ; __176_prol
-;  %.186.prol = load float, float* %arg.y.4, align 4
-	.line 178
-	lload 28 ; _arg_y_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 261 ; __186_prol
-;  %.17.i.prol = fsub float -0.000000e+00, %.176.prol
-	.line 179
-	fconst_0
-	fload 260 ; __176_prol
-	fsub
-	fstore 262 ; __17_i_prol
-;  %.29.le.i.prol = call float @llvm.exp.f32(float %.17.i.prol) #4
-	.line 180
-	fload 262 ; __17_i_prol
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 263 ; __29_le_i_prol
-;  %.46.i.prol = fmul float %.186.prol, %.186.prol
-	.line 181
-	fload 261 ; __186_prol
-	fload 261 ; __186_prol
-	fmul
-	fstore 264 ; __46_i_prol
-;  %.61.i.prol = fdiv float %.29.le.i.prol, %.46.i.prol
-	.line 182
-	fload 263 ; __29_le_i_prol
-	fload 264 ; __46_i_prol
-	fdiv
-	fstore 265 ; __61_i_prol
-;  %scevgep37 = getelementptr float, float* %46, i64 %loop.index52.prol
-	.line 183
-	lload 258 ; _258
-	ldc2_w 4
-	lload 256 ; _loop_index52_prol
-	lmul
-	ladd
-	lstore 266 ; _scevgep37
-;  store float %.61.i.prol, float* %scevgep37, align 4
-	.line 184
-	lload 266 ; _scevgep37
-	fload 265 ; __61_i_prol
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  %.207.prol = add nuw nsw i64 %loop.index52.prol, 1
-	.line 185
-	lload 256 ; _loop_index52_prol
-	lconst_1
-	ladd
-	lstore 268 ; __207_prol
-;  %lsr.iv.next39 = add nsw i64 %lsr.iv38, 1
-	.line 186
-	lload 254 ; _lsr_iv38
-	lconst_1
-	ladd
-	lstore 270 ; _lsr_iv_next39
-;  %prol.iter.cmp = icmp eq i64 %lsr.iv.next39, 0
-	.line 187
-	lload 270 ; _lsr_iv_next39
-	lconst_0
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 272 ; _prol_iter_cmp
-;  br i1 %prol.iter.cmp, label %for.body.endif.endif.endif.prol.loopexit, label %for.body.endif.endif.endif.prol, !llvm.loop !0
-	.line 188
-	iload 272 ; _prol_iter_cmp
-	ifne label27$phi8
-	lload 270 ; _lsr_iv_next39
-	lstore 254 ; _lsr_iv38
-	lload 268 ; __207_prol
-	lstore 256 ; _loop_index52_prol
-	goto label29
-label27$phi8:
-	lload 268 ; __207_prol
-	lstore 273 ; _loop_index52_unr
-	goto label27
-label27:
-;  %loop.index52.unr = phi i64 [ %loop.index52.ph, %for.body.endif.endif.endif.preheader97 ], [ %.207.prol, %for.body.endif.endif.endif.prol ]
-	.line 189
-;  %47 = icmp ult i64 %44, 3
-	.line 190
-	lload 247 ; _247
-	ldc2_w 3
-	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
-	iconst_1
-	iand
-	istore 275 ; _275
-;  br i1 %47, label %for.end, label %for.body.endif.endif.endif.preheader97.new
-	.line 191
-	iload 275 ; _275
-	ifne label6
-	goto label30
-label30:
-;  %48 = sub i64 %.12380, %loop.index52.unr
-	.line 192
-	lload 38 ; __12380
-	lload 273 ; _loop_index52_unr
-	lsub
-	lstore 276 ; _276
-;  %49 = shl i64 %loop.index52.unr, 2
-	.line 193
-	lload 273 ; _loop_index52_unr
-	ldc2_w 2
-	l2i
-	lshl
-	lstore 278 ; _278
-;  %50 = add i64 %49, 12
-	.line 194
-	lload 278 ; _278
+	lstore 86 ; _86
+;  %9 = add i64 %8, 12
+	.line 49
+	lload 86 ; _86
 	ldc2_w 12
 	ladd
-	lstore 280 ; _280
-;  %scevgep30 = getelementptr i8, i8* %.6.i, i64 %50
-	.line 195
+	lstore 88 ; _88
+;  %scevgep12 = getelementptr i8, i8* %.6.i, i64 %9
+	.line 50
 	lload 48 ; __6_i
 	lconst_1
-	lload 280 ; _280
+	lload 88 ; _88
 	lmul
 	ladd
-	lstore 282 ; _scevgep30
-;  br label %for.body.endif.endif.endif
-	.line 196
-	lload 282 ; _scevgep30
-	lstore 447 ; _lsr_iv31
-	lload 276 ; _276
-	lstore 449 ; _lsr_iv28
-	goto label31
-label26:
-;  %n.vec = and i64 %.12380, -8
-	.line 197
-	lload 38 ; __12380
-	ldc2_w -8
+	lstore 90 ; _scevgep12
+;  %10 = add i64 %loop.index52.us.unr, 3
+	.line 51
+	lload 79 ; _loop_index52_us_unr
+	ldc2_w 3
+	ladd
+	lstore 92 ; _92
+;  %11 = mul i64 %arg.x.6.0, %10
+	.line 52
+	lload 18 ; _arg_x_6_0
+	lload 92 ; _92
+	lmul
+	lstore 94 ; _94
+;  %12 = shl i64 %arg.x.6.0, 2
+	.line 53
+	lload 18 ; _arg_x_6_0
+	ldc2_w 2
+	l2i
+	lshl
+	lstore 96 ; _96
+;  %13 = add i64 %loop.index52.us.unr, 2
+	.line 54
+	lload 79 ; _loop_index52_us_unr
+	ldc2_w 2
+	ladd
+	lstore 98 ; _98
+;  %14 = mul i64 %arg.x.6.0, %13
+	.line 55
+	lload 18 ; _arg_x_6_0
+	lload 98 ; _98
+	lmul
+	lstore 100 ; _100
+;  %15 = add i64 %loop.index52.us.unr, 1
+	.line 56
+	lload 79 ; _loop_index52_us_unr
+	lconst_1
+	ladd
+	lstore 102 ; _102
+;  %16 = mul i64 %arg.x.6.0, %15
+	.line 57
+	lload 18 ; _arg_x_6_0
+	lload 102 ; _102
+	lmul
+	lstore 104 ; _104
+;  %17 = mul i64 %loop.index52.us.unr, %arg.x.6.0
+	.line 58
+	lload 79 ; _loop_index52_us_unr
+	lload 18 ; _arg_x_6_0
+	lmul
+	lstore 106 ; _106
+;  br label %for.body.endif.endif.endif.us
+	.line 59
+	lload 82 ; _82
+	lstore 191 ; _lsr_iv19
+	lload 90 ; _scevgep12
+	lstore 193 ; _lsr_iv13
+	lload 84 ; _84
+	lstore 195 ; _lsr_iv10
+	goto label15
+label9:
+;  %xtraiter = and i64 %.12378, 1
+	.line 60
+	lload 38 ; __12378
+	lconst_1
 	land
-	lstore 284 ; _n_vec
-;  %cmp.zero = icmp eq i64 %n.vec, 0
-	.line 198
-	lload 284 ; _n_vec
+	lstore 108 ; _xtraiter
+;  %lcmp.mod = icmp eq i64 %xtraiter, 0
+	.line 61
+	lload 108 ; _xtraiter
 	lconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
 	iconst_1
 	iand
-	istore 286 ; _cmp_zero
-;  br i1 %cmp.zero, label %for.body.endif.endif.endif.preheader97, label %vector.memcheck
-	.line 199
-	iload 286 ; _cmp_zero
-	ifne label25$phi9
-	goto label32
-label25$phi9:
+	istore 110 ; _lcmp_mod
+;  br i1 %lcmp.mod, label %for.body.endif.endif.endif.us.us.prol.loopexit, label %for.body.endif.endif.endif.us.us.prol
+	.line 62
+	iload 110 ; _lcmp_mod
+	ifne label16$phi5
+	goto label17
+label16$phi5:
 	lconst_0
-	lstore 241 ; _loop_index52_ph
+	lstore 117 ; _loop_index52_us_us_unr
+	goto label16
+label17:
+;  %18 = bitcast i8* %.6.i to float*
+	.line 63
+	lload 48 ; __6_i
+	lstore 111 ; _111
+;  %.176.us.us.prol = load float, float* %arg.x.4, align 4
+	.line 64
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 113 ; __176_us_us_prol
+;  %.186.us.us.prol = load float, float* %arg.y.4, align 4
+	.line 65
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 114 ; __186_us_us_prol
+;  %pow2.le.i.us.us.prol = fmul float %.176.us.us.prol, %.176.us.us.prol
+	.line 66
+	fload 113 ; __176_us_us_prol
+	fload 113 ; __176_us_us_prol
+	fmul
+	fstore 115 ; _pow2_le_i_us_us_prol
+;  %.54.i.us.us.prol = fdiv float %pow2.le.i.us.us.prol, %.186.us.us.prol
+	.line 67
+	fload 115 ; _pow2_le_i_us_us_prol
+	fload 114 ; __186_us_us_prol
+	fdiv
+	fstore 116 ; __54_i_us_us_prol
+;  store float %.54.i.us.us.prol, float* %18, align 4
+	.line 68
+	lload 111 ; _111
+	fload 116 ; __54_i_us_us_prol
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  br label %for.body.endif.endif.endif.us.us.prol.loopexit
+	.line 69
+	lconst_1
+	lstore 117 ; _loop_index52_us_us_unr
+	goto label16
+label16:
+;  %loop.index52.us.us.unr = phi i64 [ 0, %for.body.endif.endif.endif.us.us.preheader ], [ 1, %for.body.endif.endif.endif.us.us.prol ]
+	.line 70
+;  %19 = icmp eq i64 %.12378, 1
+	.line 71
+	lload 38 ; __12378
+	lconst_1
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 119 ; _119
+;  br i1 %19, label %for.end, label %for.body.endif.endif.endif.us.us.preheader.new
+	.line 72
+	iload 119 ; _119
+	ifne label6
+	goto label18
+label18:
+;  %20 = ptrtoint float* %arg.y.4 to i64
+	.line 73
+	lload 28 ; _arg_y_4
+	lstore 120 ; _120
+;  %21 = ptrtoint float* %arg.x.4 to i64
+	.line 74
+	lload 14 ; _arg_x_4
+	lstore 122 ; _122
+;  %22 = sub i64 %.12378, %loop.index52.us.us.unr
+	.line 75
+	lload 38 ; __12378
+	lload 117 ; _loop_index52_us_us_unr
+	lsub
+	lstore 124 ; _124
+;  %23 = shl i64 %loop.index52.us.us.unr, 2
+	.line 76
+	lload 117 ; _loop_index52_us_us_unr
+	ldc2_w 2
+	l2i
+	lshl
+	lstore 126 ; _126
+;  %24 = add i64 %23, 4
+	.line 77
+	lload 126 ; _126
+	ldc2_w 4
+	ladd
+	lstore 128 ; _128
+;  %scevgep1 = getelementptr i8, i8* %.6.i, i64 %24
+	.line 78
+	lload 48 ; __6_i
+	lconst_1
+	lload 128 ; _128
+	lmul
+	ladd
+	lstore 130 ; _scevgep1
+;  %25 = add i64 %loop.index52.us.us.unr, 1
+	.line 79
+	lload 117 ; _loop_index52_us_us_unr
+	lconst_1
+	ladd
+	lstore 132 ; _132
+;  %26 = mul i64 %arg.y.6.0, %25
+	.line 80
+	lload 32 ; _arg_y_6_0
+	lload 132 ; _132
+	lmul
+	lstore 134 ; _134
+;  %27 = shl i64 %arg.y.6.0, 1
+	.line 81
+	lload 32 ; _arg_y_6_0
+	lconst_1
+	l2i
+	lshl
+	lstore 136 ; _136
+;  %28 = mul i64 %arg.x.6.0, %25
+	.line 82
+	lload 18 ; _arg_x_6_0
+	lload 132 ; _132
+	lmul
+	lstore 138 ; _138
+;  %29 = shl i64 %arg.x.6.0, 1
+	.line 83
+	lload 18 ; _arg_x_6_0
+	lconst_1
+	l2i
+	lshl
+	lstore 140 ; _140
+;  %30 = mul i64 %loop.index52.us.us.unr, %arg.y.6.0
+	.line 84
+	lload 117 ; _loop_index52_us_us_unr
+	lload 32 ; _arg_y_6_0
+	lmul
+	lstore 142 ; _142
+;  %31 = mul i64 %loop.index52.us.us.unr, %arg.x.6.0
+	.line 85
+	lload 117 ; _loop_index52_us_us_unr
+	lload 18 ; _arg_x_6_0
+	lmul
+	lstore 144 ; _144
+;  br label %for.body.endif.endif.endif.us.us
+	.line 86
+	lload 122 ; _122
+	lstore 146 ; _lsr_iv8
+	lload 120 ; _120
+	lstore 148 ; _lsr_iv6
+	lload 130 ; _scevgep1
+	lstore 150 ; _lsr_iv2
+	lload 124 ; _124
+	lstore 152 ; _lsr_iv
+	goto label19
+label19:
+;  %lsr.iv8 = phi i64 [ %lsr.iv.next9, %for.body.endif.endif.endif.us.us ], [ %21, %for.body.endif.endif.endif.us.us.preheader.new ]
+	.line 87
+;  %lsr.iv6 = phi i64 [ %lsr.iv.next7, %for.body.endif.endif.endif.us.us ], [ %20, %for.body.endif.endif.endif.us.us.preheader.new ]
+	.line 88
+;  %lsr.iv2 = phi i8* [ %scevgep3, %for.body.endif.endif.endif.us.us ], [ %scevgep1, %for.body.endif.endif.endif.us.us.preheader.new ]
+	.line 89
+;  %lsr.iv = phi i64 [ %lsr.iv.next, %for.body.endif.endif.endif.us.us ], [ %22, %for.body.endif.endif.endif.us.us.preheader.new ]
+	.line 90
+;  %lsr.iv24 = bitcast i8* %lsr.iv2 to float*
+	.line 91
+	lload 150 ; _lsr_iv2
+	lstore 154 ; _lsr_iv24
+;  %32 = add i64 %31, %lsr.iv8
+	.line 92
+	lload 144 ; _144
+	lload 146 ; _lsr_iv8
+	ladd
+	lstore 156 ; _156
+;  %.175.us.us = inttoptr i64 %32 to float*
+	.line 93
+	lload 156 ; _156
+	lstore 158 ; __175_us_us
+;  %.176.us.us = load float, float* %.175.us.us, align 4
+	.line 94
+	lload 158 ; __175_us_us
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 160 ; __176_us_us
+;  %33 = add i64 %30, %lsr.iv6
+	.line 95
+	lload 142 ; _142
+	lload 148 ; _lsr_iv6
+	ladd
+	lstore 161 ; _161
+;  %.185.us.us = inttoptr i64 %33 to float*
+	.line 96
+	lload 161 ; _161
+	lstore 163 ; __185_us_us
+;  %.186.us.us = load float, float* %.185.us.us, align 4
+	.line 97
+	lload 163 ; __185_us_us
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 165 ; __186_us_us
+;  %pow2.le.i.us.us = fmul float %.176.us.us, %.176.us.us
+	.line 98
+	fload 160 ; __176_us_us
+	fload 160 ; __176_us_us
+	fmul
+	fstore 166 ; _pow2_le_i_us_us
+;  %.54.i.us.us = fdiv float %pow2.le.i.us.us, %.186.us.us
+	.line 99
+	fload 166 ; _pow2_le_i_us_us
+	fload 165 ; __186_us_us
+	fdiv
+	fstore 167 ; __54_i_us_us
+;  %scevgep5 = getelementptr float, float* %lsr.iv24, i64 -1
+	.line 100
+	lload 154 ; _lsr_iv24
+	ldc2_w 4
+	lsub
+	lstore 168 ; _scevgep5
+;  store float %.54.i.us.us, float* %scevgep5, align 4
+	.line 101
+	lload 168 ; _scevgep5
+	fload 167 ; __54_i_us_us
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %34 = add i64 %28, %lsr.iv8
+	.line 102
+	lload 138 ; _138
+	lload 146 ; _lsr_iv8
+	ladd
+	lstore 170 ; _170
+;  %.175.us.us.1 = inttoptr i64 %34 to float*
+	.line 103
+	lload 170 ; _170
+	lstore 172 ; __175_us_us_1
+;  %.176.us.us.1 = load float, float* %.175.us.us.1, align 4
+	.line 104
+	lload 172 ; __175_us_us_1
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 174 ; __176_us_us_1
+;  %35 = add i64 %26, %lsr.iv6
+	.line 105
+	lload 134 ; _134
+	lload 148 ; _lsr_iv6
+	ladd
+	lstore 175 ; _175
+;  %.185.us.us.1 = inttoptr i64 %35 to float*
+	.line 106
+	lload 175 ; _175
+	lstore 177 ; __185_us_us_1
+;  %.186.us.us.1 = load float, float* %.185.us.us.1, align 4
+	.line 107
+	lload 177 ; __185_us_us_1
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 179 ; __186_us_us_1
+;  %pow2.le.i.us.us.1 = fmul float %.176.us.us.1, %.176.us.us.1
+	.line 108
+	fload 174 ; __176_us_us_1
+	fload 174 ; __176_us_us_1
+	fmul
+	fstore 180 ; _pow2_le_i_us_us_1
+;  %.54.i.us.us.1 = fdiv float %pow2.le.i.us.us.1, %.186.us.us.1
+	.line 109
+	fload 180 ; _pow2_le_i_us_us_1
+	fload 179 ; __186_us_us_1
+	fdiv
+	fstore 181 ; __54_i_us_us_1
+;  store float %.54.i.us.us.1, float* %lsr.iv24, align 4
+	.line 110
+	lload 154 ; _lsr_iv24
+	fload 181 ; __54_i_us_us_1
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %lsr.iv.next = add i64 %lsr.iv, -2
+	.line 111
+	lload 152 ; _lsr_iv
+	ldc2_w -2
+	ladd
+	lstore 182 ; _lsr_iv_next
+;  %scevgep3 = getelementptr i8, i8* %lsr.iv2, i64 8
+	.line 112
+	lload 150 ; _lsr_iv2
+	ldc2_w 8
+	ladd
+	lstore 184 ; _scevgep3
+;  %lsr.iv.next7 = add i64 %lsr.iv6, %27
+	.line 113
+	lload 148 ; _lsr_iv6
+	lload 136 ; _136
+	ladd
+	lstore 186 ; _lsr_iv_next7
+;  %lsr.iv.next9 = add i64 %lsr.iv8, %29
+	.line 114
+	lload 146 ; _lsr_iv8
+	lload 140 ; _140
+	ladd
+	lstore 188 ; _lsr_iv_next9
+;  %exitcond.1 = icmp eq i64 %lsr.iv.next, 0
+	.line 115
+	lload 182 ; _lsr_iv_next
+	lconst_0
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 190 ; _exitcond_1
+;  br i1 %exitcond.1, label %for.end, label %for.body.endif.endif.endif.us.us
+	.line 116
+	iload 190 ; _exitcond_1
+	ifne label6
+	lload 188 ; _lsr_iv_next9
+	lstore 146 ; _lsr_iv8
+	lload 186 ; _lsr_iv_next7
+	lstore 148 ; _lsr_iv6
+	lload 184 ; _scevgep3
+	lstore 150 ; _lsr_iv2
+	lload 182 ; _lsr_iv_next
+	lstore 152 ; _lsr_iv
+	goto label19
+label15:
+;  %lsr.iv19 = phi i64 [ %lsr.iv.next20, %for.body.endif.endif.endif.us ], [ %6, %for.body.endif.endif.endif.us.preheader.new ]
+	.line 117
+;  %lsr.iv13 = phi i8* [ %scevgep14, %for.body.endif.endif.endif.us ], [ %scevgep12, %for.body.endif.endif.endif.us.preheader.new ]
+	.line 118
+;  %lsr.iv10 = phi i64 [ %lsr.iv.next11, %for.body.endif.endif.endif.us ], [ %7, %for.body.endif.endif.endif.us.preheader.new ]
+	.line 119
+;  %lsr.iv1315 = bitcast i8* %lsr.iv13 to float*
+	.line 120
+	lload 193 ; _lsr_iv13
+	lstore 197 ; _lsr_iv1315
+;  %36 = add i64 %17, %lsr.iv19
+	.line 121
+	lload 106 ; _106
+	lload 191 ; _lsr_iv19
+	ladd
+	lstore 199 ; _199
+;  %.175.us = inttoptr i64 %36 to float*
+	.line 122
+	lload 199 ; _199
+	lstore 201 ; __175_us
+;  %.176.us = load float, float* %.175.us, align 4
+	.line 123
+	lload 201 ; __175_us
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 203 ; __176_us
+;  %.186.us = load float, float* %arg.y.4, align 4
+	.line 124
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 204 ; __186_us
+;  %pow2.le.i.us = fmul float %.176.us, %.176.us
+	.line 125
+	fload 203 ; __176_us
+	fload 203 ; __176_us
+	fmul
+	fstore 205 ; _pow2_le_i_us
+;  %.54.i.us = fdiv float %pow2.le.i.us, %.186.us
+	.line 126
+	fload 205 ; _pow2_le_i_us
+	fload 204 ; __186_us
+	fdiv
+	fstore 206 ; __54_i_us
+;  %scevgep18 = getelementptr float, float* %lsr.iv1315, i64 -3
+	.line 127
+	lload 197 ; _lsr_iv1315
+	ldc2_w 12
+	lsub
+	lstore 207 ; _scevgep18
+;  store float %.54.i.us, float* %scevgep18, align 4
+	.line 128
+	lload 207 ; _scevgep18
+	fload 206 ; __54_i_us
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %37 = add i64 %16, %lsr.iv19
+	.line 129
+	lload 104 ; _104
+	lload 191 ; _lsr_iv19
+	ladd
+	lstore 209 ; _209
+;  %.175.us.1 = inttoptr i64 %37 to float*
+	.line 130
+	lload 209 ; _209
+	lstore 211 ; __175_us_1
+;  %.176.us.1 = load float, float* %.175.us.1, align 4
+	.line 131
+	lload 211 ; __175_us_1
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 213 ; __176_us_1
+;  %.186.us.1 = load float, float* %arg.y.4, align 4
+	.line 132
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 214 ; __186_us_1
+;  %pow2.le.i.us.1 = fmul float %.176.us.1, %.176.us.1
+	.line 133
+	fload 213 ; __176_us_1
+	fload 213 ; __176_us_1
+	fmul
+	fstore 215 ; _pow2_le_i_us_1
+;  %.54.i.us.1 = fdiv float %pow2.le.i.us.1, %.186.us.1
+	.line 134
+	fload 215 ; _pow2_le_i_us_1
+	fload 214 ; __186_us_1
+	fdiv
+	fstore 216 ; __54_i_us_1
+;  %scevgep17 = getelementptr float, float* %lsr.iv1315, i64 -2
+	.line 135
+	lload 197 ; _lsr_iv1315
+	ldc2_w 8
+	lsub
+	lstore 217 ; _scevgep17
+;  store float %.54.i.us.1, float* %scevgep17, align 4
+	.line 136
+	lload 217 ; _scevgep17
+	fload 216 ; __54_i_us_1
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %38 = add i64 %14, %lsr.iv19
+	.line 137
+	lload 100 ; _100
+	lload 191 ; _lsr_iv19
+	ladd
+	lstore 219 ; _219
+;  %.175.us.2 = inttoptr i64 %38 to float*
+	.line 138
+	lload 219 ; _219
+	lstore 221 ; __175_us_2
+;  %.176.us.2 = load float, float* %.175.us.2, align 4
+	.line 139
+	lload 221 ; __175_us_2
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 223 ; __176_us_2
+;  %.186.us.2 = load float, float* %arg.y.4, align 4
+	.line 140
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 224 ; __186_us_2
+;  %pow2.le.i.us.2 = fmul float %.176.us.2, %.176.us.2
+	.line 141
+	fload 223 ; __176_us_2
+	fload 223 ; __176_us_2
+	fmul
+	fstore 225 ; _pow2_le_i_us_2
+;  %.54.i.us.2 = fdiv float %pow2.le.i.us.2, %.186.us.2
+	.line 142
+	fload 225 ; _pow2_le_i_us_2
+	fload 224 ; __186_us_2
+	fdiv
+	fstore 226 ; __54_i_us_2
+;  %scevgep16 = getelementptr float, float* %lsr.iv1315, i64 -1
+	.line 143
+	lload 197 ; _lsr_iv1315
+	ldc2_w 4
+	lsub
+	lstore 227 ; _scevgep16
+;  store float %.54.i.us.2, float* %scevgep16, align 4
+	.line 144
+	lload 227 ; _scevgep16
+	fload 226 ; __54_i_us_2
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %39 = add i64 %11, %lsr.iv19
+	.line 145
+	lload 94 ; _94
+	lload 191 ; _lsr_iv19
+	ladd
+	lstore 229 ; _229
+;  %.175.us.3 = inttoptr i64 %39 to float*
+	.line 146
+	lload 229 ; _229
+	lstore 231 ; __175_us_3
+;  %.176.us.3 = load float, float* %.175.us.3, align 4
+	.line 147
+	lload 231 ; __175_us_3
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 233 ; __176_us_3
+;  %.186.us.3 = load float, float* %arg.y.4, align 4
+	.line 148
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 234 ; __186_us_3
+;  %pow2.le.i.us.3 = fmul float %.176.us.3, %.176.us.3
+	.line 149
+	fload 233 ; __176_us_3
+	fload 233 ; __176_us_3
+	fmul
+	fstore 235 ; _pow2_le_i_us_3
+;  %.54.i.us.3 = fdiv float %pow2.le.i.us.3, %.186.us.3
+	.line 150
+	fload 235 ; _pow2_le_i_us_3
+	fload 234 ; __186_us_3
+	fdiv
+	fstore 236 ; __54_i_us_3
+;  store float %.54.i.us.3, float* %lsr.iv1315, align 4
+	.line 151
+	lload 197 ; _lsr_iv1315
+	fload 236 ; __54_i_us_3
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %lsr.iv.next11 = add i64 %lsr.iv10, -4
+	.line 152
+	lload 195 ; _lsr_iv10
+	ldc2_w -4
+	ladd
+	lstore 237 ; _lsr_iv_next11
+;  %scevgep14 = getelementptr i8, i8* %lsr.iv13, i64 16
+	.line 153
+	lload 193 ; _lsr_iv13
+	ldc2_w 16
+	ladd
+	lstore 239 ; _scevgep14
+;  %lsr.iv.next20 = add i64 %lsr.iv19, %12
+	.line 154
+	lload 191 ; _lsr_iv19
+	lload 96 ; _96
+	ladd
+	lstore 241 ; _lsr_iv_next20
+;  %exitcond72.3 = icmp eq i64 %lsr.iv.next11, 0
+	.line 155
+	lload 237 ; _lsr_iv_next11
+	lconst_0
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 243 ; _exitcond72_3
+;  br i1 %exitcond72.3, label %for.end, label %for.body.endif.endif.endif.us
+	.line 156
+	iload 243 ; _exitcond72_3
+	ifne label6
+	lload 241 ; _lsr_iv_next20
+	lstore 191 ; _lsr_iv19
+	lload 239 ; _scevgep14
+	lstore 193 ; _lsr_iv13
+	lload 237 ; _lsr_iv_next11
+	lstore 195 ; _lsr_iv10
+	goto label15
+label8:
+;  br i1 %1, label %for.body.endif.endif.endif.us53.preheader, label %for.body.endif.endif.endif.preheader
+	.line 157
+	iload 52 ; _52
+	ifne label20
+	goto label21
+label20:
+;  %40 = add i64 %.12378, -1
+	.line 158
+	lload 38 ; __12378
+	ldc2_w -1
+	ladd
+	lstore 244 ; _244
+;  %xtraiter99 = and i64 %.12378, 3
+	.line 159
+	lload 38 ; __12378
+	ldc2_w 3
+	land
+	lstore 246 ; _xtraiter99
+;  %lcmp.mod100 = icmp eq i64 %xtraiter99, 0
+	.line 160
+	lload 246 ; _xtraiter99
+	lconst_0
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 248 ; _lcmp_mod100
+;  br i1 %lcmp.mod100, label %for.body.endif.endif.endif.us53.prol.loopexit, label %for.body.endif.endif.endif.us53.prol.preheader
+	.line 161
+	iload 248 ; _lcmp_mod100
+	ifne label22$phi6
+	goto label23
+label22$phi6:
+	lconst_0
+	lstore 270 ; _loop_index52_us54_unr
+	goto label22
+label23:
+;  %41 = ptrtoint float* %arg.y.4 to i64
+	.line 162
+	lload 28 ; _arg_y_4
+	lstore 249 ; _249
+;  br label %for.body.endif.endif.endif.us53.prol
+	.line 163
+	lload 249 ; _249
+	lstore 251 ; _lsr_iv37
+	lconst_0
+	lstore 253 ; _loop_index52_us54_prol
+	goto label24
+label24:
+;  %lsr.iv37 = phi i64 [ %lsr.iv.next38, %for.body.endif.endif.endif.us53.prol ], [ %41, %for.body.endif.endif.endif.us53.prol.preheader ]
+	.line 164
+;  %loop.index52.us54.prol = phi i64 [ %.207.us65.prol, %for.body.endif.endif.endif.us53.prol ], [ 0, %for.body.endif.endif.endif.us53.prol.preheader ]
+	.line 165
+;  %42 = bitcast i8* %.6.i to float*
+	.line 166
+	lload 48 ; __6_i
+	lstore 255 ; _255
+;  %.176.us56.prol = load float, float* %arg.x.4, align 4
+	.line 167
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 257 ; __176_us56_prol
+;  %.185.us60.prol = inttoptr i64 %lsr.iv37 to float*
+	.line 168
+	lload 251 ; _lsr_iv37
+	lstore 258 ; __185_us60_prol
+;  %.186.us61.prol = load float, float* %.185.us60.prol, align 4
+	.line 169
+	lload 258 ; __185_us60_prol
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 260 ; __186_us61_prol
+;  %pow2.le.i.us62.prol = fmul float %.176.us56.prol, %.176.us56.prol
+	.line 170
+	fload 257 ; __176_us56_prol
+	fload 257 ; __176_us56_prol
+	fmul
+	fstore 261 ; _pow2_le_i_us62_prol
+;  %.54.i.us63.prol = fdiv float %pow2.le.i.us62.prol, %.186.us61.prol
+	.line 171
+	fload 261 ; _pow2_le_i_us62_prol
+	fload 260 ; __186_us61_prol
+	fdiv
+	fstore 262 ; __54_i_us63_prol
+;  %scevgep36 = getelementptr float, float* %42, i64 %loop.index52.us54.prol
+	.line 172
+	lload 255 ; _255
+	ldc2_w 4
+	lload 253 ; _loop_index52_us54_prol
+	lmul
+	ladd
+	lstore 263 ; _scevgep36
+;  store float %.54.i.us63.prol, float* %scevgep36, align 4
+	.line 173
+	lload 263 ; _scevgep36
+	fload 262 ; __54_i_us63_prol
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %.207.us65.prol = add nuw nsw i64 %loop.index52.us54.prol, 1
+	.line 174
+	lload 253 ; _loop_index52_us54_prol
+	lconst_1
+	ladd
+	lstore 265 ; __207_us65_prol
+;  %lsr.iv.next38 = add i64 %lsr.iv37, %arg.y.6.0
+	.line 175
+	lload 251 ; _lsr_iv37
+	lload 32 ; _arg_y_6_0
+	ladd
+	lstore 267 ; _lsr_iv_next38
+;  %prol.iter101.cmp = icmp eq i64 %xtraiter99, %.207.us65.prol
+	.line 176
+	lload 246 ; _xtraiter99
+	lload 265 ; __207_us65_prol
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 269 ; _prol_iter101_cmp
+;  br i1 %prol.iter101.cmp, label %for.body.endif.endif.endif.us53.prol.loopexit, label %for.body.endif.endif.endif.us53.prol, !llvm.loop !2
+	.line 177
+	iload 269 ; _prol_iter101_cmp
+	ifne label22$phi7
+	lload 267 ; _lsr_iv_next38
+	lstore 251 ; _lsr_iv37
+	lload 265 ; __207_us65_prol
+	lstore 253 ; _loop_index52_us54_prol
+	goto label24
+label22$phi7:
+	lload 265 ; __207_us65_prol
+	lstore 270 ; _loop_index52_us54_unr
+	goto label22
+label22:
+;  %loop.index52.us54.unr = phi i64 [ 0, %for.body.endif.endif.endif.us53.preheader ], [ %.207.us65.prol, %for.body.endif.endif.endif.us53.prol ]
+	.line 178
+;  %43 = icmp ult i64 %40, 3
+	.line 179
+	lload 244 ; _244
+	ldc2_w 3
+	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
+	iconst_1
+	iand
+	istore 272 ; _272
+;  br i1 %43, label %for.end, label %for.body.endif.endif.endif.us53.preheader.new
+	.line 180
+	iload 272 ; _272
+	ifne label6
 	goto label25
-label32:
-;  %51 = shl i64 %.12380, 2
-	.line 200
-	lload 38 ; __12380
+label25:
+;  %44 = ptrtoint float* %arg.y.4 to i64
+	.line 181
+	lload 28 ; _arg_y_4
+	lstore 273 ; _273
+;  %45 = sub i64 %.12378, %loop.index52.us54.unr
+	.line 182
+	lload 38 ; __12378
+	lload 270 ; _loop_index52_us54_unr
+	lsub
+	lstore 275 ; _275
+;  %46 = shl i64 %loop.index52.us54.unr, 2
+	.line 183
+	lload 270 ; _loop_index52_us54_unr
+	ldc2_w 2
+	l2i
+	lshl
+	lstore 277 ; _277
+;  %47 = add i64 %46, 12
+	.line 184
+	lload 277 ; _277
+	ldc2_w 12
+	ladd
+	lstore 279 ; _279
+;  %scevgep27 = getelementptr i8, i8* %.6.i, i64 %47
+	.line 185
+	lload 48 ; __6_i
+	lconst_1
+	lload 279 ; _279
+	lmul
+	ladd
+	lstore 281 ; _scevgep27
+;  %48 = add i64 %loop.index52.us54.unr, 3
+	.line 186
+	lload 270 ; _loop_index52_us54_unr
+	ldc2_w 3
+	ladd
+	lstore 283 ; _283
+;  %49 = mul i64 %arg.y.6.0, %48
+	.line 187
+	lload 32 ; _arg_y_6_0
+	lload 283 ; _283
+	lmul
+	lstore 285 ; _285
+;  %50 = shl i64 %arg.y.6.0, 2
+	.line 188
+	lload 32 ; _arg_y_6_0
 	ldc2_w 2
 	l2i
 	lshl
 	lstore 287 ; _287
-;  %scevgep = getelementptr i8, i8* %.6.i, i64 %51
-	.line 201
-	lload 48 ; __6_i
+;  %51 = add i64 %loop.index52.us54.unr, 2
+	.line 189
+	lload 270 ; _loop_index52_us54_unr
+	ldc2_w 2
+	ladd
+	lstore 289 ; _289
+;  %52 = mul i64 %arg.y.6.0, %51
+	.line 190
+	lload 32 ; _arg_y_6_0
+	lload 289 ; _289
+	lmul
+	lstore 291 ; _291
+;  %53 = add i64 %loop.index52.us54.unr, 1
+	.line 191
+	lload 270 ; _loop_index52_us54_unr
 	lconst_1
-	lload 287 ; _287
+	ladd
+	lstore 293 ; _293
+;  %54 = mul i64 %arg.y.6.0, %53
+	.line 192
+	lload 32 ; _arg_y_6_0
+	lload 293 ; _293
+	lmul
+	lstore 295 ; _295
+;  %55 = mul i64 %loop.index52.us54.unr, %arg.y.6.0
+	.line 193
+	lload 270 ; _loop_index52_us54_unr
+	lload 32 ; _arg_y_6_0
+	lmul
+	lstore 297 ; _297
+;  br label %for.body.endif.endif.endif.us53
+	.line 194
+	lload 273 ; _273
+	lstore 478 ; _lsr_iv34
+	lload 281 ; _scevgep27
+	lstore 480 ; _lsr_iv28
+	lload 275 ; _275
+	lstore 482 ; _lsr_iv25
+	goto label26
+label21:
+;  %min.iters.check = icmp ult i64 %.12378, 8
+	.line 195
+	lload 38 ; __12378
+	ldc2_w 8
+	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
+	iconst_1
+	iand
+	istore 299 ; _min_iters_check
+;  br i1 %min.iters.check, label %for.body.endif.endif.endif.preheader95, label %min.iters.checked
+	.line 196
+	iload 299 ; _min_iters_check
+	ifne label27$phi8
+	goto label28
+label27$phi8:
+	lconst_0
+	lstore 300 ; _loop_index52_ph
+	goto label27
+label27:
+;  %loop.index52.ph = phi i64 [ 0, %vector.memcheck ], [ 0, %min.iters.checked ], [ 0, %for.body.endif.endif.endif.preheader ], [ %n.vec, %middle.block ]
+	.line 197
+;  %56 = sub i64 %.12378, %loop.index52.ph
+	.line 198
+	lload 38 ; __12378
+	lload 300 ; _loop_index52_ph
+	lsub
+	lstore 302 ; _302
+;  %57 = add i64 %.12378, -1
+	.line 199
+	lload 38 ; __12378
+	ldc2_w -1
+	ladd
+	lstore 304 ; _304
+;  %58 = sub i64 %57, %loop.index52.ph
+	.line 200
+	lload 304 ; _304
+	lload 300 ; _loop_index52_ph
+	lsub
+	lstore 306 ; _306
+;  %xtraiter102 = and i64 %56, 3
+	.line 201
+	lload 302 ; _302
+	ldc2_w 3
+	land
+	lstore 308 ; _xtraiter102
+;  %lcmp.mod103 = icmp eq i64 %xtraiter102, 0
+	.line 202
+	lload 308 ; _xtraiter102
+	lconst_0
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 310 ; _lcmp_mod103
+;  br i1 %lcmp.mod103, label %for.body.endif.endif.endif.prol.loopexit, label %for.body.endif.endif.endif.prol.preheader
+	.line 203
+	iload 310 ; _lcmp_mod103
+	ifne label29$phi9
+	goto label30
+label29$phi9:
+	lload 300 ; _loop_index52_ph
+	lstore 330 ; _loop_index52_unr
+	goto label29
+label30:
+;  %59 = sub i64 0, %xtraiter102
+	.line 204
+	lconst_0
+	lload 308 ; _xtraiter102
+	lsub
+	lstore 311 ; _311
+;  br label %for.body.endif.endif.endif.prol
+	.line 205
+	lload 311 ; _311
+	lstore 313 ; _lsr_iv49
+	lload 300 ; _loop_index52_ph
+	lstore 315 ; _loop_index52_prol
+	goto label31
+label31:
+;  %lsr.iv49 = phi i64 [ %lsr.iv.next50, %for.body.endif.endif.endif.prol ], [ %59, %for.body.endif.endif.endif.prol.preheader ]
+	.line 206
+;  %loop.index52.prol = phi i64 [ %.207.prol, %for.body.endif.endif.endif.prol ], [ %loop.index52.ph, %for.body.endif.endif.endif.prol.preheader ]
+	.line 207
+;  %60 = bitcast i8* %.6.i to float*
+	.line 208
+	lload 48 ; __6_i
+	lstore 317 ; _317
+;  %.176.prol = load float, float* %arg.x.4, align 4
+	.line 209
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 319 ; __176_prol
+;  %.186.prol = load float, float* %arg.y.4, align 4
+	.line 210
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 320 ; __186_prol
+;  %pow2.le.i.prol = fmul float %.176.prol, %.176.prol
+	.line 211
+	fload 319 ; __176_prol
+	fload 319 ; __176_prol
+	fmul
+	fstore 321 ; _pow2_le_i_prol
+;  %.54.i.prol = fdiv float %pow2.le.i.prol, %.186.prol
+	.line 212
+	fload 321 ; _pow2_le_i_prol
+	fload 320 ; __186_prol
+	fdiv
+	fstore 322 ; __54_i_prol
+;  %scevgep48 = getelementptr float, float* %60, i64 %loop.index52.prol
+	.line 213
+	lload 317 ; _317
+	ldc2_w 4
+	lload 315 ; _loop_index52_prol
 	lmul
 	ladd
-	lstore 289 ; _scevgep
+	lstore 323 ; _scevgep48
+;  store float %.54.i.prol, float* %scevgep48, align 4
+	.line 214
+	lload 323 ; _scevgep48
+	fload 322 ; __54_i_prol
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %.207.prol = add nuw nsw i64 %loop.index52.prol, 1
+	.line 215
+	lload 315 ; _loop_index52_prol
+	lconst_1
+	ladd
+	lstore 325 ; __207_prol
+;  %lsr.iv.next50 = add nsw i64 %lsr.iv49, 1
+	.line 216
+	lload 313 ; _lsr_iv49
+	lconst_1
+	ladd
+	lstore 327 ; _lsr_iv_next50
+;  %prol.iter104.cmp = icmp eq i64 %lsr.iv.next50, 0
+	.line 217
+	lload 327 ; _lsr_iv_next50
+	lconst_0
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 329 ; _prol_iter104_cmp
+;  br i1 %prol.iter104.cmp, label %for.body.endif.endif.endif.prol.loopexit, label %for.body.endif.endif.endif.prol, !llvm.loop !3
+	.line 218
+	iload 329 ; _prol_iter104_cmp
+	ifne label29$phi10
+	lload 327 ; _lsr_iv_next50
+	lstore 313 ; _lsr_iv49
+	lload 325 ; __207_prol
+	lstore 315 ; _loop_index52_prol
+	goto label31
+label29$phi10:
+	lload 325 ; __207_prol
+	lstore 330 ; _loop_index52_unr
+	goto label29
+label29:
+;  %loop.index52.unr = phi i64 [ %loop.index52.ph, %for.body.endif.endif.endif.preheader95 ], [ %.207.prol, %for.body.endif.endif.endif.prol ]
+	.line 219
+;  %61 = icmp ult i64 %58, 3
+	.line 220
+	lload 306 ; _306
+	ldc2_w 3
+	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
+	iconst_1
+	iand
+	istore 332 ; _332
+;  br i1 %61, label %for.end, label %for.body.endif.endif.endif.preheader95.new
+	.line 221
+	iload 332 ; _332
+	ifne label6
+	goto label32
+label32:
+;  %62 = sub i64 %.12378, %loop.index52.unr
+	.line 222
+	lload 38 ; __12378
+	lload 330 ; _loop_index52_unr
+	lsub
+	lstore 333 ; _333
+;  %63 = shl i64 %loop.index52.unr, 2
+	.line 223
+	lload 330 ; _loop_index52_unr
+	ldc2_w 2
+	l2i
+	lshl
+	lstore 335 ; _335
+;  %64 = add i64 %63, 12
+	.line 224
+	lload 335 ; _335
+	ldc2_w 12
+	ladd
+	lstore 337 ; _337
+;  %scevgep41 = getelementptr i8, i8* %.6.i, i64 %64
+	.line 225
+	lload 48 ; __6_i
+	lconst_1
+	lload 337 ; _337
+	lmul
+	ladd
+	lstore 339 ; _scevgep41
+;  br label %for.body.endif.endif.endif
+	.line 226
+	lload 339 ; _scevgep41
+	lstore 547 ; _lsr_iv42
+	lload 333 ; _333
+	lstore 549 ; _lsr_iv39
+	goto label33
+label28:
+;  %n.vec = and i64 %.12378, -8
+	.line 227
+	lload 38 ; __12378
+	ldc2_w -8
+	land
+	lstore 341 ; _n_vec
+;  %cmp.zero = icmp eq i64 %n.vec, 0
+	.line 228
+	lload 341 ; _n_vec
+	lconst_0
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 343 ; _cmp_zero
+;  br i1 %cmp.zero, label %for.body.endif.endif.endif.preheader95, label %vector.memcheck
+	.line 229
+	iload 343 ; _cmp_zero
+	ifne label27$phi11
+	goto label34
+label27$phi11:
+	lconst_0
+	lstore 300 ; _loop_index52_ph
+	goto label27
+label34:
+;  %65 = shl i64 %.12378, 2
+	.line 230
+	lload 38 ; __12378
+	ldc2_w 2
+	l2i
+	lshl
+	lstore 344 ; _344
+;  %scevgep = getelementptr i8, i8* %.6.i, i64 %65
+	.line 231
+	lload 48 ; __6_i
+	lconst_1
+	lload 344 ; _344
+	lmul
+	ladd
+	lstore 346 ; _scevgep
 ;  %bc = bitcast float* %arg.x.4 to i8*
-	.line 202
+	.line 232
 	lload 14 ; _arg_x_4
-	lstore 291 ; _bc
-;  %bc89 = bitcast float* %arg.x.4 to i8*
-	.line 203
+	lstore 348 ; _bc
+;  %bc87 = bitcast float* %arg.x.4 to i8*
+	.line 233
 	lload 14 ; _arg_x_4
-	lstore 293 ; _bc89
-;  %bound0 = icmp ult i8* %.6.i, %bc89
-	.line 204
+	lstore 350 ; _bc87
+;  %bound0 = icmp ult i8* %.6.i, %bc87
+	.line 234
 	lload 48 ; __6_i
-	lload 293 ; _bc89
+	lload 350 ; _bc87
 	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
 	iconst_1
 	iand
-	istore 295 ; _bound0
+	istore 352 ; _bound0
 ;  %bound1 = icmp ult i8* %bc, %scevgep
-	.line 205
-	lload 291 ; _bc
-	lload 289 ; _scevgep
+	.line 235
+	lload 348 ; _bc
+	lload 346 ; _scevgep
 	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
 	iconst_1
 	iand
-	istore 296 ; _bound1
+	istore 353 ; _bound1
 ;  %found.conflict = and i1 %bound0, %bound1
-	.line 206
-	iload 295 ; _bound0
-	iload 296 ; _bound1
+	.line 236
+	iload 352 ; _bound0
+	iload 353 ; _bound1
 	iand
 	iconst_1
 	iand
-	istore 297 ; _found_conflict
-;  %bc90 = bitcast float* %arg.y.4 to i8*
-	.line 207
+	istore 354 ; _found_conflict
+;  %bc88 = bitcast float* %arg.y.4 to i8*
+	.line 237
 	lload 28 ; _arg_y_4
-	lstore 298 ; _bc90
-;  %bc91 = bitcast float* %arg.y.4 to i8*
-	.line 208
+	lstore 355 ; _bc88
+;  %bc89 = bitcast float* %arg.y.4 to i8*
+	.line 238
 	lload 28 ; _arg_y_4
-	lstore 300 ; _bc91
-;  %bound092 = icmp ult i8* %.6.i, %bc91
-	.line 209
+	lstore 357 ; _bc89
+;  %bound090 = icmp ult i8* %.6.i, %bc89
+	.line 239
 	lload 48 ; __6_i
-	lload 300 ; _bc91
+	lload 357 ; _bc89
 	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
 	iconst_1
 	iand
-	istore 302 ; _bound092
-;  %bound193 = icmp ult i8* %bc90, %scevgep
-	.line 210
-	lload 298 ; _bc90
-	lload 289 ; _scevgep
+	istore 359 ; _bound090
+;  %bound191 = icmp ult i8* %bc88, %scevgep
+	.line 240
+	lload 355 ; _bc88
+	lload 346 ; _scevgep
 	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
 	iconst_1
 	iand
-	istore 303 ; _bound193
-;  %found.conflict94 = and i1 %bound092, %bound193
-	.line 211
-	iload 302 ; _bound092
-	iload 303 ; _bound193
+	istore 360 ; _bound191
+;  %found.conflict92 = and i1 %bound090, %bound191
+	.line 241
+	iload 359 ; _bound090
+	iload 360 ; _bound191
 	iand
 	iconst_1
 	iand
-	istore 304 ; _found_conflict94
-;  %conflict.rdx = or i1 %found.conflict, %found.conflict94
-	.line 212
-	iload 297 ; _found_conflict
-	iload 304 ; _found_conflict94
+	istore 361 ; _found_conflict92
+;  %conflict.rdx = or i1 %found.conflict, %found.conflict92
+	.line 242
+	iload 354 ; _found_conflict
+	iload 361 ; _found_conflict92
 	ior
 	iconst_1
 	iand
-	istore 305 ; _conflict_rdx
-;  br i1 %conflict.rdx, label %for.body.endif.endif.endif.preheader97, label %vector.body.preheader
-	.line 213
-	iload 305 ; _conflict_rdx
-	ifne label25$phi10
-	goto label33
-label25$phi10:
+	istore 362 ; _conflict_rdx
+;  br i1 %conflict.rdx, label %for.body.endif.endif.endif.preheader95, label %vector.body.preheader
+	.line 243
+	iload 362 ; _conflict_rdx
+	ifne label27$phi12
+	goto label35
+label27$phi12:
 	lconst_0
-	lstore 241 ; _loop_index52_ph
-	goto label25
-label33:
-;  %52 = add i64 %n.vec, -8
-	.line 214
-	lload 284 ; _n_vec
+	lstore 300 ; _loop_index52_ph
+	goto label27
+label35:
+;  %66 = add i64 %n.vec, -8
+	.line 244
+	lload 341 ; _n_vec
 	ldc2_w -8
 	ladd
-	lstore 306 ; _306
-;  %53 = lshr exact i64 %52, 3
-	.line 215
-	lload 306 ; _306
+	lstore 363 ; _363
+;  %67 = lshr exact i64 %66, 3
+	.line 245
+	lload 363 ; _363
 	ldc2_w 3
 	l2i
 	lushr
-	lstore 308 ; _308
-;  %54 = and i64 %53, 1
-	.line 216
-	lload 308 ; _308
-	lconst_1
-	land
-	lstore 310 ; _310
-;  %lcmp.mod106 = icmp eq i64 %54, 0
-	.line 217
-	lload 310 ; _310
-	lconst_0
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 312 ; _lcmp_mod106
-;  br i1 %lcmp.mod106, label %vector.body.prol, label %vector.body.prol.loopexit
-	.line 218
-	iload 312 ; _lcmp_mod106
-	ifne label34
-	lconst_0
-	lstore 333 ; _index_unr
-	goto label35
-label34:
-;  %55 = load float, float* %arg.x.4, align 4, !alias.scope !2
-	.line 219
-	lload 14 ; _arg_x_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 313 ; _313
-;  %56 = insertelement <8 x float> undef, float %55, i32 0
-	.line 220
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 4
-	iconst_0
-	i2l
-	lmul
-	ladd
-	fload 313 ; _313
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 314 ; _314
-;  %57 = shufflevector <8 x float> %56, <8 x float> undef, <8 x i32> zeroinitializer
-	.line 221
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	lstore 316 ; _316
-;  %58 = load float, float* %arg.y.4, align 4, !alias.scope !5
-	.line 222
-	lload 28 ; _arg_y_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 318 ; _318
-;  %59 = insertelement <8 x float> undef, float %58, i32 0
-	.line 223
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 4
-	iconst_0
-	i2l
-	lmul
-	ladd
-	fload 318 ; _318
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 319 ; _319
-;  %60 = fsub <8 x float> <float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00>, %57
-	.line 224
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	fconst_0
-	lload 316 ; _316
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	fconst_0
-	lload 316 ; _316
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	fconst_0
-	lload 316 ; _316
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	fconst_0
-	lload 316 ; _316
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	fconst_0
-	lload 316 ; _316
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	fconst_0
-	lload 316 ; _316
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	fconst_0
-	lload 316 ; _316
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	fconst_0
-	lload 316 ; _316
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 321 ; _321
-;  %61 = call <8 x float> @llvm.exp.v8f32(<8 x float> %60)
-	.line 225
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	lload 321 ; _321
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	lload 321 ; _321
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	lload 321 ; _321
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	lload 321 ; _321
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	lload 321 ; _321
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	lload 321 ; _321
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	lload 321 ; _321
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	lload 321 ; _321
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 323 ; _323
-;  %62 = fmul <8 x float> %59, %59
-	.line 226
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	lload 319 ; _319
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 319 ; _319
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	lload 319 ; _319
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 319 ; _319
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	lload 319 ; _319
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 319 ; _319
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	lload 319 ; _319
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 319 ; _319
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	lload 319 ; _319
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 319 ; _319
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	lload 319 ; _319
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 319 ; _319
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	lload 319 ; _319
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 319 ; _319
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	lload 319 ; _319
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 319 ; _319
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 325 ; _325
-;  %63 = shufflevector <8 x float> %62, <8 x float> undef, <8 x i32> zeroinitializer
-	.line 227
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	lstore 327 ; _327
-;  %64 = fdiv <8 x float> %61, %63
-	.line 228
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	lload 323 ; _323
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 327 ; _327
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	lload 323 ; _323
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 327 ; _327
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	lload 323 ; _323
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 327 ; _327
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	lload 323 ; _323
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 327 ; _327
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	lload 323 ; _323
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 327 ; _327
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	lload 323 ; _323
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 327 ; _327
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	lload 323 ; _323
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 327 ; _327
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	lload 323 ; _323
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 327 ; _327
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 329 ; _329
-;  %65 = bitcast i8* %.6.i to <8 x float>*
-	.line 229
-	lload 48 ; __6_i
-	lstore 331 ; _331
-;  store <8 x float> %64, <8 x float>* %65, align 4, !alias.scope !7, !noalias !9
-	.line 230
-	lload 331 ; _331
-	lload 329 ; _329
-	invokestatic lljvm/runtime/VMemory/store(JJ)V
-;  br label %vector.body.prol.loopexit
-	.line 231
-	ldc2_w 8
-	lstore 333 ; _index_unr
-	goto label35
-label35:
-;  %index.unr = phi i64 [ 0, %vector.body.preheader ], [ 8, %vector.body.prol ]
-	.line 232
-;  %66 = icmp eq i64 %53, 0
-	.line 233
-	lload 308 ; _308
-	lconst_0
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
-	iconst_1
-	iand
-	istore 335 ; _335
-;  br i1 %66, label %middle.block, label %vector.body.preheader.new
-	.line 234
-	iload 335 ; _335
-	ifne label36
-	goto label37
-label37:
-;  %67 = load float, float* %arg.x.4, align 4, !alias.scope !2
-	.line 235
-	lload 14 ; _arg_x_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 336 ; _336
-;  %68 = insertelement <8 x float> undef, float %67, i32 0
-	.line 236
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 4
-	iconst_0
-	i2l
-	lmul
-	ladd
-	fload 336 ; _336
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 337 ; _337
-;  %69 = shufflevector <8 x float> %68, <8 x float> undef, <8 x i32> zeroinitializer
-	.line 237
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	lstore 339 ; _339
-;  %70 = load float, float* %arg.y.4, align 4, !alias.scope !5
-	.line 238
-	lload 28 ; _arg_y_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 341 ; _341
-;  %71 = insertelement <8 x float> undef, float %70, i32 0
-	.line 239
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 4
-	iconst_0
-	i2l
-	lmul
-	ladd
-	fload 341 ; _341
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 342 ; _342
-;  %72 = fsub <8 x float> <float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00>, %69
-	.line 240
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	fconst_0
-	lload 339 ; _339
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	fconst_0
-	lload 339 ; _339
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	fconst_0
-	lload 339 ; _339
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	fconst_0
-	lload 339 ; _339
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	fconst_0
-	lload 339 ; _339
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	fconst_0
-	lload 339 ; _339
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	fconst_0
-	lload 339 ; _339
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	fconst_0
-	lload 339 ; _339
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 344 ; _344
-;  %73 = call <8 x float> @llvm.exp.v8f32(<8 x float> %72)
-	.line 241
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	lload 344 ; _344
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	lload 344 ; _344
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	lload 344 ; _344
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	lload 344 ; _344
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	lload 344 ; _344
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	lload 344 ; _344
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	lload 344 ; _344
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	lload 344 ; _344
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 346 ; _346
-;  %74 = fmul <8 x float> %71, %71
-	.line 242
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	lload 342 ; _342
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 342 ; _342
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	lload 342 ; _342
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 342 ; _342
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	lload 342 ; _342
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 342 ; _342
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	lload 342 ; _342
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 342 ; _342
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	lload 342 ; _342
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 342 ; _342
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	lload 342 ; _342
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 342 ; _342
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	lload 342 ; _342
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 342 ; _342
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	lload 342 ; _342
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 342 ; _342
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 348 ; _348
-;  %75 = shufflevector <8 x float> %74, <8 x float> undef, <8 x i32> zeroinitializer
-	.line 243
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	lstore 350 ; _350
-;  %76 = fdiv <8 x float> %73, %75
-	.line 244
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	lload 346 ; _346
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 350 ; _350
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	lload 346 ; _346
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 350 ; _350
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	lload 346 ; _346
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 350 ; _350
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	lload 346 ; _346
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 350 ; _350
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	lload 346 ; _346
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 350 ; _350
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	lload 346 ; _346
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 350 ; _350
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	lload 346 ; _346
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 350 ; _350
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	lload 346 ; _346
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 350 ; _350
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 352 ; _352
-;  %77 = load float, float* %arg.x.4, align 4, !alias.scope !2
-	.line 245
-	lload 14 ; _arg_x_4
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 354 ; _354
-;  %78 = insertelement <8 x float> undef, float %77, i32 0
+	lstore 365 ; _365
+;  %68 = add nuw nsw i64 %67, 1
 	.line 246
+	lload 365 ; _365
+	lconst_1
+	ladd
+	lstore 367 ; _367
+;  %xtraiter105 = and i64 %68, 3
+	.line 247
+	lload 367 ; _367
+	ldc2_w 3
+	land
+	lstore 369 ; _xtraiter105
+;  %lcmp.mod106 = icmp eq i64 %xtraiter105, 0
+	.line 248
+	lload 369 ; _xtraiter105
+	lconst_0
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 371 ; _lcmp_mod106
+;  br i1 %lcmp.mod106, label %vector.body.prol.loopexit, label %vector.body.prol.preheader
+	.line 249
+	iload 371 ; _lcmp_mod106
+	ifne label36$phi13
+	goto label37
+label36$phi13:
+	lconst_0
+	lstore 401 ; _index_unr
+	goto label36
+label37:
+;  %69 = load float, float* %arg.x.4, align 4, !alias.scope !4
+	.line 250
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 372 ; _372
+;  %70 = insertelement <8 x float> undef, float %69, i32 0
+	.line 251
 	bipush 32
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	dup2
@@ -2945,694 +2294,1721 @@ label37:
 	i2l
 	lmul
 	ladd
-	fload 354 ; _354
+	fload 372 ; _372
 	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 355 ; _355
-;  %79 = shufflevector <8 x float> %78, <8 x float> undef, <8 x i32> zeroinitializer
-	.line 247
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	lstore 357 ; _357
-;  %80 = load float, float* %arg.y.4, align 4, !alias.scope !5
-	.line 248
+	lstore 373 ; _373
+;  %71 = load float, float* %arg.y.4, align 4, !alias.scope !7
+	.line 252
 	lload 28 ; _arg_y_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 359 ; _359
-;  %81 = insertelement <8 x float> undef, float %80, i32 0
-	.line 249
-	bipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 4
-	iconst_0
-	i2l
-	lmul
-	ladd
-	fload 359 ; _359
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 360 ; _360
-;  %82 = fsub <8 x float> <float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00, float -0.000000e+00>, %79
-	.line 250
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	fconst_0
-	lload 357 ; _357
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	fconst_0
-	lload 357 ; _357
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	fconst_0
-	lload 357 ; _357
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	fconst_0
-	lload 357 ; _357
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	fconst_0
-	lload 357 ; _357
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	fconst_0
-	lload 357 ; _357
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	fconst_0
-	lload 357 ; _357
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	fconst_0
-	lload 357 ; _357
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fsub
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 362 ; _362
-;  %83 = call <8 x float> @llvm.exp.v8f32(<8 x float> %82)
-	.line 251
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	lload 362 ; _362
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	lload 362 ; _362
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	lload 362 ; _362
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	lload 362 ; _362
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	lload 362 ; _362
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	lload 362 ; _362
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	lload 362 ; _362
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	lload 362 ; _362
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 364 ; _364
-;  %84 = fmul <8 x float> %81, %81
-	.line 252
-	sipush 32
-	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	dup2
-	ldc2_w 0
-	ladd
-	lload 360 ; _360
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 360 ; _360
-	ldc2_w 0
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 4
-	ladd
-	lload 360 ; _360
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 360 ; _360
-	ldc2_w 4
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 8
-	ladd
-	lload 360 ; _360
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 360 ; _360
-	ldc2_w 8
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 12
-	ladd
-	lload 360 ; _360
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 360 ; _360
-	ldc2_w 12
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 16
-	ladd
-	lload 360 ; _360
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 360 ; _360
-	ldc2_w 16
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 20
-	ladd
-	lload 360 ; _360
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 360 ; _360
-	ldc2_w 20
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 24
-	ladd
-	lload 360 ; _360
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 360 ; _360
-	ldc2_w 24
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	dup2
-	ldc2_w 28
-	ladd
-	lload 360 ; _360
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 360 ; _360
-	ldc2_w 28
-	ladd
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fmul
-	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 366 ; _366
-;  %85 = shufflevector <8 x float> %84, <8 x float> undef, <8 x i32> zeroinitializer
+	fstore 375 ; _375
+;  %72 = insertelement <8 x float> undef, float %71, i32 0
 	.line 253
 	bipush 32
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
-	lstore 368 ; _368
-;  %86 = fdiv <8 x float> %83, %85
+	dup2
+	ldc2_w 4
+	iconst_0
+	i2l
+	lmul
+	ladd
+	fload 375 ; _375
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 376 ; _376
+;  %73 = fmul <8 x float> %70, %70
 	.line 254
 	sipush 32
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	dup2
 	ldc2_w 0
 	ladd
-	lload 364 ; _364
+	lload 373 ; _373
 	ldc2_w 0
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 368 ; _368
+	lload 373 ; _373
 	ldc2_w 0
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
+	fmul
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 	dup2
 	ldc2_w 4
 	ladd
-	lload 364 ; _364
+	lload 373 ; _373
 	ldc2_w 4
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 368 ; _368
+	lload 373 ; _373
 	ldc2_w 4
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
+	fmul
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 	dup2
 	ldc2_w 8
 	ladd
-	lload 364 ; _364
+	lload 373 ; _373
 	ldc2_w 8
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 368 ; _368
+	lload 373 ; _373
 	ldc2_w 8
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
+	fmul
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 	dup2
 	ldc2_w 12
 	ladd
-	lload 364 ; _364
+	lload 373 ; _373
 	ldc2_w 12
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 368 ; _368
+	lload 373 ; _373
 	ldc2_w 12
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
+	fmul
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 	dup2
 	ldc2_w 16
 	ladd
-	lload 364 ; _364
+	lload 373 ; _373
 	ldc2_w 16
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 368 ; _368
+	lload 373 ; _373
 	ldc2_w 16
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
+	fmul
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 	dup2
 	ldc2_w 20
 	ladd
-	lload 364 ; _364
+	lload 373 ; _373
 	ldc2_w 20
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 368 ; _368
+	lload 373 ; _373
 	ldc2_w 20
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
+	fmul
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 	dup2
 	ldc2_w 24
 	ladd
-	lload 364 ; _364
+	lload 373 ; _373
 	ldc2_w 24
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 368 ; _368
+	lload 373 ; _373
 	ldc2_w 24
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
+	fmul
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 	dup2
 	ldc2_w 28
 	ladd
-	lload 364 ; _364
+	lload 373 ; _373
 	ldc2_w 28
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	lload 368 ; _368
+	lload 373 ; _373
 	ldc2_w 28
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fdiv
+	fmul
 	invokestatic lljvm/runtime/VMemory/store(JF)V
-	lstore 370 ; _370
-;  %87 = sub i64 %n.vec, %index.unr
+	lstore 378 ; _378
+;  %74 = fdiv <8 x float> %73, %72
 	.line 255
-	lload 284 ; _n_vec
-	lload 333 ; _index_unr
-	lsub
-	lstore 372 ; _372
-;  %88 = shl i64 %index.unr, 2
+	sipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 0
+	ladd
+	lload 378 ; _378
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 376 ; _376
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 4
+	ladd
+	lload 378 ; _378
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 376 ; _376
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 8
+	ladd
+	lload 378 ; _378
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 376 ; _376
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 12
+	ladd
+	lload 378 ; _378
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 376 ; _376
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 16
+	ladd
+	lload 378 ; _378
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 376 ; _376
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 20
+	ladd
+	lload 378 ; _378
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 376 ; _376
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 24
+	ladd
+	lload 378 ; _378
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 376 ; _376
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 28
+	ladd
+	lload 378 ; _378
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 376 ; _376
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 380 ; _380
+;  %75 = shufflevector <8 x float> %74, <8 x float> undef, <8 x i32> zeroinitializer
 	.line 256
-	lload 333 ; _index_unr
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lstore 382 ; _382
+;  %76 = sub i64 0, %xtraiter105
+	.line 257
+	lconst_0
+	lload 369 ; _xtraiter105
+	lsub
+	lstore 384 ; _384
+;  br label %vector.body.prol
+	.line 258
+	lload 384 ; _384
+	lstore 386 ; _lsr_iv62
+	lconst_0
+	lstore 388 ; _index_prol
+	goto label38
+label38:
+;  %lsr.iv62 = phi i64 [ %lsr.iv.next63, %vector.body.prol ], [ %76, %vector.body.prol.preheader ]
+	.line 259
+;  %index.prol = phi i64 [ %index.next.prol, %vector.body.prol ], [ 0, %vector.body.prol.preheader ]
+	.line 260
+;  %77 = shl i64 %index.prol, 2
+	.line 261
+	lload 388 ; _index_prol
 	ldc2_w 2
 	l2i
 	lshl
-	lstore 374 ; _374
-;  %89 = add i64 %88, 32
-	.line 257
-	lload 374 ; _374
-	ldc2_w 32
-	ladd
-	lstore 376 ; _376
-;  %scevgep42 = getelementptr i8, i8* %.6.i, i64 %89
-	.line 258
+	lstore 390 ; _390
+;  %uglygep = getelementptr i8, i8* %.6.i, i64 %77
+	.line 262
 	lload 48 ; __6_i
 	lconst_1
-	lload 376 ; _376
+	lload 390 ; _390
 	lmul
 	ladd
-	lstore 378 ; _scevgep42
-;  br label %vector.body
-	.line 259
-	lload 378 ; _scevgep42
-	lstore 380 ; _lsr_iv43
-	lload 372 ; _372
-	lstore 382 ; _lsr_iv40
-	goto label38
-label38:
-;  %lsr.iv43 = phi i8* [ %scevgep44, %vector.body ], [ %scevgep42, %vector.body.preheader.new ]
-	.line 260
-;  %lsr.iv40 = phi i64 [ %lsr.iv.next41, %vector.body ], [ %87, %vector.body.preheader.new ]
-	.line 261
-;  %lsr.iv4345 = bitcast i8* %lsr.iv43 to <8 x float>*
-	.line 262
-	lload 380 ; _lsr_iv43
-	lstore 384 ; _lsr_iv4345
-;  %scevgep46 = getelementptr <8 x float>, <8 x float>* %lsr.iv4345, i64 -1
+	lstore 392 ; _uglygep
+;  %uglygep61 = bitcast i8* %uglygep to <8 x float>*
 	.line 263
-	lload 384 ; _lsr_iv4345
-	ldc2_w 4
-	lsub
-	lstore 386 ; _scevgep46
-;  store <8 x float> %76, <8 x float>* %scevgep46, align 4, !alias.scope !7, !noalias !9
+	lload 392 ; _uglygep
+	lstore 394 ; _uglygep61
+;  store <8 x float> %75, <8 x float>* %uglygep61, align 4, !alias.scope !9, !noalias !11
 	.line 264
-	lload 386 ; _scevgep46
-	lload 352 ; _352
+	lload 394 ; _uglygep61
+	lload 382 ; _382
 	invokestatic lljvm/runtime/VMemory/store(JJ)V
-;  store <8 x float> %86, <8 x float>* %lsr.iv4345, align 4, !alias.scope !7, !noalias !9
+;  %index.next.prol = add i64 %index.prol, 8
 	.line 265
-	lload 384 ; _lsr_iv4345
-	lload 370 ; _370
-	invokestatic lljvm/runtime/VMemory/store(JJ)V
-;  %lsr.iv.next41 = add i64 %lsr.iv40, -16
+	lload 388 ; _index_prol
+	ldc2_w 8
+	ladd
+	lstore 396 ; _index_next_prol
+;  %lsr.iv.next63 = add nsw i64 %lsr.iv62, 1
 	.line 266
-	lload 382 ; _lsr_iv40
-	ldc2_w -16
+	lload 386 ; _lsr_iv62
+	lconst_1
 	ladd
-	lstore 388 ; _lsr_iv_next41
-;  %scevgep44 = getelementptr i8, i8* %lsr.iv43, i64 64
+	lstore 398 ; _lsr_iv_next63
+;  %prol.iter107.cmp = icmp eq i64 %lsr.iv.next63, 0
 	.line 267
-	lload 380 ; _lsr_iv43
-	ldc2_w 64
-	ladd
-	lstore 390 ; _scevgep44
-;  %90 = icmp eq i64 %lsr.iv.next41, 0
-	.line 268
-	lload 388 ; _lsr_iv_next41
+	lload 398 ; _lsr_iv_next63
 	lconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
 	iconst_1
 	iand
-	istore 392 ; _392
-;  br i1 %90, label %middle.block, label %vector.body, !llvm.loop !10
-	.line 269
-	iload 392 ; _392
-	ifne label36
-	lload 390 ; _scevgep44
-	lstore 380 ; _lsr_iv43
-	lload 388 ; _lsr_iv_next41
-	lstore 382 ; _lsr_iv40
+	istore 400 ; _prol_iter107_cmp
+;  br i1 %prol.iter107.cmp, label %vector.body.prol.loopexit, label %vector.body.prol, !llvm.loop !12
+	.line 268
+	iload 400 ; _prol_iter107_cmp
+	ifne label36$phi14
+	lload 398 ; _lsr_iv_next63
+	lstore 386 ; _lsr_iv62
+	lload 396 ; _index_next_prol
+	lstore 388 ; _index_prol
 	goto label38
+label36$phi14:
+	lload 396 ; _index_next_prol
+	lstore 401 ; _index_unr
+	goto label36
 label36:
-;  %cmp.n = icmp eq i64 %.12380, %n.vec
+;  %index.unr = phi i64 [ 0, %vector.body.preheader ], [ %index.next.prol, %vector.body.prol ]
+	.line 269
+;  %78 = icmp ult i64 %66, 24
 	.line 270
-	lload 38 ; __12380
-	lload 284 ; _n_vec
-	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	lload 363 ; _363
+	ldc2_w 24
+	invokestatic lljvm/runtime/Instruction/icmp_ult(JJ)Z
 	iconst_1
 	iand
-	istore 393 ; _cmp_n
-;  br i1 %cmp.n, label %for.end, label %for.body.endif.endif.endif.preheader97
+	istore 403 ; _403
+;  br i1 %78, label %middle.block, label %vector.body.preheader.new
 	.line 271
-	iload 393 ; _cmp_n
-	ifne label6
-	lload 284 ; _n_vec
-	lstore 241 ; _loop_index52_ph
-	goto label25
-label24:
-;  %lsr.iv26 = phi i64 [ %lsr.iv.next27, %for.body.endif.endif.endif.us53 ], [ %34, %for.body.endif.endif.endif.us53.preheader.new ]
+	iload 403 ; _403
+	ifne label39
+	goto label40
+label40:
+;  %79 = load float, float* %arg.x.4, align 4, !alias.scope !4
 	.line 272
-;  %lsr.iv22 = phi i8* [ %scevgep23, %for.body.endif.endif.endif.us53 ], [ %scevgep21, %for.body.endif.endif.endif.us53.preheader.new ]
-	.line 273
-;  %lsr.iv19 = phi i64 [ %lsr.iv.next20, %for.body.endif.endif.endif.us53 ], [ %35, %for.body.endif.endif.endif.us53.preheader.new ]
-	.line 274
-;  %lsr.iv2224 = bitcast i8* %lsr.iv22 to float*
-	.line 275
-	lload 396 ; _lsr_iv22
-	lstore 400 ; _lsr_iv2224
-;  %.176.us56 = load float, float* %arg.x.4, align 4
-	.line 276
 	lload 14 ; _arg_x_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 402 ; __176_us56
-;  %91 = add i64 %41, %lsr.iv26
-	.line 277
-	lload 238 ; _238
-	lload 394 ; _lsr_iv26
-	ladd
-	lstore 403 ; _403
-;  %.185.us60 = inttoptr i64 %91 to float*
-	.line 278
-	lload 403 ; _403
-	lstore 405 ; __185_us60
-;  %.186.us61 = load float, float* %.185.us60, align 4
-	.line 279
-	lload 405 ; __185_us60
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 407 ; __186_us61
-;  %.17.i.us62 = fsub float -0.000000e+00, %.176.us56
-	.line 280
-	fconst_0
-	fload 402 ; __176_us56
-	fsub
-	fstore 408 ; __17_i_us62
-;  %.29.le.i.us63 = call float @llvm.exp.f32(float %.17.i.us62) #4
-	.line 281
-	fload 408 ; __17_i_us62
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 409 ; __29_le_i_us63
-;  %.46.i.us64 = fmul float %.186.us61, %.186.us61
-	.line 282
-	fload 407 ; __186_us61
-	fload 407 ; __186_us61
-	fmul
-	fstore 410 ; __46_i_us64
-;  %.61.i.us65 = fdiv float %.29.le.i.us63, %.46.i.us64
-	.line 283
-	fload 409 ; __29_le_i_us63
-	fload 410 ; __46_i_us64
-	fdiv
-	fstore 411 ; __61_i_us65
-;  %scevgep25 = getelementptr float, float* %lsr.iv2224, i64 -1
-	.line 284
-	lload 400 ; _lsr_iv2224
+	fstore 404 ; _404
+;  %80 = insertelement <8 x float> undef, float %79, i32 0
+	.line 273
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
 	ldc2_w 4
-	lsub
-	lstore 412 ; _scevgep25
-;  store float %.61.i.us65, float* %scevgep25, align 4
-	.line 285
-	lload 412 ; _scevgep25
-	fload 411 ; __61_i_us65
+	iconst_0
+	i2l
+	lmul
+	ladd
+	fload 404 ; _404
 	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  %.176.us56.1 = load float, float* %arg.x.4, align 4
+	lstore 405 ; _405
+;  %81 = load float, float* %arg.y.4, align 4, !alias.scope !7
+	.line 274
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 407 ; _407
+;  %82 = insertelement <8 x float> undef, float %81, i32 0
+	.line 275
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 4
+	iconst_0
+	i2l
+	lmul
+	ladd
+	fload 407 ; _407
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 408 ; _408
+;  %83 = fmul <8 x float> %80, %80
+	.line 276
+	sipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 0
+	ladd
+	lload 405 ; _405
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 405 ; _405
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 4
+	ladd
+	lload 405 ; _405
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 405 ; _405
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 8
+	ladd
+	lload 405 ; _405
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 405 ; _405
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 12
+	ladd
+	lload 405 ; _405
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 405 ; _405
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 16
+	ladd
+	lload 405 ; _405
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 405 ; _405
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 20
+	ladd
+	lload 405 ; _405
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 405 ; _405
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 24
+	ladd
+	lload 405 ; _405
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 405 ; _405
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 28
+	ladd
+	lload 405 ; _405
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 405 ; _405
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 410 ; _410
+;  %84 = fdiv <8 x float> %83, %82
+	.line 277
+	sipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 0
+	ladd
+	lload 410 ; _410
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 408 ; _408
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 4
+	ladd
+	lload 410 ; _410
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 408 ; _408
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 8
+	ladd
+	lload 410 ; _410
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 408 ; _408
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 12
+	ladd
+	lload 410 ; _410
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 408 ; _408
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 16
+	ladd
+	lload 410 ; _410
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 408 ; _408
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 20
+	ladd
+	lload 410 ; _410
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 408 ; _408
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 24
+	ladd
+	lload 410 ; _410
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 408 ; _408
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 28
+	ladd
+	lload 410 ; _410
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 408 ; _408
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 412 ; _412
+;  %85 = shufflevector <8 x float> %84, <8 x float> undef, <8 x i32> zeroinitializer
+	.line 278
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lstore 414 ; _414
+;  %86 = load float, float* %arg.x.4, align 4, !alias.scope !4
+	.line 279
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 416 ; _416
+;  %87 = insertelement <8 x float> undef, float %86, i32 0
+	.line 280
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 4
+	iconst_0
+	i2l
+	lmul
+	ladd
+	fload 416 ; _416
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 417 ; _417
+;  %88 = load float, float* %arg.y.4, align 4, !alias.scope !7
+	.line 281
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 419 ; _419
+;  %89 = insertelement <8 x float> undef, float %88, i32 0
+	.line 282
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 4
+	iconst_0
+	i2l
+	lmul
+	ladd
+	fload 419 ; _419
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 420 ; _420
+;  %90 = fmul <8 x float> %87, %87
+	.line 283
+	sipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 0
+	ladd
+	lload 417 ; _417
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 417 ; _417
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 4
+	ladd
+	lload 417 ; _417
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 417 ; _417
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 8
+	ladd
+	lload 417 ; _417
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 417 ; _417
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 12
+	ladd
+	lload 417 ; _417
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 417 ; _417
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 16
+	ladd
+	lload 417 ; _417
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 417 ; _417
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 20
+	ladd
+	lload 417 ; _417
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 417 ; _417
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 24
+	ladd
+	lload 417 ; _417
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 417 ; _417
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 28
+	ladd
+	lload 417 ; _417
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 417 ; _417
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 422 ; _422
+;  %91 = fdiv <8 x float> %90, %89
+	.line 284
+	sipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 0
+	ladd
+	lload 422 ; _422
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 420 ; _420
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 4
+	ladd
+	lload 422 ; _422
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 420 ; _420
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 8
+	ladd
+	lload 422 ; _422
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 420 ; _420
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 12
+	ladd
+	lload 422 ; _422
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 420 ; _420
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 16
+	ladd
+	lload 422 ; _422
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 420 ; _420
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 20
+	ladd
+	lload 422 ; _422
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 420 ; _420
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 24
+	ladd
+	lload 422 ; _422
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 420 ; _420
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 28
+	ladd
+	lload 422 ; _422
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 420 ; _420
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 424 ; _424
+;  %92 = shufflevector <8 x float> %91, <8 x float> undef, <8 x i32> zeroinitializer
+	.line 285
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lstore 426 ; _426
+;  %93 = load float, float* %arg.x.4, align 4, !alias.scope !4
 	.line 286
 	lload 14 ; _arg_x_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 414 ; __176_us56_1
-;  %92 = add i64 %39, %lsr.iv26
+	fstore 428 ; _428
+;  %94 = insertelement <8 x float> undef, float %93, i32 0
 	.line 287
-	lload 234 ; _234
-	lload 394 ; _lsr_iv26
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 4
+	iconst_0
+	i2l
+	lmul
 	ladd
-	lstore 415 ; _415
-;  %.185.us60.1 = inttoptr i64 %92 to float*
-	.line 288
-	lload 415 ; _415
-	lstore 417 ; __185_us60_1
-;  %.186.us61.1 = load float, float* %.185.us60.1, align 4
-	.line 289
-	lload 417 ; __185_us60_1
-	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 419 ; __186_us61_1
-;  %.17.i.us62.1 = fsub float -0.000000e+00, %.176.us56.1
-	.line 290
-	fconst_0
-	fload 414 ; __176_us56_1
-	fsub
-	fstore 420 ; __17_i_us62_1
-;  %.29.le.i.us63.1 = call float @llvm.exp.f32(float %.17.i.us62.1) #4
-	.line 291
-	fload 420 ; __17_i_us62_1
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 421 ; __29_le_i_us63_1
-;  %.46.i.us64.1 = fmul float %.186.us61.1, %.186.us61.1
-	.line 292
-	fload 419 ; __186_us61_1
-	fload 419 ; __186_us61_1
-	fmul
-	fstore 422 ; __46_i_us64_1
-;  %.61.i.us65.1 = fdiv float %.29.le.i.us63.1, %.46.i.us64.1
-	.line 293
-	fload 421 ; __29_le_i_us63_1
-	fload 422 ; __46_i_us64_1
-	fdiv
-	fstore 423 ; __61_i_us65_1
-;  store float %.61.i.us65.1, float* %lsr.iv2224, align 4
-	.line 294
-	lload 400 ; _lsr_iv2224
-	fload 423 ; __61_i_us65_1
+	fload 428 ; _428
 	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  %lsr.iv.next20 = add i64 %lsr.iv19, -2
-	.line 295
-	lload 398 ; _lsr_iv19
-	ldc2_w -2
+	lstore 429 ; _429
+;  %95 = load float, float* %arg.y.4, align 4, !alias.scope !7
+	.line 288
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 431 ; _431
+;  %96 = insertelement <8 x float> undef, float %95, i32 0
+	.line 289
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 4
+	iconst_0
+	i2l
+	lmul
 	ladd
-	lstore 424 ; _lsr_iv_next20
-;  %scevgep23 = getelementptr i8, i8* %lsr.iv22, i64 8
-	.line 296
-	lload 396 ; _lsr_iv22
+	fload 431 ; _431
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 432 ; _432
+;  %97 = fmul <8 x float> %94, %94
+	.line 290
+	sipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 0
+	ladd
+	lload 429 ; _429
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 429 ; _429
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 4
+	ladd
+	lload 429 ; _429
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 429 ; _429
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
 	ldc2_w 8
 	ladd
-	lstore 426 ; _scevgep23
-;  %lsr.iv.next27 = add i64 %lsr.iv26, %40
-	.line 297
-	lload 394 ; _lsr_iv26
-	lload 236 ; _236
+	lload 429 ; _429
+	ldc2_w 8
 	ladd
-	lstore 428 ; _lsr_iv_next27
-;  %exitcond75.1 = icmp eq i64 %lsr.iv.next20, 0
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 429 ; _429
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 12
+	ladd
+	lload 429 ; _429
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 429 ; _429
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 16
+	ladd
+	lload 429 ; _429
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 429 ; _429
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 20
+	ladd
+	lload 429 ; _429
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 429 ; _429
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 24
+	ladd
+	lload 429 ; _429
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 429 ; _429
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 28
+	ladd
+	lload 429 ; _429
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 429 ; _429
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 434 ; _434
+;  %98 = fdiv <8 x float> %97, %96
+	.line 291
+	sipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 0
+	ladd
+	lload 434 ; _434
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 432 ; _432
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 4
+	ladd
+	lload 434 ; _434
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 432 ; _432
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 8
+	ladd
+	lload 434 ; _434
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 432 ; _432
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 12
+	ladd
+	lload 434 ; _434
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 432 ; _432
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 16
+	ladd
+	lload 434 ; _434
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 432 ; _432
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 20
+	ladd
+	lload 434 ; _434
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 432 ; _432
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 24
+	ladd
+	lload 434 ; _434
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 432 ; _432
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 28
+	ladd
+	lload 434 ; _434
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 432 ; _432
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 436 ; _436
+;  %99 = shufflevector <8 x float> %98, <8 x float> undef, <8 x i32> zeroinitializer
+	.line 292
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lstore 438 ; _438
+;  %100 = load float, float* %arg.x.4, align 4, !alias.scope !4
+	.line 293
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 440 ; _440
+;  %101 = insertelement <8 x float> undef, float %100, i32 0
+	.line 294
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 4
+	iconst_0
+	i2l
+	lmul
+	ladd
+	fload 440 ; _440
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 441 ; _441
+;  %102 = load float, float* %arg.y.4, align 4, !alias.scope !7
+	.line 295
+	lload 28 ; _arg_y_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 443 ; _443
+;  %103 = insertelement <8 x float> undef, float %102, i32 0
+	.line 296
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 4
+	iconst_0
+	i2l
+	lmul
+	ladd
+	fload 443 ; _443
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 444 ; _444
+;  %104 = fmul <8 x float> %101, %101
+	.line 297
+	sipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 0
+	ladd
+	lload 441 ; _441
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 441 ; _441
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 4
+	ladd
+	lload 441 ; _441
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 441 ; _441
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 8
+	ladd
+	lload 441 ; _441
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 441 ; _441
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 12
+	ladd
+	lload 441 ; _441
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 441 ; _441
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 16
+	ladd
+	lload 441 ; _441
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 441 ; _441
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 20
+	ladd
+	lload 441 ; _441
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 441 ; _441
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 24
+	ladd
+	lload 441 ; _441
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 441 ; _441
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 28
+	ladd
+	lload 441 ; _441
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 441 ; _441
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fmul
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 446 ; _446
+;  %105 = fdiv <8 x float> %104, %103
 	.line 298
-	lload 424 ; _lsr_iv_next20
+	sipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	dup2
+	ldc2_w 0
+	ladd
+	lload 446 ; _446
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 444 ; _444
+	ldc2_w 0
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 4
+	ladd
+	lload 446 ; _446
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 444 ; _444
+	ldc2_w 4
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 8
+	ladd
+	lload 446 ; _446
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 444 ; _444
+	ldc2_w 8
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 12
+	ladd
+	lload 446 ; _446
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 444 ; _444
+	ldc2_w 12
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 16
+	ladd
+	lload 446 ; _446
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 444 ; _444
+	ldc2_w 16
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 20
+	ladd
+	lload 446 ; _446
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 444 ; _444
+	ldc2_w 20
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 24
+	ladd
+	lload 446 ; _446
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 444 ; _444
+	ldc2_w 24
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	dup2
+	ldc2_w 28
+	ladd
+	lload 446 ; _446
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	lload 444 ; _444
+	ldc2_w 28
+	ladd
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fdiv
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+	lstore 448 ; _448
+;  %106 = shufflevector <8 x float> %105, <8 x float> undef, <8 x i32> zeroinitializer
+	.line 299
+	bipush 32
+	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+	lstore 450 ; _450
+;  %107 = sub i64 %n.vec, %index.unr
+	.line 300
+	lload 341 ; _n_vec
+	lload 401 ; _index_unr
+	lsub
+	lstore 452 ; _452
+;  %108 = shl i64 %index.unr, 2
+	.line 301
+	lload 401 ; _index_unr
+	ldc2_w 2
+	l2i
+	lshl
+	lstore 454 ; _454
+;  %109 = add i64 %108, 96
+	.line 302
+	lload 454 ; _454
+	ldc2_w 96
+	ladd
+	lstore 456 ; _456
+;  %scevgep53 = getelementptr i8, i8* %.6.i, i64 %109
+	.line 303
+	lload 48 ; __6_i
+	lconst_1
+	lload 456 ; _456
+	lmul
+	ladd
+	lstore 458 ; _scevgep53
+;  br label %vector.body
+	.line 304
+	lload 458 ; _scevgep53
+	lstore 460 ; _lsr_iv54
+	lload 452 ; _452
+	lstore 462 ; _lsr_iv51
+	goto label41
+label41:
+;  %lsr.iv54 = phi i8* [ %scevgep55, %vector.body ], [ %scevgep53, %vector.body.preheader.new ]
+	.line 305
+;  %lsr.iv51 = phi i64 [ %lsr.iv.next52, %vector.body ], [ %107, %vector.body.preheader.new ]
+	.line 306
+;  %lsr.iv5456 = bitcast i8* %lsr.iv54 to <8 x float>*
+	.line 307
+	lload 460 ; _lsr_iv54
+	lstore 464 ; _lsr_iv5456
+;  %scevgep59 = getelementptr <8 x float>, <8 x float>* %lsr.iv5456, i64 -3
+	.line 308
+	lload 464 ; _lsr_iv5456
+	ldc2_w 12
+	lsub
+	lstore 466 ; _scevgep59
+;  store <8 x float> %85, <8 x float>* %scevgep59, align 4, !alias.scope !9, !noalias !11
+	.line 309
+	lload 466 ; _scevgep59
+	lload 414 ; _414
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
+;  %scevgep58 = getelementptr <8 x float>, <8 x float>* %lsr.iv5456, i64 -2
+	.line 310
+	lload 464 ; _lsr_iv5456
+	ldc2_w 8
+	lsub
+	lstore 468 ; _scevgep58
+;  store <8 x float> %92, <8 x float>* %scevgep58, align 4, !alias.scope !9, !noalias !11
+	.line 311
+	lload 468 ; _scevgep58
+	lload 426 ; _426
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
+;  %scevgep57 = getelementptr <8 x float>, <8 x float>* %lsr.iv5456, i64 -1
+	.line 312
+	lload 464 ; _lsr_iv5456
+	ldc2_w 4
+	lsub
+	lstore 470 ; _scevgep57
+;  store <8 x float> %99, <8 x float>* %scevgep57, align 4, !alias.scope !9, !noalias !11
+	.line 313
+	lload 470 ; _scevgep57
+	lload 438 ; _438
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
+;  store <8 x float> %106, <8 x float>* %lsr.iv5456, align 4, !alias.scope !9, !noalias !11
+	.line 314
+	lload 464 ; _lsr_iv5456
+	lload 450 ; _450
+	invokestatic lljvm/runtime/VMemory/store(JJ)V
+;  %lsr.iv.next52 = add i64 %lsr.iv51, -32
+	.line 315
+	lload 462 ; _lsr_iv51
+	ldc2_w -32
+	ladd
+	lstore 472 ; _lsr_iv_next52
+;  %scevgep55 = getelementptr i8, i8* %lsr.iv54, i64 128
+	.line 316
+	lload 460 ; _lsr_iv54
+	ldc2_w 128
+	ladd
+	lstore 474 ; _scevgep55
+;  %110 = icmp eq i64 %lsr.iv.next52, 0
+	.line 317
+	lload 472 ; _lsr_iv_next52
 	lconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
 	iconst_1
 	iand
-	istore 430 ; _exitcond75_1
-;  br i1 %exitcond75.1, label %for.end, label %for.body.endif.endif.endif.us53
-	.line 299
-	iload 430 ; _exitcond75_1
+	istore 476 ; _476
+;  br i1 %110, label %middle.block, label %vector.body, !llvm.loop !13
+	.line 318
+	iload 476 ; _476
+	ifne label39
+	lload 474 ; _scevgep55
+	lstore 460 ; _lsr_iv54
+	lload 472 ; _lsr_iv_next52
+	lstore 462 ; _lsr_iv51
+	goto label41
+label39:
+;  %cmp.n = icmp eq i64 %.12378, %n.vec
+	.line 319
+	lload 38 ; __12378
+	lload 341 ; _n_vec
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 477 ; _cmp_n
+;  br i1 %cmp.n, label %for.end, label %for.body.endif.endif.endif.preheader95
+	.line 320
+	iload 477 ; _cmp_n
 	ifne label6
-	lload 428 ; _lsr_iv_next27
-	lstore 394 ; _lsr_iv26
-	lload 426 ; _scevgep23
-	lstore 396 ; _lsr_iv22
-	lload 424 ; _lsr_iv_next20
-	lstore 398 ; _lsr_iv19
-	goto label24
+	lload 341 ; _n_vec
+	lstore 300 ; _loop_index52_ph
+	goto label27
+label26:
+;  %lsr.iv34 = phi i64 [ %lsr.iv.next35, %for.body.endif.endif.endif.us53 ], [ %44, %for.body.endif.endif.endif.us53.preheader.new ]
+	.line 321
+;  %lsr.iv28 = phi i8* [ %scevgep29, %for.body.endif.endif.endif.us53 ], [ %scevgep27, %for.body.endif.endif.endif.us53.preheader.new ]
+	.line 322
+;  %lsr.iv25 = phi i64 [ %lsr.iv.next26, %for.body.endif.endif.endif.us53 ], [ %45, %for.body.endif.endif.endif.us53.preheader.new ]
+	.line 323
+;  %lsr.iv2830 = bitcast i8* %lsr.iv28 to float*
+	.line 324
+	lload 480 ; _lsr_iv28
+	lstore 484 ; _lsr_iv2830
+;  %.176.us56 = load float, float* %arg.x.4, align 4
+	.line 325
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 486 ; __176_us56
+;  %111 = add i64 %55, %lsr.iv34
+	.line 326
+	lload 297 ; _297
+	lload 478 ; _lsr_iv34
+	ladd
+	lstore 487 ; _487
+;  %.185.us60 = inttoptr i64 %111 to float*
+	.line 327
+	lload 487 ; _487
+	lstore 489 ; __185_us60
+;  %.186.us61 = load float, float* %.185.us60, align 4
+	.line 328
+	lload 489 ; __185_us60
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 491 ; __186_us61
+;  %pow2.le.i.us62 = fmul float %.176.us56, %.176.us56
+	.line 329
+	fload 486 ; __176_us56
+	fload 486 ; __176_us56
+	fmul
+	fstore 492 ; _pow2_le_i_us62
+;  %.54.i.us63 = fdiv float %pow2.le.i.us62, %.186.us61
+	.line 330
+	fload 492 ; _pow2_le_i_us62
+	fload 491 ; __186_us61
+	fdiv
+	fstore 493 ; __54_i_us63
+;  %scevgep33 = getelementptr float, float* %lsr.iv2830, i64 -3
+	.line 331
+	lload 484 ; _lsr_iv2830
+	ldc2_w 12
+	lsub
+	lstore 494 ; _scevgep33
+;  store float %.54.i.us63, float* %scevgep33, align 4
+	.line 332
+	lload 494 ; _scevgep33
+	fload 493 ; __54_i_us63
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %.176.us56.1 = load float, float* %arg.x.4, align 4
+	.line 333
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 496 ; __176_us56_1
+;  %112 = add i64 %54, %lsr.iv34
+	.line 334
+	lload 295 ; _295
+	lload 478 ; _lsr_iv34
+	ladd
+	lstore 497 ; _497
+;  %.185.us60.1 = inttoptr i64 %112 to float*
+	.line 335
+	lload 497 ; _497
+	lstore 499 ; __185_us60_1
+;  %.186.us61.1 = load float, float* %.185.us60.1, align 4
+	.line 336
+	lload 499 ; __185_us60_1
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 501 ; __186_us61_1
+;  %pow2.le.i.us62.1 = fmul float %.176.us56.1, %.176.us56.1
+	.line 337
+	fload 496 ; __176_us56_1
+	fload 496 ; __176_us56_1
+	fmul
+	fstore 502 ; _pow2_le_i_us62_1
+;  %.54.i.us63.1 = fdiv float %pow2.le.i.us62.1, %.186.us61.1
+	.line 338
+	fload 502 ; _pow2_le_i_us62_1
+	fload 501 ; __186_us61_1
+	fdiv
+	fstore 503 ; __54_i_us63_1
+;  %scevgep32 = getelementptr float, float* %lsr.iv2830, i64 -2
+	.line 339
+	lload 484 ; _lsr_iv2830
+	ldc2_w 8
+	lsub
+	lstore 504 ; _scevgep32
+;  store float %.54.i.us63.1, float* %scevgep32, align 4
+	.line 340
+	lload 504 ; _scevgep32
+	fload 503 ; __54_i_us63_1
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %.176.us56.2 = load float, float* %arg.x.4, align 4
+	.line 341
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 506 ; __176_us56_2
+;  %113 = add i64 %52, %lsr.iv34
+	.line 342
+	lload 291 ; _291
+	lload 478 ; _lsr_iv34
+	ladd
+	lstore 507 ; _507
+;  %.185.us60.2 = inttoptr i64 %113 to float*
+	.line 343
+	lload 507 ; _507
+	lstore 509 ; __185_us60_2
+;  %.186.us61.2 = load float, float* %.185.us60.2, align 4
+	.line 344
+	lload 509 ; __185_us60_2
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 511 ; __186_us61_2
+;  %pow2.le.i.us62.2 = fmul float %.176.us56.2, %.176.us56.2
+	.line 345
+	fload 506 ; __176_us56_2
+	fload 506 ; __176_us56_2
+	fmul
+	fstore 512 ; _pow2_le_i_us62_2
+;  %.54.i.us63.2 = fdiv float %pow2.le.i.us62.2, %.186.us61.2
+	.line 346
+	fload 512 ; _pow2_le_i_us62_2
+	fload 511 ; __186_us61_2
+	fdiv
+	fstore 513 ; __54_i_us63_2
+;  %scevgep31 = getelementptr float, float* %lsr.iv2830, i64 -1
+	.line 347
+	lload 484 ; _lsr_iv2830
+	ldc2_w 4
+	lsub
+	lstore 514 ; _scevgep31
+;  store float %.54.i.us63.2, float* %scevgep31, align 4
+	.line 348
+	lload 514 ; _scevgep31
+	fload 513 ; __54_i_us63_2
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %.176.us56.3 = load float, float* %arg.x.4, align 4
+	.line 349
+	lload 14 ; _arg_x_4
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 516 ; __176_us56_3
+;  %114 = add i64 %49, %lsr.iv34
+	.line 350
+	lload 285 ; _285
+	lload 478 ; _lsr_iv34
+	ladd
+	lstore 517 ; _517
+;  %.185.us60.3 = inttoptr i64 %114 to float*
+	.line 351
+	lload 517 ; _517
+	lstore 519 ; __185_us60_3
+;  %.186.us61.3 = load float, float* %.185.us60.3, align 4
+	.line 352
+	lload 519 ; __185_us60_3
+	invokestatic lljvm/runtime/VMemory/load_f32(J)F
+	fstore 521 ; __186_us61_3
+;  %pow2.le.i.us62.3 = fmul float %.176.us56.3, %.176.us56.3
+	.line 353
+	fload 516 ; __176_us56_3
+	fload 516 ; __176_us56_3
+	fmul
+	fstore 522 ; _pow2_le_i_us62_3
+;  %.54.i.us63.3 = fdiv float %pow2.le.i.us62.3, %.186.us61.3
+	.line 354
+	fload 522 ; _pow2_le_i_us62_3
+	fload 521 ; __186_us61_3
+	fdiv
+	fstore 523 ; __54_i_us63_3
+;  store float %.54.i.us63.3, float* %lsr.iv2830, align 4
+	.line 355
+	lload 484 ; _lsr_iv2830
+	fload 523 ; __54_i_us63_3
+	invokestatic lljvm/runtime/VMemory/store(JF)V
+;  %lsr.iv.next26 = add i64 %lsr.iv25, -4
+	.line 356
+	lload 482 ; _lsr_iv25
+	ldc2_w -4
+	ladd
+	lstore 524 ; _lsr_iv_next26
+;  %scevgep29 = getelementptr i8, i8* %lsr.iv28, i64 16
+	.line 357
+	lload 480 ; _lsr_iv28
+	ldc2_w 16
+	ladd
+	lstore 526 ; _scevgep29
+;  %lsr.iv.next35 = add i64 %lsr.iv34, %50
+	.line 358
+	lload 478 ; _lsr_iv34
+	lload 287 ; _287
+	ladd
+	lstore 528 ; _lsr_iv_next35
+;  %exitcond73.3 = icmp eq i64 %lsr.iv.next26, 0
+	.line 359
+	lload 524 ; _lsr_iv_next26
+	lconst_0
+	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
+	iconst_1
+	iand
+	istore 530 ; _exitcond73_3
+;  br i1 %exitcond73.3, label %for.end, label %for.body.endif.endif.endif.us53
+	.line 360
+	iload 530 ; _exitcond73_3
+	ifne label6
+	lload 528 ; _lsr_iv_next35
+	lstore 478 ; _lsr_iv34
+	lload 526 ; _scevgep29
+	lstore 480 ; _lsr_iv28
+	lload 524 ; _lsr_iv_next26
+	lstore 482 ; _lsr_iv25
+	goto label26
 label6:
 ;  call void @NRT_decref(i8* %arg.x.0)
-	.line 300
+	.line 361
 	ldc "GeneratedClass"
 	ldc "_NRT_decref(J)V"
 	invokestatic lljvm/runtime/Function/getFunctionPointer(Ljava/lang/String;Ljava/lang/String;)J
@@ -3644,7 +4020,7 @@ label6:
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
 ;  call void @NRT_decref(i8* %arg.y.0)
-	.line 301
+	.line 362
 	ldc "GeneratedClass"
 	ldc "_NRT_decref(J)V"
 	invokestatic lljvm/runtime/Function/getFunctionPointer(Ljava/lang/String;Ljava/lang/String;)J
@@ -3655,307 +4031,255 @@ label6:
 	invokestatic lljvm/runtime/VMemory/pack(JJ)J
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
-;  %retptr.repack47 = bitcast { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr to i8**
-	.line 302
+;  %retptr.repack64 = bitcast { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr to i8**
+	.line 363
 	lload_0 ; _retptr
-	lstore 431 ; _retptr_repack47
-;  store i8* %.128, i8** %retptr.repack47, align 8
-	.line 303
-	lload 431 ; _retptr_repack47
+	lstore 531 ; _retptr_repack64
+;  store i8* %.128, i8** %retptr.repack64, align 8
+	.line 364
+	lload 531 ; _retptr_repack64
 	lload 42 ; __128
 	invokestatic lljvm/runtime/VMemory/store(JJ)V
 ;  %retptr.repack4 = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr, i64 0, i32 1
-	.line 304
+	.line 365
 	lload_0 ; _retptr
 	ldc2_w 8
 	ladd
-	lstore 433 ; _retptr_repack4
+	lstore 533 ; _retptr_repack4
 ;  store i8* null, i8** %retptr.repack4, align 8
-	.line 305
-	lload 433 ; _retptr_repack4
+	.line 366
+	lload 533 ; _retptr_repack4
 	lconst_0
 	invokestatic lljvm/runtime/VMemory/store(JJ)V
 ;  %retptr.repack6 = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr, i64 0, i32 2
-	.line 306
+	.line 367
 	lload_0 ; _retptr
 	ldc2_w 16
 	ladd
-	lstore 435 ; _retptr_repack6
-;  store i64 %.12380, i64* %retptr.repack6, align 8
-	.line 307
-	lload 435 ; _retptr_repack6
-	lload 38 ; __12380
+	lstore 535 ; _retptr_repack6
+;  store i64 %.12378, i64* %retptr.repack6, align 8
+	.line 368
+	lload 535 ; _retptr_repack6
+	lload 38 ; __12378
 	invokestatic lljvm/runtime/VMemory/store(JJ)V
 ;  %retptr.repack8 = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr, i64 0, i32 3
-	.line 308
+	.line 369
 	lload_0 ; _retptr
 	ldc2_w 24
 	ladd
-	lstore 437 ; _retptr_repack8
+	lstore 537 ; _retptr_repack8
 ;  store i64 4, i64* %retptr.repack8, align 8
-	.line 309
-	lload 437 ; _retptr_repack8
+	.line 370
+	lload 537 ; _retptr_repack8
 	ldc2_w 4
 	invokestatic lljvm/runtime/VMemory/store(JJ)V
 ;  %retptr.repack10 = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr, i64 0, i32 4
-	.line 310
+	.line 371
 	lload_0 ; _retptr
 	ldc2_w 32
 	ladd
-	lstore 439 ; _retptr_repack10
-;  %93 = bitcast float** %retptr.repack10 to i8**
-	.line 311
-	lload 439 ; _retptr_repack10
-	lstore 441 ; _441
-;  store i8* %.6.i, i8** %93, align 8
-	.line 312
-	lload 441 ; _441
+	lstore 539 ; _retptr_repack10
+;  %115 = bitcast float** %retptr.repack10 to i8**
+	.line 372
+	lload 539 ; _retptr_repack10
+	lstore 541 ; _541
+;  store i8* %.6.i, i8** %115, align 8
+	.line 373
+	lload 541 ; _541
 	lload 48 ; __6_i
 	invokestatic lljvm/runtime/VMemory/store(JJ)V
-;  %94 = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr, i64 0, i32 5, i64 0
-	.line 313
+;  %116 = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr, i64 0, i32 5, i64 0
+	.line 374
 	lload_0 ; _retptr
 	ldc2_w 40
 	ladd
-	lstore 443 ; _443
-;  store i64 %.12380, i64* %94, align 8
-	.line 314
-	lload 443 ; _443
-	lload 38 ; __12380
+	lstore 543 ; _543
+;  store i64 %.12378, i64* %116, align 8
+	.line 375
+	lload 543 ; _543
+	lload 38 ; __12378
 	invokestatic lljvm/runtime/VMemory/store(JJ)V
-;  %95 = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr, i64 0, i32 6, i64 0
-	.line 315
+;  %117 = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %retptr, i64 0, i32 6, i64 0
+	.line 376
 	lload_0 ; _retptr
 	ldc2_w 48
 	ladd
-	lstore 445 ; _445
-;  store i64 4, i64* %95, align 8
-	.line 316
-	lload 445 ; _445
+	lstore 545 ; _545
+;  store i64 4, i64* %117, align 8
+	.line 377
+	lload 545 ; _545
 	ldc2_w 4
 	invokestatic lljvm/runtime/VMemory/store(JJ)V
 ;  ret i32 0
-	.line 317
+	.line 378
 	iconst_0
 	ireturn
-label31:
-;  %lsr.iv31 = phi i8* [ %scevgep32, %for.body.endif.endif.endif ], [ %scevgep30, %for.body.endif.endif.endif.preheader97.new ]
-	.line 318
-;  %lsr.iv28 = phi i64 [ %lsr.iv.next29, %for.body.endif.endif.endif ], [ %48, %for.body.endif.endif.endif.preheader97.new ]
-	.line 319
-;  %lsr.iv3133 = bitcast i8* %lsr.iv31 to float*
-	.line 320
-	lload 447 ; _lsr_iv31
-	lstore 451 ; _lsr_iv3133
+label33:
+;  %lsr.iv42 = phi i8* [ %scevgep43, %for.body.endif.endif.endif ], [ %scevgep41, %for.body.endif.endif.endif.preheader95.new ]
+	.line 379
+;  %lsr.iv39 = phi i64 [ %lsr.iv.next40, %for.body.endif.endif.endif ], [ %62, %for.body.endif.endif.endif.preheader95.new ]
+	.line 380
+;  %lsr.iv4244 = bitcast i8* %lsr.iv42 to float*
+	.line 381
+	lload 547 ; _lsr_iv42
+	lstore 551 ; _lsr_iv4244
 ;  %.176 = load float, float* %arg.x.4, align 4
-	.line 321
+	.line 382
 	lload 14 ; _arg_x_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 453 ; __176
+	fstore 553 ; __176
 ;  %.186 = load float, float* %arg.y.4, align 4
-	.line 322
+	.line 383
 	lload 28 ; _arg_y_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 454 ; __186
-;  %.17.i = fsub float -0.000000e+00, %.176
-	.line 323
-	fconst_0
-	fload 453 ; __176
-	fsub
-	fstore 455 ; __17_i
-;  %.29.le.i = call float @llvm.exp.f32(float %.17.i) #4
-	.line 324
-	fload 455 ; __17_i
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 456 ; __29_le_i
-;  %.46.i = fmul float %.186, %.186
-	.line 325
-	fload 454 ; __186
-	fload 454 ; __186
+	fstore 554 ; __186
+;  %pow2.le.i = fmul float %.176, %.176
+	.line 384
+	fload 553 ; __176
+	fload 553 ; __176
 	fmul
-	fstore 457 ; __46_i
-;  %.61.i = fdiv float %.29.le.i, %.46.i
-	.line 326
-	fload 456 ; __29_le_i
-	fload 457 ; __46_i
+	fstore 555 ; _pow2_le_i
+;  %.54.i = fdiv float %pow2.le.i, %.186
+	.line 385
+	fload 555 ; _pow2_le_i
+	fload 554 ; __186
 	fdiv
-	fstore 458 ; __61_i
-;  %scevgep36 = getelementptr float, float* %lsr.iv3133, i64 -3
-	.line 327
-	lload 451 ; _lsr_iv3133
+	fstore 556 ; __54_i
+;  %scevgep47 = getelementptr float, float* %lsr.iv4244, i64 -3
+	.line 386
+	lload 551 ; _lsr_iv4244
 	ldc2_w 12
 	lsub
-	lstore 459 ; _scevgep36
-;  store float %.61.i, float* %scevgep36, align 4
-	.line 328
-	lload 459 ; _scevgep36
-	fload 458 ; __61_i
+	lstore 557 ; _scevgep47
+;  store float %.54.i, float* %scevgep47, align 4
+	.line 387
+	lload 557 ; _scevgep47
+	fload 556 ; __54_i
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 ;  %.176.1 = load float, float* %arg.x.4, align 4
-	.line 329
+	.line 388
 	lload 14 ; _arg_x_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 461 ; __176_1
+	fstore 559 ; __176_1
 ;  %.186.1 = load float, float* %arg.y.4, align 4
-	.line 330
+	.line 389
 	lload 28 ; _arg_y_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 462 ; __186_1
-;  %.17.i.1 = fsub float -0.000000e+00, %.176.1
-	.line 331
-	fconst_0
-	fload 461 ; __176_1
-	fsub
-	fstore 463 ; __17_i_1
-;  %.29.le.i.1 = call float @llvm.exp.f32(float %.17.i.1) #4
-	.line 332
-	fload 463 ; __17_i_1
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 464 ; __29_le_i_1
-;  %.46.i.1 = fmul float %.186.1, %.186.1
-	.line 333
-	fload 462 ; __186_1
-	fload 462 ; __186_1
+	fstore 560 ; __186_1
+;  %pow2.le.i.1 = fmul float %.176.1, %.176.1
+	.line 390
+	fload 559 ; __176_1
+	fload 559 ; __176_1
 	fmul
-	fstore 465 ; __46_i_1
-;  %.61.i.1 = fdiv float %.29.le.i.1, %.46.i.1
-	.line 334
-	fload 464 ; __29_le_i_1
-	fload 465 ; __46_i_1
+	fstore 561 ; _pow2_le_i_1
+;  %.54.i.1 = fdiv float %pow2.le.i.1, %.186.1
+	.line 391
+	fload 561 ; _pow2_le_i_1
+	fload 560 ; __186_1
 	fdiv
-	fstore 466 ; __61_i_1
-;  %scevgep35 = getelementptr float, float* %lsr.iv3133, i64 -2
-	.line 335
-	lload 451 ; _lsr_iv3133
+	fstore 562 ; __54_i_1
+;  %scevgep46 = getelementptr float, float* %lsr.iv4244, i64 -2
+	.line 392
+	lload 551 ; _lsr_iv4244
 	ldc2_w 8
 	lsub
-	lstore 467 ; _scevgep35
-;  store float %.61.i.1, float* %scevgep35, align 4
-	.line 336
-	lload 467 ; _scevgep35
-	fload 466 ; __61_i_1
+	lstore 563 ; _scevgep46
+;  store float %.54.i.1, float* %scevgep46, align 4
+	.line 393
+	lload 563 ; _scevgep46
+	fload 562 ; __54_i_1
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 ;  %.176.2 = load float, float* %arg.x.4, align 4
-	.line 337
+	.line 394
 	lload 14 ; _arg_x_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 469 ; __176_2
+	fstore 565 ; __176_2
 ;  %.186.2 = load float, float* %arg.y.4, align 4
-	.line 338
+	.line 395
 	lload 28 ; _arg_y_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 470 ; __186_2
-;  %.17.i.2 = fsub float -0.000000e+00, %.176.2
-	.line 339
-	fconst_0
-	fload 469 ; __176_2
-	fsub
-	fstore 471 ; __17_i_2
-;  %.29.le.i.2 = call float @llvm.exp.f32(float %.17.i.2) #4
-	.line 340
-	fload 471 ; __17_i_2
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 472 ; __29_le_i_2
-;  %.46.i.2 = fmul float %.186.2, %.186.2
-	.line 341
-	fload 470 ; __186_2
-	fload 470 ; __186_2
+	fstore 566 ; __186_2
+;  %pow2.le.i.2 = fmul float %.176.2, %.176.2
+	.line 396
+	fload 565 ; __176_2
+	fload 565 ; __176_2
 	fmul
-	fstore 473 ; __46_i_2
-;  %.61.i.2 = fdiv float %.29.le.i.2, %.46.i.2
-	.line 342
-	fload 472 ; __29_le_i_2
-	fload 473 ; __46_i_2
+	fstore 567 ; _pow2_le_i_2
+;  %.54.i.2 = fdiv float %pow2.le.i.2, %.186.2
+	.line 397
+	fload 567 ; _pow2_le_i_2
+	fload 566 ; __186_2
 	fdiv
-	fstore 474 ; __61_i_2
-;  %scevgep34 = getelementptr float, float* %lsr.iv3133, i64 -1
-	.line 343
-	lload 451 ; _lsr_iv3133
+	fstore 568 ; __54_i_2
+;  %scevgep45 = getelementptr float, float* %lsr.iv4244, i64 -1
+	.line 398
+	lload 551 ; _lsr_iv4244
 	ldc2_w 4
 	lsub
-	lstore 475 ; _scevgep34
-;  store float %.61.i.2, float* %scevgep34, align 4
-	.line 344
-	lload 475 ; _scevgep34
-	fload 474 ; __61_i_2
+	lstore 569 ; _scevgep45
+;  store float %.54.i.2, float* %scevgep45, align 4
+	.line 399
+	lload 569 ; _scevgep45
+	fload 568 ; __54_i_2
 	invokestatic lljvm/runtime/VMemory/store(JF)V
 ;  %.176.3 = load float, float* %arg.x.4, align 4
-	.line 345
+	.line 400
 	lload 14 ; _arg_x_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 477 ; __176_3
+	fstore 571 ; __176_3
 ;  %.186.3 = load float, float* %arg.y.4, align 4
-	.line 346
+	.line 401
 	lload 28 ; _arg_y_4
 	invokestatic lljvm/runtime/VMemory/load_f32(J)F
-	fstore 478 ; __186_3
-;  %.17.i.3 = fsub float -0.000000e+00, %.176.3
-	.line 347
-	fconst_0
-	fload 477 ; __176_3
-	fsub
-	fstore 479 ; __17_i_3
-;  %.29.le.i.3 = call float @llvm.exp.f32(float %.17.i.3) #4
-	.line 348
-	fload 479 ; __17_i_3
-	f2d
-	invokestatic java/lang/Math/exp(D)D
-	d2f
-	fstore 480 ; __29_le_i_3
-;  %.46.i.3 = fmul float %.186.3, %.186.3
-	.line 349
-	fload 478 ; __186_3
-	fload 478 ; __186_3
+	fstore 572 ; __186_3
+;  %pow2.le.i.3 = fmul float %.176.3, %.176.3
+	.line 402
+	fload 571 ; __176_3
+	fload 571 ; __176_3
 	fmul
-	fstore 481 ; __46_i_3
-;  %.61.i.3 = fdiv float %.29.le.i.3, %.46.i.3
-	.line 350
-	fload 480 ; __29_le_i_3
-	fload 481 ; __46_i_3
+	fstore 573 ; _pow2_le_i_3
+;  %.54.i.3 = fdiv float %pow2.le.i.3, %.186.3
+	.line 403
+	fload 573 ; _pow2_le_i_3
+	fload 572 ; __186_3
 	fdiv
-	fstore 482 ; __61_i_3
-;  store float %.61.i.3, float* %lsr.iv3133, align 4
-	.line 351
-	lload 451 ; _lsr_iv3133
-	fload 482 ; __61_i_3
+	fstore 574 ; __54_i_3
+;  store float %.54.i.3, float* %lsr.iv4244, align 4
+	.line 404
+	lload 551 ; _lsr_iv4244
+	fload 574 ; __54_i_3
 	invokestatic lljvm/runtime/VMemory/store(JF)V
-;  %lsr.iv.next29 = add i64 %lsr.iv28, -4
-	.line 352
-	lload 449 ; _lsr_iv28
+;  %lsr.iv.next40 = add i64 %lsr.iv39, -4
+	.line 405
+	lload 549 ; _lsr_iv39
 	ldc2_w -4
 	ladd
-	lstore 483 ; _lsr_iv_next29
-;  %scevgep32 = getelementptr i8, i8* %lsr.iv31, i64 16
-	.line 353
-	lload 447 ; _lsr_iv31
+	lstore 575 ; _lsr_iv_next40
+;  %scevgep43 = getelementptr i8, i8* %lsr.iv42, i64 16
+	.line 406
+	lload 547 ; _lsr_iv42
 	ldc2_w 16
 	ladd
-	lstore 485 ; _scevgep32
-;  %exitcond76.3 = icmp eq i64 %lsr.iv.next29, 0
-	.line 354
-	lload 483 ; _lsr_iv_next29
+	lstore 577 ; _scevgep43
+;  %exitcond74.3 = icmp eq i64 %lsr.iv.next40, 0
+	.line 407
+	lload 575 ; _lsr_iv_next40
 	lconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
 	iconst_1
 	iand
-	istore 487 ; _exitcond76_3
-;  br i1 %exitcond76.3, label %for.end, label %for.body.endif.endif.endif, !llvm.loop !13
-	.line 355
-	iload 487 ; _exitcond76_3
+	istore 579 ; _exitcond74_3
+;  br i1 %exitcond74.3, label %for.end, label %for.body.endif.endif.endif, !llvm.loop !16
+	.line 408
+	iload 579 ; _exitcond74_3
 	ifne label6
-	lload 485 ; _scevgep32
-	lstore 447 ; _lsr_iv31
-	lload 483 ; _lsr_iv_next29
-	lstore 449 ; _lsr_iv28
-	goto label31
+	lload 577 ; _scevgep43
+	lstore 547 ; _lsr_iv42
+	lload 575 ; _lsr_iv_next40
+	lstore 549 ; _lsr_iv39
+	goto label33
 	.limit stack 16
-	.limit locals 488
+	.limit locals 580
 end_method:
 .end method
 
@@ -4080,196 +4404,196 @@ end_method:
 	istore 112
 	iconst_0
 	istore 113
-label39:
+label42:
 ;  %.4 = alloca { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, align 8
-	.line 356
+	.line 409
 	bipush 56
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 4 ; __4
 ;  %.fca.0.gep1 = bitcast { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %.4 to i8**
-	.line 357
+	.line 410
 	lload 4 ; __4
 	lstore 6 ; __fca_0_gep1
 ;  %.fca.1.gep = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %.4, i64 0, i32 1
-	.line 358
+	.line 411
 	lload 4 ; __4
 	ldc2_w 8
 	ladd
 	lstore 8 ; __fca_1_gep
 ;  %.fca.2.gep = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %.4, i64 0, i32 2
-	.line 359
+	.line 412
 	lload 4 ; __4
 	ldc2_w 16
 	ladd
 	lstore 10 ; __fca_2_gep
 ;  %.fca.3.gep = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %.4, i64 0, i32 3
-	.line 360
+	.line 413
 	lload 4 ; __4
 	ldc2_w 24
 	ladd
 	lstore 12 ; __fca_3_gep
 ;  %.fca.4.gep = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %.4, i64 0, i32 4
-	.line 361
+	.line 414
 	lload 4 ; __4
 	ldc2_w 32
 	ladd
 	lstore 14 ; __fca_4_gep
 ;  %.fca.5.0.gep = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %.4, i64 0, i32 5, i64 0
-	.line 362
+	.line 415
 	lload 4 ; __4
 	ldc2_w 40
 	ladd
 	lstore 16 ; __fca_5_0_gep
 ;  %.fca.6.0.gep = getelementptr inbounds { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }, { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %.4, i64 0, i32 6, i64 0
-	.line 363
+	.line 416
 	lload 4 ; __4
 	ldc2_w 48
 	ladd
 	lstore 18 ; __fca_6_0_gep
 ;  %excinfo = alloca { i8*, i32 }*, align 8
-	.line 364
+	.line 417
 	bipush 8
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 20 ; _excinfo
 ;  %extracted.meminfo = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.1, 0
-	.line 365
+	.line 418
 	lload_0 ; __1
 	lconst_0
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 22 ; _extracted_meminfo
 ;  %extracted.parent = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.1, 1
-	.line 366
+	.line 419
 	lload_0 ; __1
 	ldc2_w 8
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 24 ; _extracted_parent
 ;  %extracted.nitems = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.1, 2
-	.line 367
+	.line 420
 	lload_0 ; __1
 	ldc2_w 16
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 26 ; _extracted_nitems
 ;  %extracted.itemsize = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.1, 3
-	.line 368
+	.line 421
 	lload_0 ; __1
 	ldc2_w 24
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 28 ; _extracted_itemsize
 ;  %extracted.data = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.1, 4
-	.line 369
+	.line 422
 	lload_0 ; __1
 	ldc2_w 32
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 30 ; _extracted_data
 ;  %extracted.shape = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.1, 5
-	.line 370
+	.line 423
 	lload_0 ; __1
 	ldc2_w 40
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 32 ; _extracted_shape
 ;  %.6 = extractvalue [1 x i64] %extracted.shape, 0
-	.line 371
+	.line 424
 	lload 32 ; _extracted_shape
 	lconst_0
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 34 ; __6
 ;  %extracted.strides = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.1, 6
-	.line 372
+	.line 425
 	lload_0 ; __1
 	ldc2_w 48
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 36 ; _extracted_strides
 ;  %.7 = extractvalue [1 x i64] %extracted.strides, 0
-	.line 373
+	.line 426
 	lload 36 ; _extracted_strides
 	lconst_0
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 38 ; __7
 ;  %extracted.meminfo.1 = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.2, 0
-	.line 374
+	.line 427
 	lload_2 ; __2
 	lconst_0
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 40 ; _extracted_meminfo_1
 ;  %extracted.parent.1 = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.2, 1
-	.line 375
+	.line 428
 	lload_2 ; __2
 	ldc2_w 8
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 42 ; _extracted_parent_1
 ;  %extracted.nitems.1 = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.2, 2
-	.line 376
+	.line 429
 	lload_2 ; __2
 	ldc2_w 16
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 44 ; _extracted_nitems_1
 ;  %extracted.itemsize.1 = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.2, 3
-	.line 377
+	.line 430
 	lload_2 ; __2
 	ldc2_w 24
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 46 ; _extracted_itemsize_1
 ;  %extracted.data.1 = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.2, 4
-	.line 378
+	.line 431
 	lload_2 ; __2
 	ldc2_w 32
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 48 ; _extracted_data_1
 ;  %extracted.shape.1 = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.2, 5
-	.line 379
+	.line 432
 	lload_2 ; __2
 	ldc2_w 40
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 50 ; _extracted_shape_1
 ;  %.8 = extractvalue [1 x i64] %extracted.shape.1, 0
-	.line 380
+	.line 433
 	lload 50 ; _extracted_shape_1
 	lconst_0
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 52 ; __8
 ;  %extracted.strides.1 = extractvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.2, 6
-	.line 381
+	.line 434
 	lload_2 ; __2
 	ldc2_w 48
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 54 ; _extracted_strides_1
 ;  %.9 = extractvalue [1 x i64] %extracted.strides.1, 0
-	.line 382
+	.line 435
 	lload 54 ; _extracted_strides_1
 	lconst_0
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 56 ; __9
 ;  %0 = bitcast { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* %.4 to i8*
-	.line 383
+	.line 436
 	lload 4 ; __4
 	lstore 58 ; _58
 ;  call void @llvm.memset.p0i8.i64(i8* nonnull %0, i8 0, i64 56, i32 8, i1 false)
-	.line 384
+	.line 437
 	lload 4 ; __4
 	iconst_0
 	ldc2_w 56
 	bipush 8
 	invokestatic lljvm/runtime/VMemory/memset(JBJI)V
 ;  %.10 = call i32 @"_ZN7pyfunc812pyfunc8$2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE"({ i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] }* nonnull %.4, { i8*, i32 }** nonnull %excinfo, i8* undef, i8* %extracted.meminfo, i8* %extracted.parent, i64 %extracted.nitems, i64 %extracted.itemsize, float* %extracted.data, i64 %.6, i64 %.7, i8* %extracted.meminfo.1, i8* %extracted.parent.1, i64 %extracted.nitems.1, i64 %extracted.itemsize.1, float* %extracted.data.1, i64 %.8, i64 %.9)
-	.line 385
+	.line 438
 	ldc "GeneratedClass"
 	ldc "__ZN7pyfunc812pyfunc8_2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE(JJJJJJJJJJJJJJJJJ)I"
 	invokestatic lljvm/runtime/Function/getFunctionPointer(Ljava/lang/String;Ljava/lang/String;)J
@@ -4314,12 +4638,12 @@ label39:
 	invokestatic lljvm/runtime/Function/invoke_i32(JJ)I
 	istore 60 ; __10
 ;  %.11 = load { i8*, i32 }*, { i8*, i32 }** %excinfo, align 8
-	.line 386
+	.line 439
 	lload 20 ; _excinfo
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 61 ; __11
 ;  %.12 = icmp eq i32 %.10, 0
-	.line 387
+	.line 440
 	iload 60 ; __10
 	iconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_eq(II)Z
@@ -4327,7 +4651,7 @@ label39:
 	iand
 	istore 63 ; __12
 ;  %notrhs = icmp ne i32 %.10, -2
-	.line 388
+	.line 441
 	iload 60 ; __10
 	bipush -2
 	invokestatic lljvm/runtime/Instruction/icmp_ne(II)Z
@@ -4335,7 +4659,7 @@ label39:
 	iand
 	istore 64 ; _notrhs
 ;  %.17 = xor i1 %.12, %notrhs
-	.line 389
+	.line 442
 	iload 63 ; __12
 	iload 64 ; _notrhs
 	ixor
@@ -4343,98 +4667,98 @@ label39:
 	iand
 	istore 65 ; __17
 ;  %.20.fca.0.load = load i8*, i8** %.fca.0.gep1, align 8
-	.line 390
+	.line 443
 	lload 6 ; __fca_0_gep1
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 66 ; __20_fca_0_load
 ;  %.20.fca.0.insert = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } undef, i8* %.20.fca.0.load, 0
-	.line 391
+	.line 444
 	bipush 56
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 68 ; __20_fca_0_insert
 ;  %.20.fca.1.load = load i8*, i8** %.fca.1.gep, align 8
-	.line 392
+	.line 445
 	lload 8 ; __fca_1_gep
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 70 ; __20_fca_1_load
 ;  %.20.fca.1.insert = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.0.insert, i8* %.20.fca.1.load, 1
-	.line 393
+	.line 446
 	bipush 56
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 72 ; __20_fca_1_insert
 ;  %.20.fca.2.load = load i64, i64* %.fca.2.gep, align 8
-	.line 394
+	.line 447
 	lload 10 ; __fca_2_gep
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 74 ; __20_fca_2_load
 ;  %.20.fca.2.insert = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.1.insert, i64 %.20.fca.2.load, 2
-	.line 395
+	.line 448
 	bipush 56
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 76 ; __20_fca_2_insert
 ;  %.20.fca.3.load = load i64, i64* %.fca.3.gep, align 8
-	.line 396
+	.line 449
 	lload 12 ; __fca_3_gep
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 78 ; __20_fca_3_load
 ;  %.20.fca.3.insert = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.2.insert, i64 %.20.fca.3.load, 3
-	.line 397
+	.line 450
 	bipush 56
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 80 ; __20_fca_3_insert
 ;  %.20.fca.4.load = load float*, float** %.fca.4.gep, align 8
-	.line 398
+	.line 451
 	lload 14 ; __fca_4_gep
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 82 ; __20_fca_4_load
 ;  %.20.fca.4.insert = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.3.insert, float* %.20.fca.4.load, 4
-	.line 399
+	.line 452
 	bipush 56
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 84 ; __20_fca_4_insert
 ;  %.20.fca.5.0.load = load i64, i64* %.fca.5.0.gep, align 8
-	.line 400
+	.line 453
 	lload 16 ; __fca_5_0_gep
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 86 ; __20_fca_5_0_load
 ;  %.20.fca.6.0.load = load i64, i64* %.fca.6.0.gep, align 8
-	.line 401
+	.line 454
 	lload 18 ; __fca_6_0_gep
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 88 ; __20_fca_6_0_load
 ;  %.26 = insertvalue [1 x i64] undef, i64 %.20.fca.5.0.load, 0
-	.line 402
+	.line 455
 	bipush 8
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 90 ; __26
 ;  %.27 = insertvalue [1 x i64] undef, i64 %.20.fca.6.0.load, 0
-	.line 403
+	.line 456
 	bipush 8
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 92 ; __27
 ;  %inserted.shape = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %.20.fca.4.insert, [1 x i64] %.26, 5
-	.line 404
+	.line 457
 	bipush 56
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 94 ; _inserted_shape
 ;  %inserted.strides = insertvalue { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %inserted.shape, [1 x i64] %.27, 6
-	.line 405
+	.line 458
 	bipush 56
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 96 ; _inserted_strides
 ;  %.33 = alloca i32, align 4
-	.line 406
+	.line 459
 	bipush 4
 	invokestatic lljvm/runtime/VMemory/allocateStack(I)J
 	lstore 98 ; __33
 ;  br i1 %.17, label %entry.if, label %entry.endif, !prof !0
-	.line 407
+	.line 460
 	iload 65 ; __17
-	ifne label40
-	goto label41
-label40:
+	ifne label43
+	goto label44
+label43:
 ;  %.18 = icmp sgt i32 %.10, 0
-	.line 408
+	.line 461
 	iload 60 ; __10
 	iconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_sgt(II)Z
@@ -4442,7 +4766,7 @@ label40:
 	iand
 	istore 100 ; __18
 ;  call void @numba_gil_ensure(i32* nonnull %.33)
-	.line 409
+	.line 462
 	ldc "_numba_gil_ensure(J)V"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 8
@@ -4453,18 +4777,18 @@ label40:
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
 ;  br i1 %.18, label %entry.if.if, label %NodeBlock
-	.line 410
+	.line 463
 	iload 100 ; __18
-	ifne label42
-	goto label43
-label41:
+	ifne label45
+	goto label46
+label44:
 ;  ret { i8*, i8*, i64, i64, float*, [1 x i64], [1 x i64] } %inserted.strides
-	.line 411
+	.line 464
 	lload 96 ; _inserted_strides
 	lreturn
-label44:
+label47:
 ;  %.55 = call i8* @PyString_FromString(i8* getelementptr inbounds ([29 x i8], [29 x i8]* @".const.<Numba C callback 'pyfunc8'>", i64 0, i64 0))
-	.line 412
+	.line 465
 	ldc "_PyString_FromString(J)J"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 8
@@ -4476,7 +4800,7 @@ label44:
 	invokestatic lljvm/runtime/Function/invoke_i64(JJ)J
 	lstore 101 ; __55
 ;  call void @PyErr_WriteUnraisable(i8* %.55)
-	.line 413
+	.line 466
 	ldc "_PyErr_WriteUnraisable(J)V"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 8
@@ -4487,7 +4811,7 @@ label44:
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
 ;  call void @Py_DecRef(i8* %.55)
-	.line 414
+	.line 467
 	ldc "_Py_DecRef(J)V"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 8
@@ -4498,7 +4822,7 @@ label44:
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
 ;  call void @numba_gil_release(i32* nonnull %.33)
-	.line 415
+	.line 468
 	ldc "_numba_gil_release(J)V"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 8
@@ -4509,35 +4833,35 @@ label44:
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
 ;  br label %entry.endif
-	.line 416
-	goto label41
-label42:
+	.line 469
+	goto label44
+label45:
 ;  call void @PyErr_Clear()
-	.line 417
+	.line 470
 	ldc "_PyErr_Clear()V"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	invokestatic lljvm/runtime/Function/invoke_void(J)V
 ;  %.38 = load { i8*, i32 }, { i8*, i32 }* %.11, align 8
-	.line 418
+	.line 471
 	lload 61 ; __11
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 103 ; __38
 ;  %.39 = extractvalue { i8*, i32 } %.38, 0
-	.line 419
+	.line 472
 	lload 103 ; __38
 	lconst_0
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 105 ; __39
 ;  %.41 = extractvalue { i8*, i32 } %.38, 1
-	.line 420
+	.line 473
 	lload 103 ; __38
 	ldc2_w 8
 	ladd
 	invokestatic lljvm/runtime/VMemory/load_i32(J)I
 	istore 107 ; __41
 ;  %.42 = call i8* @numba_unpickle(i8* %.39, i32 %.41)
-	.line 421
+	.line 474
 	ldc "_numba_unpickle(JI)J"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 12
@@ -4551,7 +4875,7 @@ label42:
 	invokestatic lljvm/runtime/Function/invoke_i64(JJ)J
 	lstore 108 ; __42
 ;  %.43 = icmp eq i8* %.42, null
-	.line 422
+	.line 475
 	lload 108 ; __42
 	lconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
@@ -4559,13 +4883,13 @@ label42:
 	iand
 	istore 110 ; __43
 ;  br i1 %.43, label %.35, label %entry.if.if.if, !prof !0
-	.line 423
+	.line 476
 	iload 110 ; __43
-	ifne label44
-	goto label45
-label43:
+	ifne label47
+	goto label48
+label46:
 ;  %Pivot = icmp slt i32 %.10, -1
-	.line 424
+	.line 477
 	iload 60 ; __10
 	iconst_m1
 	invokestatic lljvm/runtime/Instruction/icmp_slt(II)Z
@@ -4573,13 +4897,13 @@ label43:
 	iand
 	istore 111 ; _Pivot
 ;  br i1 %Pivot, label %LeafBlock, label %LeafBlock1
-	.line 425
+	.line 478
 	iload 111 ; _Pivot
-	ifne label46
-	goto label47
-label47:
+	ifne label49
+	goto label50
+label50:
 ;  %SwitchLeaf2 = icmp eq i32 %.10, -1
-	.line 426
+	.line 479
 	iload 60 ; __10
 	iconst_m1
 	invokestatic lljvm/runtime/Instruction/icmp_eq(II)Z
@@ -4587,13 +4911,13 @@ label47:
 	iand
 	istore 112 ; _SwitchLeaf2
 ;  br i1 %SwitchLeaf2, label %.35, label %entry.if.endif.endif.endif
-	.line 427
+	.line 480
 	iload 112 ; _SwitchLeaf2
-	ifne label44
-	goto label48
-label46:
+	ifne label47
+	goto label51
+label49:
 ;  %SwitchLeaf = icmp eq i32 %.10, -3
-	.line 428
+	.line 481
 	iload 60 ; __10
 	bipush -3
 	invokestatic lljvm/runtime/Instruction/icmp_eq(II)Z
@@ -4601,13 +4925,13 @@ label46:
 	iand
 	istore 113 ; _SwitchLeaf
 ;  br i1 %SwitchLeaf, label %entry.if.endif.if, label %entry.if.endif.endif.endif
-	.line 429
+	.line 482
 	iload 113 ; _SwitchLeaf
-	ifne label49
-	goto label48
-label45:
+	ifne label52
+	goto label51
+label48:
 ;  call void @numba_do_raise(i8* nonnull %.42)
-	.line 430
+	.line 483
 	ldc "_numba_do_raise(J)V"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 8
@@ -4618,11 +4942,11 @@ label45:
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
 ;  br label %.35
-	.line 431
-	goto label44
-label49:
+	.line 484
+	goto label47
+label52:
 ;  call void @PyErr_SetNone(i8* nonnull @PyExc_StopIteration)
-	.line 432
+	.line 485
 	ldc "_PyErr_SetNone(J)V"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 8
@@ -4636,11 +4960,11 @@ label49:
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
 ;  br label %.35
-	.line 433
-	goto label44
-label48:
+	.line 486
+	goto label47
+label51:
 ;  call void @PyErr_SetString(i8* nonnull @PyExc_SystemError, i8* getelementptr inbounds ([43 x i8], [43 x i8]* @".const.unknown error when calling native function", i64 0, i64 0))
-	.line 434
+	.line 487
 	ldc "_PyErr_SetString(JJ)V"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 16
@@ -4656,8 +4980,8 @@ label48:
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
 ;  br label %.35
-	.line 435
-	goto label44
+	.line 488
+	goto label47
 	.limit stack 36
 	.limit locals 114
 end_method:
@@ -4670,9 +4994,9 @@ end_method:
 	lstore 3
 	lconst_0
 	lstore 5
-label50:
+label53:
 ;  %.4 = icmp eq i8* %.1, null
-	.line 436
+	.line 489
 	lload_0 ; __1
 	lconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
@@ -4680,21 +5004,21 @@ label50:
 	iand
 	istore_2 ; __4
 ;  br i1 %.4, label %.3.if, label %.3.endif, !prof !0
-	.line 437
+	.line 490
 	iload_2 ; __4
-	ifne label51
-	goto label52
-label51:
+	ifne label54
+	goto label55
+label54:
 ;  ret void
-	.line 438
+	.line 491
 	return
-label52:
+label55:
 ;  %.7 = bitcast i8* %.1 to i64*
-	.line 439
+	.line 492
 	lload_0 ; __1
 	lstore_3 ; __7
 ;  %.4.i = atomicrmw add i64* %.7, i64 1 monotonic
-	.line 440
+	.line 493
 	lload_3 ; __7
 	dup2
 	dup2
@@ -4705,7 +5029,7 @@ label52:
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 5 ; __4_i
 ;  ret void
-	.line 441
+	.line 494
 	return
 	.limit stack 16
 	.limit locals 7
@@ -4721,9 +5045,9 @@ end_method:
 	lstore 5
 	iconst_0
 	istore 7
-label53:
+label56:
 ;  %.4 = icmp eq i8* %.1, null
-	.line 442
+	.line 495
 	lload_0 ; __1
 	lconst_0
 	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
@@ -4731,21 +5055,21 @@ label53:
 	iand
 	istore_2 ; __4
 ;  br i1 %.4, label %.3.if, label %.3.endif, !prof !0
-	.line 443
+	.line 496
 	iload_2 ; __4
-	ifne label54
-	goto label55
-label54:
+	ifne label57
+	goto label58
+label57:
 ;  ret void
-	.line 444
+	.line 497
 	return
-label55:
+label58:
 ;  %.7 = bitcast i8* %.1 to i64*
-	.line 445
+	.line 498
 	lload_0 ; __1
 	lstore_3 ; __7
 ;  %.4.i = atomicrmw sub i64* %.7, i64 1 monotonic
-	.line 446
+	.line 499
 	lload_3 ; __7
 	dup2
 	dup2
@@ -4756,7 +5080,7 @@ label55:
 	invokestatic lljvm/runtime/VMemory/load_i64(J)J
 	lstore 5 ; __4_i
 ;  %.9 = icmp eq i64 %.4.i, 1
-	.line 447
+	.line 500
 	lload 5 ; __4_i
 	lconst_1
 	invokestatic lljvm/runtime/Instruction/icmp_eq(JJ)Z
@@ -4764,13 +5088,13 @@ label55:
 	iand
 	istore 7 ; __9
 ;  br i1 %.9, label %.3.endif.if, label %.3.if, !prof !0
-	.line 448
+	.line 501
 	iload 7 ; __9
-	ifne label56
-	goto label54
-label56:
+	ifne label59
+	goto label57
+label59:
 ;  tail call void @NRT_MemInfo_call_dtor(i8* nonnull %.1)
-	.line 449
+	.line 502
 	ldc "_NRT_MemInfo_call_dtor(J)V"
 	invokestatic lljvm/runtime/Function/getExternalFunctionPointer(Ljava/lang/String;)J
 	sipush 8
@@ -4781,7 +5105,7 @@ label56:
 	pop2
 	invokestatic lljvm/runtime/Function/invoke_void(JJ)V
 ;  ret void
-	.line 450
+	.line 503
 	return
 	.limit stack 16
 	.limit locals 8

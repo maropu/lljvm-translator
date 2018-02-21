@@ -17,13 +17,29 @@
 
 package maropu.lljvm
 
-import java.lang.{Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
+import java.lang.{Long => jLong, Float => jFloat, Integer => jInt, Double => jDouble}
 
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.FunSuite
 
-class PyFuncSuite extends FunSuite {
+class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
-  val basePath = "llvm-pyfunc-bitcode"
+  private val basePath = "llvm-pyfunc-bitcode"
+
+  private var pyArray1: PyArrayHolder = _
+  private var pyArray2: PyArrayHolder = _
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+    pyArray1 = new PyArrayHolder()
+    pyArray2 = new PyArrayHolder()
+  }
+
+  override def afterAll(): Unit = {
+    pyArray1.close()
+    pyArray2.close()
+    super.afterAll()
+  }
 
   // scalastyle:off line.size.limit
 
@@ -129,7 +145,7 @@ class PyFuncSuite extends FunSuite {
       source = s"$basePath/pyfunc6_for1.py",
       functionName = "_cfunc__ZN12pyfunc6_for117pyfunc6_for1_2411E5ArrayIfLi1E1A7mutable7alignedEi",
       signature = Seq(jLong.TYPE, jInt.TYPE),
-      arguments = Seq(new jLong(ArrayUtils.pyAyray(floatArray1)), new jInt(floatArray1.size)),
+      arguments = Seq(new jLong(pyArray1.addressOf(floatArray1)), new jInt(floatArray1.size)),
       expected = 22.0
     )
     val doubleArray1 = Array(2.0, 1.0, 5.0, 13.0, 4.0)
@@ -138,7 +154,7 @@ class PyFuncSuite extends FunSuite {
       source = s"$basePath/pyfunc6_for1.py",
       functionName = "_cfunc__ZN12pyfunc6_for117pyfunc6_for1_2412E5ArrayIdLi1E1A7mutable7alignedEi",
       signature = Seq(jLong.TYPE, jInt.TYPE),
-      arguments = Seq(new jLong(ArrayUtils.pyAyray(doubleArray1)), new jInt(doubleArray1.size)),
+      arguments = Seq(new jLong(pyArray1.addressOf(doubleArray1)), new jInt(doubleArray1.size)),
       expected = 25.0
     )
     val floatArray2 = Array(4.0, -5.0, 2.0, 8.0).map(_.toFloat)
@@ -148,7 +164,7 @@ class PyFuncSuite extends FunSuite {
       functionName =
         "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2413E5ArrayIfLi1E1A7mutable7alignedE",
       signature = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(ArrayUtils.pyAyray(floatArray2))),
+      arguments = Seq(new jLong(pyArray1.addressOf(floatArray2))),
       expected = 9.0
     )
     val doubleArray2 = Array(5.0, 3.0, -9.0, 5.0, 1.0, 2.0, 2.0, 9.0, 1.0, 3.0)
@@ -158,7 +174,7 @@ class PyFuncSuite extends FunSuite {
       functionName =
         "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2414E5ArrayIdLi1E1A7mutable7alignedE",
       signature = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(ArrayUtils.pyAyray(doubleArray2))),
+      arguments = Seq(new jLong(pyArray1.addressOf(doubleArray2))),
       expected = 22.0
     )
   }
@@ -172,7 +188,7 @@ class PyFuncSuite extends FunSuite {
       source = s"$basePath/pyfunc8.py",
       functionName = "_cfunc__ZN7pyfunc812pyfunc8_2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE",
       signature = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(ArrayUtils.pyAyray(floatX)), new jLong(ArrayUtils.pyAyray(floatY))),
+      arguments = Seq(new jLong(pyArray1.addressOf(floatX)), new jLong(pyArray2.addressOf(floatY))),
       expected = null
     )
     val doubleX = Array(1.0, 2.0, 3.0, 4.0)
@@ -182,7 +198,7 @@ class PyFuncSuite extends FunSuite {
       source = s"$basePath/pyfunc8.py",
       functionName = "cfunc._ZN7pyfunc812pyfunc8$2418E5ArrayIdLi1E1A7mutable7alignedE5ArrayIdLi1E1A7mutable7alignedE",
       signature = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(ArrayUtils.pyAyray(doubleX)), new jLong(ArrayUtils.pyAyray(doubleY))),
+      arguments = Seq(new jLong(pyArray1.addressOf(doubleX)), new jLong(pyArray2.addressOf(doubleY))),
       expected = null
     )
   }

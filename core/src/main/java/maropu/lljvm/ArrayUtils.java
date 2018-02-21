@@ -120,41 +120,4 @@ public class ArrayUtils {
   public static long addressOf(double[] ar) {
     return _addressOf(ar) + Platform.DOUBLE_ARRAY_OFFSET;
   }
-
-  private static long _pyArray(long arrayAddr, long shape, long stride) {
-    PyArrayHolder holder = pyArrayHolderAddr.get();
-    Platform.putLong(null, holder.getArrayAddr(), arrayAddr);
-    Platform.putLong(null, holder.getShapeHolderAddr(), shape);
-    Platform.putLong(null, holder.getStrideHolderAddr(), stride);
-    return holder.getHolderAddr();
-  }
-
-  // For python arrays
-  public static long pyAyray(boolean[] ar) {
-    return _pyArray(addressOf(ar), ar.length, 1);
-  }
-
-  public static long pyAyray(byte[] ar) {
-    return _pyArray(addressOf(ar), ar.length, 1);
-  }
-
-  public static long pyAyray(short[] ar) {
-    return _pyArray(addressOf(ar), ar.length, 2);
-  }
-
-  public static long pyAyray(int[] ar) {
-    return _pyArray(addressOf(ar), ar.length, 4);
-  }
-
-  public static long pyAyray(long[] ar) {
-    return _pyArray(addressOf(ar), ar.length, 8);
-  }
-
-  public static long pyAyray(float[] ar) {
-    return _pyArray(addressOf(ar), ar.length, 4);
-  }
-
-  public static long pyAyray(double[] ar) {
-    return _pyArray(addressOf(ar), ar.length, 8);
-  }
 }

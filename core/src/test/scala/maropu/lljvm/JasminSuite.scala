@@ -257,12 +257,14 @@ class JasminSuite extends FunSuite {
     val obj = clazz.newInstance()
     assert(obj.getClass.getSimpleName === "GeneratedClass")
     val floatX = Array(1.0f, 2.0f, 3.0f, 4.0f)
-    val floatY = Array(2.0f, 4.0f, 8.0f, 1.0f)
-    val args = Seq(new jLong(ArrayUtils.pyAyray(floatX)), new jLong(ArrayUtils.pyAyray(floatY)))
+    val floatY = Array(1.0f, 2.0f, 3.0f, 4.0f)
+    val pyArrayX = new PyArrayHolder()
+    val pyArrayY = new PyArrayHolder()
+    val args = Seq(new jLong(pyArrayX.addressOf(floatX)), new jLong(pyArrayY.addressOf(floatY)))
     val result = method.invoke(obj, args: _*).asInstanceOf[Long]
     assert(Platform.getFloat(null, result) === 1.0f)
-    assert(Platform.getFloat(null, result + 4) === 1.0f)
-    assert(Platform.getFloat(null, result + 8) === 1.0f)
-    assert(Platform.getFloat(null, result + 12) === 1.0f)
+    assert(Platform.getFloat(null, result + 4) === 2.0f)
+    assert(Platform.getFloat(null, result + 8) === 3.0f)
+    assert(Platform.getFloat(null, result + 12) === 4.0f)
   }
 }
