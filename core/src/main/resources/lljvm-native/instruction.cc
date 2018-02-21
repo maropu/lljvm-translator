@@ -513,7 +513,8 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
             int size = targetData->getTypeAllocSize(seqTy->getElementType());
             printPtrLoad(fieldIndex * size);
             printSimpleInstruction("ladd");
-            printIndirectLoad(aggType);
+            printValueLoad(inst->getOperand(1));
+            printIndirectStore(inst->getOperand(1)->getType());
         }
     } else {
         llvm_unreachable("Invalid type");

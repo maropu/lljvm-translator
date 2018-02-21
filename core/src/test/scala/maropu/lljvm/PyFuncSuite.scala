@@ -124,47 +124,6 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     )
   }
 
-  test("sum by simple for") {
-    val floatArray1 = Array(1.0, 8.0, 2.0, 3.0, 4.0, 1.0, 1.0, 2.0).map(_.toFloat)
-    TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc6_for1-cfunc-float32.bc",
-      source = s"$basePath/pyfunc6_for1.py",
-      functionName = "_cfunc__ZN12pyfunc6_for117pyfunc6_for1_2411E5ArrayIfLi1E1A7mutable7alignedEi",
-      signature = Seq(jLong.TYPE, jInt.TYPE),
-      arguments = Seq(new jLong(pyArray1.addressOf(floatArray1)), new jInt(floatArray1.size)),
-      expected = Some(22.0)
-    )
-    val doubleArray1 = Array(2.0, 1.0, 5.0, 13.0, 4.0)
-    TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc6_for1-cfunc-float64.bc",
-      source = s"$basePath/pyfunc6_for1.py",
-      functionName = "_cfunc__ZN12pyfunc6_for117pyfunc6_for1_2412E5ArrayIdLi1E1A7mutable7alignedEi",
-      signature = Seq(jLong.TYPE, jInt.TYPE),
-      arguments = Seq(new jLong(pyArray1.addressOf(doubleArray1)), new jInt(doubleArray1.size)),
-      expected = Some(25.0)
-    )
-    val floatArray2 = Array(4.0, -5.0, 2.0, 8.0).map(_.toFloat)
-    TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc6_for2-cfunc-float32.bc",
-      source = s"$basePath/pyfunc6_for2.py",
-      functionName =
-        "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2413E5ArrayIfLi1E1A7mutable7alignedE",
-      signature = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(pyArray1.addressOf(floatArray2))),
-      expected = Some(9.0)
-    )
-    val doubleArray2 = Array(5.0, 3.0, -9.0, 5.0, 1.0, 2.0, 2.0, 9.0, 1.0, 3.0)
-    TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc6_for2-cfunc-float64.bc",
-      source = s"$basePath/pyfunc6_for2.py",
-      functionName =
-        "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2414E5ArrayIdLi1E1A7mutable7alignedE",
-      signature = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(pyArray1.addressOf(doubleArray2))),
-      expected = Some(22.0)
-    )
-  }
-
   private var pyArray1: PyArrayHolder = _
   private var pyArray2: PyArrayHolder = _
 
@@ -180,6 +139,47 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     super.afterAll()
   }
 
+  test("sum by simple for") {
+    val floatArray1 = Array(1.0, 8.0, 2.0, 3.0, 4.0, 1.0, 1.0, 2.0).map(_.toFloat)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc6_for1-cfunc-float32.bc",
+      source = s"$basePath/pyfunc6_for1.py",
+      functionName = "_cfunc__ZN12pyfunc6_for117pyfunc6_for1_2411E5ArrayIfLi1E1A7mutable7alignedEi",
+      signature = Seq(jLong.TYPE, jInt.TYPE),
+      arguments = Seq(new jLong(pyArray1.`with`(floatArray1)), new jInt(floatArray1.size)),
+      expected = Some(22.0)
+    )
+    val doubleArray1 = Array(2.0, 1.0, 5.0, 13.0, 4.0)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc6_for1-cfunc-float64.bc",
+      source = s"$basePath/pyfunc6_for1.py",
+      functionName = "_cfunc__ZN12pyfunc6_for117pyfunc6_for1_2412E5ArrayIdLi1E1A7mutable7alignedEi",
+      signature = Seq(jLong.TYPE, jInt.TYPE),
+      arguments = Seq(new jLong(pyArray1.`with`(doubleArray1)), new jInt(doubleArray1.size)),
+      expected = Some(25.0)
+    )
+    val floatArray2 = Array(4.0, -5.0, 2.0, 8.0).map(_.toFloat)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc6_for2-cfunc-float32.bc",
+      source = s"$basePath/pyfunc6_for2.py",
+      functionName =
+        "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2413E5ArrayIfLi1E1A7mutable7alignedE",
+      signature = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(pyArray1.`with`(floatArray2))),
+      expected = Some(9.0)
+    )
+    val doubleArray2 = Array(5.0, 3.0, -9.0, 5.0, 1.0, 2.0, 2.0, 9.0, 1.0, 3.0)
+    TestUtils.doTest(
+      bitcode = s"$basePath/pyfunc6_for2-cfunc-float64.bc",
+      source = s"$basePath/pyfunc6_for2.py",
+      functionName =
+        "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2414E5ArrayIdLi1E1A7mutable7alignedE",
+      signature = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(pyArray1.`with`(doubleArray2))),
+      expected = Some(22.0)
+    )
+  }
+
   test("numpy.power") {
     val floatX = Array(1.0f, 2.0f, 3.0f, 4.0f)
     val floatY = Array(1.0f, 2.0f, 3.0f, 4.0f)
@@ -188,13 +188,10 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       source = s"$basePath/pyfunc8.py",
       functionName = "_cfunc__ZN7pyfunc812pyfunc8_2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE",
       signature = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(pyArray1.addressOf(floatX)), new jLong(pyArray2.addressOf(floatY)))
+      arguments = Seq(new jLong(pyArray1.`with`(floatX)), new jLong(pyArray2.`with`(floatY)))
     )
-    val resultData1 = Platform.getLong(null, result1 + 32)
-    assert(Platform.getFloat(null, resultData1) === 1.0f)
-    assert(Platform.getFloat(null, resultData1 + 4) === 8.0f)
-    assert(Platform.getFloat(null, resultData1 + 8) === 27.0f)
-    assert(Platform.getFloat(null, resultData1 + 12) === 64.0f)
+    val resultArray1 = new PyArrayHolder(result1)
+    assert(resultArray1.floatArray() === Seq(1.0f, 8.0f, 27.0f, 64.0f))
 
     val doubleX = Array(1.0, 2.0, 3.0, 4.0)
     val doubleY = Array(1.0, 2.0, 3.0, 4.0)
@@ -203,13 +200,10 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       source = s"$basePath/pyfunc8.py",
       functionName = "_cfunc__ZN7pyfunc812pyfunc8_2418E5ArrayIdLi1E1A7mutable7alignedE5ArrayIdLi1E1A7mutable7alignedE",
       signature = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(pyArray1.addressOf(doubleX)), new jLong(pyArray2.addressOf(doubleY)))
+      arguments = Seq(new jLong(pyArray1.`with`(doubleX)), new jLong(pyArray2.`with`(doubleY)))
     )
-    val resultData2 = Platform.getLong(null, result2 + 32)
-    assert(Platform.getDouble(null, resultData2) === 1.0)
-    assert(Platform.getDouble(null, resultData2 + 8) === 8.0)
-    assert(Platform.getDouble(null, resultData2 + 16) === 27.0)
-    assert(Platform.getDouble(null, resultData2 + 24) === 64.0)
+    val resultArray2 = new PyArrayHolder(result2)
+    assert(resultArray2.doubleArray() === Seq(1.0, 8.0, 27.0, 64.0))
   }
 
   // TODO: Currently, we cannot use 2-d arrays in the gen'd code

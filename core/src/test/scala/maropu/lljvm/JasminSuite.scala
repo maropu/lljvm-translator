@@ -254,7 +254,7 @@ class JasminSuite extends FunSuite {
     assert(out.size > 0)
 
     val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
-    val method = LLJVMUtils.getMethod(clazz, "_cfunc__ZN7pyfunc812pyfunc8_2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE", Seq(jLong.TYPE, jLong.TYPE): _*)
+    val method = LLJVMUtils.getMethod(clazz, "_cfunc__ZN7pyfunc812pyfunc8_2418E5ArrayIdLi1E1A7mutable7alignedE5ArrayIdLi1E1A7mutable7alignedE", Seq(jLong.TYPE, jLong.TYPE): _*)
     val obj = clazz.newInstance()
     assert(obj.getClass.getSimpleName === "GeneratedClass")
   }
