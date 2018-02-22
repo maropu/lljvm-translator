@@ -44,12 +44,10 @@ object TestUtils extends FunSuite {
   def doTest[T](
       bitcode: String,
       source: String,
-      functionName: String,
-      signature: Seq[Class[_]],
+      argTypes: Seq[Class[_]],
       arguments: Seq[AnyRef],
       expected: Option[T] = None): T = try {
-    val clazz = TestUtils.loadClassFromResource(bitcode)
-    val method = clazz.newInstance.getClass.getMethod(functionName, signature: _*)
+    val method = LLJVMUtils.getMethod(TestUtils.loadClassFromResource(bitcode), argTypes: _*)
     val actualResult = method.invoke(null, arguments: _*)
     expected.foreach { expectedResult =>
       assert(actualResult === expectedResult)

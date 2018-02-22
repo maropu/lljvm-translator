@@ -17,7 +17,7 @@
 
 package maropu.lljvm
 
-import java.lang.{Long => jLong, Float => jFloat, Integer => jInt, Double => jDouble}
+import java.lang.{Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
@@ -27,98 +27,83 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
   private val basePath = "pyfunc"
 
-  // scalastyle:off line.size.limit
-
-  test("x + y") {
+  test("add") {
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc1-cfunc-int32.bc",
-      source = s"$basePath/pyfunc1.py",
-      functionName = "_cfunc__ZN7pyfunc111pyfunc1_241Eii",
-      signature = Seq(jInt.TYPE, jInt.TYPE),
+      bitcode = s"$basePath/add_test-cfunc-int32.bc",
+      source = s"$basePath/add_test.py",
+      argTypes = Seq(jInt.TYPE, jInt.TYPE),
       arguments = Seq(new jInt(4), new jInt(5)),
       expected = Some(9)
     )
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc1-cfunc-int64.bc",
-      source = s"$basePath/pyfunc1.py",
-      functionName = "_cfunc__ZN7pyfunc111pyfunc1_242Exx",
-      signature = Seq(jLong.TYPE, jLong.TYPE),
+      bitcode = s"$basePath/add_test-cfunc-int64.bc",
+      source = s"$basePath/add_test.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(3), new jLong(2)),
       expected = Some(5)
     )
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc1-cfunc-float32.bc",
-      source = s"$basePath/pyfunc1.py",
-      functionName = "_cfunc__ZN7pyfunc111pyfunc1_243Eff",
-      signature = Seq(jFloat.TYPE, jFloat.TYPE),
+      bitcode = s"$basePath/add_test-cfunc-float32.bc",
+      source = s"$basePath/add_test.py",
+      argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
       arguments = Seq(new jFloat(1.0f), new jFloat(7.0f)),
       expected = Some(8.0f)
     )
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc1-cfunc-float64.bc",
-      source = s"$basePath/pyfunc1.py",
-      functionName = "_cfunc__ZN7pyfunc111pyfunc1_244Edd",
-      signature = Seq(jDouble.TYPE, jDouble.TYPE),
+      bitcode = s"$basePath/add_test-cfunc-float64.bc",
+      source = s"$basePath/add_test.py",
+      argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(2.0), new jDouble(2.0)),
       expected = Some(4.0)
     )
   }
 
-  test("math.pow(x, y)") {
+  test("pow") {
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc2-cfunc-float32.bc",
-      source = s"$basePath/pyfunc2.py",
-      functionName = "_cfunc__ZN7pyfunc211pyfunc2_245Eff",
-      signature = Seq(jFloat.TYPE, jFloat.TYPE),
+      bitcode = s"$basePath/math_pow_test-cfunc-float32.bc",
+      source = s"$basePath/math_pow_test.py",
+      argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
       arguments = Seq(new jFloat(1.0f), new jFloat(4.0f)),
       expected = Some(1.0f)
     )
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc2-cfunc-float64.bc",
-      source = s"$basePath/pyfunc2.py",
-      functionName = "_cfunc__ZN7pyfunc211pyfunc2_246Edd",
-      signature = Seq(jDouble.TYPE, jDouble.TYPE),
+      bitcode = s"$basePath/math_pow_test-cfunc-float64.bc",
+      source = s"$basePath/math_pow_test.py",
+      argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(3.0), new jDouble(2.0)),
       expected = Some(9.0)
     )
   }
 
-  test("2 * y + math.log10(x)") {
+  test("log10") {
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc3-cfunc-float32.bc",
-      source = s"$basePath/pyfunc3.py",
-      functionName = "_cfunc__ZN7pyfunc311pyfunc3_247Eff",
-      signature = Seq(jFloat.TYPE, jFloat.TYPE),
+      bitcode = s"$basePath/math_log10_test-cfunc-float32.bc",
+      source = s"$basePath/math_log10_test.py",
+      argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
       arguments = Seq(new jFloat(100.0f), new jFloat(1.0f)),
       expected = Some(4.0f)
     )
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc3-cfunc-float64.bc",
-      source = s"$basePath/pyfunc3.py",
-      functionName = "_cfunc__ZN7pyfunc311pyfunc3_248Edd",
-      signature = Seq(jDouble.TYPE, jDouble.TYPE),
+      bitcode = s"$basePath/math_log10_test-cfunc-float64.bc",
+      source = s"$basePath/math_log10_test.py",
+      argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(1000.0), new jDouble(3.0)),
       expected = Some(9.0)
     )
   }
 
-  test("simple if") {
+  test("if") {
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc4-cfunc-int32.bc",
-      source = s"$basePath/pyfunc4.py",
-      functionName = "_cfunc__ZN7pyfunc411pyfunc4_249Ei",
-      signature = Seq(jInt.TYPE),
+      bitcode = s"$basePath/if1_test-cfunc-int32.bc",
+      source = s"$basePath/if1_test.py",
+      argTypes = Seq(jInt.TYPE),
       arguments = Seq(new jInt(1)),
       expected = Some(0)
     )
-  }
-
-  test("ternary operator") {
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc5-cfunc-int32.bc",
-      source = s"$basePath/pyfunc5.py",
-      functionName = "_cfunc__ZN7pyfunc512pyfunc5_2410Ei",
-      signature = Seq(jInt.TYPE),
+      bitcode = s"$basePath/if2_test-cfunc-int32.bc",
+      source = s"$basePath/if2_test.py",
+      argTypes = Seq(jInt.TYPE),
       arguments = Seq(new jInt(0)),
       expected = Some(1)
     )
@@ -139,55 +124,48 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     super.afterAll()
   }
 
-  test("sum by simple for") {
+  test("loop") {
     val floatArray1 = Array(1.0, 8.0, 2.0, 3.0, 4.0, 1.0, 1.0, 2.0).map(_.toFloat)
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc6_for1-cfunc-float32.bc",
-      source = s"$basePath/pyfunc6_for1.py",
-      functionName = "_cfunc__ZN12pyfunc6_for117pyfunc6_for1_2411E5ArrayIfLi1E1A7mutable7alignedEi",
-      signature = Seq(jLong.TYPE, jInt.TYPE),
+      bitcode = s"$basePath/for1_test-cfunc-float32.bc",
+      source = s"$basePath/for1_test.py",
+      argTypes = Seq(jLong.TYPE, jInt.TYPE),
       arguments = Seq(new jLong(pyArray1.`with`(floatArray1)), new jInt(floatArray1.size)),
       expected = Some(22.0)
     )
     val doubleArray1 = Array(2.0, 1.0, 5.0, 13.0, 4.0)
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc6_for1-cfunc-float64.bc",
-      source = s"$basePath/pyfunc6_for1.py",
-      functionName = "_cfunc__ZN12pyfunc6_for117pyfunc6_for1_2412E5ArrayIdLi1E1A7mutable7alignedEi",
-      signature = Seq(jLong.TYPE, jInt.TYPE),
+      bitcode = s"$basePath/for1_test-cfunc-float64.bc",
+      source = s"$basePath/for1_test.py",
+      argTypes = Seq(jLong.TYPE, jInt.TYPE),
       arguments = Seq(new jLong(pyArray1.`with`(doubleArray1)), new jInt(doubleArray1.size)),
       expected = Some(25.0)
     )
     val floatArray2 = Array(4.0, -5.0, 2.0, 8.0).map(_.toFloat)
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc6_for2-cfunc-float32.bc",
-      source = s"$basePath/pyfunc6_for2.py",
-      functionName =
-        "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2413E5ArrayIfLi1E1A7mutable7alignedE",
-      signature = Seq(jLong.TYPE),
+      bitcode = s"$basePath/for2_test-cfunc-float32.bc",
+      source = s"$basePath/for2_test.py",
+      argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(pyArray1.`with`(floatArray2))),
       expected = Some(9.0)
     )
     val doubleArray2 = Array(5.0, 3.0, -9.0, 5.0, 1.0, 2.0, 2.0, 9.0, 1.0, 3.0)
     TestUtils.doTest(
-      bitcode = s"$basePath/pyfunc6_for2-cfunc-float64.bc",
-      source = s"$basePath/pyfunc6_for2.py",
-      functionName =
-        "_cfunc__ZN12pyfunc6_for217pyfunc6_for2_2414E5ArrayIdLi1E1A7mutable7alignedE",
-      signature = Seq(jLong.TYPE),
+      bitcode = s"$basePath/for2_test-cfunc-float64.bc",
+      source = s"$basePath/for2_test.py",
+      argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(pyArray1.`with`(doubleArray2))),
       expected = Some(22.0)
     )
   }
 
-  test("numpy.power") {
+  test("numpy power") {
     val floatX = Array(1.0f, 2.0f, 3.0f, 4.0f)
     val floatY = Array(1.0f, 2.0f, 3.0f, 4.0f)
     val result1 = TestUtils.doTest[Long](
-      bitcode = s"$basePath/pyfunc8-cfunc-float32.bc",
-      source = s"$basePath/pyfunc8.py",
-      functionName = "_cfunc__ZN7pyfunc812pyfunc8_2415E5ArrayIfLi1E1A7mutable7alignedE5ArrayIfLi1E1A7mutable7alignedE",
-      signature = Seq(jLong.TYPE, jLong.TYPE),
+      bitcode = s"$basePath/numpy_power_test-cfunc-float32.bc",
+      source = s"$basePath/numpy_power.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(pyArray1.`with`(floatX)), new jLong(pyArray2.`with`(floatY)))
     )
     val resultArray1 = new PyArrayHolder(result1)
@@ -196,10 +174,9 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     val doubleX = Array(1.0, 2.0, 3.0, 4.0)
     val doubleY = Array(1.0, 2.0, 3.0, 4.0)
     val result2 = TestUtils.doTest[Long](
-      bitcode = s"$basePath/pyfunc8-cfunc-float64.bc",
-      source = s"$basePath/pyfunc8.py",
-      functionName = "_cfunc__ZN7pyfunc812pyfunc8_2418E5ArrayIdLi1E1A7mutable7alignedE5ArrayIdLi1E1A7mutable7alignedE",
-      signature = Seq(jLong.TYPE, jLong.TYPE),
+      bitcode = s"$basePath/numpy_power_test-cfunc-float64.bc",
+      source = s"$basePath/numpy_power.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(pyArray1.`with`(doubleX)), new jLong(pyArray2.`with`(doubleY)))
     )
     val resultArray2 = new PyArrayHolder(result2)
@@ -208,6 +185,4 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
   // TODO: Currently, we cannot use 2-d arrays in the gen'd code
   ignore("logistic regression") {}
-
-  // scalastyle:on line.size.limit
 }

@@ -64,7 +64,7 @@ class LLJVMUtilsSuite extends FunSuite {
   }
 
   test("findMethods") {
-    val methods = LLJVMUtils.findMethods(classOf[TestClass], "method", classOf[String])
+    val methods = LLJVMUtils.getMethods(classOf[TestClass], "method", classOf[String])
     assert(methods.asScala.map(_.getName()).toSet === Set("methodY", "methodZ"))
   }
 
@@ -114,7 +114,7 @@ class LLJVMUtilsSuite extends FunSuite {
     assert(errMsg2.contains(expectedErrMsg))
 
     val errMsg3 = intercept[LLJVMRuntimeException] {
-      LLJVMUtils.findMethods(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
+      LLJVMUtils.getMethods(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
     }.getMessage
     assert(errMsg3.contains(expectedErrMsg))
   }

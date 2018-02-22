@@ -106,7 +106,23 @@ public class LLJVMUtils {
     throw new LLJVMRuntimeException("Method not found: " + notFoundMethod);
   }
 
-  public static List<Method> findMethods(Class<?> clazz, String methodName, Class<?>... signature) {
+  public static Method getMethod(Class<?> clazz, Class<?>... signature)
+      throws LLJVMRuntimeException {
+    try {
+      for (Method m : clazz.getDeclaredMethods()) {
+        if (Modifier.isPublic(m.getModifiers()) &&
+              Arrays.equals(m.getParameterTypes(), signature)) {
+          return m;
+        }
+      }
+    } catch (Throwable e) { // All the error states caught here
+      throw new LLJVMRuntimeException("Illegal bytecode found: " + e.getMessage());
+    }
+    String notFoundMethod = String.format("func(%s)", joinString(signature, ", "));
+    throw new LLJVMRuntimeException("Method not found: " + notFoundMethod);
+  }
+
+  public static List<Method> getMethods(Class<?> clazz, String methodName, Class<?>... signature) {
     List<Method> methods = new ArrayList<>();
     try {
       for (Method m : clazz.getDeclaredMethods()) {

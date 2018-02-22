@@ -35,42 +35,38 @@ def write_bitcode_with_jit(pyfunc, sig, filename_suffix=""):
     # print f.inspect_llvm()
     fout.write(f.overloads[f.signatures[0]].library._final_module.as_bitcode())
 
-from pyfunc1 import *
-write_bitcode_with_cfunc(pyfunc1, "int32(int32, int32)", "-cfunc-int32")
-write_bitcode_with_cfunc(pyfunc1, "int64(int64, int64)", "-cfunc-int64")
-write_bitcode_with_cfunc(pyfunc1, "float32(float32, float32)", "-cfunc-float32")
-write_bitcode_with_cfunc(pyfunc1, "float64(float64, float64)", "-cfunc-float64")
+from add_test import *
+write_bitcode_with_cfunc(add_test, "int32(int32, int32)", "-cfunc-int32")
+write_bitcode_with_cfunc(add_test, "int64(int64, int64)", "-cfunc-int64")
+write_bitcode_with_cfunc(add_test, "float32(float32, float32)", "-cfunc-float32")
+write_bitcode_with_cfunc(add_test, "float64(float64, float64)", "-cfunc-float64")
 
-from pyfunc2 import *
-write_bitcode_with_cfunc(pyfunc2, "float32(float32, float32)", "-cfunc-float32")
-write_bitcode_with_cfunc(pyfunc2, "float64(float64, float64)", "-cfunc-float64")
+from math_pow_test import *
+write_bitcode_with_cfunc(math_pow_test, "float32(float32, float32)", "-cfunc-float32")
+write_bitcode_with_cfunc(math_pow_test, "float64(float64, float64)", "-cfunc-float64")
 
-from pyfunc3 import *
-write_bitcode_with_cfunc(pyfunc3, "float32(float32, float32)", "-cfunc-float32")
-write_bitcode_with_cfunc(pyfunc3, "float64(float64, float64)", "-cfunc-float64")
+from math_log10_test import *
+write_bitcode_with_cfunc(math_log10_test, "float32(float32, float32)", "-cfunc-float32")
+write_bitcode_with_cfunc(math_log10_test, "float64(float64, float64)", "-cfunc-float64")
 
-from pyfunc4 import *
-write_bitcode_with_cfunc(pyfunc4, "int32(int32)", "-cfunc-int32")
+from if1_test import *
+write_bitcode_with_cfunc(if1_test, "int32(int32)", "-cfunc-int32")
 
-from pyfunc5 import *
-write_bitcode_with_cfunc(pyfunc5, "int32(int32)", "-cfunc-int32")
+from if2_test import *
+write_bitcode_with_cfunc(if2_test, "int32(int32)", "-cfunc-int32")
 
-from pyfunc6_for1 import *
-write_bitcode_with_cfunc(pyfunc6_for1, "float32(float32[:], int32)", "-cfunc-float32")
-write_bitcode_with_cfunc(pyfunc6_for1, "float64(float64[:], int32)", "-cfunc-float64")
+from for1_test import *
+write_bitcode_with_cfunc(for1_test, "float32(float32[:], int32)", "-cfunc-float32")
+write_bitcode_with_cfunc(for1_test, "float64(float64[:], int32)", "-cfunc-float64")
 
-from pyfunc6_for2 import *
-write_bitcode_with_cfunc(pyfunc6_for2, "float32(float32[:])", "-cfunc-float32")
-write_bitcode_with_cfunc(pyfunc6_for2, "float64(float64[:])", "-cfunc-float64")
+from for2_test import *
+write_bitcode_with_cfunc(for2_test, "float32(float32[:])", "-cfunc-float32")
+write_bitcode_with_cfunc(for2_test, "float64(float64[:])", "-cfunc-float64")
 
-# TODO: We cannot resolve function chains in gen'd class files
-# from pyfunc7 import *
-# write_bitcode_with_cfunc(pyfunc7, "float32(float32, float32)", "-cfunc-float32")
+from numpy_power_test  import *
+write_bitcode_with_cfunc(numpy_power_test, "float32[:](float32[:], float32[:])", "-cfunc-float32")
+write_bitcode_with_cfunc(numpy_power_test, "float64[:](float64[:], float64[:])", "-cfunc-float64")
 
-from pyfunc8 import *
-write_bitcode_with_cfunc(pyfunc8, "float32[:](float32[:], float32[:])", "-cfunc-float32")
-write_bitcode_with_cfunc(pyfunc8, "float64[:](float64[:], float64[:])", "-cfunc-float64")
-
-from pyfunc9 import *
-write_bitcode_with_cfunc(logistic_regression, "float64[:](float64[:], float64[:,:], float64[:], int64)", "-cfunc-float64")
+from numpy_logistic_regression import *
+write_bitcode_with_cfunc(numpy_logistic_regression, "float64[:](float64[:], float64[:,:], float64[:], int64)", "-cfunc-float64")
 

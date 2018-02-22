@@ -39,7 +39,7 @@ class LLJVMTranslatorSuite extends FunSuite {
     val outputFile = new File(file, "code.class")
     val classLoader = new LLJVMClassLoader()
     val clazz = classLoader.loadClassFromBytecodeFile("GeneratedClass", outputFile.getAbsolutePath)
-    LLJVMUtils.findMethods(clazz, "pyfunc1", jInt.TYPE, jInt.TYPE).asScala.headOption.map { m =>
+    LLJVMUtils.getMethods(clazz, "pyfunc1", jInt.TYPE, jInt.TYPE).asScala.headOption.map { m =>
       val obj = clazz.newInstance()
       val args = Seq(new jInt(4), new jInt(1))
       assert(m.invoke(obj, args: _*) === 5)

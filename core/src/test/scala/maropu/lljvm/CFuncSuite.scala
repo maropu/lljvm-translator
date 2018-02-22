@@ -25,100 +25,85 @@ class CFuncSuite extends FunSuite {
 
   val basePath = "cfunc"
 
-  test("x + y") {
+  test("add") {
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc1.bc",
-      source = s"$basePath/cfunc1.c",
-      functionName = "_cfunc1",
-      signature = Seq(jInt.TYPE, jInt.TYPE),
+      bitcode = s"$basePath/add_test.bc",
+      source = s"$basePath/add_test.c",
+      argTypes = Seq(jInt.TYPE, jInt.TYPE),
       arguments = Seq(new jInt(4), new jInt(5)),
       expected = Some(9)
     )
   }
 
-  test("pow(x, y)") {
+  test("pow") {
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc2.bc",
-      source = s"$basePath/cfunc2.c",
-      functionName = "_cfunc2",
-      signature = Seq(jDouble.TYPE, jDouble.TYPE),
+      bitcode = s"$basePath/math_pow1_test.bc",
+      source = s"$basePath/math_pow1_test.c",
+      argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(2.0), new jDouble(3.0)),
       expected = Some(8.0)
     )
-  }
-
-  test("2 * y + pow(y, x)") {
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc3.bc",
-      source = s"$basePath/cfunc3.c",
-      functionName = "_cfunc3",
-      signature = Seq(jDouble.TYPE, jDouble.TYPE),
+      bitcode = s"$basePath/math_pow2_test.bc",
+      source = s"$basePath/math_pow2_test.c",
+      argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(100.0), new jDouble(1.0)),
       expected = Some(3.0)
     )
   }
 
-  test("sum by simple for") {
+  test("for") {
     val longArray = Array(3, 5, 8, 2, 1).map(_.toLong)
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc4_for1.bc",
-      source = s"$basePath/cfunc4_for1.c",
-      functionName = "_cfunc4_for1",
-      signature = Seq(jLong.TYPE, jLong.TYPE),
+      bitcode = s"$basePath/for1_test.bc",
+      source = s"$basePath/for2_test.c",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(longArray)), new jLong(longArray.size)),
       expected = Some(19)
     )
 
     val doubleArray = Array(2.0, 1.0)
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc4_for2.bc",
-      source = s"$basePath/cfunc4_for2.c",
-      functionName = "_cfunc4_for2",
-      signature = Seq(jLong.TYPE, jLong.TYPE),
+      bitcode = s"$basePath/for2_test.bc",
+      source = s"$basePath/for2_test.c",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(doubleArray)), new jLong(doubleArray.size)),
       expected = Some(84.0)
     )
   }
 
-  test("sum by simple while") {
+  test("while") {
     val intArray = Array(3, 1, 2, 8, 7, 2, 8, 9, 1, 3, 5, 8)
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc4_while1.bc",
-      source = s"$basePath/cfunc4_while1.c",
-      functionName = "_cfunc4_while1",
-      signature = Seq(jLong.TYPE, jLong.TYPE),
+      bitcode = s"$basePath/while1_test.bc",
+      source = s"$basePath/while1_test.c",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(intArray)), new jLong(intArray.size)),
       expected = Some(57)
     )
 
     val floatArray = Array(5, 1, 1, 0, 3, 2, 9, 1, 2, 3).map(_.toFloat)
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc4_while2.bc",
-      source = s"$basePath/cfunc4_while2.c",
-      functionName = "_cfunc4_while2",
-      signature = Seq(jLong.TYPE, jLong.TYPE),
+      bitcode = s"$basePath/while2_test.bc",
+      source = s"$basePath/while2_test.c",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(floatArray)), new jLong(floatArray.size)),
       expected = Some(27.0)
     )
   }
 
-  test("simple if") {
+  test("if") {
      TestUtils.doTest(
-      bitcode = s"$basePath/cfunc5.bc",
-      source = s"$basePath/cfunc5.c",
-      functionName = "_cfunc5",
-      signature = Seq(jInt.TYPE),
+      bitcode = s"$basePath/if_test.bc",
+      source = s"$basePath/if_test.c",
+      argTypes = Seq(jInt.TYPE),
       arguments = Seq(new jInt(0)),
       expected = Some(1)
     )
-  }
-
-  test("ternary operator") {
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc6.bc",
-      source = s"$basePath/cfunc6.c",
-      functionName = "_cfunc6",
-      signature = Seq(jInt.TYPE),
+      bitcode = s"$basePath/ternary_if_test.bc",
+      source = s"$basePath/ternary_if_test.c",
+      argTypes = Seq(jInt.TYPE),
       arguments = Seq(new jInt(1)),
       expected = Some(0)
     )
@@ -126,12 +111,11 @@ class CFuncSuite extends FunSuite {
 
   test("function call chains") {
     TestUtils.doTest(
-      bitcode = s"$basePath/cfunc7.bc",
-      source = s"$basePath/cfunc7.c",
-      functionName = "_cfunc7",
-      signature = Seq(jDouble.TYPE, jDouble.TYPE),
+      bitcode = s"$basePath/func_call_test.bc",
+      source = s"$basePath/func_call_test.c",
+      argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(4.0), new jDouble(1.0)),
-      expected = Some(7.0)
+      expected = Some(4.0)
     )
   }
 }
