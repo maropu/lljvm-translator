@@ -27,7 +27,8 @@ import maropu.lljvm.util.ReflectionUtils;
  * be thread-safe because multiple threads possibly access stack frames.
  */
 public class VMemory {
-  public static final String KEY_LLJVM_RUNTIME_VMEM_STACKSIZE = "maropu.lljvm.runtime.vmem.stacksize";
+  public static final String KEY_LLJVM_RUNTIME_VMEM_STACKSIZE =
+    "maropu.lljvm.runtime.vmem.stacksize";
   public static final String DEFAULT_STACKSIZE = "2097152"; // 64KiB x 32 = 2MiB
 
   public static final int ALIGNMENT = 8; // 8-byte alignment

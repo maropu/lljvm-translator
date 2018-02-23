@@ -17,9 +17,10 @@
 
 package maropu.lljvm
 
+import org.scalatest.FunSuite
+
 import maropu.lljvm.unsafe.Platform
 import maropu.lljvm.util.ArrayUtils
-import org.scalatest.FunSuite
 
 class ArrayUtilsSuite extends FunSuite {
 

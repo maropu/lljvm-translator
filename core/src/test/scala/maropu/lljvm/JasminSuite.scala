@@ -237,7 +237,6 @@ class JasminSuite extends FunSuite {
     assert(method.invoke(obj, args: _*) === 6.0)
   }
 
-  // scalastyle:off line.size.limit
   ignore("jasmin assembly tests from resources") {
     val code = TestUtils.resourceToBytes("test.jasmin")
     val classFile = new ClassFile()
@@ -251,5 +250,4 @@ class JasminSuite extends FunSuite {
     val obj = clazz.newInstance()
     assert(obj.getClass.getSimpleName === "GeneratedClass")
   }
-  // scalastyle:on line.size.limit
 }

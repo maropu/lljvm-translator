@@ -50,11 +50,11 @@ public class LLJVMTranslator {
     }
 
     String bitcodeFilename = bitcodeFile.getName();
-    String baseFilename = bitcodeFilename.substring(0, bitcodeFilename.lastIndexOf('.'));
+    String basename = bitcodeFilename.substring(0, bitcodeFilename.lastIndexOf('.'));
     String outputDir = bitcodeFile.getParentFile().getAbsolutePath();
 
     try (Reader in = new InputStreamReader(new ByteArrayInputStream(jasminCode.getBytes()));
-          OutputStream os = new FileOutputStream(new File(outputDir, baseFilename + ".class"))) {
+          OutputStream os = new FileOutputStream(new File(outputDir, basename + ".class"))) {
       // Compile the code and write JVM bytecode
       ClassFile classFile = new ClassFile();
       classFile.readJasmin(in, "GeneratedClass", false);

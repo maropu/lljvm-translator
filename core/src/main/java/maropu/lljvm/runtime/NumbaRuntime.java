@@ -22,12 +22,12 @@
 
 package maropu.lljvm.runtime;
 
-import maropu.lljvm.LLJVMRuntimeException;
 import org.netlib.blas.*;
 
+import maropu.lljvm.LLJVMRuntimeException;
 import maropu.lljvm.unsafe.Platform;
 
-public final class NumbaRuntime {
+final class NumbaRuntime {
 
   static long _NRT_MemInfo_alloc_safe_aligned(long size, int align) {
     long memInfoSize = 40;

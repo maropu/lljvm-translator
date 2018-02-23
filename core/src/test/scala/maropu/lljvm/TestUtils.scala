@@ -17,8 +17,7 @@
 
 package maropu.lljvm
 
-import java.io.{PrintWriter, StringWriter}
-import java.io.{ByteArrayOutputStream, File, IOException}
+import java.io.{ByteArrayOutputStream, File, IOException, PrintWriter, StringWriter}
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 

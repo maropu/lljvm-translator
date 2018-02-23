@@ -35,7 +35,6 @@ class LLJVMNativeSuite extends FunSuite {
   test("asBitcode") {
     val bitcode = TestUtils.resourceToBytes("llvm-pyfunc-bitcode/pyfunc1-cfunc-int32.bc")
     val lljvmApi = LLJVMLoader.loadLLJVMApi()
-    // scalastyle:off line.size.limit
     TestUtils.compareCode(lljvmApi.asBitcode(bitcode),
       s"""
          |source_filename = "<string>"
@@ -60,6 +59,5 @@ class LLJVMNativeSuite extends FunSuite {
          |attributes #0 = { norecurse nounwind }
          |attributes #1 = { norecurse nounwind readnone }
        """.stripMargin)
-    // scalastyle:on line.size.limit
   }
 }

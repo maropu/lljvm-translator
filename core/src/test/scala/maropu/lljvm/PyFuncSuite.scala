@@ -17,9 +17,10 @@
 
 package maropu.lljvm
 
-import java.lang.{Long => jLong, Float => jFloat, Integer => jInt, Double => jDouble}
+import java.lang.{Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
+
 import maropu.lljvm.unsafe.Platform
 import maropu.lljvm.util.PyArrayHolder
 
