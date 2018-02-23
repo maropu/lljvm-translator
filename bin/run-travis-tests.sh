@@ -27,7 +27,7 @@ _DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Run tests for lljvm-native code
 cd ${_DIR}/../core/src/main/resources/lljvm-native
-./waf configure && ./waf
+./waf configure && ./waf -v
 
 # Run tests for java code
 cd ${_DIR}/..

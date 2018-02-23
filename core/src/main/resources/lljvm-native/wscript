@@ -27,7 +27,13 @@ def command(cmd):
   return subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
 
 def llvm_config(options):
-  return re.split("[\s\n]+", command('%s %s' % (LLVM_CONFIG, options)))
+  llvm_options = re.split("[\s\n]+", command('%s %s' % (LLVM_CONFIG, options)))
+  options = list(llvm_options)
+  for opt in llvm_options:
+    # `llvm-config` possible disable C++ exceptions, so we explicitly set it here
+    if opt == "-fno-exceptions":
+      options.remove(opt)
+  return options
 
 def options(opt):
   opt.load('compiler_cxx waf_unit_test');
@@ -46,6 +52,9 @@ def configure(ctx):
     ctx.env['LLJVM_COMPILE_SHLIB_SUFFIX'] = 'dylib'
   else:
     ctx.fatal('OS must be linux or darwin, but %s found' % platform)
+
+  # Since we use C++ exceptions, so we explicitly set it here
+  ctx.env.append_value('CXXFLAGS', ['-fcxx-exceptions'])
 
   # Currently, it only support x86_64 platforms
   ctx.env['LLJVM_COMPILE_ARCH'] = 'x86_64'
@@ -86,7 +95,6 @@ def build(bld):
             target = 'lljvm',
             includes = '%s/%s' % (JAVAH_DIR, bld.env.LLJVM_COMPILE_OS),
             # linkflags = '-static',
-            cxxflags = '-fcxx-exceptions',
             use = 'llvm',
             uselib_store = 'lljvm')
 
