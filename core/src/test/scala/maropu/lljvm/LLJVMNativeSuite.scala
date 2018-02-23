@@ -33,27 +33,26 @@ class LLJVMNativeSuite extends FunSuite {
   }
 
   test("asBitcode") {
-    val bitcode = TestUtils.resourceToBytes("llvm-pyfunc-bitcode/pyfunc1-cfunc-int32.bc")
+    val bitcode = TestUtils.resourceToBytes("pyfunc/add_test-cfunc-float32.bc")
     val lljvmApi = LLJVMLoader.loadLLJVMApi()
     TestUtils.compareCode(lljvmApi.asBitcode(bitcode),
-      s"""
-         |source_filename = "<string>"
+      s"""source_filename = "<string>"
          |target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
          |target triple = "x86_64-apple-darwin15.3.0"
          |
          |; Function Attrs: norecurse nounwind
-         |define i32 @"_ZN7pyfunc111pyfunc1$$241Eii"(i32* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i8* noalias nocapture readnone %env, i32 %arg.x, i32 %arg.y) local_unnamed_addr #0 {
+         |define i32 @"_ZN8add_test12add_test $$243Eff"(float* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i8* noalias nocapture readnone %env, float %arg.x, float %arg.y) local_unnamed_addr #0 {
          |entry:
-         |  %.17 = add i32 %arg.y, %arg.x
-         |  store i32 %.17, i32* %retptr, align 4
+         |  %.15 = fadd float %arg.x, %arg.y
+         |  store float %.15, float* %retptr, align 4
          |  ret i32 0
          |}
          |
          |; Function Attrs: norecurse nounwind readnone
-         |define i32 @"cfunc._ZN7pyfunc111pyfunc1$$241Eii"(i32 %.1, i32 %.2) local_unnamed_addr #1 {
+         |define float @"cfunc._ZN8add_test12add_test $$243Eff"(float %.1, float %.2) local_unnamed_addr #1 {
          |entry:
-         |  %.17.i = add i32 %.2, %.1
-         |  ret i32 %.17.i
+         |  %.15.i = fadd float %.1, %.2
+         |  ret float %.15.i
          |}
          |
          |attributes #0 = { norecurse nounwind }

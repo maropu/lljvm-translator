@@ -29,7 +29,7 @@ class LLJVMTranslatorSuite extends FunSuite {
 
   test("simple test") {
     val file = TestUtils.createTempDir()
-    val bitcode = TestUtils.resourceToBytes("llvm-pyfunc-bitcode/pyfunc1-cfunc-int32.bc")
+    val bitcode = TestUtils.resourceToBytes("cfunc/add_test.bc")
     val inputFile = new File(file, "code.bc")
     val os = new FileOutputStream(inputFile)
     os.write(bitcode)
@@ -39,7 +39,7 @@ class LLJVMTranslatorSuite extends FunSuite {
     val outputFile = new File(file, "code.class")
     val classLoader = new LLJVMClassLoader()
     val clazz = classLoader.loadClassFromBytecodeFile("GeneratedClass", outputFile.getAbsolutePath)
-    LLJVMUtils.getMethods(clazz, "pyfunc1", jInt.TYPE, jInt.TYPE).asScala.headOption.map { m =>
+    LLJVMUtils.getMethods(clazz, "_add_test", jInt.TYPE, jInt.TYPE).asScala.headOption.map { m =>
       val obj = clazz.newInstance()
       val args = Seq(new jInt(4), new jInt(1))
       assert(m.invoke(obj, args: _*) === 5)

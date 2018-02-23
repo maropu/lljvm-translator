@@ -28,7 +28,7 @@ import maropu.lljvm.unsafe.Platform
 class JasminSuite extends FunSuite {
 
   test("asBytecode") {
-    val bitcode = TestUtils.resourceToBytes("llvm-cfunc-bitcode/cfunc1.bc")
+    val bitcode = TestUtils.resourceToBytes("cfunc/add_test.bc")
     TestUtils.compareCode(LLJVMUtils.asBytecode(bitcode),
       s""".class public final GeneratedClass
          |.super java/lang/Object
@@ -54,7 +54,7 @@ class JasminSuite extends FunSuite {
          |.end method
          |
          |
-         |.method public static _cfunc1(II)I
+         |.method public static _add_test(II)I
          |        lconst_0
          |        lstore 2
          |        lconst_0
