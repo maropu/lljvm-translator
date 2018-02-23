@@ -28,11 +28,11 @@ with open("pyfunc.bc", "wb") as out:
   out.write(f._library._final_module.as_bitcode())
 ```
 
-Finally, you get a JVM class file for `plus`:
+Finally, you get a JVM class file for the python function `pyfunc`:
 
     $ ./bin/lljvm-translator ./pyfunc.bc
 
-To check gen'd bytecode, you can use `javap`:
+To check gen'd bytecode in the JVM class file, you can use `javap`:
 
     $ javap -c -s pyfunc.class
 
@@ -69,14 +69,14 @@ You can load this gen'd class file by the code below and run in JVMs:
 ```java
 import java.lang.reflect.Method;
 
-import maropu.lljvm.LLJVMClassLoader;
+import maropu.lljvm.*;
 
 public class LLJVMTest {
 
   public static void main(String[] args) {
     try {
-      Class<?> clazz = (new LLJVMClassLoader()).loadClassFromBytecodeFile("GeneratedClass", "pyfunc.class");
-      Method pyfunc = clazz.getMethod("_cfunc__ZN8__main__10pyfunc_241Edd", Double.TYPE, Double.TYPE);
+      Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBytecodeFile("GeneratedClass", "pyfunc.class");
+      Method pyfunc = LLJVMUtils.getMethod(clazz, Double.TYPE, Double.TYPE);
       System.out.println(pyfunc.invoke(null, 3, 6));
     } catch (Exception e) {
       e.printStackTrace();
@@ -137,7 +137,44 @@ public final class GeneratedClass {
 }
 ```
 
-## Example: inject python UDFs into Spark gen'd code
+## NumPy-aware translation and runtime
+
+Most of python users possibly write python functions with `NumPy`, so it is useful to translate these functions for JVMs:
+Let's say you write a python function below with `NumPy` and
+you get [LLVM assembly code](./examples/numpy_logistic_regression.ll) for this function via `Numba`:
+
+```python
+import numpy as np
+
+def numpy_logistic_regression(Y, X, w, iterations):
+  for i in range(iterations):
+    w -= np.dot(((1.0 / (1.0 + np.exp(-Y * np.dot(X, w))) - 1.0) * Y), X)
+    return w
+```
+
+Then, you can generate [a JVM class file](./examples/numpy_logistic_regression.jasmin) for the function
+via `lljvm-translator` and invoke this as follows:
+
+```java
+  // Placeholders for python arrays
+  PyArrayHolder Y = new PyArrayHolder();
+  PyArrayHolder X = new PyArrayHolder();
+  PyArrayHolder w = new PyArrayHolder();
+
+  // Loads the gen'd class file
+  Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBytecodeFile("GeneratedClass", "numpy_logistic_regression.class");
+  Method pyfunc = LLJVMUtils.getMethod(clazz, Long.TYPE, Long.TYPE, Long.TYPE, Long.TYPE);
+
+  // Invokes it
+  pyfunc.invoke(
+    null,
+    Y.with(double[] { 1.0, 1.0 }).addr(),
+    X.with(double[] { 1.0, 1.0, 1.0, 1.0 }).reshape(2, 2).addr(),
+    w.with(double[] { 1.0, 1.0 }).addr(),
+    1L);
+```
+
+## Use cases: injects python UDFs into Spark gen'd code
 
 Python UDFs in [Spark](https://spark.apache.org/) have well-known overheads and the recent work of
 [Vectorized UDFs](https://issues.apache.org/jira/browse/SPARK-21190) in the community
