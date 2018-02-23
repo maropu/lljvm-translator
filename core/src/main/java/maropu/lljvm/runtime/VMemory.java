@@ -51,6 +51,8 @@ public class VMemory {
     return ((offset - 1) & ~(align - 1)) + align;
   }
 
+  // TODO: Need to implement createStack and destroyStack?
+
   /**
    * Allocate a memory block of the given size within the stack.
    */
