@@ -25,20 +25,19 @@ import java.util.List;
 
 public class LLJVMUtils {
 
-  public static void checkLLVMBitcodeFormat(byte[] bitcode) {
+  private static void checkLLVMBitcodeFormat(byte[] bitcode) {
     // A format of LLVM bitcode is as follows:
     //  - https://llvm.org/docs/BitCodeFormat.html
     if (bitcode.length < 4 ||
         !(bitcode[0] == -34 && bitcode[1] == -64 && bitcode[2] == 23 && bitcode[3] == 11)) {
       throw new LLJVMRuntimeException("Corrupt LLVM bitcode found");
     }
-
-    // try {
-    //   LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
-    //   lljvmApi.veryfyBitcode(bitcode);
-    // } catch (Exception e) {
-    //   throw new LLJVMRuntimeException(e.getMessage());
-    // }
+    try {
+      LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
+      lljvmApi.veryfyBitcode(bitcode);
+    } catch (Exception e) {
+      throw new LLJVMRuntimeException(e.getMessage());
+    }
   }
 
   public static String asLLVMAssemblyCode(byte[] bitcode) throws LLJVMRuntimeException {
@@ -55,7 +54,6 @@ public class LLJVMUtils {
     String bytecode = null;
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
-      lljvmApi.veryfyBitcode(bitcode);
       bytecode = lljvmApi.parseBitcode(bitcode);
     } catch (Exception e) {
       throw new LLJVMRuntimeException(e.getMessage());
@@ -90,50 +88,30 @@ public class LLJVMUtils {
     return sb.toString();
   }
 
-  public static Method getMethod(Class<?> clazz, String methodName, Class<?>... signature)
-      throws LLJVMRuntimeException {
-    try {
-      for (Method m : clazz.getDeclaredMethods()) {
-        if (Modifier.isPublic(m.getModifiers()) &&
-            m.getName().equals(methodName) && Arrays.equals(m.getParameterTypes(), signature)) {
-          return m;
-        }
-      }
-    } catch (Throwable e) { // All the error states caught here
-      throw new LLJVMRuntimeException("Illegal bytecode found: " + e.getMessage());
-    }
-    String notFoundMethod = String.format("%s(%s)", methodName, joinString(signature, ", "));
+  private static void throwNotFoundMethodException(String name,  Class<?>... argTypes) {
+    final String notFoundMethod = String.format("%s(%s)", name, joinString(argTypes, ", "));
     throw new LLJVMRuntimeException("Method not found: " + notFoundMethod);
   }
 
-  public static Method getMethod(Class<?> clazz, Class<?>... signature)
+  public static Method getMethod(Class<?> clazz, String methodName, Class<?>... argTypes)
       throws LLJVMRuntimeException {
     try {
       for (Method m : clazz.getDeclaredMethods()) {
-        if (Modifier.isPublic(m.getModifiers()) &&
-              Arrays.equals(m.getParameterTypes(), signature)) {
-          return m;
+        if (Modifier.isPublic(m.getModifiers()) && Arrays.equals(m.getParameterTypes(), argTypes)) {
+          if (methodName.isEmpty() || m.getName().equals(methodName)) {
+            return m;
+          }
         }
       }
     } catch (Throwable e) { // All the error states caught here
       throw new LLJVMRuntimeException("Illegal bytecode found: " + e.getMessage());
     }
-    String notFoundMethod = String.format("func(%s)", joinString(signature, ", "));
-    throw new LLJVMRuntimeException("Method not found: " + notFoundMethod);
+    throwNotFoundMethodException(methodName, argTypes);
+    return null; // Not hit here
   }
 
-  public static List<Method> getMethods(Class<?> clazz, String methodName, Class<?>... signature) {
-    List<Method> methods = new ArrayList<>();
-    try {
-      for (Method m : clazz.getDeclaredMethods()) {
-        if (Modifier.isPublic(m.getModifiers()) &&
-            m.getName().contains(methodName) && Arrays.equals(m.getParameterTypes(), signature)) {
-          methods.add(m);
-        }
-      }
-    } catch (Throwable e) { // All the error states caught here
-      throw new LLJVMRuntimeException("Illegal bytecode found: " + e.getMessage());
-    }
-    return methods;
+  public static Method getMethod(Class<?> clazz, Class<?>... argTypes)
+      throws LLJVMRuntimeException {
+    return getMethod(clazz, "", argTypes);
   }
 }

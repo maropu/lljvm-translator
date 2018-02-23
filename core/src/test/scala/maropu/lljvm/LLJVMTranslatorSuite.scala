@@ -17,11 +17,8 @@
 
 package maropu.lljvm
 
-import java.io.File
-import java.io.FileOutputStream
+import java.io.{File, FileOutputStream}
 import java.lang.{Integer => jInt}
-
-import scala.collection.JavaConverters._
 
 import org.scalatest.FunSuite
 
@@ -39,12 +36,7 @@ class LLJVMTranslatorSuite extends FunSuite {
     val outputFile = new File(file, "code.class")
     val classLoader = new LLJVMClassLoader()
     val clazz = classLoader.loadClassFromBytecodeFile("GeneratedClass", outputFile.getAbsolutePath)
-    LLJVMUtils.getMethods(clazz, "_add_test", jInt.TYPE, jInt.TYPE).asScala.headOption.map { m =>
-      val obj = clazz.newInstance()
-      val args = Seq(new jInt(4), new jInt(1))
-      assert(m.invoke(obj, args: _*) === 5)
-    }.getOrElse {
-      fail("Method not found")
-    }
+    val method = LLJVMUtils.getMethod(clazz, "_add_test", jInt.TYPE, jInt.TYPE)
+    assert(method.invoke(null, new jInt(4), new jInt(1)) === 5)
   }
 }

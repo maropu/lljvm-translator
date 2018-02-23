@@ -63,11 +63,6 @@ class LLJVMUtilsSuite extends FunSuite {
     assert(m4.getParameterTypes.toSeq === Seq.empty)
   }
 
-  test("findMethods") {
-    val methods = LLJVMUtils.getMethods(classOf[TestClass], "method", classOf[String])
-    assert(methods.asScala.map(_.getName()).toSet === Set("methodY", "methodZ"))
-  }
-
   test("throw exceptions if illegal bytecode found") {
     val illegalCode =
       s""".class public final GeneratedClass
@@ -112,10 +107,5 @@ class LLJVMUtilsSuite extends FunSuite {
       LLJVMUtils.getMethod(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
     }.getMessage
     assert(errMsg2.contains(expectedErrMsg))
-
-    val errMsg3 = intercept[LLJVMRuntimeException] {
-      LLJVMUtils.getMethods(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
-    }.getMessage
-    assert(errMsg3.contains(expectedErrMsg))
   }
 }
