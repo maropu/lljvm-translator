@@ -133,9 +133,7 @@ public class LoopAdd {
       try {
         Class<?> clazz1 = new LLJVMClassLoader()
           .loadClassFromBitcode("GeneratedClass", resourceToBytes("benchmark/pyAdd-float32.bc"));
-        this.pyAdd = LLJVMUtils.getMethod(
-          clazz1, "_cfunc__ZN8__main__9pyAdd_241Eff",
-          Float.TYPE, Float.TYPE);
+        this.pyAdd = LLJVMUtils.getMethod(clazz1, Float.TYPE, Float.TYPE);
       } catch (IOException e) {
         throw new RuntimeException(e.getMessage());
       }

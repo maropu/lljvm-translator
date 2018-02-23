@@ -124,14 +124,10 @@ public class LoopSum {
       try {
         Class<?> clazz1 = new LLJVMClassLoader()
           .loadClassFromBitcode("GeneratedClass", resourceToBytes("benchmark/pyAdd-float32.bc"));
-        this.pyAdd = LLJVMUtils.getMethod(
-          clazz1, "_cfunc__ZN8__main__9pyAdd_241Eff",
-          Float.TYPE, Float.TYPE);
+        this.pyAdd = LLJVMUtils.getMethod(clazz1, Float.TYPE, Float.TYPE);
         Class<?> clazz2 = new LLJVMClassLoader()
           .loadClassFromBitcode("GeneratedClass", resourceToBytes("benchmark/pySum-float32.bc"));
-        this.pySum = LLJVMUtils.getMethod(
-          clazz2, "_cfunc__ZN8__main__9pySum_242E5ArrayIfLi1E1A7mutable7alignedE",
-          Long.TYPE);
+        this.pySum = LLJVMUtils.getMethod(clazz2, Long.TYPE);
       } catch (IOException e) {
         throw new RuntimeException(e.getMessage());
       }
