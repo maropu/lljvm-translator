@@ -19,7 +19,9 @@ package maropu.lljvm;
 
 import lljvm.unsafe.Platform;
 
-// TODO: Needs to support over 2-dimension arrays
+/**
+ * A placeholder for one or two dimensional arrays in Python.
+ */
 public class PyArrayHolder implements AutoCloseable {
   private final long holderAddr;
   private final long meminfoHolderAddr;
@@ -31,32 +33,37 @@ public class PyArrayHolder implements AutoCloseable {
     this.holderAddr = addr;
     this.meminfoHolderAddr = Platform.getLong(null, holderAddr);
     this.shapeHolderAddr = Platform.getLong(null, holderAddr + 40);
-    this.strideHolderAddr = Platform.getLong(null, holderAddr + 48);
+    this.strideHolderAddr = 0; // Not used
     this.isArrayOwner = false;
   }
 
   public PyArrayHolder() {
     // We assume that the aggregate(array/struct) type of python input arrays is
-    // `{ i8*, i8*, i64, i64, ty*, [1 x i64], [1 x i64] }`.
-    int elemNumInAggType = 7;
-    long holderSize = elemNumInAggType * 8;
+    // `{ i8*, i8*, i64, i64, ty*, [n x i64], [n x i64] }`.
+    long holderSize = 72;
     this.holderAddr = Platform.allocateMemory(holderSize);
     this.meminfoHolderAddr = Platform.allocateMemory(8);
-    this.shapeHolderAddr = Platform.allocateMemory(8);
-    this.strideHolderAddr = Platform.allocateMemory(8);
+    this.shapeHolderAddr = Platform.allocateMemory(16);
+    this.strideHolderAddr = Platform.allocateMemory(16);
     this.isArrayOwner = true;
     Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
+    Platform.setMemory(null, shapeHolderAddr, 16, (byte) 0);
+    Platform.setMemory(null, strideHolderAddr, 16, (byte) 0);
     Platform.putLong(null, holderAddr,  meminfoHolderAddr);
-    Platform.putLong(null, holderAddr + 40, shapeHolderAddr);
-    Platform.putLong(null, holderAddr + 48, strideHolderAddr);
   }
 
   public long addr() {
     return holderAddr;
   }
 
+  public int[] shape() {
+    int x = (int) Platform.getLong(null, shapeHolderAddr);
+    int y = (int) Platform.getLong(null, shapeHolderAddr + 8);
+    return new int[] {x, y};
+  }
+
   public int length() {
-    return (int) Platform.getLong(null, shapeHolderAddr);
+    return (int) Platform.getLong(null, nitemsAddr());
   }
 
   private long meminfoAddr() {
@@ -79,54 +86,80 @@ public class PyArrayHolder implements AutoCloseable {
     return holderAddr + 32;
   }
 
-  private long shapeAddr() {
-    return holderAddr + 40;
+  private boolean is1d(long x, long y) {
+    return y == 1;
   }
 
-  private long strideAddr() {
-    return holderAddr + 48;
+  public PyArrayHolder reshape(long x, long y) {
+    long nitem = Platform.getLong(null, nitemsAddr());
+    long itemsize = Platform.getLong(null, itemsizeAddr());
+    if (nitem != x * y) {
+      throw new LLJVMRuntimeException("Total size of new array must be unchanged");
+    }
+    if (is1d(x, y)) { // 1-d array
+      Platform.putLong(null, holderAddr + 40, shapeHolderAddr);
+      Platform.putLong(null, holderAddr + 48, strideHolderAddr);
+      _resize(itemsize, 0);
+    } else { // 2-d array
+      Platform.putLong(null, holderAddr + 40, shapeHolderAddr);
+      Platform.putLong(null, holderAddr + 56, strideHolderAddr);
+      _resize(x * itemsize, itemsize);
+    }
+    _reshape(x, y);
+    return this;
   }
 
-  private void _setArrayData(long arrayAddr, long shape, long stride) {
+  private void _reshape(long x, long y) {
+    Platform.putLong(null, shapeHolderAddr, x);
+    Platform.putLong(null, shapeHolderAddr + 8, y);
+  }
+
+  private void _resize(long x, long y) {
+    Platform.putLong(null, strideHolderAddr, x);
+    Platform.putLong(null, strideHolderAddr + 8, y);
+  }
+
+  private void setArrayData(long arrayAddr, long length, long size) {
     assert(isArrayOwner);
+    Platform.putLong(null, nitemsAddr(), length);
+    Platform.putLong(null, itemsizeAddr(), size);
     Platform.putLong(null, dataAddr(), arrayAddr);
-    Platform.putLong(null, shapeHolderAddr, shape);
-    Platform.putLong(null, strideHolderAddr, stride);
+    reshape(length, 1);
   }
 
-  public long with(boolean[] ar) {
-    _setArrayData(ArrayUtils.addressOf(ar), ar.length, 1);
-    return holderAddr;
+  public PyArrayHolder with(boolean[] ar) {
+    setArrayData(ArrayUtils.addressOf(ar), ar.length, 1);
+    return this;
   }
 
-  public long with(byte[] ar) {
-    _setArrayData(ArrayUtils.addressOf(ar), ar.length, 1);
-    return holderAddr;
+  public PyArrayHolder with(byte[] ar) {
+    setArrayData(ArrayUtils.addressOf(ar), ar.length, 1);
+    return this;
   }
 
-  public long with(short[] ar) {
-    _setArrayData(ArrayUtils.addressOf(ar), ar.length, 2);
-    return holderAddr;
+  public PyArrayHolder with(short[] ar) {
+    setArrayData(ArrayUtils.addressOf(ar), ar.length, 2);
+    return this;
   }
 
-  public long with(int[] ar) {
-    _setArrayData(ArrayUtils.addressOf(ar), ar.length, 4);
-    return holderAddr;
+  public PyArrayHolder with(int[] ar) {
+    setArrayData(ArrayUtils.addressOf(ar), ar.length, 4);
+    return this;
   }
 
-  public long with(long[] ar) {
-    _setArrayData(ArrayUtils.addressOf(ar), ar.length, 8);
-    return holderAddr;
+  public PyArrayHolder with(long[] ar) {
+    setArrayData(ArrayUtils.addressOf(ar), ar.length, 8);
+    return this;
   }
 
-  public long with(float[] ar) {
-    _setArrayData(ArrayUtils.addressOf(ar), ar.length, 4);
-    return holderAddr;
+  public PyArrayHolder with(float[] ar) {
+    setArrayData(ArrayUtils.addressOf(ar), ar.length, 4);
+    return this;
   }
 
-  public long with(double[] ar) {
-    _setArrayData(ArrayUtils.addressOf(ar), ar.length, 8);
-    return holderAddr;
+  public PyArrayHolder with(double[] ar) {
+    setArrayData(ArrayUtils.addressOf(ar), ar.length, 8);
+    return this;
   }
 
   public boolean[] booleanArray() {

@@ -56,6 +56,7 @@ public class LLJVMUtils {
     String bytecode = null;
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
+      lljvmApi.veryfyBitcode(bitcode);
       bytecode = lljvmApi.parseBitcode(bitcode);
     } catch (Exception e) {
       throw new LLJVMRuntimeException(e.getMessage());

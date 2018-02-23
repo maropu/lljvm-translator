@@ -77,12 +77,14 @@ JNIEXPORT jlong JNICALL Java_maropu_lljvm_LLJVMNative_addressOf
 
 JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_parseBitcode
     (JNIEnv *env, jobject self, jbyteArray bitcode) {
-  const jbyte *src = env->GetByteArrayElements(bitcode, NULL);
+  jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);
   try {
     const std::string out = parseBitcode((const char *)src, size, 0);
+    env->ReleaseByteArrayElements(bitcode, src, 0);
     return env->NewStringUTF(out.c_str());
   } catch (const std::string& e) {
+    env->ReleaseByteArrayElements(bitcode, src, 0);
     throw_exception(env, self, e);
     return env->NewStringUTF("");
   }
@@ -96,6 +98,7 @@ JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode
   LLVMContext context;
   auto buf = MemoryBuffer::getMemBuffer(StringRef((char *)src, size));
   auto mod = parseBitcodeFile(buf.get()->getMemBufferRef(), context);
+  env->ReleaseByteArrayElements(bitcode, src, 0);
   // if(check if error happens) {
   //     std::cerr << "Unable to parse bitcode file" << std::endl;
   //     return 1;
@@ -116,6 +119,7 @@ JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asBitcode
   LLVMContext context;
   auto buf = MemoryBuffer::getMemBuffer(StringRef((char *)src, size));
   auto mod = parseBitcodeFile(buf.get()->getMemBufferRef(), context);
+  env->ReleaseByteArrayElements(bitcode, src, 0);
   // if(check if error happens) {
   //     std::cerr << "Unable to parse bitcode file" << std::endl;
   //     return 1;

@@ -130,7 +130,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       bitcode = s"$basePath/for1_test-cfunc-float32.bc",
       source = s"$basePath/for1_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
-      arguments = Seq(new jLong(pyArray1.`with`(floatArray1)), new jInt(floatArray1.size)),
+      arguments = Seq(new jLong(pyArray1.`with`(floatArray1).addr()), new jInt(floatArray1.size)),
       expected = Some(22.0)
     )
     val doubleArray1 = Array(2.0, 1.0, 5.0, 13.0, 4.0)
@@ -138,7 +138,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       bitcode = s"$basePath/for1_test-cfunc-float64.bc",
       source = s"$basePath/for1_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
-      arguments = Seq(new jLong(pyArray1.`with`(doubleArray1)), new jInt(doubleArray1.size)),
+      arguments = Seq(new jLong(pyArray1.`with`(doubleArray1).addr()), new jInt(doubleArray1.size)),
       expected = Some(25.0)
     )
     val floatArray2 = Array(4.0, -5.0, 2.0, 8.0).map(_.toFloat)
@@ -146,7 +146,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       bitcode = s"$basePath/for2_test-cfunc-float32.bc",
       source = s"$basePath/for2_test.py",
       argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(pyArray1.`with`(floatArray2))),
+      arguments = Seq(new jLong(pyArray1.`with`(floatArray2).addr())),
       expected = Some(9.0)
     )
     val doubleArray2 = Array(5.0, 3.0, -9.0, 5.0, 1.0, 2.0, 2.0, 9.0, 1.0, 3.0)
@@ -154,35 +154,59 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       bitcode = s"$basePath/for2_test-cfunc-float64.bc",
       source = s"$basePath/for2_test.py",
       argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(pyArray1.`with`(doubleArray2))),
+      arguments = Seq(new jLong(pyArray1.`with`(doubleArray2).addr())),
       expected = Some(22.0)
     )
   }
 
-  test("numpy power") {
-    val floatX = Array(1.0f, 2.0f, 3.0f, 4.0f)
-    val floatY = Array(1.0f, 2.0f, 3.0f, 4.0f)
+  ignore("numpy power") {
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
+    val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val result1 = TestUtils.doTest[Long](
       bitcode = s"$basePath/numpy_power_test-cfunc-float32.bc",
-      source = s"$basePath/numpy_power.py",
+      source = s"$basePath/numpy_power_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(pyArray1.`with`(floatX)), new jLong(pyArray2.`with`(floatY)))
+      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
     )
     val resultArray1 = new PyArrayHolder(result1)
     assert(resultArray1.floatArray() === Seq(1.0f, 8.0f, 27.0f, 64.0f))
 
-    val doubleX = Array(1.0, 2.0, 3.0, 4.0)
-    val doubleY = Array(1.0, 2.0, 3.0, 4.0)
+    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
+    val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0))
     val result2 = TestUtils.doTest[Long](
       bitcode = s"$basePath/numpy_power_test-cfunc-float64.bc",
-      source = s"$basePath/numpy_power.py",
+      source = s"$basePath/numpy_power_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(pyArray1.`with`(doubleX)), new jLong(pyArray2.`with`(doubleY)))
+      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
     )
     val resultArray2 = new PyArrayHolder(result2)
     assert(resultArray2.doubleArray() === Seq(1.0, 8.0, 27.0, 64.0))
   }
 
-  // TODO: Currently, we cannot use 2-d arrays in the gen'd code
+  ignore("numpy dot") {
+    // Matrix * Matrix case
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
+    val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
+    val result1 = TestUtils.doTest[Long](
+      bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float32.bc",
+      source = s"$basePath/numpy_dot_test.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
+    )
+    val resultArray1 = new PyArrayHolder(result1)
+    assert(resultArray1.floatArray() === Seq(7.0f, 10.0f, 15.0f, 22.0f))
+
+    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
+    val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
+    val result2 = TestUtils.doTest[Long](
+      bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float64.bc",
+      source = s"$basePath/numpy_dot_test.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
+    )
+    val resultArray2 = new PyArrayHolder(result2)
+    assert(resultArray2.doubleArray() === Seq(7.0, 10.0, 15.0, 22.0))
+  }
+
   ignore("logistic regression") {}
 }

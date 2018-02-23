@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import javafx.util.Pair;
 
-import lljvm.util.NumbaFunctions;
 import lljvm.util.ReflectionUtils;
 
 /**
@@ -53,7 +52,7 @@ public class Function {
     private static Map<String, Pair<Long, Method>> externalFieldGetters = new HashMap<>();
 
     static {
-        for(Method method : ReflectionUtils.getStaticMethods(NumbaFunctions.class)) {
+        for(Method method : ReflectionUtils.getStaticMethods(NumbaRuntime.class)) {
             // TODO: Reconsider this
             final long addr = method.hashCode();
             final String sig = ReflectionUtils.getSignature(method);

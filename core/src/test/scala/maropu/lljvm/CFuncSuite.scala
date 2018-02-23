@@ -109,7 +109,7 @@ class CFuncSuite extends FunSuite {
     )
   }
 
-  test("function call chains") {
+  ignore("function call chains") {
     TestUtils.doTest(
       bitcode = s"$basePath/func_call_test.bc",
       source = s"$basePath/func_call_test.c",

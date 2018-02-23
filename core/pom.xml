@@ -40,6 +40,7 @@
     <scala.version>2.11.8</scala.version>
     <scala.binary.version>2.11</scala.binary.version>
     <snappy.version>1.1.2.6</snappy.version>
+    <netlib-java.version>1.1</netlib-java.version>
     <janino.version>3.0.0</janino.version>
     <jasmin.version>2.4.2</jasmin.version>
     <scalatest.version>2.2.4</scalatest.version>
@@ -60,6 +61,12 @@
       <groupId>org.xerial.snappy</groupId>
       <artifactId>snappy-java</artifactId>
       <version>${snappy.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.netlib-java</groupId>
+      <artifactId>netlib-java</artifactId>
+      <version>${netlib-java.version}</version>
       <scope>compile</scope>
     </dependency>
 
