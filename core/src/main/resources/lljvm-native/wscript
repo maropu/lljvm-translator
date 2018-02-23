@@ -86,6 +86,7 @@ def build(bld):
             target = 'lljvm',
             includes = '%s/%s' % (JAVAH_DIR, bld.env.LLJVM_COMPILE_OS),
             # linkflags = '-static',
+            cxxflags = '-fcxx-exceptions',
             use = 'llvm',
             uselib_store = 'lljvm')
 
