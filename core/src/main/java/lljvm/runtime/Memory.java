@@ -27,6 +27,7 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 import lljvm.util.ReflectionUtils;
+import maropu.lljvm.LLJVMRuntimeException;
 
 /**
  * Virtual memory, with methods for storing/loading values to/from
@@ -227,29 +228,6 @@ public final class Memory {
     }
     
     /**
-     * Increase the size of the heap by the specified amount.
-     * 
-     * @param increment  the amount to increment the heap size
-     * @return           a pointer to the previous end of the heap on success,
-     *                   -1 on error
-     */
-    public static long sbrk(int increment) {
-        final long prevHeapEnd = heapEnd;
-        if(heapEnd + increment > MEM_SIZE - STACK_SIZE
-        || heapEnd + increment < DATA_SIZE)
-            return Error.errno(Error.ENOMEM);
-        heapEnd += increment;
-        final long HEAP_BOTTOM = prevHeapEnd>>>PAGE_SHIFT;
-        final long HEAP_END = (heapEnd - 1)>>>PAGE_SHIFT;
-        for(long i = HEAP_BOTTOM; i <= HEAP_END; i++)
-            // TODO: Support 64bit addresses
-            if(pages[(int)i] == null)
-                pages[(int)i] = createPage();
-        // TODO: destroy pages if increment < 0
-        return prevHeapEnd;
-    }
-    
-    /**
      * Store a boolean value at the given address.
      * 
      * @param addr   the address at which to store the value
@@ -389,10 +367,6 @@ public final class Memory {
      */
     public static long store(long addr, String string, int size) {
         final byte[] bytes = string.getBytes();
-        if(bytes.length + 1 > size) {
-            Error.errno(Error.ERANGE);
-            return NULL;
-        }
         store(addr, bytes);
         Memory.store(addr + bytes.length, (byte) 0);
         return addr;
