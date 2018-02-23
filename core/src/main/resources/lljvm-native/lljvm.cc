@@ -111,7 +111,7 @@ JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode
   }
 }
 
-JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asBitcode
+JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asLLVMAssemblyCode
     (JNIEnv *env, jobject self, jbyteArray bitcode) {
   jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);

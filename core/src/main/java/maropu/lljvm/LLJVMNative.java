@@ -34,7 +34,7 @@ public class LLJVMNative {
   public native void veryfyBitcode(byte[] bitcode) throws IOException, LLJVMRuntimeException;
 
   // Return a human-readable LLVM bitcode
-  public native String asBitcode(byte[] bitcode) throws IOException;
+  public native String asLLVMAssemblyCode(byte[] bitcode) throws IOException;
 
   // This exception is mainly used in native code
   public void throwException(String message) throws LLJVMRuntimeException {

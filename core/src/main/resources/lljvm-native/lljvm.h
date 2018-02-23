@@ -33,10 +33,10 @@ JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode
 
 /*
  * Class:     maropu_lljvm_LLJVMNative
- * Method:    asBitcode
+ * Method:    asLLVMAssemblyCode
  * Signature: ([B)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asBitcode
+JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asLLVMAssemblyCode
   (JNIEnv *, jobject, jbyteArray);
 
 #ifdef __cplusplus

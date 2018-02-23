@@ -60,7 +60,7 @@ object TestUtils extends FunSuite {
            |========== Source Code ==========
            |${new String(TestUtils.resourceToBytes(source), StandardCharsets.UTF_8)}
            |========== LLVM Bitcode =========
-           |${LLJVMUtils.asBytecode(TestUtils.resourceToBytes(bitcode))}
+           |${LLJVMUtils.asJVMAssemblyCode(TestUtils.resourceToBytes(bitcode))}
          """.stripMargin)
   }
 

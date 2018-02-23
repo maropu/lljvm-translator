@@ -35,7 +35,7 @@ class LLJVMNativeSuite extends FunSuite {
   test("asBitcode") {
     val bitcode = TestUtils.resourceToBytes("pyfunc/add_test-cfunc-float32.bc")
     val lljvmApi = LLJVMLoader.loadLLJVMApi()
-    TestUtils.compareCode(lljvmApi.asBitcode(bitcode),
+    TestUtils.compareCode(lljvmApi.asLLVMAssemblyCode(bitcode),
       s"""source_filename = "<string>"
          |target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
          |target triple = "x86_64-apple-darwin15.3.0"

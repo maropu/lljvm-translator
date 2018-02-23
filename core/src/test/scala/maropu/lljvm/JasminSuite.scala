@@ -29,7 +29,7 @@ class JasminSuite extends FunSuite {
 
   test("asBytecode") {
     val bitcode = TestUtils.resourceToBytes("cfunc/add_test.bc")
-    TestUtils.compareCode(LLJVMUtils.asBytecode(bitcode),
+    TestUtils.compareCode(LLJVMUtils.asJVMAssemblyCode(bitcode),
       s""".class public final GeneratedClass
          |.super java/lang/Object
          |
