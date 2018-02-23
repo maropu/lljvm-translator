@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package lljvm.runtime
+package maropu.lljvm.runtime
 
 import org.scalatest.FunSuite
 

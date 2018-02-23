@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-package maropu.lljvm;
+package maropu.lljvm.util;
 
-import lljvm.unsafe.Platform;
+import maropu.lljvm.LLJVMLoader;
+import maropu.lljvm.LLJVMNative;
+import maropu.lljvm.LLJVMRuntimeException;
+import maropu.lljvm.unsafe.Platform;
 
 public class ArrayUtils {
   // Variables below are used to decompress COOPs in JDKs

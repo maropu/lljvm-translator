@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package maropu.lljvm;
+package maropu.lljvm.util;
 
-import lljvm.unsafe.Platform;
+import maropu.lljvm.LLJVMRuntimeException;
+import maropu.lljvm.unsafe.Platform;
 
 /**
  * A placeholder for one or two dimensional arrays in Python.

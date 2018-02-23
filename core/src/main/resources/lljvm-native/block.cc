@@ -74,7 +74,7 @@ void JVMWriter::printInstruction(const Instruction *inst) {
     switch(inst->getOpcode()) {
     case Instruction::Ret:
         // printSimpleInstruction("invokestatic",
-        //                        "lljvm/runtime/Memory/destroyStackFrame()V");
+        //                        "maropu/lljvm/runtime/VMemory/destroyStackFrame()V");
         if(inst->getNumOperands() >= 1) {
             printValueLoad(left);
             printSimpleInstruction(
@@ -85,15 +85,15 @@ void JVMWriter::printInstruction(const Instruction *inst) {
         break;
     // case Instruction::Unwind:
     //     printSimpleInstruction("getstatic",
-    //         "lljvm/runtime/Instruction$Unwind/instance "
-    //         "Llljvm/runtime/Instruction$Unwind;");
+    //         "maropu/lljvm/runtime/Instruction$Unwind/instance "
+    //         "Lmaropu/lljvm/runtime/Instruction$Unwind;");
     //     printSimpleInstruction("athrow");
     //     // TODO: need to destroy stack frames
     //     break;
     case Instruction::Unreachable:
         printSimpleInstruction("getstatic",
-            "lljvm/runtime/Instruction$Unreachable/instance "
-            "Llljvm/runtime/Instruction$Unreachable;");
+            "maropu/lljvm/runtime/Instruction$Unreachable/instance "
+            "Lmaropu/lljvm/runtime/Instruction$Unreachable;");
         printSimpleInstruction("athrow");
         break;
     case Instruction::Add:

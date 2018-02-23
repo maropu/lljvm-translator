@@ -37,7 +37,7 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import lljvm.unsafe.Platform;
+import maropu.lljvm.unsafe.Platform;
 import maropu.lljvm.LLJVMClassLoader;
 import maropu.lljvm.LLJVMUtils;
 

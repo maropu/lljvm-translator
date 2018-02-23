@@ -172,7 +172,7 @@ void JVMWriter::printStaticConstant(const Constant *c) {
         // zero initialised constant
         printPtrLoad(targetData->getTypeAllocSize(c->getType()));
         printSimpleInstruction("invokestatic",
-                               "lljvm/runtime/Memory/zero(JJ)J");
+                               "maropu/lljvm/runtime/VMemory/zero(JJ)J");
         return;
     }
     std::string typeDescriptor = getTypeDescriptor(c->getType());
@@ -182,7 +182,7 @@ void JVMWriter::printStaticConstant(const Constant *c) {
     case Type::DoubleTyID:
         printConstLoad(c);
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/VMemory/pack(J" + typeDescriptor + ")J");
+            "maropu/lljvm/runtime/VMemory/pack(J" + typeDescriptor + ")J");
         break;
     case Type::ArrayTyID:
         // if(const ConstantArray *ca = dyn_cast<ConstantArray>(c))
@@ -192,12 +192,12 @@ void JVMWriter::printStaticConstant(const Constant *c) {
                 printConstLoad(ca->getAsString(), cstring);
                 if(cstring)
                     printSimpleInstruction("invokestatic",
-                        "lljvm/runtime/VMemory/pack(JLjava/lang/String;)J");
+                        "maropu/lljvm/runtime/VMemory/pack(JLjava/lang/String;)J");
                 else {
                     printSimpleInstruction("invokevirtual",
                                            "java/lang/String/toCharArray()[C");
                     printSimpleInstruction("invokestatic",
-                                           "lljvm/runtime/VMemory/pack(J[C)J");
+                                           "maropu/lljvm/runtime/VMemory/pack(J[C)J");
                 }
                 break;
             }
@@ -222,7 +222,7 @@ void JVMWriter::printStaticConstant(const Constant *c) {
             llvm_unreachable("Invalid static initializer");
         }
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/VMemory/pack(J" + typeDescriptor + ")J");
+            "maropu/lljvm/runtime/VMemory/pack(J" + typeDescriptor + ")J");
         break;
     default:
         errs() << "TypeID = " << c->getType()->getTypeID() << '\n';

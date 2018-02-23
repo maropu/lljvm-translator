@@ -20,7 +20,7 @@
 * THE SOFTWARE.
 */
 
-package lljvm.runtime;
+package maropu.lljvm.runtime;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import javafx.util.Pair;
 
-import lljvm.util.ReflectionUtils;
+import maropu.lljvm.util.ReflectionUtils;
 
 /**
  * Provides function pointers for methods.

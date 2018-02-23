@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import maropu.lljvm.util.PyArrayHolder;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.CompilerControl;
@@ -37,8 +38,8 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-import lljvm.unsafe.Platform;
-import maropu.lljvm.ArrayUtils;
+import maropu.lljvm.unsafe.Platform;
+import maropu.lljvm.util.ArrayUtils;
 import maropu.lljvm.LLJVMClassLoader;
 import maropu.lljvm.LLJVMUtils;
 
@@ -74,6 +75,7 @@ import maropu.lljvm.LLJVMUtils;
 public class LoopSum {
   // Set a small value for CPU-intensive tests
   final static int SIZE = 1024;
+  final static PyArrayHolder pyArray = new PyArrayHolder();
 
   @State(Scope.Thread)
   public static class Context {
@@ -163,7 +165,7 @@ public class LoopSum {
       //   for i in range(s):
       //     sum += x[i]
       //   return sum
-      return (float) context.pySum.invoke(null, ArrayUtils.pyAyray(context.javaArray));
+      return (float) context.pySum.invoke(null, pyArray.with(context.javaArray));
     } catch (Exception e) {
       e.printStackTrace();
     }

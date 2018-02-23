@@ -20,14 +20,13 @@
 * THE SOFTWARE.
 */
 
-package lljvm.runtime;
+package maropu.lljvm.runtime;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-import lljvm.util.ReflectionUtils;
-import maropu.lljvm.LLJVMRuntimeException;
+import maropu.lljvm.util.ReflectionUtils;
 
 /**
  * Virtual memory, with methods for storing/loading values to/from

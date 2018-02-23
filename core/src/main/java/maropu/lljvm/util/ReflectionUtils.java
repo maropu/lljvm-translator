@@ -20,7 +20,7 @@
 * THE SOFTWARE.
 */
 
-package lljvm.util;
+package maropu.lljvm.util;
 
 import java.io.File;
 import java.lang.reflect.AccessibleObject;

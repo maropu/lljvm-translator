@@ -17,8 +17,9 @@
 
 package maropu.lljvm
 
-import java.lang.{Double => jDouble, Integer => jInt, Long => jLong}
+import java.lang.{Long => jLong, Integer => jInt, Double => jDouble}
 
+import maropu.lljvm.util.ArrayUtils
 import org.scalatest.FunSuite
 
 class CFuncSuite extends FunSuite {

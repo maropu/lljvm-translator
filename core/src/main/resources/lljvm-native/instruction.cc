@@ -101,7 +101,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op,
 
         printSimpleInstruction("sipush", utostr(seqTy->getNumElements() * size));
         printSimpleInstruction("invokestatic",
-                               "lljvm/runtime/VMemory/allocateStack(I)J");
+                               "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
         // TODO: Need to support vector computation?
         for (int i = 0; i < seqTy->getNumElements(); i++) {
@@ -384,7 +384,7 @@ void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
         printSimpleInstruction("imul");
     }
     printSimpleInstruction("invokestatic",
-                           "lljvm/runtime/VMemory/allocateStack(I)J");
+                           "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 }
 
 
@@ -449,7 +449,7 @@ void JVMWriter::printInsertElement(const InsertElementInst *inst) {
     uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
     if (const UndefValue *undef = dyn_cast<UndefValue>(vec)) {
         printSimpleInstruction("bipush", utostr(vecSize * undef->getNumElements()));
-        printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
+        printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
     } else {
         printValueLoad(vec);
     }
@@ -476,7 +476,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
         }
         if (const UndefValue *undef = dyn_cast<UndefValue>(aggValue)) {
             printSimpleInstruction("bipush", utostr(aggSize));
-            printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
+            printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
         } else {
             printValueLoad(aggValue);
         }
@@ -501,7 +501,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
         int aggSize = targetData->getTypeAllocSize(seqTy->getElementType()) * seqTy->getNumElements();
         if (const UndefValue *undef = dyn_cast<UndefValue>(aggValue)) {
             printSimpleInstruction("bipush", utostr(aggSize));
-            printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
+            printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
         } else {
             printValueLoad(aggValue);
         }
@@ -529,7 +529,7 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
     const ConstantAggregateZero *mask = dyn_cast<ConstantAggregateZero>(inst->getOperand(2));
     uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
     printSimpleInstruction("bipush", utostr(vecSize * mask->getNumElements()));
-    printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/allocateStack(I)J");
+    printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 }
 
 void JVMWriter::printAtomicRMW(const AtomicRMWInst *inst) {
@@ -601,13 +601,13 @@ void JVMWriter::printMemIntrinsic(const MemIntrinsic *inst) {
     switch(inst->getIntrinsicID()) {
     case Intrinsic::memcpy:
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/VMemory/memcpy(JJ" + lenDescriptor + "I)V"); break;
+            "maropu/lljvm/runtime/VMemory/memcpy(JJ" + lenDescriptor + "I)V"); break;
     case Intrinsic::memmove:
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/VMemory/memmove(JJ" + lenDescriptor + "I)V"); break;
+            "maropu/lljvm/runtime/VMemory/memmove(JJ" + lenDescriptor + "I)V"); break;
     case Intrinsic::memset:
         printSimpleInstruction("invokestatic",
-            "lljvm/runtime/VMemory/memset(JB" + lenDescriptor + "I)V"); break;
+            "maropu/lljvm/runtime/VMemory/memset(JB" + lenDescriptor + "I)V"); break;
     }
 }
 
@@ -637,7 +637,7 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
 
         printSimpleInstruction("sipush", utostr(seqTy->getNumElements() * size));
         printSimpleInstruction("invokestatic",
-                               "lljvm/runtime/VMemory/allocateStack(I)J");
+                               "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
         // TODO: Need to support vector computation?
         for (int i = 0; i < seqTy->getNumElements(); i++) {

@@ -97,7 +97,7 @@ void JVMWriter::printSimpleInstruction(const std::string &inst,
  * @param sig  the signature of the instruction
  */
 void JVMWriter::printVirtualInstruction(const char *sig) {
-    out << '\t' << "invokestatic lljvm/runtime/Instruction/" << sig << '\n';
+    out << '\t' << "invokestatic maropu/lljvm/runtime/Instruction/" << sig << '\n';
 }
 
 /**

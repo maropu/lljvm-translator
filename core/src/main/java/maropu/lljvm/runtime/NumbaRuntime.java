@@ -20,12 +20,12 @@
 * THE SOFTWARE.
 */
 
-package lljvm.runtime;
+package maropu.lljvm.runtime;
 
 import maropu.lljvm.LLJVMRuntimeException;
 import org.netlib.blas.*;
 
-import lljvm.unsafe.Platform;
+import maropu.lljvm.unsafe.Platform;
 
 public final class NumbaRuntime {
 

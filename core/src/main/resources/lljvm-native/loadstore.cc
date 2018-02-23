@@ -34,13 +34,13 @@ void JVMWriter::printValueLoad(const Value *v) {
         if(externRefs.count(v)) {
             printSimpleInstruction("ldc", '"' + sig + '"');
             printSimpleInstruction("invokestatic",
-                "lljvm/runtime/Function/getExternalFunctionPointer"
+                "maropu/lljvm/runtime/Function/getExternalFunctionPointer"
                 "(Ljava/lang/String;)J");
         } else {
             printSimpleInstruction("ldc", '"' + classname + '"');
             printSimpleInstruction("ldc", '"' + sig + '"');
             printSimpleInstruction("invokestatic",
-                "lljvm/runtime/Function/getFunctionPointer"
+                "maropu/lljvm/runtime/Function/getFunctionPointer"
                 "(Ljava/lang/String;Ljava/lang/String;)J");
         }
     } else if(isa<GlobalVariable>(v)) {
@@ -49,13 +49,13 @@ void JVMWriter::printValueLoad(const Value *v) {
             // printSimpleInstruction("getstatic", getValueName(v) + " I");
             printSimpleInstruction("ldc", '"' + getValueName(v) + '"');
             printSimpleInstruction("invokestatic",
-                "lljvm/runtime/Function/getExternalFieldGetterPointer"
+                "maropu/lljvm/runtime/Function/getExternalFieldGetterPointer"
                 "(Ljava/lang/String;)J");
 
             std::string funcName;
             raw_string_ostream strbuf(funcName);
             const Type *pt = v->getType();
-            strbuf << "lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
+            strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
             strbuf.flush();
             printSimpleInstruction("lconst_0");
             printSimpleInstruction("invokestatic", funcName);
@@ -139,7 +139,7 @@ void JVMWriter::printIndirectLoad(const Value *v) {
  * @param ty  the type of the value
  */
 void JVMWriter::printIndirectLoad(const Type *ty) {
-    printSimpleInstruction("invokestatic", "lljvm/runtime/VMemory/load_"
+    printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/load_"
         + getTypePostfix(ty) + "(J)" + getTypeDescriptor(ty));
 }
 
@@ -162,5 +162,5 @@ void JVMWriter::printIndirectStore(const Value *ptr, const Value *val) {
  */
 void JVMWriter::printIndirectStore(const Type *ty) {
     printSimpleInstruction("invokestatic",
-        "lljvm/runtime/VMemory/store(J" + getTypeDescriptor(ty) + ")V");
+        "maropu/lljvm/runtime/VMemory/store(J" + getTypeDescriptor(ty) + ")V");
 }

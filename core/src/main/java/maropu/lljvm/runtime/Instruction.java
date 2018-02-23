@@ -20,7 +20,7 @@
 * THE SOFTWARE.
 */
 
-package lljvm.runtime;
+package maropu.lljvm.runtime;
 
 /**
  * This class provides methods that emulate several LLVM instructions and

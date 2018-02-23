@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-package lljvm.runtime;
+package maropu.lljvm.runtime;
 
 import java.lang.System;
 
-import lljvm.unsafe.Platform;
-import lljvm.util.ReflectionUtils;
+import maropu.lljvm.unsafe.Platform;
+import maropu.lljvm.util.ReflectionUtils;
 
 /**
  * Virtual memory for storing/loading values to/from specified 64bit addresses. This class should
  * be thread-safe because multiple threads possibly access stack frames.
  */
 public class VMemory {
-  public static final String KEY_LLJVM_RUNTIME_VMEM_STACKSIZE = "lljvm.runtime.vmem.stacksize";
+  public static final String KEY_LLJVM_RUNTIME_VMEM_STACKSIZE = "maropu.lljvm.runtime.vmem.stacksize";
   public static final String DEFAULT_STACKSIZE = "2097152"; // 64KiB x 32 = 2MiB
 
   public static final int ALIGNMENT = 8; // 8-byte alignment

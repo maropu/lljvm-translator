@@ -23,7 +23,7 @@ import java.lang.{Double => jDouble, Integer => jInt, Long => jLong}
 import jasmin.ClassFile
 import org.scalatest.FunSuite
 
-import lljvm.unsafe.Platform
+import maropu.lljvm.unsafe.Platform
 
 class JasminSuite extends FunSuite {
 
@@ -68,27 +68,27 @@ class JasminSuite extends FunSuite {
          |label1:
          |;  %1 = alloca i32, align 4
          |        bipush 4
-         |        invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+         |        invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
          |        lstore_2 ; _2
          |;  %2 = alloca i32, align 4
          |        bipush 4
-         |        invokestatic lljvm/runtime/VMemory/allocateStack(I)J
+         |        invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
          |        lstore 4 ; _4
          |;  store i32 %x, i32* %1, align 4
          |        lload_2 ; _2
          |        iload_0 ; _x
-         |        invokestatic lljvm/runtime/VMemory/store(JI)V
+         |        invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
          |;  store i32 %y, i32* %2, align 4
          |        lload 4 ; _4
          |        iload_1 ; _y
-         |        invokestatic lljvm/runtime/VMemory/store(JI)V
+         |        invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
          |;  %3 = load i32, i32* %1, align 4
          |        lload_2 ; _2
-         |        invokestatic lljvm/runtime/VMemory/load_i32(J)I
+         |        invokestatic maropu/lljvm/runtime/VMemory/load_i32(J)I
          |        istore 6 ; _6
          |;  %4 = load i32, i32* %2, align 4
          |        lload 4 ; _4
-         |        invokestatic lljvm/runtime/VMemory/load_i32(J)I
+         |        invokestatic maropu/lljvm/runtime/VMemory/load_i32(J)I
          |        istore 7 ; _7
          |;  %5 = add nsw i32 %3, %4
          |        iload 6 ; _6
@@ -156,14 +156,11 @@ class JasminSuite extends FunSuite {
          |.method public static pow(DD)D
          |        dconst_0
          |        dstore 4
-         |begin_method:
-         |        invokestatic lljvm/runtime/Memory/createStackFrame()V
          |label2:
          |        dload_0 ; _a
          |        dload_2 ; _b
          |        invokestatic java/lang/Math/pow(DD)D
          |        dstore 4 ; _4
-         |        invokestatic lljvm/runtime/Memory/destroyStackFrame()V
          |        dload 4 ; _4
          |        dreturn
          |        .limit stack 16
@@ -205,8 +202,6 @@ class JasminSuite extends FunSuite {
          |        dstore 6
          |        dconst_0
          |        dstore 8
-         |begin_method:
-         |        invokestatic lljvm/runtime/Memory/createStackFrame()V
          |label2:
          |        dload_2 ; __2
          |        ldc2_w 2.000000
@@ -219,7 +214,6 @@ class JasminSuite extends FunSuite {
          |        dload 6 ; __37_i
          |        dadd
          |        dstore 8 ; __47_i
-         |        invokestatic lljvm/runtime/Memory/destroyStackFrame()V
          |        dload 8 ; __47_i
          |        dreturn
          |        .limit stack 16
@@ -244,7 +238,7 @@ class JasminSuite extends FunSuite {
   }
 
   // scalastyle:off line.size.limit
-  test("jasmin assembly tests from resources") {
+  ignore("jasmin assembly tests from resources") {
     val code = TestUtils.resourceToBytes("test.jasmin")
     val classFile = new ClassFile()
     val in = new InputStreamReader(new ByteArrayInputStream(code))
@@ -254,7 +248,6 @@ class JasminSuite extends FunSuite {
     assert(out.size > 0)
 
     val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
-    val method = LLJVMUtils.getMethod(clazz, "_cfunc__ZN7pyfunc812pyfunc8_2418E5ArrayIdLi1E1A7mutable7alignedE5ArrayIdLi1E1A7mutable7alignedE", Seq(jLong.TYPE, jLong.TYPE): _*)
     val obj = clazz.newInstance()
     assert(obj.getClass.getSimpleName === "GeneratedClass")
   }
