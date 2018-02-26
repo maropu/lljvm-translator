@@ -29,28 +29,28 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
   private val basePath = "pyfunc"
 
   test("add") {
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/add_test-cfunc-int32.bc",
       source = s"$basePath/add_test.py",
       argTypes = Seq(jInt.TYPE, jInt.TYPE),
       arguments = Seq(new jInt(4), new jInt(5)),
       expected = Some(9)
     )
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/add_test-cfunc-int64.bc",
       source = s"$basePath/add_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(3), new jLong(2)),
       expected = Some(5)
     )
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/add_test-cfunc-float32.bc",
       source = s"$basePath/add_test.py",
       argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
       arguments = Seq(new jFloat(1.0f), new jFloat(7.0f)),
       expected = Some(8.0f)
     )
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/add_test-cfunc-float64.bc",
       source = s"$basePath/add_test.py",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
@@ -60,14 +60,14 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
   }
 
   test("pow") {
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/math_pow_test-cfunc-float32.bc",
       source = s"$basePath/math_pow_test.py",
       argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
       arguments = Seq(new jFloat(1.0f), new jFloat(4.0f)),
       expected = Some(1.0f)
     )
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/math_pow_test-cfunc-float64.bc",
       source = s"$basePath/math_pow_test.py",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
@@ -77,14 +77,14 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
   }
 
   test("log10") {
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/math_log10_test-cfunc-float32.bc",
       source = s"$basePath/math_log10_test.py",
       argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
       arguments = Seq(new jFloat(100.0f), new jFloat(1.0f)),
       expected = Some(4.0f)
     )
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/math_log10_test-cfunc-float64.bc",
       source = s"$basePath/math_log10_test.py",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
@@ -94,14 +94,14 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
   }
 
   test("if") {
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/if1_test-cfunc-int32.bc",
       source = s"$basePath/if1_test.py",
       argTypes = Seq(jInt.TYPE),
       arguments = Seq(new jInt(1)),
       expected = Some(0)
     )
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/if2_test-cfunc-int32.bc",
       source = s"$basePath/if2_test.py",
       argTypes = Seq(jInt.TYPE),
@@ -127,7 +127,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
   test("loop") {
     val floatArray1 = Array(1.0, 8.0, 2.0, 3.0, 4.0, 1.0, 1.0, 2.0).map(_.toFloat)
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/for1_test-cfunc-float32.bc",
       source = s"$basePath/for1_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
@@ -135,7 +135,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       expected = Some(22.0)
     )
     val doubleArray1 = Array(2.0, 1.0, 5.0, 13.0, 4.0)
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/for1_test-cfunc-float64.bc",
       source = s"$basePath/for1_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
@@ -143,7 +143,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       expected = Some(25.0)
     )
     val floatArray2 = Array(4.0, -5.0, 2.0, 8.0).map(_.toFloat)
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/for2_test-cfunc-float32.bc",
       source = s"$basePath/for2_test.py",
       argTypes = Seq(jLong.TYPE),
@@ -151,7 +151,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       expected = Some(9.0)
     )
     val doubleArray2 = Array(5.0, 3.0, -9.0, 5.0, 1.0, 2.0, 2.0, 9.0, 1.0, 3.0)
-    TestUtils.doTest(
+    TestUtils.doTest2(
       bitcode = s"$basePath/for2_test-cfunc-float64.bc",
       source = s"$basePath/for2_test.py",
       argTypes = Seq(jLong.TYPE),
@@ -160,10 +160,10 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     )
   }
 
-  ignore("numpy power") {
+  test("numpy power") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
-    val result1 = TestUtils.doTest[Long](
+    val result1 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/numpy_power_test-cfunc-float32.bc",
       source = s"$basePath/numpy_power_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -174,7 +174,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
     val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0))
-    val result2 = TestUtils.doTest[Long](
+    val result2 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/numpy_power_test-cfunc-float64.bc",
       source = s"$basePath/numpy_power_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -188,7 +188,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     // Matrix * Matrix case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
-    val result1 = TestUtils.doTest[Long](
+    val result1 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float32.bc",
       source = s"$basePath/numpy_dot_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -199,7 +199,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
-    val result2 = TestUtils.doTest[Long](
+    val result2 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float64.bc",
       source = s"$basePath/numpy_dot_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),

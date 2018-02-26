@@ -40,9 +40,10 @@ object TestUtils extends FunSuite {
     }
   }
 
-  def doTest[T](
+  def doTest1[T](
       bitcode: String,
       source: String,
+      funcName: String,
       argTypes: Seq[Class[_]],
       arguments: Seq[AnyRef],
       expected: Option[T] = None): T = try {
@@ -62,6 +63,15 @@ object TestUtils extends FunSuite {
            |========== LLVM Bitcode =========
            |${LLJVMUtils.asJVMAssemblyCode(TestUtils.resourceToBytes(bitcode))}
          """.stripMargin)
+  }
+
+  def doTest2[T](
+      bitcode: String,
+      source: String,
+      argTypes: Seq[Class[_]],
+      arguments: Seq[AnyRef],
+      expected: Option[T] = None): T = {
+    doTest1(bitcode, source, "", argTypes, arguments, expected)
   }
 
   def compareCode(actual: String, expected: String): Unit = {
