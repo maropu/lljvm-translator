@@ -110,14 +110,14 @@ class CFuncSuite extends FunSuite {
     )
   }
 
-  ignore("function call chains") {
+  test("function call chains") {
     TestUtils.doTest1(
       bitcode = s"$basePath/func_call_test.bc",
       source = s"$basePath/func_call_test.c",
       funcName = "_func_call_test",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(4.0), new jDouble(1.0)),
-      expected = Some(4.0)
+      expected = Some(7.0)
     )
   }
 }

@@ -431,7 +431,18 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
             }
             printPtrLoad(size);
             printSimpleInstruction("ladd");
-            printIndirectLoad(structTy->getContainedType(fieldIndex));
+            // We load a value itself for regular/pointer types.
+            // Otherwise, we need to load an address for sequential types (array/vector):
+            //
+            // e.g., %2 = extractvalue { i64, i8*, [4 x i64] } %.1, 3
+            //
+            // In this example, it is a value for `i64`/`i8*` and
+            // an adress for `[4 x i64]`.
+            if (const SequentialType *seqTy = dyn_cast<SequentialType>(structTy->getContainedType(fieldIndex))) {
+                // Loads an adress itself
+            } else {
+                printIndirectLoad(structTy->getContainedType(fieldIndex));
+            }
         } else if(const SequentialType *seqTy = dyn_cast<SequentialType>(aggType)) {
             size = targetData->getTypeAllocSize(seqTy->getElementType());
             printPtrLoad(fieldIndex * size);

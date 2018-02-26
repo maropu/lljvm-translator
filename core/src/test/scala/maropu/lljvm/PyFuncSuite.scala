@@ -209,5 +209,5 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(resultArray2.doubleArray() === Seq(7.0, 10.0, 15.0, 22.0))
   }
 
-  ignore("logistic regression") {}
+  test("logistic regression") {}
 }

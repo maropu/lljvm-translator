@@ -25,16 +25,18 @@ import maropu.lljvm.unsafe.Platform;
  */
 public class PyArrayHolder implements AutoCloseable {
   private final long holderAddr;
-  private final long meminfoHolderAddr;
-  private final long shapeHolderAddr;
-  private final long strideHolderAddr;
+  private final long meminfoAddr;
+  private final long parentAddr;
   private final boolean isArrayOwner;
+
+  // This value depends on a shape of arrays
+  private long strideAddrOffset;
 
   public PyArrayHolder(long addr) {
     this.holderAddr = addr;
-    this.meminfoHolderAddr = Platform.getLong(null, holderAddr);
-    this.shapeHolderAddr = Platform.getLong(null, holderAddr + 40);
-    this.strideHolderAddr = 0; // Not used
+    this.meminfoAddr = Platform.getLong(null, holderAddr);
+    this.parentAddr = Platform.getLong(null, holderAddr + 8);
+    this.strideAddrOffset = 0; // Not used
     this.isArrayOwner = false;
   }
 
@@ -43,24 +45,18 @@ public class PyArrayHolder implements AutoCloseable {
     // `{ i8*, i8*, i64, i64, ty*, [n x i64], [n x i64] }`.
     long holderSize = 72;
     this.holderAddr = Platform.allocateMemory(holderSize);
-    this.meminfoHolderAddr = Platform.allocateMemory(8);
-    this.shapeHolderAddr = Platform.allocateMemory(16);
-    this.strideHolderAddr = Platform.allocateMemory(16);
+    this.meminfoAddr = Platform.allocateMemory(8);
+    this.parentAddr = Platform.allocateMemory(8);
+    // 1-d array by default, e.g., `{ i8*, i8*, i64, i64, ty*, [1 x i64], [1 x i64] }`
+    this.strideAddrOffset = 8;
     this.isArrayOwner = true;
     Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
-    Platform.setMemory(null, shapeHolderAddr, 16, (byte) 0);
-    Platform.setMemory(null, strideHolderAddr, 16, (byte) 0);
-    Platform.putLong(null, holderAddr,  meminfoHolderAddr);
+    Platform.putLong(null, holderAddr, meminfoAddr);
+    Platform.putLong(null, meminfoAddr, 0L);
   }
 
   public long addr() {
     return holderAddr;
-  }
-
-  public int[] shape() {
-    int x = (int) Platform.getLong(null, shapeHolderAddr);
-    int y = (int) Platform.getLong(null, shapeHolderAddr + 8);
-    return new int[] {x, y};
   }
 
   public int length() {
@@ -87,6 +83,14 @@ public class PyArrayHolder implements AutoCloseable {
     return holderAddr + 32;
   }
 
+  private long shapeAddr() {
+    return holderAddr + 40;
+  }
+
+  private long strideAddr() {
+    return shapeAddr() + strideAddrOffset;
+  }
+
   private boolean is1d(long x, long y) {
     return y == 1;
   }
@@ -97,27 +101,22 @@ public class PyArrayHolder implements AutoCloseable {
     if (nitem != x * y) {
       throw new LLJVMRuntimeException("Total size of new array must be unchanged");
     }
-    if (is1d(x, y)) { // 1-d array
-      Platform.putLong(null, holderAddr + 40, shapeHolderAddr);
-      Platform.putLong(null, holderAddr + 48, strideHolderAddr);
-      _resize(itemsize, 0);
-    } else { // 2-d array
-      Platform.putLong(null, holderAddr + 40, shapeHolderAddr);
-      Platform.putLong(null, holderAddr + 56, strideHolderAddr);
-      _resize(x * itemsize, itemsize);
+    if (is1d(x, y)) {
+      strideAddrOffset = 8;
+
+      // Updates shape and stride for 1-d arrays
+      Platform.putLong(null, shapeAddr(), x);
+      Platform.putLong(null, strideAddr(), itemsize);
+    } else {
+      strideAddrOffset = 16;
+
+      // Updates shape and stride for 2-d arrays
+      Platform.putLong(null, shapeAddr(), x);
+      Platform.putLong(null, shapeAddr() + 8, y);
+      Platform.putLong(null, strideAddr(), x * itemsize);
+      Platform.putLong(null, strideAddr() + 8, itemsize);
     }
-    _reshape(x, y);
     return this;
-  }
-
-  private void _reshape(long x, long y) {
-    Platform.putLong(null, shapeHolderAddr, x);
-    Platform.putLong(null, shapeHolderAddr + 8, y);
-  }
-
-  private void _resize(long x, long y) {
-    Platform.putLong(null, strideHolderAddr, x);
-    Platform.putLong(null, strideHolderAddr + 8, y);
   }
 
   private void setArrayData(long arrayAddr, long length, long size) {
@@ -230,9 +229,8 @@ public class PyArrayHolder implements AutoCloseable {
   public void close() throws Exception {
     if (isArrayOwner) {
       Platform.freeMemory(holderAddr);
-      Platform.freeMemory(meminfoHolderAddr);
-      Platform.freeMemory(shapeHolderAddr);
-      Platform.freeMemory(strideHolderAddr);
+      Platform.freeMemory(meminfoAddr);
+      Platform.freeMemory(parentAddr);
     }
   }
 }
