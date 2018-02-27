@@ -26,7 +26,7 @@ import maropu.lljvm.unsafe.Platform;
 public class PyArrayHolder implements AutoCloseable {
   private final long holderAddr;
   private final long meminfoAddr;
-  private final long parentAddr;
+  private final long parentAddr; // Not used now
   private final boolean isArrayOwner;
 
   // This value depends on a shape of arrays
@@ -45,14 +45,25 @@ public class PyArrayHolder implements AutoCloseable {
     // `{ i8*, i8*, i64, i64, ty*, [n x i64], [n x i64] }`.
     long holderSize = 72;
     this.holderAddr = Platform.allocateMemory(holderSize);
-    this.meminfoAddr = Platform.allocateMemory(8);
+    // A pointer to allocated memory info; we assume the total size is 40B and the structure
+    // in `numba/runtime/nrt.c` is as follows;
+    //
+    // struct MemInfo {
+    //   size_t             refct;
+    //   NRT_dtor_function  dtor;
+    //   void              *dtor_info;
+    //   void              *data;
+    //   size_t             size;
+    // };
+    long memInfoSize = 40;
+    this.meminfoAddr = Platform.allocateMemory(memInfoSize);
     this.parentAddr = Platform.allocateMemory(8);
     // 1-d array by default, e.g., `{ i8*, i8*, i64, i64, ty*, [1 x i64], [1 x i64] }`
     this.strideAddrOffset = 8;
     this.isArrayOwner = true;
     Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
+    Platform.setMemory(null, meminfoAddr, memInfoSize, (byte) 0);
     Platform.putLong(null, holderAddr, meminfoAddr);
-    Platform.putLong(null, meminfoAddr, 0L);
   }
 
   public long addr() {

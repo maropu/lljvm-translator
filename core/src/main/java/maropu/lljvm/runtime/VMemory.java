@@ -65,6 +65,7 @@ public class VMemory {
       if (nextOffset < vm.getBase() + vm.getNumBytes()) {
         vm.setCurrentOffset(nextOffset);
       } else {
+        // TODO: Throw an exception?
         vm.setCurrentOffset(vm.getBase());
       }
       return addr;

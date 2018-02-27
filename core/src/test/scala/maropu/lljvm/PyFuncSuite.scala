@@ -184,7 +184,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(resultArray2.doubleArray() === Seq(1.0, 8.0, 27.0, 64.0))
   }
 
-  ignore("numpy dot") {
+  test("numpy dot") {
     // Matrix * Matrix case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
@@ -209,5 +209,5 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(resultArray2.doubleArray() === Seq(7.0, 10.0, 15.0, 22.0))
   }
 
-  test("logistic regression") {}
+  ignore("logistic regression") {}
 }

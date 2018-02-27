@@ -30,24 +30,35 @@ import maropu.lljvm.unsafe.Platform;
 final class NumbaRuntime {
 
   static long _NRT_MemInfo_alloc_safe_aligned(long size, int align) {
+    // We assume the total size of an allocated memory info is 40B and the structure
+    // in `numba/runtime/nrt.c` is as follows;
+    //
+    // struct MemInfo {
+    //   size_t             refct;
+    //   NRT_dtor_function  dtor;
+    //   void              *dtor_info;
+    //   void              *data;
+    //   size_t             size;
+    // };
     long memInfoSize = 40;
-    long base = Platform.allocateMemory(memInfoSize + size + align * 2);
+    long base = VMemory.allocateStack((int) (memInfoSize + size + align * 2));
     long data = base + memInfoSize;
     long rem = data % align;
     if (rem != 0) {
       long offset = align - rem;
       data += offset;
     }
-    Platform.putLong(null, base, 1);
-    Platform.putLong(null, base + 8, 0);
-    Platform.putLong(null, base + 16, 0);
+    // Initialize `MemInfo`
+    Platform.putLong(null, base, 1L); // starts with 1 refct
+    Platform.putLong(null, base + 8, 0);  // Not used now
+    Platform.putLong(null, base + 16, 0); // Not used now
     Platform.putLong(null, base + 24, data);
     Platform.putLong(null, base + 32, size);
     return base;
   }
 
   static void _NRT_MemInfo_call_dtor(long addr) {
-    Platform.freeMemory(addr);
+    // Do nothing
   }
 
   private static String toChar(byte b) {
