@@ -40,18 +40,17 @@ final class NumbaRuntime {
     //   void              *data;
     //   size_t             size;
     // };
-    long memInfoSize = 40;
-    long base = VMemory.allocateStack((int) (memInfoSize + size + align * 2));
-    long data = base + memInfoSize;
+    long meminfoSize = 40;
+    long base = VMemory.allocateStack((int) (meminfoSize + size + align * 2));
+    long data = base + meminfoSize;
     long rem = data % align;
     if (rem != 0) {
       long offset = align - rem;
       data += offset;
     }
     // Initialize `MemInfo`
+    Platform.setMemory(null, base, meminfoSize, (byte) 0);
     Platform.putLong(null, base, 1L); // starts with 1 refct
-    Platform.putLong(null, base + 8, 0);  // Not used now
-    Platform.putLong(null, base + 16, 0); // Not used now
     Platform.putLong(null, base + 24, data);
     Platform.putLong(null, base + 32, size);
     return base;

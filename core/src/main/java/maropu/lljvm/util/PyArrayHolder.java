@@ -45,6 +45,7 @@ public class PyArrayHolder implements AutoCloseable {
     // `{ i8*, i8*, i64, i64, ty*, [n x i64], [n x i64] }`.
     long holderSize = 72;
     this.holderAddr = Platform.allocateMemory(holderSize);
+
     // A pointer to allocated memory info; we assume the total size is 40B and the structure
     // in `numba/runtime/nrt.c` is as follows;
     //
@@ -55,15 +56,21 @@ public class PyArrayHolder implements AutoCloseable {
     //   void              *data;
     //   size_t             size;
     // };
-    long memInfoSize = 40;
-    this.meminfoAddr = Platform.allocateMemory(memInfoSize);
+    long meminfoSize = 40;
+    this.meminfoAddr = Platform.allocateMemory(meminfoSize);
+    // TODO: Needs to merge code to initialize `MemInfo` in `NumbaRuntime`
+    Platform.setMemory(null, meminfoAddr, meminfoSize, (byte) 0);
+    Platform.putLong(null, meminfoAddr, 1L); // starts with 1 refct
+
     this.parentAddr = Platform.allocateMemory(8);
+
     // 1-d array by default, e.g., `{ i8*, i8*, i64, i64, ty*, [1 x i64], [1 x i64] }`
     this.strideAddrOffset = 8;
-    this.isArrayOwner = true;
     Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
-    Platform.setMemory(null, meminfoAddr, memInfoSize, (byte) 0);
+    Platform.setMemory(null, meminfoAddr, meminfoSize, (byte) 0);
     Platform.putLong(null, holderAddr, meminfoAddr);
+
+    this.isArrayOwner = true;
   }
 
   public long addr() {
@@ -135,6 +142,11 @@ public class PyArrayHolder implements AutoCloseable {
     Platform.putLong(null, nitemsAddr(), length);
     Platform.putLong(null, itemsizeAddr(), size);
     Platform.putLong(null, dataAddr(), arrayAddr);
+
+    // Updates `MemInfo`
+    Platform.putLong(null, meminfoAddr + 24, arrayAddr);
+    Platform.putLong(null, meminfoAddr + 32, length * size);
+
     reshape(length, 1);
   }
 
