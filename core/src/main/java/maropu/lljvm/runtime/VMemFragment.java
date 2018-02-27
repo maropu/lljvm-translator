@@ -17,28 +17,16 @@
 
 package maropu.lljvm.runtime;
 
-import java.util.Stack;
-
 public class VMemFragment {
   private final long base;
   private final long numBytes;
 
-  private Stack<Long> stackFrames = new Stack<>();
   private long currentOffset;
 
   public VMemFragment(long baseAddr, long numBytes) {
     this.base = baseAddr;
     this.numBytes = numBytes;
     this.currentOffset = 0;
-  }
-
-  public void createStackFrame() {
-    stackFrames.push(currentOffset);
-  }
-
-  public void destroyStackFrame() {
-    assert(!stackFrames.isEmpty());
-    this.currentOffset = stackFrames.pop();
   }
 
   public long getCapacity() {
@@ -49,7 +37,6 @@ public class VMemFragment {
     return getCapacity() - currentOffset;
   }
 
-  // For memory releases
   public long getBaseAddr() {
     return base;
   }

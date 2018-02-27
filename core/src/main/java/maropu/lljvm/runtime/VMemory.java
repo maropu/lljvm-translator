@@ -17,29 +17,48 @@
 
 package maropu.lljvm.runtime;
 
-import java.lang.System;
+import java.util.Stack;
 
 import maropu.lljvm.unsafe.Platform;
+import maropu.lljvm.util.Pair;
 import maropu.lljvm.util.ReflectionUtils;
 
 /**
  * Virtual memory for storing/loading values to/from specified 64bit addresses. This class should
- * be thread-safe because multiple threads possibly access stack frames.
+ * be thread-safe because multiple threads possibly access the memory.
  */
 public class VMemory {
-  public static final String KEY_LLJVM_RUNTIME_VMEM_STACKSIZE =
-    "maropu.lljvm.runtime.vmem.stacksize";
-  public static final String DEFAULT_STACKSIZE = "2097152"; // 64KiB x 32 = 2MiB
 
-  public static final int ALIGNMENT = 8; // 8-byte alignment
+  // 8-byte alignment for this memory model
+  private static final int ALIGNMENT = 8;
 
-  // We assume multiple threads possibly access this
-  private static ThreadLocal<VMemFragment> vmem = new ThreadLocal<VMemFragment>() {
-    @Override public VMemFragment initialValue() {
-      long stackSize = Integer.parseInt(
-        System.getProperty(KEY_LLJVM_RUNTIME_VMEM_STACKSIZE, DEFAULT_STACKSIZE));
-      long baseAddr = Platform.allocateMemory(stackSize + ALIGNMENT);
-      return new VMemFragment(baseAddr , stackSize);
+  // For stack
+  private static ThreadLocal<Pair<VMemFragment, Stack<Long>>> _stack =
+       new ThreadLocal<Pair<VMemFragment, Stack<Long>>>() {
+
+     @Override public Pair<VMemFragment, Stack<Long>> initialValue() {
+       final String sizeStr = System.getProperty(
+         "maropu.lljvm.runtime.vmem.stacksize", String.valueOf(8 * 1024 * 1024));
+       int size = Integer.parseInt(sizeStr);
+       long baseAddr = Platform.allocateMemory(size + ALIGNMENT);
+       return new Pair<>(new VMemFragment(baseAddr , size), new Stack<Long>());
+    }
+
+    @Override public void remove() {
+      Platform.freeMemory(this.get().getKey().getBaseAddr());
+      super.remove();
+    }
+  };
+
+  // For heap
+  private static ThreadLocal<VMemFragment> _heap = new ThreadLocal<VMemFragment>() {
+
+     @Override public VMemFragment initialValue() {
+       final String sizeStr = System.getProperty(
+         "maropu.lljvm.runtime.vmem.heapsize", String.valueOf(2 * 1024 * 1024));
+       int size = Integer.parseInt(sizeStr);
+       long baseAddr = Platform.allocateMemory(size + ALIGNMENT);
+       return new VMemFragment(baseAddr , size);
     }
 
     @Override public void remove() {
@@ -48,6 +67,16 @@ public class VMemory {
     }
   };
 
+  private static Pair<VMemFragment, Stack<Long>> currentStack() {
+    assert(_stack.get() != null);
+    return _stack.get();
+  }
+
+  private static VMemFragment currentHeap() {
+    assert(_heap.get() != null);
+    return _heap.get();
+  }
+
   /**
    * Return the least address greater than offset which is a multiple of align.
    */
@@ -55,26 +84,28 @@ public class VMemory {
     return ((offset - 1) & ~(align - 1)) + align;
   }
 
-  private static VMemFragment currentVMemory() {
-    assert(vmem.get() != null);
-    return vmem.get();
-  }
-
   public static void createStackFrame() {
-    currentVMemory().createStackFrame();
+    Pair<VMemFragment, Stack<Long>> stack = currentStack();
+    VMemFragment mem = stack.getKey();
+    Stack<Long> stackFrames = stack.getValue();
+    stackFrames.push(mem.getCurrentAddr());
   }
 
   public static void destroyStackFrame() {
-    currentVMemory().destroyStackFrame();
+    Pair<VMemFragment, Stack<Long>> stack = currentStack();
+    VMemFragment mem = stack.getKey();
+    Stack<Long> stackFrames = stack.getValue();
+    mem.setCurrentAddr(stackFrames.pop());
   }
 
   /**
    * Allocate a memory block of the given size within the stack.
    */
-  public static long allocateStack(int requied) {
-    if (currentVMemory().getRemainingBytes() >= requied + ALIGNMENT) {
-      long addr = alignOffsetUp(currentVMemory().getCurrentAddr(), ALIGNMENT);
-      currentVMemory().setCurrentAddr(addr + requied);
+  public static long allocateStack(int required) {
+    VMemFragment stack = currentStack().getKey();
+    if (stack.getRemainingBytes() >= required + ALIGNMENT) {
+      long addr = alignOffsetUp(stack.getCurrentAddr(), ALIGNMENT);
+      stack.setCurrentAddr(addr + required);
       return addr;
     } else {
       throw new RuntimeException("Not enough memory for the stack");
@@ -84,9 +115,16 @@ public class VMemory {
   /**
    * Allocate a memory block for global variables.
    */
-  public static long allocateData(int required) {
-    // TODO: This is wrong code, so we should fix in near future
-    return allocateStack(required);
+  public static long allocateData(int _required) {
+    int required = _required + ALIGNMENT;
+    assert(currentHeap().getCapacity() > required);
+    // TODO: Needs to check if we have enough heap for global variables in a gen'd class
+    if (currentHeap().getRemainingBytes() < required) {
+      currentHeap().setCurrentAddr(currentHeap().getBaseAddr());
+    }
+    long addr = alignOffsetUp(currentHeap().getCurrentAddr(), ALIGNMENT);
+    currentHeap().setCurrentAddr(addr + required);
+    return addr;
   }
 
   /**
