@@ -34,6 +34,8 @@ import maropu.lljvm.util.ReflectionUtils;
 
 /**
  * Provides function pointers for methods.
+ *
+ * TODO: Needs to make this class thread-safe
  * 
  * @author  David Roberts
  */
