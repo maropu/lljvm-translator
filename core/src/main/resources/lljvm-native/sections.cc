@@ -98,7 +98,10 @@ void JVMWriter::printConstructor() {
 void JVMWriter::printClInit() {
     out << ".method public <clinit>()V\n";
     printSimpleInstruction(".limit stack 4");
-    
+
+    printSimpleInstruction("invokestatic",
+      "maropu/lljvm/runtime/VMemory/resetHeap()V");
+
     out << "\n\t; allocate global variables\n";
     for(Module::global_iterator i = module->global_begin(),
                                 e = module->global_end(); i != e; i++) {
@@ -113,7 +116,7 @@ void JVMWriter::printClInit() {
                 classname + "/" + getValueName(g) + " J");
         }
     }
-    
+
     out << "\n\t; initialise global variables\n";
     for(Module::global_iterator i = module->global_begin(),
                                 e = module->global_end(); i != e; i++) {

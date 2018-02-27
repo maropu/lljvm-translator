@@ -46,6 +46,7 @@ class JasminSuite extends FunSuite {
          |
          |.method public <clinit>()V
          |        .limit stack 4
+         |        invokestatic maropu/lljvm/runtime/VMemory/resetHeap()V
          |
          |        ; allocate global variables
          |

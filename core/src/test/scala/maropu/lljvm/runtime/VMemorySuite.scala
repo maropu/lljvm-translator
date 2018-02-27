@@ -68,6 +68,6 @@ class VMemorySuite extends FunSuite with BeforeAndAfterAll {
         VMemory.allocateStack(8)
       }
     }.getMessage
-    assert(errMsg === "Not enough memory for the stack")
+    assert(errMsg === "Not enough memory in the stack")
   }
 }

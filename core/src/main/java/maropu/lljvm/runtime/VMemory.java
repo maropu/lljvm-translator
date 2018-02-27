@@ -103,24 +103,24 @@ public class VMemory {
    */
   public static long allocateStack(int required) {
     VMemFragment stack = currentStack().getKey();
-    if (stack.getRemainingBytes() >= required + ALIGNMENT) {
-      long addr = alignOffsetUp(stack.getCurrentAddr(), ALIGNMENT);
-      stack.setCurrentAddr(addr + required);
-      return addr;
-    } else {
-      throw new RuntimeException("Not enough memory for the stack");
+    if (stack.getRemainingBytes() < required + ALIGNMENT) {
+      throw new RuntimeException("Not enough memory in the stack");
     }
+    long addr = alignOffsetUp(stack.getCurrentAddr(), ALIGNMENT);
+    stack.setCurrentAddr(addr + required);
+    return addr;
+  }
+
+  public static void resetHeap() {
+    currentHeap().setCurrentAddr(currentHeap().getBaseAddr());
   }
 
   /**
    * Allocate a memory block for global variables.
    */
-  public static long allocateData(int _required) {
-    int required = _required + ALIGNMENT;
-    assert(currentHeap().getCapacity() > required);
-    // TODO: Needs to check if we have enough heap for global variables in a gen'd class
-    if (currentHeap().getRemainingBytes() < required) {
-      currentHeap().setCurrentAddr(currentHeap().getBaseAddr());
+  public static long allocateData(int required) {
+    if (currentHeap().getRemainingBytes() < required + ALIGNMENT) {
+      throw new RuntimeException("Not enough memory in the heap");
     }
     long addr = alignOffsetUp(currentHeap().getCurrentAddr(), ALIGNMENT);
     currentHeap().setCurrentAddr(addr + required);
