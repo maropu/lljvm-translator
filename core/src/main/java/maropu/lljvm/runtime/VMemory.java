@@ -19,6 +19,7 @@ package maropu.lljvm.runtime;
 
 import java.util.Stack;
 
+import maropu.lljvm.LLJVMRuntimeException;
 import maropu.lljvm.unsafe.Platform;
 import maropu.lljvm.util.Pair;
 import maropu.lljvm.util.ReflectionUtils;
@@ -31,6 +32,40 @@ public class VMemory {
 
   // 8-byte alignment for this memory model
   private static final int ALIGNMENT = 8;
+
+  private static class VMemFragment {
+    private final long base;
+    private final long numBytes;
+
+    private long currentOffset;
+
+    public VMemFragment(long baseAddr, long numBytes) {
+      this.base = baseAddr;
+      this.numBytes = numBytes;
+      this.currentOffset = 0;
+    }
+
+    public long getCapacity() {
+      return numBytes;
+    }
+
+    public long getRemainingBytes() {
+      return getCapacity() - currentOffset;
+    }
+
+    public long getBaseAddr() {
+      return base;
+    }
+
+    public long getCurrentAddr() {
+      return base + currentOffset;
+  }
+
+    public void setCurrentAddr(long addr) {
+      assert(base <= addr && addr <= base + numBytes);
+      this.currentOffset = addr - base;
+    }
+  }
 
   // For stack
   private static ThreadLocal<Pair<VMemFragment, Stack<Long>>> _stack =
@@ -66,6 +101,9 @@ public class VMemory {
       super.remove();
     }
   };
+
+  // Prevents this class from being instantiated
+  private VMemory() {}
 
   private static Pair<VMemFragment, Stack<Long>> currentStack() {
     assert(_stack.get() != null);
@@ -104,7 +142,7 @@ public class VMemory {
   public static long allocateStack(int required) {
     VMemFragment stack = currentStack().getKey();
     if (stack.getRemainingBytes() < required + ALIGNMENT) {
-      throw new RuntimeException("Not enough memory in the stack");
+      throw new LLJVMRuntimeException("Not enough memory in the stack");
     }
     long addr = alignOffsetUp(stack.getCurrentAddr(), ALIGNMENT);
     stack.setCurrentAddr(addr + required);
@@ -120,7 +158,7 @@ public class VMemory {
    */
   public static long allocateData(int required) {
     if (currentHeap().getRemainingBytes() < required + ALIGNMENT) {
-      throw new RuntimeException("Not enough memory in the heap");
+      throw new LLJVMRuntimeException("Not enough memory in the heap");
     }
     long addr = alignOffsetUp(currentHeap().getCurrentAddr(), ALIGNMENT);
     currentHeap().setCurrentAddr(addr + required);
@@ -435,7 +473,6 @@ public class VMemory {
    * Fill the first len bytes of memory area dest with the constant byte val.
    */
   public static void memset(long dest, byte val, int len, int align) {
-    // TODO: make more efficient by setting larger blocks at a time
     for(long i = dest; i < dest + len; i++)
       store(i, val);
   }

@@ -29,6 +29,18 @@ import maropu.lljvm.unsafe.Platform;
 
 final class NumbaRuntime {
 
+  /******************************************************************
+   * External field values for Numba runtime.
+   ******************************************************************
+   */
+  public static long _PyExc_StopIteration = 3;
+  public static long _PyExc_SystemError = -1;
+
+
+  /******************************************************************
+   * External methods for Numba runtime.
+   ******************************************************************
+   */
   static long _NRT_MemInfo_alloc_safe_aligned(long size, int align) {
     // We assume the total size of an allocated memory info is 40B and the structure
     // in `numba/runtime/nrt.c` is as follows;

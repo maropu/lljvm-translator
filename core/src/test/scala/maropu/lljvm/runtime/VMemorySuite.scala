@@ -19,6 +19,8 @@ package maropu.lljvm.runtime
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
+import maropu.lljvm.LLJVMRuntimeException
+
 class VMemorySuite extends FunSuite with BeforeAndAfterAll {
 
   override def beforeAll(): Unit = {
@@ -63,7 +65,7 @@ class VMemorySuite extends FunSuite with BeforeAndAfterAll {
 
   // This test should lie in the end of this suite
   test("Throw an exception if not enough memory") {
-    val errMsg = intercept[RuntimeException] {
+    val errMsg = intercept[LLJVMRuntimeException] {
       while (true) {
         VMemory.allocateStack(8)
       }

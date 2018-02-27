@@ -46,18 +46,12 @@ void JVMWriter::printValueLoad(const Value *v) {
     } else if(isa<GlobalVariable>(v)) {
         const Type *ty = cast<PointerType>(v->getType())->getElementType();
         if(externRefs.count(v)) {
-            // printSimpleInstruction("getstatic", getValueName(v) + " I");
-            printSimpleInstruction("ldc", '"' + getValueName(v) + '"');
-            printSimpleInstruction("invokestatic",
-                "maropu/lljvm/runtime/Function/getExternalFieldGetterPointer"
-                "(Ljava/lang/String;)J");
-
             std::string funcName;
             raw_string_ostream strbuf(funcName);
             const Type *pt = v->getType();
-            strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
+            strbuf << "maropu/lljvm/runtime/FieldValue/get_" << getTypePostfix(pt, true) << "(Ljava/lang/String;)" << getTypeDescriptor(pt);
             strbuf.flush();
-            printSimpleInstruction("lconst_0");
+            printSimpleInstruction("ldc", '"' + getValueName(v) + '"');
             printSimpleInstruction("invokestatic", funcName);
         } else {
             printSimpleInstruction("getstatic",

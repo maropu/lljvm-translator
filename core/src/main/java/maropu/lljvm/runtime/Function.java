@@ -32,14 +32,8 @@ import java.util.Set;
 import maropu.lljvm.util.Pair;
 import maropu.lljvm.util.ReflectionUtils;
 
-/**
- * Provides function pointers for methods.
- *
- * TODO: Needs to make this class thread-safe
- * 
- * @author  David Roberts
- */
 public class Function {
+
     /** Set of registered classes */
     private static Set<String> registeredClasses = new HashSet<>();
     /** Map of function signatures to function pointers */
@@ -49,9 +43,6 @@ public class Function {
 
     /** Map of external functions to Method objects */
     private static Map<String, Pair<Long, Method>> externalFunctions = new HashMap<>();
-
-    /** Map of external fields to getter Method objects */
-    private static Map<String, Pair<Long, Method>> externalFieldGetters = new HashMap<>();
 
     static {
         for(Method method : ReflectionUtils.getStaticMethods(NumbaRuntime.class)) {
@@ -63,9 +54,7 @@ public class Function {
         }
     }
 
-    /**
-     * Prevent this class from being instantiated.
-     */
+    // Prevents this class from being instantiated
     private Function() {}
     
     /**
@@ -123,19 +112,6 @@ public class Function {
         } else {
             throw new IllegalArgumentException(
                     "Cannot resolve an external function for " + methodSignature);
-        }
-    }
-
-    public static long getExternalFieldGetterPointer(String fieldName) {
-        if (externalFieldGetters.containsKey(fieldName)) {
-            final Pair<Long, Method> func = externalFieldGetters.get(fieldName);
-            if (!functionObjects.containsKey(func.getKey())) {
-                functionObjects.put(func.getKey(), func.getValue());
-            }
-            return func.getKey();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot resolve an external field for" + fieldName);
         }
     }
 
