@@ -17,36 +17,49 @@
 
 package maropu.lljvm.runtime;
 
+import java.util.Stack;
+
 public class VMemFragment {
   private final long base;
   private final long numBytes;
 
+  private Stack<Long> stackFrames = new Stack<>();
   private long currentOffset;
 
-  public VMemFragment(long base, long numBytes) {
-    this.base = base;
+  public VMemFragment(long baseAddr, long numBytes) {
+    this.base = baseAddr;
     this.numBytes = numBytes;
-    this.currentOffset = base;
+    this.currentOffset = 0;
   }
 
-  public long getBase() {
-    return base;
+  public void createStackFrame() {
+    stackFrames.push(currentOffset);
   }
 
-  public long getNumBytes() {
+  public void destroyStackFrame() {
+    assert(!stackFrames.isEmpty());
+    this.currentOffset = stackFrames.pop();
+  }
+
+  public long getCapacity() {
     return numBytes;
   }
 
-  public long getCurrentOffset() {
-    return currentOffset;
-  }
-
   public long getRemainingBytes() {
-    return base + numBytes - currentOffset;
+    return getCapacity() - currentOffset;
   }
 
-  public void setCurrentOffset(long offset) {
-    assert(base <= offset && offset < base + numBytes);
-    this.currentOffset = offset;
+  // For memory releases
+  public long getBaseAddr() {
+    return base;
+  }
+
+  public long getCurrentAddr() {
+    return base + currentOffset;
+  }
+
+  public void setCurrentAddr(long addr) {
+    assert(base <= addr && addr <= base + numBytes);
+    this.currentOffset = addr - base;
   }
 }

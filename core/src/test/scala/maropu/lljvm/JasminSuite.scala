@@ -65,6 +65,8 @@ class JasminSuite extends FunSuite {
          |        istore 7
          |        iconst_0
          |        istore 8
+         |begin_method:
+         |        invokestatic maropu/lljvm/runtime/VMemory/createStackFrame()V
          |label1:
          |;  %1 = alloca i32, align 4
          |        bipush 4
@@ -96,6 +98,7 @@ class JasminSuite extends FunSuite {
          |        iadd
          |        istore 8 ; _8
          |;  ret i32 %5
+         |        invokestatic maropu/lljvm/runtime/VMemory/destroyStackFrame()V
          |        iload 8 ; _8
          |        ireturn
          |        .limit stack 16

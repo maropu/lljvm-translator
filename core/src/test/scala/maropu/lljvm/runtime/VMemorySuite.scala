@@ -17,9 +17,19 @@
 
 package maropu.lljvm.runtime
 
-import org.scalatest.FunSuite
+import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
-class VMemorySuite extends FunSuite {
+class VMemorySuite extends FunSuite with BeforeAndAfterAll {
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+    VMemory.createStackFrame()
+  }
+
+  override def afterAll(): Unit = {
+    VMemory.destroyStackFrame()
+    super.afterAll()
+  }
 
   test("read/write primitive types") {
     val addr1 = VMemory.allocateStack(1)
@@ -51,11 +61,13 @@ class VMemorySuite extends FunSuite {
     assert(VMemory.load_f64(addr7) === 8.0)
   }
 
-  test("read/write many times") {
-    for (i <- 0 until VMemory.DEFAULT_STACKSIZE.toInt) {
-      val addr = VMemory.allocateStack(4)
-      VMemory.store(addr, i)
-      assert(VMemory.load_i32(addr) === i)
-    }
+  // This test should lie in the end of this suite
+  test("Throw an exception if not enough memory") {
+    val errMsg = intercept[RuntimeException] {
+      while (true) {
+        VMemory.allocateStack(8)
+      }
+    }.getMessage
+    assert(errMsg === "Not enough memory for the stack")
   }
 }

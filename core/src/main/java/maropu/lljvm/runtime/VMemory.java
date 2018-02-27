@@ -38,9 +38,13 @@ public class VMemory {
     @Override public VMemFragment initialValue() {
       long stackSize = Integer.parseInt(
         System.getProperty(KEY_LLJVM_RUNTIME_VMEM_STACKSIZE, DEFAULT_STACKSIZE));
-      // TODO: How we do we release the allocated memory?
-      long base = Platform.allocateMemory(stackSize + ALIGNMENT);
-      return new VMemFragment(alignOffsetUp(base, ALIGNMENT), stackSize);
+      long baseAddr = Platform.allocateMemory(stackSize + ALIGNMENT);
+      return new VMemFragment(baseAddr , stackSize);
+    }
+
+    @Override public void remove() {
+      Platform.freeMemory(this.get().getBaseAddr());
+      super.remove();
     }
   };
 
@@ -51,51 +55,38 @@ public class VMemory {
     return ((offset - 1) & ~(align - 1)) + align;
   }
 
-  // TODO: Need to implement createStack and destroyStack?
-
-  /**
-   * Allocate a memory block of the given size within the stack.
-   */
-  public static long allocateStack(int size) {
+  private static VMemFragment currentVMemory() {
     assert(vmem.get() != null);
-    VMemFragment vm = vmem.get();
-    if (vm.getRemainingBytes() > size) {
-      long addr = alignOffsetUp(vm.getCurrentOffset(), ALIGNMENT);
-      long nextOffset = alignOffsetUp(addr + size, ALIGNMENT);
-      if (nextOffset < vm.getBase() + vm.getNumBytes()) {
-        vm.setCurrentOffset(nextOffset);
-      } else {
-        // TODO: Throw an exception?
-        vm.setCurrentOffset(vm.getBase());
-      }
-      return addr;
-    }
-    long addr = vm.getBase();
-    long nextOffset = alignOffsetUp(addr + size, ALIGNMENT);
-    vm.setCurrentOffset(nextOffset);
-    return addr;
+    return vmem.get();
+  }
+
+  public static void createStackFrame() {
+    currentVMemory().createStackFrame();
+  }
+
+  public static void destroyStackFrame() {
+    currentVMemory().destroyStackFrame();
   }
 
   /**
    * Allocate a memory block of the given size within the stack.
    */
-  public static long allocateData(int size) {
-    assert(vmem.get() != null);
-    VMemFragment vm = vmem.get();
-    if (vm.getRemainingBytes() > size) {
-      long addr = alignOffsetUp(vm.getCurrentOffset(), ALIGNMENT);
-      long nextOffset = alignOffsetUp(addr + size, ALIGNMENT);
-      if (nextOffset < vm.getBase() + vm.getNumBytes()) {
-        vm.setCurrentOffset(nextOffset);
-      } else {
-        vm.setCurrentOffset(vm.getBase());
-      }
+  public static long allocateStack(int requied) {
+    if (currentVMemory().getRemainingBytes() >= requied + ALIGNMENT) {
+      long addr = alignOffsetUp(currentVMemory().getCurrentAddr(), ALIGNMENT);
+      currentVMemory().setCurrentAddr(addr + requied);
       return addr;
+    } else {
+      throw new RuntimeException("Not enough memory for the stack");
     }
-    long addr = vm.getBase();
-    long nextOffset = alignOffsetUp(addr + size, ALIGNMENT);
-    vm.setCurrentOffset(nextOffset);
-    return addr;
+  }
+
+  /**
+   * Allocate a memory block for global variables.
+   */
+  public static long allocateData(int required) {
+    // TODO: This is wrong code, so we should fix in near future
+    return allocateStack(required);
   }
 
   /**

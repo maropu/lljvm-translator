@@ -387,9 +387,9 @@ void JVMWriter::printFunction(const Function &f) {
         printSimpleInstruction("istore", utostr(usedRegisters + i));
     }
 
-    // printLabel("begin_method");
-    // printSimpleInstruction("invokestatic",
-    //                        "maropu/lljvm/runtime/VMemory/createStackFrame()V");
+    printLabel("begin_method");
+    printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/createStackFrame()V");
+
     printFunctionBody(f);
     if(numJumps) printCatchJump(numJumps);
     printSimpleInstruction(".limit stack", utostr(stackDepth * 2));
