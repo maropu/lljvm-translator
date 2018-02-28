@@ -27,7 +27,7 @@ class FieldValueSuite extends FunSuite {
     assert(FieldValue.get_i64("_PyExc_SystemError") === -1L)
   }
 
-  test("non-existent value") {
+  test("non-existent values") {
     val errMsg = intercept[LLJVMRuntimeException] {
       FieldValue.get_i64("unknown value")
     }.getMessage
