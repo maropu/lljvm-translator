@@ -71,7 +71,10 @@ final class NumbaRuntime {
   }
 
   public static void _NRT_MemInfo_call_dtor(long addr) {
-    // Do nothing
+    // Since `MemInfo` allocated on the stack, we need to do nothing
+    long dtor = Platform.getLong(null, addr + 8);
+    long dtor_info = Platform.getLong(null, addr + 16);
+    assert(dtor == 0L && dtor_info == 0L);
   }
 
   private static String toChar(byte b) {
