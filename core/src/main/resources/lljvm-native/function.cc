@@ -117,10 +117,10 @@ void JVMWriter::printFunctionCall(const Value *functionVal,
             // const Type *pt = functionVal->getType();
             const Type *pt = ty->getReturnType();
             if (inst->getNumOperands() > 1) {
-                strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
+                strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(Ljava/lang/String;Ljava/lang/String;J)" << getTypeDescriptor(pt);
             } else {
                 // Case for no argument
-                strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(J)" << getTypeDescriptor(pt);
+                strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(Ljava/lang/String;Ljava/lang/String;)" << getTypeDescriptor(pt);
             }
             strbuf.flush();
             printSimpleInstruction("invokestatic", funcName);
@@ -160,10 +160,10 @@ void JVMWriter::printFunctionCall(const Value *functionVal,
         // const Type *pt = functionVal->getType();
         const Type *pt = fTy->getReturnType();
         if (inst->getNumOperands() > 1) {
-            strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(JJ)" << getTypeDescriptor(pt);
+            strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(Ljava/lang/String;Ljava/lang/String;J)" << getTypeDescriptor(pt);
         } else {
             // Case for no argument
-            strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(J)" << getTypeDescriptor(pt);
+            strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) << "(Ljava/lang/String;Ljava/lang/String;)" << getTypeDescriptor(pt);
         }
         strbuf.flush();
         printSimpleInstruction("invokestatic", funcName);

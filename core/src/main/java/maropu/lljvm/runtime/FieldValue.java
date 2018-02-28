@@ -38,6 +38,8 @@ public class FieldValue {
     }
   }
 
+  private FieldValue() {}
+
   public static void put(String fieldName, Object value) {
     externalFieldValues.put(fieldName, value);
   }
@@ -55,27 +57,31 @@ public class FieldValue {
     }
   }
 
+  public static boolean get_i1(String fieldName) {
+    return (Boolean) _get(fieldName);
+  }
+
   public static byte get_i8(String fieldName) {
-    return (byte) _get(fieldName);
+    return (Byte) _get(fieldName);
   }
 
   public static short get_i16(String fieldName) {
-    return (short) _get(fieldName);
+    return (Short) _get(fieldName);
   }
 
   public static int get_i32(String fieldName) {
-    return (int) _get(fieldName);
+    return (Integer) _get(fieldName);
   }
 
   public static long get_i64(String fieldName) {
-    return (long) _get(fieldName);
+    return (Long) _get(fieldName);
   }
 
   public static float get_f32(String fieldName) {
-    return (float) _get(fieldName);
+    return (Float) _get(fieldName);
   }
 
   public static double get_f64(String fieldName) {
-    return (double) _get(fieldName);
+    return (Double) _get(fieldName);
   }
 }

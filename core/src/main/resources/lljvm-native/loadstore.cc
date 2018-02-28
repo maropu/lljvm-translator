@@ -32,16 +32,11 @@ void JVMWriter::printValueLoad(const Value *v) {
         std::string sig = getValueName(f)
                         + getCallSignature(f->getFunctionType());
         if(externRefs.count(v)) {
+            printSimpleInstruction("ldc", "\"\"");
             printSimpleInstruction("ldc", '"' + sig + '"');
-            printSimpleInstruction("invokestatic",
-                "maropu/lljvm/runtime/Function/getExternalFunctionPointer"
-                "(Ljava/lang/String;)J");
         } else {
             printSimpleInstruction("ldc", '"' + classname + '"');
             printSimpleInstruction("ldc", '"' + sig + '"');
-            printSimpleInstruction("invokestatic",
-                "maropu/lljvm/runtime/Function/getFunctionPointer"
-                "(Ljava/lang/String;Ljava/lang/String;)J");
         }
     } else if(isa<GlobalVariable>(v)) {
         const Type *ty = cast<PointerType>(v->getType())->getElementType();

@@ -1,245 +1,150 @@
 /*
-* Copyright (c) 2009 David Roberts <d@vidr.cc>
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package maropu.lljvm.runtime;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
+import maropu.lljvm.LLJVMRuntimeException;
 import maropu.lljvm.util.Pair;
 import maropu.lljvm.util.ReflectionUtils;
 
 public class Function {
 
-    /** Set of registered classes */
-    private static Set<String> registeredClasses = new HashSet<>();
-    /** Map of function signatures to function pointers */
-    private static Map<String, Long> functionPointers = new HashMap<>();
-    /** Map of function pointers to Method objects */
-    private static Map<Long, Method> functionObjects = new HashMap<>();
+  private static Map<String, Method> externalFuncPointers = new ConcurrentHashMap<>();
+  private static LoadingCache<Pair<String, String>, Method> methodCache =
+      CacheBuilder.newBuilder()
+        .maximumSize(100)
+        .build(new CacheLoader<Pair<String, String>, Method>() {
 
-    /** Map of external functions to Method objects */
-    private static Map<String, Pair<Long, Method>> externalFunctions = new HashMap<>();
-
-    static {
-        for(Method method : ReflectionUtils.getStaticMethods(NumbaRuntime.class)) {
-            // TODO: Reconsider this
-            final long addr = method.hashCode();
-            final String sig = ReflectionUtils.getSignature(method);
-            method.setAccessible(true);
-            externalFunctions.put(sig, new Pair<>(addr, method));
+    @Override
+    public Method load(Pair<String, String> methodSignature) throws LLJVMRuntimeException {
+      final String targetSignature = methodSignature.getKey() + "/" + methodSignature.getValue();
+      try {
+        Class<?> clazz = ReflectionUtils.getClass(methodSignature.getKey());
+        for (Method method : ReflectionUtils.getStaticMethods(clazz)) {
+          String candidate = ReflectionUtils.getQualifiedSignature(method);
+          if (targetSignature.equals(candidate)) {
+            return method;
+          }
         }
+      } catch (Exception e) {
+        // Throws an exception in the end
+      }
+      throw new LLJVMRuntimeException("Method not found: " + targetSignature);
     }
+  });
 
-    // Prevents this class from being instantiated
-    private Function() {}
-    
-    /**
-     * If the class specified by the given binary name has not yet been
-     * registered, then generate function pointers for all public static
-     * methods that it declares.
-     * 
-     * @param classname  Binary name of the class to register.
-     * @throws ClassNotFoundException
-     *                   if no class with the given name can be found
-     */
-    private static void registerClass(String classname)
-    throws ClassNotFoundException {
-        // if(registeredClasses.contains(classname))
-        //     return;
-        Class<?> cls = ReflectionUtils.getClass(classname);
-        for(Method method : ReflectionUtils.getStaticMethods(cls)) {
-            final long addr = VMemory.allocateStack(1);
-            final String sig = ReflectionUtils.getQualifiedSignature(method);
-            functionPointers.put(sig, addr);
-            functionObjects.put(addr, method);
-            method.setAccessible(true);
-        }
-        registeredClasses.add(classname);
+  static {
+    for (Method m : ReflectionUtils.getPublicStaticMethods(NumbaRuntime.class)) {
+      externalFuncPointers.put(ReflectionUtils.getSignature(m), m);
     }
-    
-    /**
-     * Return a function pointer for the method with the specified signature
-     * declared by the specified class.
-     * 
-     * @param classname        the binary name of the declaring class
-     * @param methodSignature  the signature of the method
-     * @return                 a function pointer for the specified method
-     */
-    public static long getFunctionPointer(String classname, String methodSignature) {
+  }
+
+  private Function() {}
+
+  public static void put(String methodSignature, Method m) {
+    externalFuncPointers.put(methodSignature, m);
+  }
+
+  public static void remove(String methodSignature) {
+    externalFuncPointers.remove(methodSignature);
+  }
+
+  private static Object invoke(Method method, long args) {
+    Class<?>[] paramTypes = method.getParameterTypes();
+    try {
+      if (args != 0) {
+        return method.invoke(null, VMemory.unpack(args, paramTypes));
+      } else {
+        return method.invoke(null, null);
+      }
+    } catch (Exception e) {
+      throw new LLJVMRuntimeException("Cannot invoke a method via reflection");
+    }
+  }
+
+  private static Object invoke(String className, String methodSignature, long args) {
+    if (!className.isEmpty()) {
+      synchronized (methodCache) {
         try {
-            registerClass(classname);
-        } catch(ClassNotFoundException e) {
-            throw new RuntimeException(e);
+          Method method = methodCache.get(new Pair<>(className, methodSignature));
+          return invoke(method, args);
+        } catch (ExecutionException e) {
+          throw new LLJVMRuntimeException("Cannot load a method from the cache");
         }
-        final String sig = classname + "/" + methodSignature;
-        if(!functionPointers.containsKey(sig))
-            throw new IllegalArgumentException(
-                    "Unable to get function pointer for "+sig);
-        return functionPointers.get(sig);
-    }
-
-    public static long getExternalFunctionPointer(String methodSignature) {
-        if (externalFunctions.containsKey(methodSignature)) {
-            final Pair<Long, Method> func = externalFunctions.get(methodSignature);
-            if (!functionObjects.containsKey(func.getKey())) {
-                functionObjects.put(func.getKey(), func.getValue());
-            }
-            return func.getKey();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot resolve an external function for " + methodSignature);
-        }
-    }
-
-    /**
-     * Invoke the method pointed to by the given function pointer with the
-     * given arguments.
-     * 
-     * @param f     the function pointer
-     * @param args  a pointer to the packed list of arguments
-     * @return      the return value of the method
-     */
-    private static Object invoke(long f, long args) {
-        final Method method = functionObjects.get(f);
-        if(method == null)
-            throw new IllegalArgumentException("Invalid function pointer: "+f);
-        final Class<?>[] paramTypes = method.getParameterTypes();
+      }
+    } else {
+      // Invokes an external function
+      if (externalFuncPointers.containsKey(methodSignature)) {
         try {
-            if (args != 0) {
-                final Object[] params = VMemory.unpack(args, paramTypes);
-                return method.invoke(null, params);
-            } else {
-                return method.invoke(null, null);
-            }
-        } catch(IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch(InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if(cause instanceof RuntimeException)
-                throw (RuntimeException) cause;
-            throw new RuntimeException(cause);
+          Method method = externalFuncPointers.get(methodSignature);
+          return invoke(method, args);
+        } catch (Exception e) {
+          throw new LLJVMRuntimeException(
+            "Cannot invoke an external function for `" + methodSignature + "`");
         }
+      } else {
+        throw new LLJVMRuntimeException(
+          "Cannot resolve an external function for `" + methodSignature + "`");
+      }
     }
-    
-    /**
-     * Invoke the method pointed to by the given function pointer with the
-     * given arguments.
-     * 
-     * @param f     the function pointer
-     * @param args  a pointer to the packed list of arguments
-     */
-    public static void invoke_void(long f, long args) {
-        invoke(f, args);
-    }
-    public static void invoke_void(long f) {
-        invoke(f, 0);
-    }
+  }
 
-    /**
-     * Invoke the method pointed to by the given function pointer with the
-     * given arguments.
-     * 
-     * @param f     the function pointer
-     * @param args  a pointer to the packed list of arguments
-     * @return      the return value of the method
-     */
-    public static boolean invoke_i1(long f, long args) {
-        return (Boolean) invoke(f, args);
-    }
-    
-    /**
-     * Invoke the method pointed to by the given function pointer with the
-     * given arguments.
-     * 
-     * @param f     the function pointer
-     * @param args  a pointer to the packed list of arguments
-     * @return      the return value of the method
-     */
-    public static byte invoke_i8(long f, long args) {
-        return (Byte) invoke(f, args);
-    }
-    
-    /**
-     * Invoke the method pointed to by the given function pointer with the
-     * given arguments.
-     * 
-     * @param f     the function pointer
-     * @param args  a pointer to the packed list of arguments
-     * @return      the return value of the method
-     */
-    public static short invoke_i16(long f, long args) {
-        return (Short) invoke(f, args);
-    }
-    
-    /**
-     * Invoke the method pointed to by the given function pointer with the
-     * given arguments.
-     * 
-     * @param f     the function pointer
-     * @param args  a pointer to the packed list of arguments
-     * @return      the return value of the method
-     */
-    public static int invoke_i32(long f, long args) {
-        return (Integer) invoke(f, args);
-    }
-    
-    /**
-     * Invoke the method pointed to by the given function pointer with the
-     * given arguments.
-     * 
-     * @param f     the function pointer
-     * @param args  a pointer to the packed list of arguments
-     * @return      the return value of the method
-     */
-    public static long invoke_i64(long f, long args) {
-        return (Long) invoke(f, args);
-    }
-    
-    /**
-     * Invoke the method pointed to by the given function pointer with the
-     * given arguments.
-     * 
-     * @param f     the function pointer
-     * @param args  a pointer to the packed list of arguments
-     * @return      the return value of the method
-     */
-    public static float invoke_f32(long f, long args) {
-        return (Float) invoke(f, args);
-    }
-    
-    /**
-     * Invoke the method pointed to by the given function pointer with the
-     * given arguments.
-     * 
-     * @param f     the function pointer
-     * @param args  a pointer to the packed list of arguments
-     * @return      the return value of the method
-     */
-    public static double invoke_f64(long f, long args) {
-        return (Double) invoke(f, args);
-    }
+  public static void invoke_void(String className, String methodSignature, long args) {
+    invoke(className, methodSignature, args);
+  }
+
+  public static void invoke_void(String className, String methodSignature) {
+    invoke(className, methodSignature, 0);
+  }
+
+  public static boolean invoke_i1(String className, String methodSignature, long args) {
+    return (Boolean) invoke(className, methodSignature, args);
+  }
+
+  public static byte invoke_i8(String className, String methodSignature, long args) {
+    return (Byte) invoke(className, methodSignature, args);
+  }
+
+  public static short invoke_i16(String className, String methodSignature, long args) {
+    return (Short) invoke(className, methodSignature, args);
+  }
+
+  public static int invoke_i32(String className, String methodSignature, long args) {
+    return (Integer) invoke(className, methodSignature, args);
+  }
+
+  public static long invoke_i64(String className, String methodSignature, long args) {
+    return (Long) invoke(className, methodSignature, args);
+  }
+
+  public static float invoke_f32(String className, String methodSignature, long args) {
+    return (Float) invoke(className, methodSignature, args);
+  }
+
+  public static double invoke_f64(String className, String methodSignature, long args) {
+    return (Double) invoke(className, methodSignature, args);
+  }
 }

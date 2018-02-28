@@ -102,7 +102,6 @@ public class VMemory {
     }
   };
 
-  // Prevents this class from being instantiated
   private VMemory() {}
 
   private static Pair<VMemFragment, Stack<Long>> currentStack() {

@@ -52,9 +52,6 @@ public final class Instruction {
         private Unreachable() {}
     }
     
-    /**
-     * Prevent this class from being instantiated.
-     */
     private Instruction() {}
     
     public static boolean icmp_eq(int op1, int op2) {

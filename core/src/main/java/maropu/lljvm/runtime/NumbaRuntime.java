@@ -29,6 +29,8 @@ import maropu.lljvm.unsafe.Platform;
 
 final class NumbaRuntime {
 
+  private NumbaRuntime() {}
+
   /******************************************************************
    * External field values for Numba runtime.
    ******************************************************************
@@ -41,7 +43,7 @@ final class NumbaRuntime {
    * External methods for Numba runtime.
    ******************************************************************
    */
-  static long _NRT_MemInfo_alloc_safe_aligned(long size, int align) {
+  public static long _NRT_MemInfo_alloc_safe_aligned(long size, int align) {
     // We assume the total size of an allocated memory info is 40B and the structure
     // in `numba/runtime/nrt.c` is as follows;
     //
@@ -68,7 +70,7 @@ final class NumbaRuntime {
     return base;
   }
 
-  static void _NRT_MemInfo_call_dtor(long addr) {
+  public static void _NRT_MemInfo_call_dtor(long addr) {
     // Do nothing
   }
 
@@ -129,7 +131,7 @@ final class NumbaRuntime {
   }
 
   // Matrix * matrix: c = alpha * a * b + beta * c
-  static int _numba_xxgemm(
+  public static int _numba_xxgemm(
       byte kind,
       byte transa,
       byte transb,
@@ -160,7 +162,7 @@ final class NumbaRuntime {
   }
 
   // Matrix * vector: y = alpha * a * x + beta * y
-  static int _numba_xxgemv(
+  public static int _numba_xxgemv(
       byte kind,
       byte trans,
       long m,
@@ -175,33 +177,33 @@ final class NumbaRuntime {
   }
 
   // Vector * vector: result = dx * dy
-  static int _numba_xxdot(byte kind, byte conjugate, long n, long dx, long dy, long result) {
+  public static int _numba_xxdot(byte kind, byte conjugate, long n, long dx, long dy, long result) {
     return 0;
   }
 
-  static void _numba_gil_ensure(long x) {}
-  static void _numba_gil_release(long x) {}
-  static void _numba_do_raise(long x) {}
-  static long _numba_unpickle(long x, int y) {
+  public static void _numba_gil_ensure(long x) {}
+  public static void _numba_gil_release(long x) {}
+  public static void _numba_do_raise(long x) {}
+  public static long _numba_unpickle(long x, int y) {
     return 0;
   }
 
-  static void _Py_FatalError(long x) {}
-  static void _Py_DecRef(long x) {}
+  public static void _Py_FatalError(long x) {}
+  public static void _Py_DecRef(long x) {}
 
-  static long _PyExc_StopIteration() {
+  public static long _PyExc_StopIteration() {
     return 0;
   }
-  static long _PyExc_SystemError() {
-    return 0;
-  }
-
-  static long _PyString_FromString(long x) {
+  public static long _PyExc_SystemError() {
     return 0;
   }
 
-  static void _PyErr_SetNone(long x) {}
-  static void _PyErr_SetString(long x, long y) {}
-  static void _PyErr_WriteUnraisable(long x) {}
-  static void _PyErr_Clear() {}
+  public static long _PyString_FromString(long x) {
+    return 0;
+  }
+
+  public static void _PyErr_SetNone(long x) {}
+  public static void _PyErr_SetString(long x, long y) {}
+  public static void _PyErr_WriteUnraisable(long x) {}
+  public static void _PyErr_Clear() {}
 }
