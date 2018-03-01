@@ -17,6 +17,7 @@
 
 package maropu.lljvm.runtime;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,9 +81,10 @@ public class Function {
       } else {
         return method.invoke(null, null);
       }
-    } catch (Exception e) {
-      throw new LLJVMRuntimeException(
-        "Cannot invoke a method via reflection: " + e.getCause().getMessage());
+    } catch (IllegalAccessException e) {
+      throw new LLJVMRuntimeException("Cannot invoke a method via reflection");
+    } catch (InvocationTargetException e) {
+      throw new LLJVMRuntimeException(e.getCause().getMessage());
     }
   }
 

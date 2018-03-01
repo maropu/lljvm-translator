@@ -281,15 +281,11 @@ final class NumbaRuntime {
     return 0;
   }
 
-  public static void _Py_FatalError(long x) {}
   public static void _Py_DecRef(long x) {}
 
-  public static void _PyErr_SetNone(long x) {}
-  public static void _PyErr_SetString(long x, long y) {}
-
-  public static long _PyString_FromString(long src) {
+  public static long _PyString_FromString(long addr) {
     // Just passes through a C string pointer
-    return src;
+    return addr;
   }
 
   private static String toString(long addr) {
@@ -304,8 +300,15 @@ final class NumbaRuntime {
     return new String(strBuf, StandardCharsets.UTF_8);
   }
 
-  public static void _PyErr_WriteUnraisable(long s) {
-    throw new LLJVMRuntimeException("Numba runtime exception " + toString(s));
+  public static void _PyErr_SetNone(long errType) {}
+  public static void _PyErr_SetString(long errType, long errMsg) {}
+
+  public static void _Py_FatalError(long errMsg) {
+    throw new LLJVMRuntimeException("Numba runtime exception " + toString(errMsg));
+  }
+
+  public static void _PyErr_WriteUnraisable(long errMsg) {
+    throw new LLJVMRuntimeException("Numba runtime exception " + toString(errMsg));
   }
 
   public static void _PyErr_Clear() {
