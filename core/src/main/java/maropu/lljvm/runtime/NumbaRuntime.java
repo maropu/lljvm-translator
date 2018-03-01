@@ -27,6 +27,8 @@ import org.netlib.blas.*;
 import maropu.lljvm.LLJVMRuntimeException;
 import maropu.lljvm.unsafe.Platform;
 
+import java.nio.charset.StandardCharsets;
+
 final class NumbaRuntime {
 
   private NumbaRuntime() {}
@@ -267,29 +269,46 @@ final class NumbaRuntime {
     return 0;
   }
 
-  public static void _numba_gil_ensure(long x) {}
-  public static void _numba_gil_release(long x) {}
+  public static void _numba_gil_ensure(long x) {
+    // Do nothing
+  }
+  public static void _numba_gil_release(long x) {
+    // Do nothing
+  }
+
   public static void _numba_do_raise(long x) {}
   public static long _numba_unpickle(long x, int y) {
     return 0;
   }
 
-  public static void _Py_FatalError(long x) { }
+  public static void _Py_FatalError(long x) {}
   public static void _Py_DecRef(long x) {}
-
-  public static long _PyExc_StopIteration() {
-    return 0;
-  }
-  public static long _PyExc_SystemError() {
-    return 0;
-  }
-
-  public static long _PyString_FromString(long x) {
-    return 0;
-  }
 
   public static void _PyErr_SetNone(long x) {}
   public static void _PyErr_SetString(long x, long y) {}
-  public static void _PyErr_WriteUnraisable(long x) {}
-  public static void _PyErr_Clear() {}
+
+  public static long _PyString_FromString(long src) {
+    // Just passes through a C string pointer
+    return src;
+  }
+
+  private static String toString(long addr) {
+    final int maxNumBytes = 1024;
+    int numBytes = 0;
+    while (Platform.getByte(null, addr + numBytes) != 0) {
+      if (numBytes > maxNumBytes) break;
+      numBytes++;
+    }
+    byte[] strBuf = new byte[numBytes];
+    Platform.copyMemory(null, addr, strBuf, Platform.BYTE_ARRAY_OFFSET, numBytes);
+    return new String(strBuf, StandardCharsets.UTF_8);
+  }
+
+  public static void _PyErr_WriteUnraisable(long s) {
+    throw new LLJVMRuntimeException("Numba runtime exception " + toString(s));
+  }
+
+  public static void _PyErr_Clear() {
+    // Do nothing
+  }
 }

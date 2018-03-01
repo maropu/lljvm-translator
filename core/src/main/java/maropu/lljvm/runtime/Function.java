@@ -81,7 +81,8 @@ public class Function {
         return method.invoke(null, null);
       }
     } catch (Exception e) {
-      throw new LLJVMRuntimeException("Cannot invoke a method via reflection");
+      throw new LLJVMRuntimeException(
+        "Cannot invoke a method via reflection: " + e.getCause().getMessage());
     }
   }
 
@@ -98,13 +99,8 @@ public class Function {
     } else {
       // Invokes an external function
       if (externalFuncPointers.containsKey(methodSignature)) {
-        try {
-          Method method = externalFuncPointers.get(methodSignature);
-          return invoke(method, args);
-        } catch (Exception e) {
-          throw new LLJVMRuntimeException(
-            "Cannot invoke an external function for `" + methodSignature + "`");
-        }
+        Method method = externalFuncPointers.get(methodSignature);
+        return invoke(method, args);
       } else {
         throw new LLJVMRuntimeException(
           "Cannot resolve an external function for `" + methodSignature + "`");

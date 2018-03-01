@@ -18,11 +18,12 @@
 package maropu.lljvm
 
 import java.lang.{Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
+import java.lang.reflect.InvocationTargetException
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
-
 import maropu.lljvm.unsafe.Platform
 import maropu.lljvm.util.PyArrayHolder
+
 
 class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
@@ -255,6 +256,18 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     )
     val resultArray2 = new PyArrayHolder(result2)
     assert(resultArray2.doubleArray() === Seq(7.0, 10.0, 15.0, 22.0))
+  }
+
+  test("numpy dot - throws an exception when hitting incompatible shapes") {
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
+    val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
+    val errMsg = intercept[InvocationTargetException] {
+      val method = LLJVMUtils.getMethod(
+        TestUtils.loadClassFromResource(s"$basePath/numpy_dot_test-cfunc-mm-float32.bc"),
+        jLong.TYPE, jLong.TYPE)
+      method.invoke(null, new jLong(floatX.addr()), new jLong(floatY.addr()))
+    }.getCause.getMessage
+    assert(errMsg.contains("Cannot invoke a method via reflection: Numba runtime exception"))
   }
 
   ignore("logistic regression") {}
