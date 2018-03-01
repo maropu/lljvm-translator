@@ -68,8 +68,15 @@ write_bitcode_with_cfunc(numpy_power_test, "float32[:](float32[:], float32[:])",
 write_bitcode_with_cfunc(numpy_power_test, "float64[:](float64[:], float64[:])", "-cfunc-float64")
 
 from numpy_dot_test  import *
-write_bitcode_with_cfunc(numpy_dot_test, "float32[:,:](float32[:,:], float32[:,:])", "-cfunc-mv-float32")
-write_bitcode_with_cfunc(numpy_dot_test, "float64[:,:](float64[:,:], float64[:,:])", "-cfunc-mv-float64")
+# Matrix * Matrix case
+write_bitcode_with_cfunc(numpy_dot_test, "float32[:,:](float32[:,:], float32[:,:])", "-cfunc-mm-float32")
+write_bitcode_with_cfunc(numpy_dot_test, "float64[:,:](float64[:,:], float64[:,:])", "-cfunc-mm-float64")
+# Matrix * Vector case
+write_bitcode_with_cfunc(numpy_dot_test, "float32[:](float32[:,:], float32[:])", "-cfunc-mv-float32")
+write_bitcode_with_cfunc(numpy_dot_test, "float64[:](float64[:,:], float64[:])", "-cfunc-mv-float64")
+# Vector * Vector case
+write_bitcode_with_cfunc(numpy_dot_test, "float32(float32[:], float32[:])", "-cfunc-vv-float32")
+write_bitcode_with_cfunc(numpy_dot_test, "float64(float64[:], float64[:])", "-cfunc-vv-float64")
 
 # from numpy_logistic_regression import *
 # write_bitcode_with_cfunc(numpy_logistic_regression, "float64[:](float64[:], float64[:,:], float64[:], int64)", "-cfunc-float64")
