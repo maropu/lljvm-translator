@@ -83,7 +83,70 @@ final class NumbaRuntime {
     return new String(new byte[] { b });
   }
 
-  private static void sgemm(
+  // TODO: Needs to call BLAS native implementations if possible
+  private static void _fdot_jvm_impl(long n, long x, long y, long result) {
+    float[] fx = new float[(int) n];
+    float[] fy = new float[(int) n];
+    Platform.copyMemory(null, x, fx, Platform.FLOAT_ARRAY_OFFSET, 4 * n);
+    Platform.copyMemory(null, y, fy, Platform.FLOAT_ARRAY_OFFSET, 4 * n);
+    float value = Sdot.sdot((int) n, fx, 0, 1, fy, 0, 1);
+    Platform.putFloat(null, result, value);
+  }
+
+  private static void _ddot_jvm_impl(long n, long x, long y, long result) {
+    double[] dx = new double[(int) n];
+    double[] dy = new double[(int) n];
+    Platform.copyMemory(null, x, dx, Platform.DOUBLE_ARRAY_OFFSET, 8 * n);
+    Platform.copyMemory(null, y, dy, Platform.DOUBLE_ARRAY_OFFSET, 8 * n);
+    double value = Ddot.ddot((int) n, dx, 0, 1, dy, 0, 1);
+    Platform.putDouble(null, result, value);
+  }
+
+  private static void _sgemv_jvm_impl(
+      byte trans,
+      long m,
+      long n,
+      long alpha,
+      long a,
+      long lda,
+      long x,
+      long beta,
+      long y) {
+    float falpha = Platform.getFloat(null, alpha);
+    float fbeta = Platform.getFloat(null, beta);
+    float[] fa = new float[(int) (m * n)];
+    float[] fx = new float[(int) (n * 1)];
+    float[] fy = new float[(int) (m * 1)];
+    Platform.copyMemory(null, a, fa, Platform.FLOAT_ARRAY_OFFSET, 4 * (m * n));
+    Platform.copyMemory(null, x, fx, Platform.FLOAT_ARRAY_OFFSET, 4 * (n * 1));
+    Sgemv.sgemv(toChar(trans), (int) m, (int) n,
+      falpha, fa, 0, (int) lda, fx, 0, 1, fbeta, fy, 0, 1);
+    Platform.copyMemory(fy, Platform.FLOAT_ARRAY_OFFSET, null, y, 4 * (m * 1));
+  }
+
+  private static void _dgemv_jvm_impl(
+      byte trans,
+      long m,
+      long n,
+      long alpha,
+      long a,
+      long lda,
+      long x,
+      long beta,
+      long y) {
+    double dalpha = Platform.getDouble(null, alpha);
+    double dbeta = Platform.getDouble(null, beta);
+    double[] da = new double[(int) (m * n)];
+    double[] dx = new double[(int) (n * 1)];
+    double[] dy = new double[(int) (m * 1)];
+    Platform.copyMemory(null, a, da, Platform.DOUBLE_ARRAY_OFFSET, 8 * (m * n));
+    Platform.copyMemory(null, x, dx, Platform.DOUBLE_ARRAY_OFFSET, 8 * (n * 1));
+    Dgemv.dgemv(toChar(trans), (int) m, (int) n,
+      dalpha, da, 0, (int) lda, dx, 0, 1, dbeta, dy, 0, 1);
+    Platform.copyMemory(dy, Platform.FLOAT_ARRAY_OFFSET, null, y,8 * (m * 1));
+  }
+
+  private static void _sgemm_jvm_impl(
       byte transa,
       byte transb,
       long m,
@@ -109,7 +172,7 @@ final class NumbaRuntime {
     Platform.copyMemory(fc, Platform.FLOAT_ARRAY_OFFSET, null, c, 4 * (m * k));
   }
 
-  private static void dgemm(
+  private static void _dgemm_jvm_impl(
       byte transa,
       byte transb,
       long m,
@@ -135,6 +198,48 @@ final class NumbaRuntime {
     Platform.copyMemory(dc, Platform.DOUBLE_ARRAY_OFFSET, null, c, 8 * (m * k));
   }
 
+  // Vector * vector: result = dx * dy
+  public static int _numba_xxdot(byte kind, byte conjugate, long n, long x, long y, long result) {
+    switch (kind) {
+      case 115: // 's': float
+        _fdot_jvm_impl(n, x, y, result);
+        break;
+      case 100: // 'd': double
+        _ddot_jvm_impl(n, x, y, result);
+        break;
+      default:
+        throw new LLJVMRuntimeException(
+          "Unsupported kind in numba_xxdot: kind=" + toChar(kind));
+    }
+    return 0;
+  }
+
+  // Matrix * vector: y = alpha * a * x + beta * y
+  public static int _numba_xxgemv(
+      byte kind,
+      byte trans,
+      long m,
+      long n,
+      long alpha,
+      long a,
+      long lda,
+      long x,
+      long beta,
+      long y) {
+    switch (kind) {
+      case 115: // 's': float
+        _sgemv_jvm_impl(trans, m, n, alpha, a, lda, x, beta, y);
+        break;
+      case 100: // 'd': double
+        _dgemv_jvm_impl(trans, m, n, alpha, a, lda, x, beta, y);
+        break;
+      default:
+        throw new LLJVMRuntimeException(
+          "Unsupported kind in numba_xxgemv: kind=" + toChar(kind));
+    }
+    return 0;
+  }
+
   // Matrix * matrix: c = alpha * a * b + beta * c
   public static int _numba_xxgemm(
       byte kind,
@@ -153,10 +258,10 @@ final class NumbaRuntime {
       long ldc) {
     switch (kind) {
       case 115: // 's': float
-        sgemm(transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
+        _sgemm_jvm_impl(transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
         break;
       case 100: // 'd': double
-        dgemm(transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
+        _dgemm_jvm_impl(transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
         break;
       default:
         throw new LLJVMRuntimeException(
@@ -165,109 +270,6 @@ final class NumbaRuntime {
     return 0;
   }
 
-  private static void sgemv(
-      byte trans,
-      long m,
-      long n,
-      long alpha,
-      long a,
-      long lda,
-      long x,
-      long beta,
-      long y) {
-    float falpha = Platform.getFloat(null, alpha);
-    float fbeta = Platform.getFloat(null, beta);
-    float[] fa = new float[(int) (m * n)];
-    float[] fx = new float[(int) (n * 1)];
-    float[] fy = new float[(int) (m * 1)];
-    Platform.copyMemory(null, a, fa, Platform.FLOAT_ARRAY_OFFSET, 4 * (m * n));
-    Platform.copyMemory(null, x, fx, Platform.FLOAT_ARRAY_OFFSET, 4 * (n * 1));
-    Sgemv.sgemv(toChar(trans), (int) m, (int) n,
-      falpha, fa, 0, (int) lda, fx, 0, 1, fbeta, fy, 0, 1);
-    Platform.copyMemory(fy, Platform.FLOAT_ARRAY_OFFSET, null, y, 4 * (m * 1));
-  }
-
-  private static void dgemv(
-      byte trans,
-      long m,
-      long n,
-      long alpha,
-      long a,
-      long lda,
-      long x,
-      long beta,
-      long y) {
-    double dalpha = Platform.getDouble(null, alpha);
-    double dbeta = Platform.getDouble(null, beta);
-    double[] da = new double[(int) (m * n)];
-    double[] dx = new double[(int) (n * 1)];
-    double[] dy = new double[(int) (m * 1)];
-    Platform.copyMemory(null, a, da, Platform.DOUBLE_ARRAY_OFFSET, 8 * (m * n));
-    Platform.copyMemory(null, x, dx, Platform.DOUBLE_ARRAY_OFFSET, 8 * (n * 1));
-    Dgemv.dgemv(toChar(trans), (int) m, (int) n,
-      dalpha, da, 0, (int) lda, dx, 0, 1, dbeta, dy, 0, 1);
-    Platform.copyMemory(dy, Platform.FLOAT_ARRAY_OFFSET, null, y,8 * (m * 1));
-  }
-
-  // Matrix * vector: y = alpha * a * x + beta * y
-  public static int _numba_xxgemv(
-      byte kind,
-      byte trans,
-      long m,
-      long n,
-      long alpha,
-      long a,
-      long lda,
-      long x,
-      long beta,
-      long y) {
-    switch (kind) {
-      case 115: // 's': float
-        sgemv(trans, m, n, alpha, a, lda, x, beta, y);
-        break;
-      case 100: // 'd': double
-        dgemv(trans, m, n, alpha, a, lda, x, beta, y);
-        break;
-      default:
-        throw new LLJVMRuntimeException(
-          "Unsupported kind in numba_xxgemv: kind=" + toChar(kind));
-    }
-    return 0;
-  }
-
-  private static void fdot(long n, long x, long y, long result) {
-    float[] fx = new float[(int) n];
-    float[] fy = new float[(int) n];
-    Platform.copyMemory(null, x, fx, Platform.FLOAT_ARRAY_OFFSET, 4 * n);
-    Platform.copyMemory(null, y, fy, Platform.FLOAT_ARRAY_OFFSET, 4 * n);
-    float value = Sdot.sdot((int) n, fx, 0, 1, fy, 0, 1);
-    Platform.putFloat(null, result, value);
-  }
-
-  private static void ddot(long n, long x, long y, long result) {
-    double[] dx = new double[(int) n];
-    double[] dy = new double[(int) n];
-    Platform.copyMemory(null, x, dx, Platform.DOUBLE_ARRAY_OFFSET, 8 * n);
-    Platform.copyMemory(null, y, dy, Platform.DOUBLE_ARRAY_OFFSET, 8 * n);
-    double value = Ddot.ddot((int) n, dx, 0, 1, dy, 0, 1);
-    Platform.putDouble(null, result, value);
-  }
-
-  // Vector * vector: result = dx * dy
-  public static int _numba_xxdot(byte kind, byte conjugate, long n, long x, long y, long result) {
-    switch (kind) {
-      case 115: // 's': float
-        fdot(n, x, y, result);
-        break;
-      case 100: // 'd': double
-        ddot(n, x, y, result);
-        break;
-      default:
-        throw new LLJVMRuntimeException(
-          "Unsupported kind in numba_xxdot: kind=" + toChar(kind));
-    }
-    return 0;
-  }
 
   public static void _numba_gil_ensure(long x) {
     // Do nothing
