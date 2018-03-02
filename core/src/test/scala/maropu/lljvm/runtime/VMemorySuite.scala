@@ -17,11 +17,17 @@
 
 package maropu.lljvm.runtime
 
+import java.util.concurrent.Executors
+
+import scala.util.Random
+
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.scalatest.concurrent.TimeLimits
+import org.scalatest.time.SpanSugar._
 
 import maropu.lljvm.LLJVMRuntimeException
 
-class VMemorySuite extends FunSuite with BeforeAndAfterAll {
+class VMemorySuite extends FunSuite with BeforeAndAfterAll with TimeLimits {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -71,5 +77,102 @@ class VMemorySuite extends FunSuite with BeforeAndAfterAll {
       }
     }.getMessage
     assert(errMsg === "Not enough memory in the stack")
+  }
+
+  test("multi-threading tests") {
+    val testThread1 = new Runnable () {
+      override def run(): Unit = {
+        for (i <- 0 until 1024) {
+          VMemory.createStackFrame()
+          val xAddr = VMemory.allocateStack(4)
+          VMemory.store(xAddr, i)
+          val yAddr = VMemory.allocateStack(4)
+          VMemory.store(yAddr, 2 * i)
+          val result = VMemory.load_i32(xAddr) + VMemory.load_i32(yAddr)
+          assert(result === 3 * i)
+          VMemory.destroyStackFrame()
+        }
+      }
+    }
+
+    val testThread2 = new Runnable () {
+      override def run(): Unit = {
+        for (i <- 0 until 1024) {
+          VMemory.resetHeap()
+          val xAddr = VMemory.allocateData(4)
+          VMemory.store(xAddr, 3 * i)
+          val yAddr = VMemory.allocateData(4)
+          VMemory.store(yAddr, 2 * i)
+          val result = VMemory.load_i32(xAddr) + VMemory.load_i32(yAddr)
+          assert(result === 5 * i)
+        }
+      }
+    }
+
+    val testThread3 = new Runnable () {
+      override def run(): Unit = {
+        for (i <- 0 until 1024) {
+          VMemory.resetHeap()
+          VMemory.createStackFrame()
+          val xAddr = VMemory.allocateData(4)
+          VMemory.store(xAddr, i + 1)
+          val yAddr = VMemory.allocateStack(4)
+          VMemory.store(yAddr, 2 * i + 5)
+          val result = VMemory.load_i32(xAddr) + VMemory.load_i32(yAddr)
+          assert(result === 3 * i + 6)
+          VMemory.destroyStackFrame()
+        }
+      }
+    }
+
+    val testThread4 = new Runnable() {
+      override def run(): Unit = {
+        for (i <- 0 until 1024) {
+          VMemory.createStackFrame()
+          val baseAddr = VMemory.allocateStack(4 * 512)
+          var curAddr = baseAddr
+          var expectedValue: Int = 0
+          for (j <- 0 until 512) {
+            val v = Random.nextInt(10)
+            curAddr = VMemory.pack(curAddr, v)
+            expectedValue += v
+          }
+          val argTypes = Array.fill[Class[_]](512)(Integer.TYPE)
+          val actualValue = VMemory.unpack(baseAddr, argTypes)
+            .map(_.asInstanceOf[Integer])
+            .reduce(_ + _)
+          assert(actualValue === expectedValue)
+          VMemory.destroyStackFrame()
+        }
+      }
+    }
+
+    val testThread5 = new Runnable() {
+      override def run(): Unit = {
+        for (i <- 0 until 1024) {
+          VMemory.resetHeap()
+          val baseAddr = VMemory.allocateData(4 * 512)
+          var curAddr = baseAddr
+          var expectedValue: Int = 0
+          for (j <- 0 until 512) {
+            val v = Random.nextInt(10)
+            curAddr = VMemory.pack(curAddr, v)
+            expectedValue += v
+          }
+          val argTypes = Array.fill[Class[_]](512)(Integer.TYPE)
+          val actualValue = VMemory.unpack(baseAddr, argTypes)
+            .map(_.asInstanceOf[Integer])
+            .reduce(_ + _)
+          assert(actualValue === expectedValue)
+        }
+      }
+    }
+
+    val service = Executors.newFixedThreadPool(5)
+    failAfter(10.seconds) {
+      val threads = Seq(testThread1, testThread2, testThread3, testThread4, testThread5)
+      threads.foreach(t => service.submit(t))
+      service.shutdown()
+    }
   }
 }
