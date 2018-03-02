@@ -17,10 +17,15 @@
 
 package maropu.lljvm.runtime
 
-import maropu.lljvm.LLJVMRuntimeException
-import org.scalatest.FunSuite
+import java.util.concurrent.Executors
 
-class FieldValueSuite extends FunSuite {
+import org.scalatest.FunSuite
+import org.scalatest.concurrent.TimeLimits
+import org.scalatest.time.SpanSugar._
+
+import maropu.lljvm.LLJVMRuntimeException
+
+class FieldValueSuite extends FunSuite with TimeLimits {
 
   test("field values for Numba") {
     assert(FieldValue.get_i64("_PyExc_StopIteration") === 0L)
@@ -42,5 +47,21 @@ class FieldValueSuite extends FunSuite {
       FieldValue.get_f64("value1")
     }.getMessage
     assert(errMsg === "Cannot resolve an external field for `value1`")
+  }
+
+  test("multi-threading tests") {
+    failAfter(10.seconds) {
+      val service = Executors.newFixedThreadPool(2)
+      (0 until 5).foreach(_ => service.submit(new Runnable() {
+        override def run(): Unit = {
+          for (i <- 0 until 64) {
+            val fieldName = s"value-${Thread.currentThread().getId}-$i"
+            FieldValue.put(fieldName, i)
+            assert(FieldValue.get_i32(fieldName) === i)
+          }
+        }
+      }))
+      service.shutdown()
+    }
   }
 }

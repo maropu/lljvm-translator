@@ -80,7 +80,7 @@ class VMemorySuite extends FunSuite with BeforeAndAfterAll with TimeLimits {
   }
 
   test("multi-threading tests") {
-    val testThread1 = new Runnable () {
+    val testThread1 = new Runnable() {
       override def run(): Unit = {
         for (i <- 0 until 1024) {
           VMemory.createStackFrame()
@@ -95,7 +95,7 @@ class VMemorySuite extends FunSuite with BeforeAndAfterAll with TimeLimits {
       }
     }
 
-    val testThread2 = new Runnable () {
+    val testThread2 = new Runnable() {
       override def run(): Unit = {
         for (i <- 0 until 1024) {
           VMemory.resetHeap()
@@ -109,7 +109,7 @@ class VMemorySuite extends FunSuite with BeforeAndAfterAll with TimeLimits {
       }
     }
 
-    val testThread3 = new Runnable () {
+    val testThread3 = new Runnable() {
       override def run(): Unit = {
         for (i <- 0 until 1024) {
           VMemory.resetHeap()
@@ -168,8 +168,8 @@ class VMemorySuite extends FunSuite with BeforeAndAfterAll with TimeLimits {
       }
     }
 
-    val service = Executors.newFixedThreadPool(5)
     failAfter(10.seconds) {
+      val service = Executors.newFixedThreadPool(5)
       val threads = Seq(testThread1, testThread2, testThread3, testThread4, testThread5)
       threads.foreach(t => service.submit(t))
       service.shutdown()
