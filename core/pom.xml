@@ -44,7 +44,7 @@
     <guava.version>14.0.1</guava.version>
     <janino.version>3.0.0</janino.version>
     <jasmin.version>2.4.2</jasmin.version>
-    <scalatest.version>2.2.4</scalatest.version>
+    <scalatest.version>3.0.3</scalatest.version>
     <scalacheck.version>1.13.5</scalacheck.version>
 
     <test.java.home>${java.home}</test.java.home>
