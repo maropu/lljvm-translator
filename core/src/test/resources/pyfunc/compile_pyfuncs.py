@@ -78,6 +78,7 @@ write_bitcode_with_cfunc(numpy_dot_test, "float64[:](float64[:,:], float64[:])",
 write_bitcode_with_cfunc(numpy_dot_test, "float32(float32[:], float32[:])", "-cfunc-vv-float32")
 write_bitcode_with_cfunc(numpy_dot_test, "float64(float64[:], float64[:])", "-cfunc-vv-float64")
 
-# from numpy_logistic_regression import *
-# write_bitcode_with_cfunc(numpy_logistic_regression, "float64[:](float64[:], float64[:,:], float64[:], int64)", "-cfunc-float64")
+from numba_examples.logistic_regression.logistic_regression import *
+# write_bitcode_with_cfunc(logistic_regression, "float32[:](float32[:], float32[:,:], float32[:], int32)", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(logistic_regression, "float64[:](float64[:], float64[:,:], float64[:], int64)", "-numba-cfunc-float64")
 

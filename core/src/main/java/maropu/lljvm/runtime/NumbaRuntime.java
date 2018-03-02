@@ -37,8 +37,11 @@ final class NumbaRuntime {
    * External field values for Numba runtime.
    ******************************************************************
    */
-  public static long _PyExc_StopIteration = 3;
-  public static long _PyExc_SystemError = -1;
+  public static long _PyExc_SystemError = 0;
+  public static long _PyExc_NameError = 0;
+  public static long _PyExc_StopIteration = 0;
+  public static long _PyExc_RuntimeError = 0;
+  public static long __Py_NoneStruct = 0;
 
 
   /******************************************************************

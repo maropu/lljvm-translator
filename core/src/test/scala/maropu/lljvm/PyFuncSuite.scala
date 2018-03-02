@@ -113,16 +113,19 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
   private var pyArray1: PyArrayHolder = _
   private var pyArray2: PyArrayHolder = _
+  private var pyArray3: PyArrayHolder = _
 
   override def beforeAll(): Unit = {
     super.beforeAll()
     pyArray1 = new PyArrayHolder()
     pyArray2 = new PyArrayHolder()
+    pyArray3 = new PyArrayHolder()
   }
 
   override def afterAll(): Unit = {
     pyArray1.close()
     pyArray2.close()
+    pyArray3.close()
     super.afterAll()
   }
 
@@ -267,8 +270,26 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
         jLong.TYPE, jLong.TYPE)
       method.invoke(null, new jLong(floatX.addr()), new jLong(floatY.addr()))
     }.getCause.getMessage
-    assert(errMsg.contains("Cannot invoke a method via reflection: Numba runtime exception"))
+    assert(errMsg.contains("Numba runtime exception <Numba C callback 'numpy_dot_test'>"))
   }
 
-  ignore("logistic regression") {}
+  test("logistic regression") {
+    val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
+    val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
+    val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
+    val result = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/logistic_regression-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/logistic_regression/logistic_regression.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE),
+      arguments = Seq(
+        new jLong(doubleX.addr()), // Y
+        new jLong(doubleY.addr()), // X
+        new jLong(doubleZ.addr()), // w
+        new jLong(100))            // iterations
+    )
+    val doubleArray = new PyArrayHolder(result).doubleArray()
+    // Just checks the result values approach to zero
+    assert(doubleArray(0) < 1e-300)
+    assert(doubleArray(1) < 1e-300)
+  }
 }
