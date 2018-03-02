@@ -63,6 +63,10 @@ from for2_test import *
 write_bitcode_with_cfunc(for2_test, "float32(float32[:])", "-cfunc-float32")
 write_bitcode_with_cfunc(for2_test, "float64(float64[:])", "-cfunc-float64")
 
+from func_call_test import *
+write_bitcode_with_cfunc(func_call_test, "float32(float32, float32)", "-cfunc-float32")
+write_bitcode_with_cfunc(func_call_test, "float64(float64, float64)", "-cfunc-float64")
+
 from numpy_power_test  import *
 write_bitcode_with_cfunc(numpy_power_test, "float32[:](float32[:], float32[:])", "-cfunc-float32")
 write_bitcode_with_cfunc(numpy_power_test, "float64[:](float64[:], float64[:])", "-cfunc-float64")
