@@ -273,6 +273,27 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(errMsg.contains("Numba runtime exception <Numba C callback 'numpy_dot_test'>"))
   }
 
+  test("linear regression") {
+    val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
+    val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
+    val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
+    val result = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/linear_regression-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/linear_regression.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE, jDouble.TYPE),
+      arguments = Seq(
+        new jLong(doubleX.addr()), // Y
+        new jLong(doubleY.addr()), // X
+        new jLong(doubleZ.addr()), // w
+        new jLong(50),             // iterations
+        new jDouble(0.1))          // alphaN
+    )
+    val doubleArray = new PyArrayHolder(result).doubleArray()
+    // Just checks the result values approach to 0.50
+    assert(doubleArray(0) - 0.50 < 1e-10)
+    assert(doubleArray(1) - 0.50 < 1e-10)
+  }
+
   test("logistic regression") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
@@ -289,7 +310,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     )
     val doubleArray = new PyArrayHolder(result).doubleArray()
     // Just checks the result values approach to zero
-    assert(doubleArray(0) < 1e-300)
-    assert(doubleArray(1) < 1e-300)
+    assert(doubleArray(0) < 1.0)
+    assert(doubleArray(1) < 1.0)
   }
 }
