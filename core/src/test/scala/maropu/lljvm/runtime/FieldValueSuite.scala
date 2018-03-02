@@ -23,8 +23,8 @@ import org.scalatest.FunSuite
 class FieldValueSuite extends FunSuite {
 
   test("field values for Numba") {
-    assert(FieldValue.get_i64("_PyExc_StopIteration") === 3L)
-    assert(FieldValue.get_i64("_PyExc_SystemError") === -1L)
+    assert(FieldValue.get_i64("_PyExc_StopIteration") === 0L)
+    assert(FieldValue.get_i64("_PyExc_SystemError") === 0L)
   }
 
   test("non-existent values") {

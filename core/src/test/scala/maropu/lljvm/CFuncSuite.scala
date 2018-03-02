@@ -89,7 +89,7 @@ class CFuncSuite extends FunSuite {
       source = s"$basePath/while2_test.c",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(ArrayUtils.addressOf(floatArray)), new jLong(floatArray.size)),
-      expected = Some(27.0)
+      expected = Some(27.0f)
     )
   }
 

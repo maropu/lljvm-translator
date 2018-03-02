@@ -46,9 +46,6 @@ class FunctionSuite extends FunSuite with BeforeAndAfterAll {
     Function.invoke_void("", "_NRT_MemInfo_call_dtor(J)V", args2)
 
     // TODO: Adds tests for `_numba_xxgemm`, `_numba_xxgemv`, and `_numba_xxdot`
-
-    // Invokes `_PyExc_StopIteration()`
-    assert(Function.invoke_i64("", "_PyExc_StopIteration()J", 0) === 0L)
   }
 
   test("non-existent functions") {
