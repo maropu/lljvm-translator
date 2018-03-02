@@ -190,8 +190,8 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
     )
-    val resultArray1 = new PyArrayHolder(result1)
-    assert(resultArray1.floatArray() === Seq(1.0f, 8.0f, 27.0f, 64.0f))
+    val resultArray1 = new PyArrayHolder(result1).floatArray()
+    assert(resultArray1 === Seq(1.0f, 8.0f, 27.0f, 64.0f))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
     val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0))
@@ -201,8 +201,8 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
     )
-    val resultArray2 = new PyArrayHolder(result2)
-    assert(resultArray2.doubleArray() === Seq(1.0, 8.0, 27.0, 64.0))
+    val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    assert(resultArray2 === Seq(1.0, 8.0, 27.0, 64.0))
   }
 
   test("numpy dot - vv") {
@@ -238,8 +238,8 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
     )
-    val resultArray1 = new PyArrayHolder(result1)
-    assert(resultArray1.floatArray() === Seq(5.0f, 11.0f))
+    val resultArray1 = new PyArrayHolder(result1).floatArray()
+    assert(resultArray1 === Seq(5.0f, 11.0f))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 2.0)).reshape(2, 1)
@@ -249,8 +249,8 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
     )
-    val resultArray2 = new PyArrayHolder(result2)
-    assert(resultArray2.doubleArray() === Seq(5.0, 11.0))
+    val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    assert(resultArray2 === Seq(5.0, 11.0))
   }
 
   test("numpy dot - mm") {
@@ -263,8 +263,8 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
     )
-    val resultArray1 = new PyArrayHolder(result1)
-    assert(resultArray1.floatArray() === Seq(7.0f, 10.0f, 15.0f, 22.0f))
+    val resultArray1 = new PyArrayHolder(result1).floatArray()
+    assert(resultArray1 === Seq(7.0f, 10.0f, 15.0f, 22.0f))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
@@ -274,8 +274,8 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
     )
-    val resultArray2 = new PyArrayHolder(result2)
-    assert(resultArray2.doubleArray() === Seq(7.0, 10.0, 15.0, 22.0))
+    val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    assert(resultArray2 === Seq(7.0, 10.0, 15.0, 22.0))
   }
 
   test("numpy dot - throws an exception when hitting incompatible shapes") {
@@ -290,7 +290,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(errMsg.contains("Numba runtime exception <Numba C callback 'numpy_dot_test'>"))
   }
 
-  test("linear regression") {
+  test("numba - linear regression") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
@@ -309,13 +309,13 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     // assert(doubleArray === Seq())
   }
 
-  test("logistic regression") {
+  test("numba - logistic regression") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val result = TestUtils.doTest2[Long](
       bitcode = s"$basePath/logistic_regression-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/logistic_regression/logistic_regression.py",
+      source = s"$basePath/numba_examples/logistic_regression.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE),
       arguments = Seq(
         new jLong(doubleX.addr()), // Y
@@ -325,5 +325,207 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     )
     val doubleArray = new PyArrayHolder(result).doubleArray()
     // assert(doubleArray === Seq())
+  }
+
+  test("numba - blur image") {
+    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
+    val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
+    val result = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/filter2d-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/blur_image.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(
+        new jLong(doubleX.addr()), // image
+        new jLong(doubleY.addr())) // filt
+    )
+    val doubleArray = new PyArrayHolder(result).doubleArray()
+    // assert(doubleArray === Seq())
+  }
+
+  ignore("numba - bubble sort") {
+    val floatX = pyArray1.`with`(Array(4.0f, 2.0f, 1.0f, 3.0f))
+    val result1 = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/bubblesort-numba-cfunc-float32.bc",
+      source = s"$basePath/numba_examples/bubblesort.py",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(floatX.addr()))
+    )
+    val resultArray1 = new PyArrayHolder(result1).floatArray()
+    assert(resultArray1 === Seq(1.0f, 2.0f, 3.0f, 4.0f))
+
+    val doubleX = pyArray1.`with`(Array(4.0, 3.0, 1.0, 2.0))
+    val result2 = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/bubblesort-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/bubblesort.py",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(doubleX.addr()))
+    )
+    val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    assert(resultArray2 === Seq(1.0, 2.0, 3.0, 4.0))
+  }
+
+  ignore("numba - kernel density estimation") {
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
+    TestUtils.doTest2[Float](
+      bitcode = s"$basePath/kde-numba-cfunc-float32.bc",
+      source = s"$basePath/numba_examples/kernel_density_estimation.py",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(floatX.addr())),
+      expected = Some(0.0f)
+    )
+    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
+    TestUtils.doTest2[Double](
+      bitcode = s"$basePath/kde-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/kernel_density_estimation.py",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(doubleX.addr())),
+      expected = Some(0.0)
+    )
+  }
+
+  ignore("numba - laplace2d") {
+    val floatX = pyArray1.`with`(Array(1.0f, 1.0f, 1.0f, 1.0f))
+    val floatY = pyArray2.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f))
+    TestUtils.doTest2[Float](
+      bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float32.bc",
+      source = s"$basePath/numba_examples/laplace2d.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
+      expected = Some(0.0f)
+    )
+    val resultArray1 = floatY.floatArray()
+    assert(resultArray1 === Seq())
+
+    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
+    val doubleY = pyArray2.`with`(Array(0.0, 0.0, 0.0, 0.0))
+    TestUtils.doTest2[Double](
+      bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/laplace2d.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
+      expected = Some(0.0)
+    )
+    val resultArray2 = floatX.floatArray()
+    assert(resultArray2 === Seq())
+  }
+
+  test("numba - mandel") {
+    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
+    val result = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/create_fractal-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/mandel.py",
+      argTypes =
+        Seq(jDouble.TYPE, jDouble.TYPE, jDouble.TYPE, jDouble.TYPE, jLong.TYPE, jLong.TYPE),
+      arguments = Seq(
+        new jDouble(-1.0),         // min_x
+        new jDouble(1.0),          // max_x
+        new jDouble(-1.0),         // min_y
+        new jDouble(1.0),          // max_y
+        new jLong(doubleX.addr()), // image
+        new jLong(10)              // iters
+      )
+    )
+    val resultArray = new PyArrayHolder(result).doubleArray()
+    assert(resultArray === Seq(2.0, 2.0, 3.0, 5.0))
+  }
+
+  // TODO: Needs to implement unsupported LLVM instructions
+  ignore("numba - pi") {
+    TestUtils.doTest2[Float](
+      bitcode = s"$basePath/calc_pi-numba-cfunc-float32.bc",
+      source = s"$basePath/numba_examples/pi.py",
+      argTypes = Seq(jInt.TYPE),
+      arguments = Seq(new jInt(10)),
+      expected = Some(0.0f)
+    )
+    TestUtils.doTest2[Double](
+      bitcode = s"$basePath/calc_pi-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/pi.py",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(10)),
+      expected = Some(0.0)
+    )
+  }
+
+  ignore("numba - sum") {
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
+    TestUtils.doTest2[Float](
+      bitcode = s"$basePath/sum2d-numba-cfunc-float32.bc",
+      source = s"$basePath/numba_examples/sum.py",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(floatX.addr())),
+      expected = Some(10.0f)
+    )
+    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
+    TestUtils.doTest2[Double](
+      bitcode = s"$basePath/sum2d-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/sum.py",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(doubleX.addr())),
+      expected = Some(10.0)
+    )
+  }
+
+  // TODO: Needs to implement unsupported LLVM instructions
+  ignore("numba - ra24") {
+    val floatX = pyArray1.`with`(Array(45.0f, 45.0f, 45.0f, 45.0f))
+    val result1 = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/ra_numba-numba-cfunc-float32.bc",
+      source = s"$basePath/numba_examples/ra24.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(
+        new jInt(240),            // doy
+        new jLong(floatX.addr())  // lat
+      )
+    )
+    val resultArray1 = new PyArrayHolder(result1).floatArray()
+    assert(resultArray1 === Seq())
+
+    val doubleX = pyArray1.`with`(Array(45.0, 45.0, 45.0, 45.0))
+    val result2 = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/ra_numba-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/ra24.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(
+        new jLong(240),           // doy
+        new jLong(doubleX.addr()) // lat
+      )
+    )
+    val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    assert(resultArray2 === Seq())
+  }
+
+  ignore("numba - movemean") {
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
+    val floatY = pyArray1.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f))
+    val intX = pyArray1.`with`(Array(1, 2, 3, 4))
+    val result1 = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/move_mean-numba-cfunc-float32.bc",
+      source = s"$basePath/numba_examples/movemean.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE),
+      arguments = Seq(
+        new jLong(floatX.addr()), // a
+        new jLong(intX.addr()),   // window_arr
+        new jLong(floatY.addr())  // out
+      )
+    )
+    val resultArray1 = floatY.floatArray()
+    assert(resultArray1 === Seq())
+
+    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
+    val doubleY = pyArray1.`with`(Array(0.0, 0.0, 0.0, 0.0))
+    val longX = pyArray1.`with`(Array(1L, 2L, 3L, 4L))
+    val result2 = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/move_mean-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/movemean.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE),
+      arguments = Seq(
+        new jLong(doubleX.addr()), // a
+        new jLong(longX.addr()),   // window_arr
+        new jLong(doubleY.addr())  // out
+      )
+    )
+    val resultArray2 = doubleY.doubleArray()
+    assert(resultArray2 === Seq())
   }
 }

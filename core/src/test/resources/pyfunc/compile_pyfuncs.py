@@ -86,7 +86,47 @@ from numba_examples.linear_regression import *
 # write_bitcode_with_cfunc(linear_regression, "float32[:](float32[:], float32[:,:], float32[:], int32, float32)", "-numba-cfunc-float32")
 write_bitcode_with_cfunc(linear_regression, "float64[:](float64[:], float64[:,:], float64[:], int64, float64)", "-numba-cfunc-float64")
 
-from numba_examples.logistic_regression.logistic_regression import *
+from numba_examples.logistic_regression import *
 # write_bitcode_with_cfunc(logistic_regression, "float32[:](float32[:], float32[:,:], float32[:], int32)", "-numba-cfunc-float32")
 write_bitcode_with_cfunc(logistic_regression, "float64[:](float64[:], float64[:,:], float64[:], int64)", "-numba-cfunc-float64")
+
+from numba_examples.blur_image import *
+# write_bitcode_with_cfunc(filter2d, "float32[:,:](float32[:,:], float32[:,:])", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(filter2d, "float64[:,:](float64[:,:], float64[:,:])", "-numba-cfunc-float64")
+
+from numba_examples.bubblesort import *
+write_bitcode_with_cfunc(bubblesort, "void(float32[:])", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(bubblesort, "void(float64[:])", "-numba-cfunc-float64")
+
+from numba_examples.mergesort import *
+# write_bitcode_with_cfunc(mergesort, "float32[:](float32[:])", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(mergesort, "float64[:](float64[:])", "-numba-cfunc-float64")
+
+from numba_examples.kernel_density_estimation import *
+write_bitcode_with_cfunc(kde, "float32(float32[:])", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(kde, "float64(float64[:])", "-numba-cfunc-float64")
+
+from numba_examples.laplace2d import *
+# write_bitcode_with_cfunc(jacobi_relax_core, "float32(float32[:], float32[:])", "-numba-cfunc-float32")
+# write_bitcode_with_cfunc(jacobi_relax_core, "float64(float64[:], float64[:])", "-numba-cfunc-float64")
+
+from numba_examples.mandel import *
+# write_bitcode_with_cfunc(create_fractal, "float32[:,:](float32, float32, float32, float32, float32[:,:], int32)", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(create_fractal, "float64[:,:](float64, float64, float64, float64, float64[:,:], int64)", "-numba-cfunc-float64")
+
+from numba_examples.pi import *
+write_bitcode_with_cfunc(calc_pi, "float32(int32)", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(calc_pi, "float64(int64)", "-numba-cfunc-float64")
+
+from numba_examples.sum import *
+# write_bitcode_with_cfunc(sum2d, "float32(float32[:])", "-numba-cfunc-float32")
+# write_bitcode_with_cfunc(sum2d, "float64(float64[:])", "-numba-cfunc-float64")
+
+from numba_examples.ra24 import *
+write_bitcode_with_cfunc(ra_numba, "float32[:](int32, float32[:])", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(ra_numba, "float64[:](int64, float64[:])", "-numba-cfunc-float64")
+
+from numba_examples.movemean import *
+write_bitcode_with_cfunc(move_mean, "void(float32[:], int32[:], float32[:])", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(move_mean, "void(float64[:], int64[:], float64[:])", "-numba-cfunc-float32")
 
