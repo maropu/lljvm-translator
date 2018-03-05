@@ -79,7 +79,7 @@ class VMemorySuite extends FunSuite with BeforeAndAfterAll with TimeLimits {
     assert(errMsg === "Not enough memory in the stack")
   }
 
-  test("multi-threading tests") {
+  ignore("multi-threading tests") {
     val testThread1 = new Runnable() {
       override def run(): Unit = {
         for (i <- 0 until 1024) {

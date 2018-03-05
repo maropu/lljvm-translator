@@ -119,8 +119,8 @@ write_bitcode_with_cfunc(calc_pi, "float32(int32)", "-numba-cfunc-float32")
 write_bitcode_with_cfunc(calc_pi, "float64(int64)", "-numba-cfunc-float64")
 
 from numba_examples.sum import *
-# write_bitcode_with_cfunc(sum2d, "float32(float32[:])", "-numba-cfunc-float32")
-# write_bitcode_with_cfunc(sum2d, "float64(float64[:])", "-numba-cfunc-float64")
+write_bitcode_with_cfunc(sum2d, "float32(float32[:,:])", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(sum2d, "float64(float64[:,:])", "-numba-cfunc-float64")
 
 from numba_examples.ra24 import *
 write_bitcode_with_cfunc(ra_numba, "float32[:](int32, float32[:])", "-numba-cfunc-float32")

@@ -214,7 +214,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       source = s"$basePath/numpy_dot_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
-      expected = Some(30.0f)
+      expected = Some(1.0f)
     )
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4, 1)
@@ -224,7 +224,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       source = s"$basePath/numpy_dot_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr())),
-      expected = Some(30.0)
+      expected = Some(1.0)
     )
   }
 
@@ -239,7 +239,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
     )
     val resultArray1 = new PyArrayHolder(result1).floatArray()
-    assert(resultArray1 === Seq(5.0f, 11.0f))
+    assert(resultArray1 === Seq(1.0f, 3.0f))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 2.0)).reshape(2, 1)
@@ -250,7 +250,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
     )
     val resultArray2 = new PyArrayHolder(result2).doubleArray()
-    assert(resultArray2 === Seq(5.0, 11.0))
+    assert(resultArray2 === Seq(1.0, 3.0))
   }
 
   test("numpy dot - mm") {
@@ -426,7 +426,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       )
     )
     val resultArray = new PyArrayHolder(result).doubleArray()
-    assert(resultArray === Seq(2.0, 2.0, 3.0, 5.0))
+    assert(resultArray === Seq(2.0, 255.0, 255.0, 255.0))
   }
 
   // TODO: Needs to implement unsupported LLVM instructions
@@ -447,16 +447,16 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     )
   }
 
-  ignore("numba - sum") {
-    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
+  test("numba - sum") {
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f)).reshape(2, 3)
     TestUtils.doTest2[Float](
       bitcode = s"$basePath/sum2d-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/sum.py",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr())),
-      expected = Some(10.0f)
+      expected = Some(21.0f)
     )
-    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
+    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4, 1)
     TestUtils.doTest2[Double](
       bitcode = s"$basePath/sum2d-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/sum.py",

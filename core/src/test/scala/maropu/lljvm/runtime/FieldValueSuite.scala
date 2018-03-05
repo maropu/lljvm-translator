@@ -49,7 +49,7 @@ class FieldValueSuite extends FunSuite with TimeLimits {
     assert(errMsg === "Cannot resolve an external field for `value1`")
   }
 
-  test("multi-threading tests") {
+  ignore("multi-threading tests") {
     failAfter(10.seconds) {
       val service = Executors.newFixedThreadPool(2)
       (0 until 5).foreach(_ => service.submit(new Runnable() {

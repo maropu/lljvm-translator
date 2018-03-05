@@ -119,21 +119,14 @@ public class PyArrayHolder implements AutoCloseable {
     if (nitem != x * y) {
       throw new LLJVMRuntimeException("Total size of new array must be unchanged");
     }
-    if (is1d(x, y)) {
-      strideAddrOffset = 8;
 
-      // Updates shape and stride for 1-d arrays
-      Platform.putLong(null, shapeAddr(), x);
-      Platform.putLong(null, strideAddr(), itemsize);
-    } else {
-      strideAddrOffset = 16;
+    strideAddrOffset = 16;
 
-      // Updates shape and stride for 2-d arrays
-      Platform.putLong(null, shapeAddr(), x);
-      Platform.putLong(null, shapeAddr() + 8, y);
-      Platform.putLong(null, strideAddr(), x * itemsize);
-      Platform.putLong(null, strideAddr() + 8, itemsize);
-    }
+    // Updates shape and stride for 2-d arrays
+    Platform.putLong(null, shapeAddr(), x);
+    Platform.putLong(null, shapeAddr() + 8, y);
+    Platform.putLong(null, strideAddr(), y * itemsize);
+    Platform.putLong(null, strideAddr() + 8, itemsize);
     return this;
   }
 
@@ -147,7 +140,9 @@ public class PyArrayHolder implements AutoCloseable {
     Platform.putLong(null, meminfoAddr + 24, arrayAddr);
     Platform.putLong(null, meminfoAddr + 32, length * size);
 
-    reshape(length, 1);
+    // reshape(length, 1);
+    Platform.putLong(null, shapeAddr(), length);
+    Platform.putLong(null, strideAddr(), size);
   }
 
   public PyArrayHolder with(boolean[] ar) {
