@@ -46,41 +46,119 @@ static unsigned int alignOffset(unsigned int offset, unsigned int align) {
 void JVMWriter::printCmpInstruction(unsigned int predicate,
                                     const Value *left,
                                     const Value *right) {
-    std::string inst;
-    switch(predicate) {
-    case ICmpInst::ICMP_EQ:  inst = "icmp_eq";  break;
-    case ICmpInst::ICMP_NE:  inst = "icmp_ne";  break;
-    case ICmpInst::ICMP_ULE: inst = "icmp_ule"; break;
-    case ICmpInst::ICMP_SLE: inst = "icmp_sle"; break;
-    case ICmpInst::ICMP_UGE: inst = "icmp_uge"; break;
-    case ICmpInst::ICMP_SGE: inst = "icmp_sge"; break;
-    case ICmpInst::ICMP_ULT: inst = "icmp_ult"; break;
-    case ICmpInst::ICMP_SLT: inst = "icmp_slt"; break;
-    case ICmpInst::ICMP_UGT: inst = "icmp_ugt"; break;
-    case ICmpInst::ICMP_SGT: inst = "icmp_sgt"; break;
-    case FCmpInst::FCMP_UGT: inst = "fcmp_ugt"; break;
-    case FCmpInst::FCMP_OGT: inst = "fcmp_ogt"; break;
-    case FCmpInst::FCMP_UGE: inst = "fcmp_uge"; break;
-    case FCmpInst::FCMP_OGE: inst = "fcmp_oge"; break;
-    case FCmpInst::FCMP_ULT: inst = "fcmp_ult"; break;
-    case FCmpInst::FCMP_OLT: inst = "fcmp_olt"; break;
-    case FCmpInst::FCMP_ULE: inst = "fcmp_ule"; break;
-    case FCmpInst::FCMP_OLE: inst = "fcmp_ole"; break;
-    case FCmpInst::FCMP_UEQ: inst = "fcmp_ueq"; break;
-    case FCmpInst::FCMP_OEQ: inst = "fcmp_oeq"; break;
-    case FCmpInst::FCMP_UNE: inst = "fcmp_une"; break;
-    case FCmpInst::FCMP_ONE: inst = "fcmp_one"; break;
-    case FCmpInst::FCMP_ORD: inst = "fcmp_ord"; break;
-    case FCmpInst::FCMP_UNO: inst = "fcmp_uno"; break;
-    default:
-        errs() << "Predicate = " << predicate << '\n';
-        llvm_unreachable("Invalid cmp predicate");
+    // First, we need to check if the input is a vector type or not.
+    // TODO: We need to support vector types in other types?
+    if(const SequentialType *leftSeqTy = dyn_cast<SequentialType>(left->getType())) {
+        const SequentialType *rightSeqTy = cast<SequentialType>(right->getType());
+
+        // TODO: A return type is always i1?
+        Type *rTy = Type::getInt1Ty(module->getContext());
+        int size = targetData->getTypeAllocSize(rTy);
+        printSimpleInstruction("sipush", utostr(leftSeqTy->getNumElements() * size));
+        printSimpleInstruction("invokestatic",
+                               "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+
+        // TODO: Need to support vector computation?
+        for (int i = 0; i < leftSeqTy->getNumElements(); i++) {
+            printSimpleInstruction("dup2");
+            printSimpleInstruction("ldc2_w", utostr(i * size));
+            printSimpleInstruction("ladd");
+
+            if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
+                printValueLoad(vec->getElementAsConstant(i));
+            } else {
+                printValueLoad(left);
+                int lsize = targetData->getTypeAllocSize(leftSeqTy->getElementType());
+                printSimpleInstruction("ldc2_w", utostr(i * lsize));
+                printSimpleInstruction("ladd");
+                printIndirectLoad(leftSeqTy->getElementType());
+            }
+
+            if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
+                printValueLoad(vec->getElementAsConstant(i));
+            } else {
+                printValueLoad(right);
+                int rsize = targetData->getTypeAllocSize(rightSeqTy->getElementType());
+                printSimpleInstruction("ldc2_w", utostr(i * rsize));
+                printSimpleInstruction("ladd");
+                printIndirectLoad(rightSeqTy->getElementType());
+            }
+
+            std::string inst;
+            switch(predicate) {
+            case ICmpInst::ICMP_EQ:  inst = "icmp_eq";  break;
+            case ICmpInst::ICMP_NE:  inst = "icmp_ne";  break;
+            case ICmpInst::ICMP_ULE: inst = "icmp_ule"; break;
+            case ICmpInst::ICMP_SLE: inst = "icmp_sle"; break;
+            case ICmpInst::ICMP_UGE: inst = "icmp_uge"; break;
+            case ICmpInst::ICMP_SGE: inst = "icmp_sge"; break;
+            case ICmpInst::ICMP_ULT: inst = "icmp_ult"; break;
+            case ICmpInst::ICMP_SLT: inst = "icmp_slt"; break;
+            case ICmpInst::ICMP_UGT: inst = "icmp_ugt"; break;
+            case ICmpInst::ICMP_SGT: inst = "icmp_sgt"; break;
+            case FCmpInst::FCMP_UGT: inst = "fcmp_ugt"; break;
+            case FCmpInst::FCMP_OGT: inst = "fcmp_ogt"; break;
+            case FCmpInst::FCMP_UGE: inst = "fcmp_uge"; break;
+            case FCmpInst::FCMP_OGE: inst = "fcmp_oge"; break;
+            case FCmpInst::FCMP_ULT: inst = "fcmp_ult"; break;
+            case FCmpInst::FCMP_OLT: inst = "fcmp_olt"; break;
+            case FCmpInst::FCMP_ULE: inst = "fcmp_ule"; break;
+            case FCmpInst::FCMP_OLE: inst = "fcmp_ole"; break;
+            case FCmpInst::FCMP_UEQ: inst = "fcmp_ueq"; break;
+            case FCmpInst::FCMP_OEQ: inst = "fcmp_oeq"; break;
+            case FCmpInst::FCMP_UNE: inst = "fcmp_une"; break;
+            case FCmpInst::FCMP_ONE: inst = "fcmp_one"; break;
+            case FCmpInst::FCMP_ORD: inst = "fcmp_ord"; break;
+            case FCmpInst::FCMP_UNO: inst = "fcmp_uno"; break;
+            default:
+                errs() << "Predicate = " << predicate << '\n';
+                llvm_unreachable("Invalid cmp predicate");
+            }
+            printVirtualInstruction(
+                inst + "("
+                + getTypeDescriptor(leftSeqTy->getElementType(), true)
+                + getTypeDescriptor(rightSeqTy->getElementType(), true)
+                + ")Z");
+
+            printIndirectStore(rTy);
+        }
+    } else {
+        std::string inst;
+        switch(predicate) {
+        case ICmpInst::ICMP_EQ:  inst = "icmp_eq";  break;
+        case ICmpInst::ICMP_NE:  inst = "icmp_ne";  break;
+        case ICmpInst::ICMP_ULE: inst = "icmp_ule"; break;
+        case ICmpInst::ICMP_SLE: inst = "icmp_sle"; break;
+        case ICmpInst::ICMP_UGE: inst = "icmp_uge"; break;
+        case ICmpInst::ICMP_SGE: inst = "icmp_sge"; break;
+        case ICmpInst::ICMP_ULT: inst = "icmp_ult"; break;
+        case ICmpInst::ICMP_SLT: inst = "icmp_slt"; break;
+        case ICmpInst::ICMP_UGT: inst = "icmp_ugt"; break;
+        case ICmpInst::ICMP_SGT: inst = "icmp_sgt"; break;
+        case FCmpInst::FCMP_UGT: inst = "fcmp_ugt"; break;
+        case FCmpInst::FCMP_OGT: inst = "fcmp_ogt"; break;
+        case FCmpInst::FCMP_UGE: inst = "fcmp_uge"; break;
+        case FCmpInst::FCMP_OGE: inst = "fcmp_oge"; break;
+        case FCmpInst::FCMP_ULT: inst = "fcmp_ult"; break;
+        case FCmpInst::FCMP_OLT: inst = "fcmp_olt"; break;
+        case FCmpInst::FCMP_ULE: inst = "fcmp_ule"; break;
+        case FCmpInst::FCMP_OLE: inst = "fcmp_ole"; break;
+        case FCmpInst::FCMP_UEQ: inst = "fcmp_ueq"; break;
+        case FCmpInst::FCMP_OEQ: inst = "fcmp_oeq"; break;
+        case FCmpInst::FCMP_UNE: inst = "fcmp_une"; break;
+        case FCmpInst::FCMP_ONE: inst = "fcmp_one"; break;
+        case FCmpInst::FCMP_ORD: inst = "fcmp_ord"; break;
+        case FCmpInst::FCMP_UNO: inst = "fcmp_uno"; break;
+        default:
+            errs() << "Predicate = " << predicate << '\n';
+            llvm_unreachable("Invalid cmp predicate");
+        }
+        printVirtualInstruction(
+            inst + "("
+            + getTypeDescriptor(left->getType(), true)
+            + getTypeDescriptor(right->getType(), true)
+            + ")Z", left, right);
     }
-    printVirtualInstruction(
-        inst + "("
-        + getTypeDescriptor(left->getType(), true)
-        + getTypeDescriptor(right->getType(), true)
-        + ")Z", left, right);
 }
 
 /**
@@ -94,6 +172,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op,
                                            const Value *left,
                                            const Value *right) {
     // First, we need to check if the input is a vector type or not.
+    // TODO: We need to support vector types in other types?
     if(const SequentialType *seqTy = dyn_cast<SequentialType>(left->getType())) {
         std::string typePrefix = getTypePrefix(seqTy->getElementType(), true);
         std::string typeDescriptor = getTypeDescriptor(seqTy->getElementType());
@@ -263,49 +342,123 @@ void JVMWriter::printCastInstruction(const std::string &typePrefix,
  */
 void JVMWriter::printCastInstruction(unsigned int op, const Value *v,
                                      const Type *ty, const Type *srcTy) {
-    printValueLoad(v);
-    switch(op) {
-    case Instruction::SIToFP:
-    case Instruction::FPToSI:
-    case Instruction::FPTrunc:
-    case Instruction::FPExt:
-    case Instruction::SExt:
-        if(getBitWidth(srcTy) < 32)
-            printCastInstruction(getTypePrefix(srcTy), "i");
-        printCastInstruction(getTypePrefix(ty, true),
-                             getTypePrefix(srcTy, true)); break;
-    case Instruction::Trunc:
-        if(getBitWidth(srcTy) == 64 && getBitWidth(ty) < 32) {
-            printSimpleInstruction("l2i");
-            printCastInstruction(getTypePrefix(ty), "i");
-        } else
-            printCastInstruction(getTypePrefix(ty),
-                                 getTypePrefix(srcTy, true));
-        break;
-    case Instruction::IntToPtr:
-        // TODO: "l" is correct?
-        printCastInstruction("l", getTypePrefix(srcTy, true)); break;
-    case Instruction::PtrToInt:
-        // TODO: "l" is correct?
-        printCastInstruction(getTypePrefix(ty), "l"); break;
-    case Instruction::ZExt:
-        printVirtualInstruction("zext_" + getTypePostfix(ty, true)
-            + "(" + getTypeDescriptor(srcTy) + ")"
-            + getTypeDescriptor(ty, true));
-        break;
-    case Instruction::UIToFP:
-        printVirtualInstruction("uitofp_" + getTypePostfix(ty)
-            + "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(ty));
-        break;
-    case Instruction::FPToUI:
-        printVirtualInstruction("fptoui_" + getTypePostfix(ty)
-            + "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(ty));
-        break;
-    case Instruction::BitCast:
-        printBitCastInstruction(ty, srcTy); break;
-    default:
-        errs() << "Opcode = " << op << '\n';
-        llvm_unreachable("Invalid cast instruction");
+    // First, we need to check if the input is a vector type or not.
+    // TODO: We need to support vector types in other types?
+    // TODO: We need to check the `ty != NULL` case
+    if(ty != NULL && dyn_cast<SequentialType>(v->getType())) {
+        const SequentialType *seqTy = dyn_cast<SequentialType>(v->getType());
+        Type *srcElemTy = seqTy->getElementType();
+        Type *destElemTy = cast<SequentialType>(ty)->getElementType();
+        int size = targetData->getTypeAllocSize(destElemTy);
+        printSimpleInstruction("sipush", utostr(seqTy->getNumElements() * size));
+        printSimpleInstruction("invokestatic",
+                               "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+
+        // TODO: Need to support vector computation?
+        for (int i = 0; i < seqTy->getNumElements(); i++) {
+            printSimpleInstruction("dup2");
+            printSimpleInstruction("ldc2_w", utostr(i * size));
+            printSimpleInstruction("ladd");
+
+            if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(v)) {
+                printValueLoad(vec->getElementAsConstant(i));
+            } else {
+                printValueLoad(v);
+                int ssize = targetData->getTypeAllocSize(destElemTy);
+                printSimpleInstruction("ldc2_w", utostr(i * ssize));
+                printSimpleInstruction("ladd");
+                printIndirectLoad(seqTy->getElementType());
+            }
+
+            switch(op) {
+            case Instruction::SIToFP:
+            case Instruction::FPToSI:
+            case Instruction::FPTrunc:
+            case Instruction::FPExt:
+            case Instruction::SExt:
+                if(getBitWidth(srcElemTy) < 32)
+                    printCastInstruction(getTypePrefix(srcElemTy), "i");
+                printCastInstruction(getTypePrefix(destElemTy, true),
+                                     getTypePrefix(srcElemTy, true)); break;
+            case Instruction::Trunc:
+                if(getBitWidth(srcElemTy) == 64 && getBitWidth(destElemTy) < 32) {
+                    printSimpleInstruction("l2i");
+                    printCastInstruction(getTypePrefix(destElemTy), "i");
+                } else
+                    printCastInstruction(getTypePrefix(destElemTy),
+                                         getTypePrefix(srcElemTy, true));
+                break;
+            case Instruction::IntToPtr:
+                // TODO: "l" is correct?
+                printCastInstruction("l", getTypePrefix(srcElemTy, true)); break;
+            case Instruction::PtrToInt:
+                // TODO: "l" is correct?
+                printCastInstruction(getTypePrefix(destElemTy), "l"); break;
+            case Instruction::ZExt:
+                printVirtualInstruction("zext_" + getTypePostfix(destElemTy, false)
+                    + "(" + getTypeDescriptor(srcElemTy) + ")"
+                    + getTypeDescriptor(destElemTy, true));
+                break;
+            case Instruction::UIToFP:
+                printVirtualInstruction("uitofp_" + getTypePostfix(destElemTy)
+                    + "(" + getTypeDescriptor(srcElemTy) + ")" + getTypeDescriptor(destElemTy));
+                break;
+            case Instruction::FPToUI:
+                printVirtualInstruction("fptoui_" + getTypePostfix(destElemTy)
+                    + "(" + getTypeDescriptor(srcElemTy) + ")" + getTypeDescriptor(destElemTy));
+                break;
+            case Instruction::BitCast:
+                printBitCastInstruction(destElemTy, srcElemTy); break;
+            default:
+                errs() << "Opcode = " << op << '\n';
+                llvm_unreachable("Invalid cast instruction");
+            }
+        }
+    } else {
+        printValueLoad(v);
+        switch(op) {
+        case Instruction::SIToFP:
+        case Instruction::FPToSI:
+        case Instruction::FPTrunc:
+        case Instruction::FPExt:
+        case Instruction::SExt:
+            if(getBitWidth(srcTy) < 32)
+                printCastInstruction(getTypePrefix(srcTy), "i");
+            printCastInstruction(getTypePrefix(ty, true),
+                                 getTypePrefix(srcTy, true)); break;
+        case Instruction::Trunc:
+            if(getBitWidth(srcTy) == 64 && getBitWidth(ty) < 32) {
+                printSimpleInstruction("l2i");
+                printCastInstruction(getTypePrefix(ty), "i");
+            } else
+                printCastInstruction(getTypePrefix(ty),
+                                     getTypePrefix(srcTy, true));
+            break;
+        case Instruction::IntToPtr:
+            // TODO: "l" is correct?
+            printCastInstruction("l", getTypePrefix(srcTy, true)); break;
+        case Instruction::PtrToInt:
+            // TODO: "l" is correct?
+            printCastInstruction(getTypePrefix(ty), "l"); break;
+        case Instruction::ZExt:
+            printVirtualInstruction("zext_" + getTypePostfix(ty, true)
+                + "(" + getTypeDescriptor(srcTy) + ")"
+                + getTypeDescriptor(ty, true));
+            break;
+        case Instruction::UIToFP:
+            printVirtualInstruction("uitofp_" + getTypePostfix(ty)
+                + "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(ty));
+            break;
+        case Instruction::FPToUI:
+            printVirtualInstruction("fptoui_" + getTypePostfix(ty)
+                + "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(ty));
+            break;
+        case Instruction::BitCast:
+            printBitCastInstruction(ty, srcTy); break;
+        default:
+            errs() << "Opcode = " << op << '\n';
+            llvm_unreachable("Invalid cast instruction");
+        }
     }
 }
 
@@ -474,6 +627,25 @@ void JVMWriter::printInsertElement(const InsertElementInst *inst) {
     printIndirectStore(inst->getOperand(1)->getType());
 }
 
+void JVMWriter::printExtractElement(const ExtractElementInst *inst) {
+    const Value *vec = inst->getOperand(0);
+    const SequentialType *vecTy = cast<SequentialType>(vec->getType());
+    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
+    if (const UndefValue *undef = dyn_cast<UndefValue>(vec)) {
+        printSimpleInstruction("bipush", utostr(vecSize * undef->getNumElements()));
+        printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+    } else {
+        printValueLoad(vec);
+    }
+    printSimpleInstruction("dup2");
+    printSimpleInstruction("ldc2_w", utostr(vecSize));
+    printValueLoad(inst->getOperand(1));
+    printCastInstruction("l", getTypePrefix(inst->getOperand(1)->getType(), true));
+    printSimpleInstruction("lmul");
+    printSimpleInstruction("ladd");
+    printIndirectLoad(inst->getOperand(0)->getType());
+}
+
 void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     const Value *aggValue = inst->getOperand(0);
     const Type *aggType = aggValue->getType();
@@ -537,10 +709,14 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
     const Value *vec1 = inst->getOperand(0);
     const Value *vec2 = inst->getOperand(1);
     const SequentialType *vecTy = cast<SequentialType>(vec1->getType());
-    const ConstantAggregateZero *mask = dyn_cast<ConstantAggregateZero>(inst->getOperand(2));
-    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
-    printSimpleInstruction("bipush", utostr(vecSize * mask->getNumElements()));
-    printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+    if (const ConstantAggregateZero *mask = dyn_cast<ConstantAggregateZero>(inst->getOperand(2))) {
+      uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
+      printSimpleInstruction("bipush", utostr(vecSize * mask->getNumElements()));
+      printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+    } else {
+      // errs() << "Aggregate Operand= " << inst->getOperand(2)->getName() << '\n';
+      llvm_unreachable("Unsupported mask type");
+    }
 }
 
 void JVMWriter::printAtomicRMW(const AtomicRMWInst *inst) {

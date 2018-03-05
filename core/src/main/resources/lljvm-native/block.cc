@@ -160,6 +160,8 @@ void JVMWriter::printInstruction(const Instruction *inst) {
         printVAArgInstruction(cast<VAArgInst>(inst)); break;
     case Instruction::ExtractValue:
         printExtractValue(cast<ExtractValueInst>(inst)); break;
+    case Instruction::ExtractElement:
+        printExtractElement(cast<ExtractElementInst>(inst)); break;
     case Instruction::InsertElement:
         printInsertElement(cast<InsertElementInst>(inst)); break;
     case Instruction::InsertValue:

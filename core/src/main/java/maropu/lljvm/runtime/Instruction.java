@@ -242,16 +242,28 @@ public final class Instruction {
     return Double.isNaN(op1) || Double.isNaN(op2);
   }
 
+  public static byte zext_i8(boolean value) {
+    return (byte) (value? 1 : 0);
+  }
+
+  public static short zext_i16(boolean value) {
+    return (short) (value? 1 : 0);
+  }
+
+  public static short zext_i16(byte value) {
+    return (short) (((int) value) & (short) 0xff);
+  }
+
   public static int zext_i32(boolean value) {
     return value? 1 : 0;
   }
 
   public static int zext_i32(byte value) {
-    return ((int)value) & 0xff;
+    return ((int) value) & 0xff;
   }
 
   public static int zext_i32(short value) {
-    return ((int)value) & 0xffff;
+    return ((int) value) & 0xffff;
   }
 
   public static long zext_i64(boolean value) {

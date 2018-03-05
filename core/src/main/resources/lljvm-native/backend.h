@@ -151,6 +151,7 @@ private:
     void printAllocaInstruction(const AllocaInst *inst);
     void printVAArgInstruction(const VAArgInst *inst);
     void printExtractValue(const ExtractValueInst *inst);
+    void printExtractElement(const ExtractElementInst *inst);
     void printInsertElement(const InsertElementInst *inst);
     void printInsertValue(const InsertValueInst *inst);
     void printShuffleVector(const ShuffleVectorInst *inst);

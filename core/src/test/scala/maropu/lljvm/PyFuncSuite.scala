@@ -429,7 +429,6 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(resultArray === Seq(2.0, 255.0, 255.0, 255.0))
   }
 
-  // TODO: Needs to implement unsupported LLVM instructions
   ignore("numba - pi") {
     TestUtils.doTest2[Float](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float32.bc",
