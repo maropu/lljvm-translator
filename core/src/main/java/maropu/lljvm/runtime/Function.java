@@ -122,27 +122,55 @@ public class Function {
     return (Boolean) invoke(className, methodSignature, args);
   }
 
+  public static boolean invoke_i1(String className, String methodSignature) {
+    return (Boolean) invoke(className, methodSignature, 0);
+  }
+
   public static byte invoke_i8(String className, String methodSignature, long args) {
     return (Byte) invoke(className, methodSignature, args);
+  }
+
+  public static byte invoke_i8(String className, String methodSignature) {
+    return (Byte) invoke(className, methodSignature, 0);
   }
 
   public static short invoke_i16(String className, String methodSignature, long args) {
     return (Short) invoke(className, methodSignature, args);
   }
 
+  public static short invoke_i16(String className, String methodSignature) {
+    return (Short) invoke(className, methodSignature, 0);
+  }
+
   public static int invoke_i32(String className, String methodSignature, long args) {
     return (Integer) invoke(className, methodSignature, args);
+  }
+
+  public static int invoke_i32(String className, String methodSignature) {
+    return (Integer) invoke(className, methodSignature, 0);
   }
 
   public static long invoke_i64(String className, String methodSignature, long args) {
     return (Long) invoke(className, methodSignature, args);
   }
 
+  public static long invoke_i64(String className, String methodSignature) {
+    return (Long) invoke(className, methodSignature, 0);
+  }
+
   public static float invoke_f32(String className, String methodSignature, long args) {
     return (Float) invoke(className, methodSignature, args);
   }
 
+  public static float invoke_f32(String className, String methodSignature) {
+    return (Float) invoke(className, methodSignature, 0);
+  }
+
   public static double invoke_f64(String className, String methodSignature, long args) {
     return (Double) invoke(className, methodSignature, args);
+  }
+
+  public static double invoke_f64(String className, String methodSignature) {
+    return (Double) invoke(className, methodSignature, 0);
   }
 }

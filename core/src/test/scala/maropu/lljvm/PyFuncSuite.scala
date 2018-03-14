@@ -429,7 +429,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(resultArray === Seq(2.0, 255.0, 255.0, 255.0))
   }
 
-  ignore("numba - pi") {
+  test("numba - pi") {
     TestUtils.doTest2[Float](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/pi.py",
@@ -437,9 +437,10 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       arguments = Seq(new jInt(10)),
       expected = Some(0.0f)
     )
-    TestUtils.doTest2[Double](
+    TestUtils.doTest1[Double](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/pi.py",
+      funcName = "_cfunc__ZN14numba_examples2pi12calc_pi_2472Ex",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(10)),
       expected = Some(0.0)

@@ -397,7 +397,7 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v,
             case Instruction::ZExt:
                 printVirtualInstruction("zext_" + getTypePostfix(destElemTy, false)
                     + "(" + getTypeDescriptor(srcElemTy) + ")"
-                    + getTypeDescriptor(destElemTy, true));
+                    + getTypeDescriptor(destElemTy, false));
                 break;
             case Instruction::UIToFP:
                 printVirtualInstruction("uitofp_" + getTypePostfix(destElemTy)
@@ -413,6 +413,8 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v,
                 errs() << "Opcode = " << op << '\n';
                 llvm_unreachable("Invalid cast instruction");
             }
+
+            printIndirectStore(destElemTy);
         }
     } else {
         printValueLoad(v);
@@ -637,7 +639,7 @@ void JVMWriter::printExtractElement(const ExtractElementInst *inst) {
     } else {
         printValueLoad(vec);
     }
-    printSimpleInstruction("dup2");
+    // printSimpleInstruction("dup2");
     printSimpleInstruction("ldc2_w", utostr(vecSize));
     printValueLoad(inst->getOperand(1));
     printCastInstruction("l", getTypePrefix(inst->getOperand(1)->getType(), true));
@@ -710,9 +712,16 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
     const Value *vec2 = inst->getOperand(1);
     const SequentialType *vecTy = cast<SequentialType>(vec1->getType());
     if (const ConstantAggregateZero *mask = dyn_cast<ConstantAggregateZero>(inst->getOperand(2))) {
+      // zeroinitializer
       uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
-      printSimpleInstruction("bipush", utostr(vecSize * mask->getNumElements()));
+      printSimpleInstruction("bipush", utostr(vecSize * vecTy->getNumElements()));
       printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+    } else if (const ConstantVector *mask = dyn_cast<ConstantVector>(inst->getOperand(2))) {
+      // out << "; ConstantVector:" << *mask->getAggregateElement((unsigned) 1) << "\n";
+      uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
+      printSimpleInstruction("bipush", utostr(vecSize * vecTy->getNumElements()));
+      printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+      // printValueLoad(inst->getOperand(2));
     } else {
       // errs() << "Aggregate Operand= " << inst->getOperand(2)->getName() << '\n';
       llvm_unreachable("Unsupported mask type");

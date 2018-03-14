@@ -273,6 +273,69 @@ final class NumbaRuntime {
     return 0;
   }
 
+  // For _numba_get_np_random_state()
+  private static ThreadLocal<Long> _rnd_state_t = new ThreadLocal<Long>() {
+    // typedef struct {
+    //     int index;
+    //     /* unsigned int is sufficient on modern machines as we only need 32 bits */
+    //     unsigned int mt[MT_N];
+    //     int has_gauss;
+    //     double gauss;
+    //     int is_initialized;
+    // } rnd_state_t;
+
+    // NUMBA_EXPORT_FUNC(void)
+    // numba_rnd_init(rnd_state_t *state, unsigned int seed)
+    // {
+    //     unsigned int pos;
+    //     seed &= 0xffffffffU;
+    //
+    //     /* Knuth's PRNG as used in the Mersenne Twister reference implementation */
+    //     for (pos = 0; pos < MT_N; pos++) {
+    //         state->mt[pos] = seed;
+    //         seed = (1812433253U * (seed ^ (seed >> 30)) + pos + 1) & 0xffffffffU;
+    //     }
+    //     state->index = MT_N;
+    //     state->has_gauss = 0;
+    //     state->gauss = 0.0;
+    //     state->is_initialized = 1;
+    // }
+    @Override public Long initialValue() {
+      // A return type of this function is `{ i32, [624 x i32], i32, double, i32 }*`
+      int MT_N = 624;
+      long holderSize = 4 + MT_N * 4 + 4 + 8 + 4;
+      long holderAddr = Platform.allocateMemory(holderSize);
+      long indexOffset = 0;
+      long mtOffset = indexOffset + 4;
+      long hasGaussOffset = mtOffset + MT_N * 4;
+      long gaussOffset = hasGaussOffset + 4;
+      long isInitializedOffset = gaussOffset + 8;
+      Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
+      Platform.putInt(null, holderAddr + indexOffset, MT_N);
+      int seed = 19650218;
+      for (int i = 0; i < MT_N; i++) {
+        Platform.putInt(null, holderAddr + mtOffset + 4 * i, seed);
+        seed = (1812433253 * (seed ^ (seed >> 30)) + i + 1) & 0xffffffff;
+      }
+      Platform.putInt(null, holderAddr + hasGaussOffset, 0);
+      Platform.putDouble(null, holderAddr + gaussOffset, 0.0);
+      Platform.putInt(null, holderAddr + isInitializedOffset, 1);
+      return holderAddr;
+    }
+
+    @Override public void remove() {
+      Platform.freeMemory(this.get());
+      super.remove();
+    }
+  };
+
+  public static long _numba_get_np_random_state() {
+    return _rnd_state_t.get();
+  }
+
+  public static void _numba_rnd_shuffle(long stateAddr) {
+    // TODO: Need to implement
+  }
 
   public static void _numba_gil_ensure(long x) {
     // Do nothing

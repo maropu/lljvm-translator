@@ -42,9 +42,16 @@ void JVMWriter::printPHICopy(const BasicBlock *src, const BasicBlock *dest) {
     for(BasicBlock::const_iterator i = dest->begin(); isa<PHINode>(i); i++) {
         const PHINode *phi = cast<PHINode>(i);
         const Value *val = phi->getIncomingValueForBlock(src);
-        if(isa<UndefValue>(val))
+        // TODO: Handle vector values for `val`
+        if(isa<UndefValue>(val)) {
             continue;
-        printValueLoad(val);
+        } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(val)) {
+            printSimpleInstruction("lconst_0");
+        } else if (const ConstantAggregateZero *vec = dyn_cast<ConstantAggregateZero>(val)) {
+            printSimpleInstruction("lconst_0");
+        } else {
+            printValueLoad(val);
+        }
         printValueStore(phi);
     }
 }
@@ -84,11 +91,11 @@ void JVMWriter::printBranchInstruction(const BasicBlock *curBlock,
         if(isa<PHINode>(trueBlock->begin()))
             labelname += "$phi" + utostr(getUID());
         printSimpleInstruction("ifne", labelname);
-        
+
         if(isa<PHINode>(falseBlock->begin()))
             printPHICopy(curBlock, falseBlock);
         printSimpleInstruction("goto", getLabelName(falseBlock));
-        
+
         if(isa<PHINode>(trueBlock->begin())) {
             printLabel(labelname);
             printPHICopy(curBlock, trueBlock);
