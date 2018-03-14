@@ -376,8 +376,8 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v,
             case Instruction::FPTrunc:
             case Instruction::FPExt:
             case Instruction::SExt:
-                if(getBitWidth(srcElemTy) < 32)
-                    printCastInstruction(getTypePrefix(srcElemTy), "i");
+                // if(getBitWidth(srcElemTy) < 32)
+                //     printCastInstruction(getTypePrefix(srcElemTy), "i");
                 printCastInstruction(getTypePrefix(destElemTy, true),
                                      getTypePrefix(srcElemTy, true)); break;
             case Instruction::Trunc:
@@ -424,8 +424,8 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v,
         case Instruction::FPTrunc:
         case Instruction::FPExt:
         case Instruction::SExt:
-            if(getBitWidth(srcTy) < 32)
-                printCastInstruction(getTypePrefix(srcTy), "i");
+            // if(getBitWidth(srcTy) < 32)
+            //     printCastInstruction(getTypePrefix(srcTy), "i");
             printCastInstruction(getTypePrefix(ty, true),
                                  getTypePrefix(srcTy, true)); break;
         case Instruction::Trunc:
