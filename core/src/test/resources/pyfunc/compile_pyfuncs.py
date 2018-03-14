@@ -82,6 +82,12 @@ write_bitcode_with_cfunc(numpy_dot_test, "float64[:](float64[:,:], float64[:])",
 write_bitcode_with_cfunc(numpy_dot_test, "float32(float32[:], float32[:])", "-cfunc-vv-float32")
 write_bitcode_with_cfunc(numpy_dot_test, "float64(float64[:], float64[:])", "-cfunc-vv-float64")
 
+from numpy_random1_test import *
+write_bitcode_with_cfunc(numpy_random1_test, "float64()", "-cfunc-float64")
+
+from numpy_random2_test import *
+write_bitcode_with_cfunc(numpy_random2_test, "float64[:](int64)", "-cfunc-float64")
+
 from numba_examples.linear_regression import *
 # write_bitcode_with_cfunc(linear_regression, "float32[:](float32[:], float32[:,:], float32[:], int32, float32)", "-numba-cfunc-float32")
 write_bitcode_with_cfunc(linear_regression, "float64[:](float64[:], float64[:,:], float64[:], int64, float64)", "-numba-cfunc-float64")

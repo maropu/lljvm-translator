@@ -273,6 +273,15 @@ final class NumbaRuntime {
     return 0;
   }
 
+  private static final int MT_N = 624;
+  private static final int MT_M = 397;
+
+  private static final long indexOffset = 0;
+  private static final long mtOffset = indexOffset + 4;
+  private static final long hasGaussOffset = mtOffset + MT_N * 4;
+  private static final long gaussOffset = hasGaussOffset + 4;
+  private static final long isInitializedOffset = gaussOffset + 8;
+
   // For _numba_get_np_random_state()
   private static ThreadLocal<Long> _rnd_state_t = new ThreadLocal<Long>() {
     // typedef struct {
@@ -283,7 +292,7 @@ final class NumbaRuntime {
     //     double gauss;
     //     int is_initialized;
     // } rnd_state_t;
-
+    //
     // NUMBA_EXPORT_FUNC(void)
     // numba_rnd_init(rnd_state_t *state, unsigned int seed)
     // {
@@ -302,14 +311,8 @@ final class NumbaRuntime {
     // }
     @Override public Long initialValue() {
       // A return type of this function is `{ i32, [624 x i32], i32, double, i32 }*`
-      int MT_N = 624;
       long holderSize = 4 + MT_N * 4 + 4 + 8 + 4;
       long holderAddr = Platform.allocateMemory(holderSize);
-      long indexOffset = 0;
-      long mtOffset = indexOffset + 4;
-      long hasGaussOffset = mtOffset + MT_N * 4;
-      long gaussOffset = hasGaussOffset + 4;
-      long isInitializedOffset = gaussOffset + 8;
       Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
       Platform.putInt(null, holderAddr + indexOffset, MT_N);
       int seed = 19650218;
@@ -334,7 +337,52 @@ final class NumbaRuntime {
   }
 
   public static void _numba_rnd_shuffle(long stateAddr) {
-    // TODO: Need to implement
+    // NUMBA_EXPORT_FUNC(void)
+    // numba_rnd_shuffle(rnd_state_t *state)
+    // {
+    //   int i;
+    //   unsigned int y;
+    //
+    //   for (i = 0; i < MT_N - MT_M; i++) {
+    //     y = (state->mt[i] & MT_UPPER_MASK) | (state->mt[i+1] & MT_LOWER_MASK);
+    //     state->mt[i] = state->mt[i+MT_M] ^ (y >> 1) ^
+    //             (-(int) (y & 1) & MT_MATRIX_A);
+    //   }
+    //   for (; i < MT_N - 1; i++) {
+    //     y = (state->mt[i] & MT_UPPER_MASK) | (state->mt[i+1] & MT_LOWER_MASK);
+    //     state->mt[i] = state->mt[i+(MT_M-MT_N)] ^ (y >> 1) ^
+    //             (-(int) (y & 1) & MT_MATRIX_A);
+    //   }
+    //   y = (state->mt[MT_N - 1] & MT_UPPER_MASK) | (state->mt[0] & MT_LOWER_MASK);
+    //   state->mt[MT_N - 1] = state->mt[MT_M - 1] ^ (y >> 1) ^
+    //           (-(int) (y & 1) & MT_MATRIX_A);
+    // }
+    final int MT_UPPER_MASK = 0x80000000;
+    final int MT_LOWER_MASK = 0x7fffffff;
+    final int MT_MATRIX_A = 0x9908b0df;
+
+    for (int i = 0; i < MT_N - MT_M; i++) {
+      int mt1 = Platform.getInt(null, stateAddr + mtOffset + 4 * i) & MT_UPPER_MASK;
+      int mt2 = Platform.getInt(null, stateAddr + mtOffset + 4 * (i + 1)) & MT_LOWER_MASK;
+      int y = mt1 | mt2;
+      int mt3 = Platform.getInt(null, stateAddr + mtOffset + 4 * (i + MT_M)) & MT_LOWER_MASK;
+      int newMtValue = mt3 ^ (y >>> 1) ^ (-(y & 1) & MT_MATRIX_A);
+      Platform.putInt(null, stateAddr + mtOffset + 4 * i, newMtValue);
+    }
+    for (int i = 0; i < MT_N - 1; i++) {
+      int mt1 = Platform.getInt(null, stateAddr + mtOffset + 4 * i) & MT_UPPER_MASK;
+      int mt2 = Platform.getInt(null, stateAddr + mtOffset + 4 * (i + 1)) & MT_LOWER_MASK;
+      int y = mt1 | mt2;
+      int mt3 = Platform.getInt(null, stateAddr + mtOffset + 4 * (i + MT_M - MT_N)) & MT_LOWER_MASK;
+      int newMtValue = mt3 ^ (y >>> 1) ^ (-(y & 1) & MT_MATRIX_A);
+      Platform.putInt(null, stateAddr + mtOffset + 4 * i, newMtValue);
+    }
+    int mt1 = Platform.getInt(null, stateAddr + mtOffset + 4 * (MT_N - 1)) & MT_UPPER_MASK;
+    int mt2 = Platform.getInt(null, stateAddr + mtOffset) & MT_LOWER_MASK;
+    int y = mt1 | mt2;
+    int mt3 = Platform.getInt(null, stateAddr + mtOffset + 4 * (MT_M - 1)) & MT_LOWER_MASK;
+    int newMtValue = mt3 ^ (y >>> 1) ^ (-(y & 1) & MT_MATRIX_A);
+    Platform.putInt(null, stateAddr + mtOffset + 4 * (MT_N - 1), newMtValue);
   }
 
   public static void _numba_gil_ensure(long x) {

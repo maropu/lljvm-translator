@@ -44,8 +44,8 @@ object TestUtils extends FunSuite {
       bitcode: String,
       source: String,
       funcName: String,
-      argTypes: Seq[Class[_]],
-      arguments: Seq[AnyRef],
+      argTypes: Seq[Class[_]] = Seq.empty,
+      arguments: Seq[AnyRef] = Seq.empty,
       expected: Option[T] = None): T = try {
     val method = LLJVMUtils.getMethod(
       TestUtils.loadClassFromResource(bitcode), funcName, argTypes: _*)
@@ -62,15 +62,15 @@ object TestUtils extends FunSuite {
            |========== Source Code ==========
            |${new String(TestUtils.resourceToBytes(source), StandardCharsets.UTF_8)}
            |========== LLVM Bitcode =========
-           |${LLJVMUtils.asJVMAssemblyCode(TestUtils.resourceToBytes(bitcode))}
+           |
          """.stripMargin)
   }
 
   def doTest2[T](
       bitcode: String,
       source: String,
-      argTypes: Seq[Class[_]],
-      arguments: Seq[AnyRef],
+      argTypes: Seq[Class[_]] = Seq.empty,
+      arguments: Seq[AnyRef] = Seq.empty,
       expected: Option[T] = None): T = {
     doTest1(bitcode, source, "", argTypes, arguments, expected)
   }

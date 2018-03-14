@@ -22,6 +22,10 @@
 
 #include "backend.h"
 
+#include <sstream>
+#include <iomanip>
+#include <ios>
+
 /**
  * Load the given pointer.
  *
@@ -81,8 +85,12 @@ void JVMWriter::printConstLoad(float f) {
     // else if(IsInf(f) < 0)
     //     printSimpleInstruction("getstatic",
     //                            "java/lang/Float/NEGATIVE_INFINITY F");
-    else
-        printSimpleInstruction("ldc", std::to_string(f));
+    else {
+        std::stringstream strbuf;
+        // TODO: Need to use scientific formats?
+        strbuf << std::fixed << std::setprecision(std::numeric_limits<float>::digits10 + 1) << f;
+        printSimpleInstruction("ldc", strbuf.str());
+    }
 }
 
 /**
@@ -95,6 +103,7 @@ void JVMWriter::printConstLoad(double d) {
         printSimpleInstruction("dconst_0");
     else if(d == 1.0)
         printSimpleInstruction("dconst_1");
+    // TODO: Need to implement
     // else if(IsNAN(d))
     //     printSimpleInstruction("getstatic", "java/lang/Double/NaN D");
     // else if(IsInf(d) > 0)
@@ -103,8 +112,12 @@ void JVMWriter::printConstLoad(double d) {
     // else if(IsInf(d) < 0)
     //     printSimpleInstruction("getstatic",
     //                            "java/lang/Double/NEGATIVE_INFINITY D");
-    else
-        printSimpleInstruction("ldc2_w", std::to_string(d));
+    else {
+        std::stringstream strbuf;
+        // TODO: Need to use scientific formats?
+        strbuf << std::fixed << std::setprecision(std::numeric_limits<double>::digits10 + 1) << d;
+        printSimpleInstruction("ldc2_w", strbuf.str());
+    }
 }
 
 /**
@@ -116,10 +129,11 @@ void JVMWriter::printConstLoad(const Constant *c) {
     if(const ConstantInt *i = dyn_cast<ConstantInt>(c)) {
         printConstLoad(i->getValue());
     } else if(const ConstantFP *fp = dyn_cast<ConstantFP>(c)) {
-        if(fp->getType()->getTypeID() == Type::FloatTyID)
+        if(fp->getType()->getTypeID() == Type::FloatTyID) {
             printConstLoad(fp->getValueAPF().convertToFloat());
-        else
+        } else {
             printConstLoad(fp->getValueAPF().convertToDouble());
+        }
     } else if(isa<UndefValue>(c)) {
         printPtrLoad(0);
     } else {
