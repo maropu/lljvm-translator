@@ -415,9 +415,10 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     )
   }
 
+  // TODO: Needs to implement unsupported LLVM instructions
   ignore("numba - laplace2d") {
-    val floatX = pyArray1.`with`(Array(1.0f, 1.0f, 1.0f, 1.0f))
-    val floatY = pyArray2.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f))
+    val floatX = pyArray1.`with`(Array(1.0f, 1.0f, 1.0f, 1.0f)).reshape(2, 2)
+    val floatY = pyArray2.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f)).reshape(2, 2)
     TestUtils.doTest2[Float](
       bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/laplace2d.py",
@@ -428,8 +429,8 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     val resultArray1 = floatY.floatArray()
     assert(resultArray1 === Seq())
 
-    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
-    val doubleY = pyArray2.`with`(Array(0.0, 0.0, 0.0, 0.0))
+    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
+    val doubleY = pyArray2.`with`(Array(0.0, 0.0, 0.0, 0.0)).reshape(2, 2)
     TestUtils.doTest2[Double](
       bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/laplace2d.py",
