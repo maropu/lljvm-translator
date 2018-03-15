@@ -22,7 +22,6 @@ import java.lang.reflect.InvocationTargetException
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
-import maropu.lljvm.unsafe.Platform
 import maropu.lljvm.util.PyArrayHolder
 
 class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
@@ -371,25 +370,25 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     // assert(doubleArray === Seq())
   }
 
-  ignore("numba - bubble sort") {
+  test("numba - bubble sort") {
     val floatX = pyArray1.`with`(Array(4.0f, 2.0f, 1.0f, 3.0f))
-    val result1 = TestUtils.doTest2[Long](
+    TestUtils.doTest2[Unit](
       bitcode = s"$basePath/bubblesort-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
-    val resultArray1 = new PyArrayHolder(result1).floatArray()
+    val resultArray1 = floatX.floatArray()
     assert(resultArray1 === Seq(1.0f, 2.0f, 3.0f, 4.0f))
 
     val doubleX = pyArray1.`with`(Array(4.0, 3.0, 1.0, 2.0))
-    val result2 = TestUtils.doTest2[Long](
+    TestUtils.doTest2[Unit](
       bitcode = s"$basePath/bubblesort-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )
-    val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    val resultArray2 = doubleX.doubleArray()
     assert(resultArray2 === Seq(1.0, 2.0, 3.0, 4.0))
   }
 
