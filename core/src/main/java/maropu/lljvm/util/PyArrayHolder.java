@@ -120,9 +120,8 @@ public class PyArrayHolder implements AutoCloseable {
       throw new LLJVMRuntimeException("Total size of new array must be unchanged");
     }
 
-    strideAddrOffset = 16;
-
     // Updates shape and stride for 2-d arrays
+    strideAddrOffset = 16;
     Platform.putLong(null, shapeAddr(), x);
     Platform.putLong(null, shapeAddr() + 8, y);
     Platform.putLong(null, strideAddr(), y * itemsize);
@@ -141,6 +140,7 @@ public class PyArrayHolder implements AutoCloseable {
     Platform.putLong(null, meminfoAddr + 32, length * size);
 
     // reshape(length, 1);
+    strideAddrOffset = 8;
     Platform.putLong(null, shapeAddr(), length);
     Platform.putLong(null, strideAddr(), size);
   }

@@ -371,20 +371,24 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
   }
 
   test("numba - bubble sort") {
-    val floatX = pyArray1.`with`(Array(4.0f, 2.0f, 1.0f, 3.0f))
-    TestUtils.doTest2[Unit](
+    val floatX = new PyArrayHolder().`with`(Array(4.0f, 2.0f, 1.0f, 3.0f))
+    TestUtils.doTest1[Unit](
       bitcode = s"$basePath/bubblesort-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
+      funcName =
+        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2452E5ArrayIfLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
     val resultArray1 = floatX.floatArray()
     assert(resultArray1 === Seq(1.0f, 2.0f, 3.0f, 4.0f))
 
-    val doubleX = pyArray1.`with`(Array(4.0, 3.0, 1.0, 2.0))
-    TestUtils.doTest2[Unit](
+    val doubleX = new PyArrayHolder().`with`(Array(4.0, 3.0, 1.0, 2.0))
+    TestUtils.doTest1[Unit](
       bitcode = s"$basePath/bubblesort-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
+      funcName =
+        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2453E5ArrayIdLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )
@@ -454,7 +458,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       )
     )
     val resultArray = new PyArrayHolder(result).doubleArray()
-    assert(resultArray === Seq(2.0, 255.0, 255.0, 255.0))
+    assert(resultArray === Seq(2.0, 2.0, 3.0, 5.0))
   }
 
   ignore("numba - pi") {
