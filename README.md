@@ -1,3 +1,4 @@
+[![License](http://img.shields.io/:license-Apache_v2-blue.svg)](https://github.com/maropu/lljvm-translator/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/maropu/lljvm-translator.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
 [![Coverage Status](https://coveralls.io/repos/github/maropu/lljvm-translator/badge.svg?branch=master)](https://coveralls.io/github/maropu/lljvm-translator?branch=master)
 
