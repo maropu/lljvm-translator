@@ -102,6 +102,9 @@
     <finalName>${project.artifactId}-${project.version}</finalName>
     <testOutputDirectory>target/scala-${scala.binary.version}/test-classes</testOutputDirectory>
 
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

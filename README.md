@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/maropu/lljvm-translator.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
+[![Coverage Status](https://coveralls.io/repos/github/maropu/lljvm-translator/badge.svg?branch=master)](https://coveralls.io/github/maropu/lljvm-translator?branch=master)
 
 This is an experimental translator to build JVM bytecode from LLVM bitcode.
 Since some existing tools can generate LLVM bitcode from functions written in other languages
