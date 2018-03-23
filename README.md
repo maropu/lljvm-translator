@@ -7,6 +7,7 @@ Since some existing tools can generate LLVM bitcode from functions written in ot
 (e.g.,  [Numba](https://numba.pydata.org/) for python functions,
 [clang](https://clang.llvm.org/) for C/C++ functions, and [DragonEgg](https://dragonegg.llvm.org/) for Fortran/Go functions),
 this library targets at easily injecting the bitcode into JVMs.
+This core component has been refactored from [lljvm](https://github.com/davidar/lljvm) (credit should go to the original author).
 
 ## Python functions to JVM class methods
 
