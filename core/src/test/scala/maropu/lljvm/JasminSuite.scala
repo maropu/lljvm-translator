@@ -18,7 +18,7 @@
 package maropu.lljvm
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader}
-import java.lang.{Double => jDouble, Integer => jInt, Long => jLong}
+import java.lang.{Double => jDouble, Integer => jInt}
 
 import jasmin.ClassFile
 import org.scalatest.FunSuite
