@@ -51,15 +51,15 @@ public class LLJVMUtils {
 
   public static String asJVMAssemblyCode(byte[] bitcode) throws LLJVMRuntimeException {
     checkLLVMBitcodeFormat(bitcode);
-    String bytecode = null;
+    String jvmAsm = null;
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
-      bytecode = lljvmApi.parseBitcode(bitcode);
+      jvmAsm = lljvmApi.parseBitcode(bitcode);
     } catch (Exception e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }
-    assert(bytecode != null);
-    return bytecode;
+    assert(jvmAsm != null);
+    return jvmAsm;
   }
 
   public static List<Method> getAllMethods(Class<?> clazz) throws LLJVMRuntimeException {

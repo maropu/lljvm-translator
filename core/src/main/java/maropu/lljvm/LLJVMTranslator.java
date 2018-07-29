@@ -55,7 +55,7 @@ public class LLJVMTranslator {
 
     try (Reader in = new InputStreamReader(new ByteArrayInputStream(jasminCode.getBytes()));
           OutputStream os = new FileOutputStream(new File(outputDir, basename + ".class"))) {
-      // Compile the code and write JVM bytecode
+      // Compile the code and write as JVM bytecode
       ClassFile classFile = new ClassFile();
       classFile.readJasmin(in, "GeneratedClass", false);
       classFile.write(os);

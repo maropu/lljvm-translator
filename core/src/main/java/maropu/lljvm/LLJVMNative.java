@@ -27,7 +27,7 @@ public class LLJVMNative {
   // Calculate the memory address of a given array
   public native long addressOf(byte[] ar) throws LLJVMRuntimeException;
 
-  // Parse an input LLVM bitcode and transform it to JVM bytecode
+  // Parse an input LLVM bitcode and transform it to JVM assembly code
   public native String parseBitcode(byte[] bitcode) throws IOException, LLJVMRuntimeException;
 
   // Return a human-readable LLVM bitcode

@@ -83,11 +83,11 @@ public class LLJVMClassLoader extends ClassLoader {
 
   public Class<?> loadClassFromBitcode(String className, byte[] bitcode)
       throws IOException, LLJVMRuntimeException {
-    String bytecode = LLJVMUtils.asJVMAssemblyCode(bitcode);
+    String jvmAsm = LLJVMUtils.asJVMAssemblyCode(bitcode);
     ClassFile classFile = new ClassFile();
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     try (Reader in = new InputStreamReader(
-        new ByteArrayInputStream(bytecode.getBytes(StandardCharsets.UTF_8)))) {
+        new ByteArrayInputStream(jvmAsm.getBytes(StandardCharsets.UTF_8)))) {
       classFile.readJasmin(in, className, false);
       classFile.write(out);
     } catch (Exception e) {

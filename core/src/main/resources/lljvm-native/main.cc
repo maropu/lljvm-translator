@@ -51,8 +51,8 @@ int main(int argc, char** argv) {
   }
   std::string str((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
   try {
-    std::string bytecode = parseBitcode(str.c_str(), str.size(), debugLevel);
-    std::cout << bytecode << "\n";
+    std::string jvmAsm = parseBitcode(str.c_str(), str.size(), debugLevel);
+    std::cout << jvmAsm << "\n";
   } catch (const std::string& e) {
     std::cerr << e << std::endl;
     return -1;
