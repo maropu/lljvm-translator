@@ -21,6 +21,8 @@ import java.io.{ByteArrayOutputStream, File, IOException, PrintWriter, StringWri
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 
+import scala.util.Try
+
 import org.scalatest.FunSuite
 
 object TestUtils extends FunSuite {
@@ -56,13 +58,16 @@ object TestUtils extends FunSuite {
     actualResult.asInstanceOf[T]
   } catch {
     case e: Throwable =>
+      val testCode = TestUtils.resourceToBytes(bitcode)
       fail(
         s"""Test failed because: ${e.getMessage}
            |${exceptionString(e)}
            |========== Source Code ==========
            |${new String(TestUtils.resourceToBytes(source), StandardCharsets.UTF_8)}
-           |========== LLVM Bitcode =========
-           |
+           |========== LLVM Assembly Code =========
+           |${LLJVMUtils.asLLVMAssemblyCode(testCode)}
+           |========== JVM Assembly Code =========
+           |${Try(LLJVMUtils.asJVMAssemblyCode(testCode)).getOrElse("<invalid>")}
          """.stripMargin)
   }
 
