@@ -134,5 +134,5 @@ write_bitcode_with_cfunc(ra_numba, "float64[:](int64, float64[:])", "-numba-cfun
 
 from numba_examples.movemean import *
 write_bitcode_with_cfunc(move_mean, "void(float32[:], int32[:], float32[:])", "-numba-cfunc-float32")
-write_bitcode_with_cfunc(move_mean, "void(float64[:], int64[:], float64[:])", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(move_mean, "void(float64[:], int64[:], float64[:])", "-numba-cfunc-float64")
 
