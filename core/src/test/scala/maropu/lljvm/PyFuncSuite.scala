@@ -180,104 +180,128 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     )
   }
 
-  test("numpy power") {
+  test("numpy power (not supported") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
-    val result1 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_power_test-cfunc-float32.bc",
-      source = s"$basePath/numpy_power_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
-    )
-    val resultArray1 = new PyArrayHolder(result1).floatArray()
-    assert(resultArray1 === Seq(1.0f, 8.0f, 27.0f, 64.0f))
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/numpy_power_test-cfunc-float32.bc",
+        // source = s"$basePath/numpy_power_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
+      )
+    }.getMessage
+    // val resultArray1 = new PyArrayHolder(result1).floatArray()
+    // assert(resultArray1 === Seq(1.0f, 8.0f, 27.0f, 64.0f))
+    assert(errMsg1.contains("FIELD not supported:"))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
     val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0))
-    val result2 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_power_test-cfunc-float64.bc",
-      source = s"$basePath/numpy_power_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
-    )
-    val resultArray2 = new PyArrayHolder(result2).doubleArray()
-    assert(resultArray2 === Seq(1.0, 8.0, 27.0, 64.0))
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/numpy_power_test-cfunc-float64.bc",
+        // source = s"$basePath/numpy_power_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
+      )
+    }.getMessage
+    // val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    // assert(resultArray2 === Seq(1.0, 8.0, 27.0, 64.0))
+    assert(errMsg2.contains("FIELD not supported:"))
   }
 
-  test("numpy dot - vv") {
+  test("numpy dot - vv (not supported)") {
     // Vector * Vector case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
-    TestUtils.doTest2[Float](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float32.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
-      expected = Some(1.0f)
-    )
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Float](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float32.bc",
+        // source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
+        // expected = Some(1.0f)
+      )
+    }.getMessage
+    assert(errMsg1.contains("FIELD not supported:"))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4, 1)
-    TestUtils.doTest2[Double](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float64.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr())),
-      expected = Some(1.0)
-    )
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Double](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float64.bc",
+        // source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
+        // expected = Some(1.0)
+      )
+    }.getMessage
+    assert(errMsg2.contains("FIELD not supported:"))
   }
 
-  test("numpy dot - mv") {
+  test("numpy dot - mv (not supported)") {
     // Matrix * Vector case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f)).reshape(2, 1)
-    val result1 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float32.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
-    )
-    val resultArray1 = new PyArrayHolder(result1).floatArray()
-    assert(resultArray1 === Seq(1.0f, 3.0f))
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float32.bc",
+        // source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
+      )
+    }.getMessage
+    // val resultArray1 = new PyArrayHolder(result1).floatArray()
+    // assert(resultArray1 === Seq(1.0f, 3.0f))
+    assert(errMsg1.contains("FIELD not supported:"))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 2.0)).reshape(2, 1)
-    val result2 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float64.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
-    )
-    val resultArray2 = new PyArrayHolder(result2).doubleArray()
-    assert(resultArray2 === Seq(1.0, 3.0))
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float64.bc",
+        // source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
+      )
+    }.getMessage
+    // val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    // assert(resultArray2 === Seq(1.0, 3.0))
+    assert(errMsg2.contains("FIELD not supported:"))
   }
 
-  test("numpy dot - mm") {
+  test("numpy dot - mm (not supported)") {
     // Matrix * Matrix case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
-    val result1 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float32.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
-    )
-    val resultArray1 = new PyArrayHolder(result1).floatArray()
-    assert(resultArray1 === Seq(7.0f, 10.0f, 15.0f, 22.0f))
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float32.bc",
+        // source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
+      )
+    }.getMessage
+    // val resultArray1 = new PyArrayHolder(result1).floatArray()
+    // assert(resultArray1 === Seq(7.0f, 10.0f, 15.0f, 22.0f))
+    assert(errMsg1.contains("FIELD not supported:"))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
-    val result2 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float64.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
-    )
-    val resultArray2 = new PyArrayHolder(result2).doubleArray()
-    assert(resultArray2 === Seq(7.0, 10.0, 15.0, 22.0))
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float64.bc",
+        // source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
+      )
+    }.getMessage
+    // val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    // assert(resultArray2 === Seq(7.0, 10.0, 15.0, 22.0))
+    assert(errMsg2.contains("FIELD not supported:"))
   }
 
-  test("numpy dot - throws an exception when hitting incompatible shapes") {
+  ignore("numpy dot - throws an exception when hitting incompatible shapes") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val errMsg = intercept[InvocationTargetException] {
@@ -289,7 +313,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(errMsg.contains("Numba runtime exception <Numba C callback 'numpy_dot_test'>"))
   }
 
-  test("numpy random") {
+  ignore("numpy random") {
     val rvalues1 = (0 until 100).map { _ =>
       TestUtils.doTest2[Double](
         bitcode = s"$basePath/numpy_random1_test-cfunc-float64.bc",
@@ -318,56 +342,65 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  test("numba - linear regression") {
+  test("numba - linear regression (not supported)") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
-    val result = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/linear_regression-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/linear_regression.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE, jDouble.TYPE),
-      arguments = Seq(
-        new jLong(doubleX.addr()), // Y
-        new jLong(doubleY.addr()), // X
-        new jLong(doubleZ.addr()), // w
-        new jLong(50),             // iterations
-        new jDouble(0.1))          // alphaN
-    )
-    val doubleArray = new PyArrayHolder(result).doubleArray()
+    val errMsg = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/linear_regression-numba-cfunc-float64.bc",
+        // source = s"$basePath/numba_examples/linear_regression.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE, jDouble.TYPE),
+        arguments = Seq(
+          new jLong(doubleX.addr()), // Y
+          new jLong(doubleY.addr()), // X
+          new jLong(doubleZ.addr()), // w
+          new jLong(50),             // iterations
+          new jDouble(0.1))          // alphaN
+      )
+    }.getMessage
+    // val doubleArray = new PyArrayHolder(result).doubleArray()
     // assert(doubleArray === Seq())
+    assert(errMsg.contains("FIELD not supported:"))
   }
 
-  test("numba - logistic regression") {
+  test("numba - logistic regression (not supported)") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
-    val result = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/logistic_regression-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/logistic_regression.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE),
-      arguments = Seq(
-        new jLong(doubleX.addr()), // Y
-        new jLong(doubleY.addr()), // X
-        new jLong(doubleZ.addr()), // w
-        new jLong(100))            // iterations
-    )
-    val doubleArray = new PyArrayHolder(result).doubleArray()
+    val errMsg = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/logistic_regression-numba-cfunc-float64.bc",
+        // source = s"$basePath/numba_examples/logistic_regression.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE),
+        arguments = Seq(
+          new jLong(doubleX.addr()), // Y
+          new jLong(doubleY.addr()), // X
+          new jLong(doubleZ.addr()), // w
+          new jLong(100))            // iterations
+      )
+    }.getMessage
+    // val doubleArray = new PyArrayHolder(result).doubleArray()
     // assert(doubleArray === Seq())
+    assert(errMsg.contains("FIELD not supported:"))
   }
 
-  test("numba - blur image") {
+  test("numba - blur image (not supported)") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
-    val result = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/filter2d-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/blur_image.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(
-        new jLong(doubleX.addr()), // image
-        new jLong(doubleY.addr())) // filt
-    )
-    val doubleArray = new PyArrayHolder(result).doubleArray()
+    val errMsg = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/filter2d-numba-cfunc-float64.bc",
+        // source = s"$basePath/numba_examples/blur_image.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(
+          new jLong(doubleX.addr()), // image
+          new jLong(doubleY.addr())) // filt
+      )
+    }.getMessage
+    // val doubleArray = new PyArrayHolder(result).doubleArray()
     // assert(doubleArray === Seq())
+    assert(errMsg.contains("FIELD not supported:"))
   }
 
   test("numba - bubble sort") {
@@ -396,88 +429,111 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(resultArray2 === Seq(1.0, 2.0, 3.0, 4.0))
   }
 
-  ignore("numba - kernel density estimation") {
+  test("numba - kernel density estimation (not supported)") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
-    TestUtils.doTest2[Float](
-      bitcode = s"$basePath/kde-numba-cfunc-float32.bc",
-      source = s"$basePath/numba_examples/kernel_density_estimation.py",
-      argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr())),
-      expected = Some(0.0f)
-    )
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Float](
+        bitcode = s"$basePath/kde-numba-cfunc-float32.bc",
+        // source = s"$basePath/numba_examples/kernel_density_estimation.py",
+        argTypes = Seq(jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()))
+        // expected = Some(0.0f)
+      )
+    }.getMessage
+    assert(errMsg1.contains("FIELD not supported:"))
+
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
-    TestUtils.doTest2[Double](
-      bitcode = s"$basePath/kde-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/kernel_density_estimation.py",
-      argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(doubleX.addr())),
-      expected = Some(0.0)
-    )
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Double](
+        bitcode = s"$basePath/kde-numba-cfunc-float64.bc",
+        // source = s"$basePath/numba_examples/kernel_density_estimation.py",
+        argTypes = Seq(jLong.TYPE),
+        arguments = Seq(new jLong(doubleX.addr()))
+        // expected = Some(0.0)
+      )
+    }.getMessage
+    assert(errMsg2.contains("FIELD not supported:"))
   }
 
   // TODO: Needs to implement unsupported LLVM instructions
   ignore("numba - laplace2d") {
     val floatX = pyArray1.`with`(Array(1.0f, 1.0f, 1.0f, 1.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f)).reshape(2, 2)
-    TestUtils.doTest2[Float](
-      bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float32.bc",
-      source = s"$basePath/numba_examples/laplace2d.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
-      expected = Some(0.0f)
-    )
-    val resultArray1 = floatY.floatArray()
-    assert(resultArray1 === Seq())
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Float](
+        bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float32.bc",
+        // source = s"$basePath/numba_examples/laplace2d.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
+        // expected = Some(0.0f)
+      )
+    }.getMessage
+    // val resultArray1 = floatY.floatArray()
+    // assert(resultArray1 === Seq())
+    assert(errMsg1.contains("FIELD not supported:"))
 
     val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(0.0, 0.0, 0.0, 0.0)).reshape(2, 2)
-    TestUtils.doTest2[Double](
-      bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/laplace2d.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
-      expected = Some(0.0)
-    )
-    val resultArray2 = floatX.floatArray()
-    assert(resultArray2 === Seq())
-  }
-
-  test("numba - mandel") {
-    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
-    val result = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/create_fractal-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/mandel.py",
-      argTypes =
-        Seq(jDouble.TYPE, jDouble.TYPE, jDouble.TYPE, jDouble.TYPE, jLong.TYPE, jLong.TYPE),
-      arguments = Seq(
-        new jDouble(-1.0),         // min_x
-        new jDouble(1.0),          // max_x
-        new jDouble(-1.0),         // min_y
-        new jDouble(1.0),          // max_y
-        new jLong(doubleX.addr()), // image
-        new jLong(10)              // iters
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      TestUtils.doTest2[Double](
+        bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float64.bc",
+        source = s"$basePath/numba_examples/laplace2d.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
+        expected = Some(0.0)
       )
-    )
-    val resultArray = new PyArrayHolder(result).doubleArray()
-    assert(resultArray === Seq(2.0, 2.0, 3.0, 5.0))
+    }.getMessage
+    // val resultArray2 = floatX.floatArray()
+    // assert(resultArray2 === Seq())
+    assert(errMsg2.contains("FIELD not supported:"))
   }
 
-  ignore("numba - pi") {
-    TestUtils.doTest2[Float](
-      bitcode = s"$basePath/calc_pi-numba-cfunc-float32.bc",
-      source = s"$basePath/numba_examples/pi.py",
-      argTypes = Seq(jInt.TYPE),
-      arguments = Seq(new jInt(10)),
-      expected = Some(3.0f)
-    )
-    TestUtils.doTest1[Double](
-      bitcode = s"$basePath/calc_pi-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/pi.py",
-      funcName = "_cfunc__ZN14numba_examples2pi12calc_pi_2474Ex",
-      argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(10)),
-      expected = Some(3.0)
-    )
+  test("numba - mandel (not supported)") {
+    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
+    val errMsg = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/create_fractal-numba-cfunc-float64.bc",
+        // source = s"$basePath/numba_examples/mandel.py",
+        argTypes =
+          Seq(jDouble.TYPE, jDouble.TYPE, jDouble.TYPE, jDouble.TYPE, jLong.TYPE, jLong.TYPE),
+        arguments = Seq(
+          new jDouble(-1.0),         // min_x
+          new jDouble(1.0),          // max_x
+          new jDouble(-1.0),         // min_y
+          new jDouble(1.0),          // max_y
+          new jLong(doubleX.addr()), // image
+          new jLong(10)              // iters
+        )
+      )
+    }.getMessage
+    // val resultArray = new PyArrayHolder(result).doubleArray()
+    // assert(resultArray === Seq(2.0, 2.0, 3.0, 5.0))
+    assert(errMsg.contains("FIELD not supported:"))
+  }
+
+  test("numba - pi (not supported)") {
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Float](
+        bitcode = s"$basePath/calc_pi-numba-cfunc-float32.bc",
+        // source = s"$basePath/numba_examples/pi.py",
+        argTypes = Seq(jInt.TYPE),
+        arguments = Seq(new jInt(10))
+        // expected = Some(3.0f)
+      )
+    }.getMessage
+    assert(errMsg1.contains("FIELD not supported:"))
+
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Double](
+        bitcode = s"$basePath/calc_pi-numba-cfunc-float64.bc",
+        // source = s"$basePath/numba_examples/pi.py",
+        // funcName = "_cfunc__ZN14numba_examples2pi12calc_pi_2474Ex",
+        argTypes = Seq(jLong.TYPE),
+        arguments = Seq(new jLong(10))
+        // expected = Some(3.0)
+      )
+    }.getMessage
+    assert(errMsg2.contains("FIELD not supported:"))
   }
 
   test("numba - sum") {
@@ -502,63 +558,75 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
   // TODO: Needs to implement unsupported LLVM instructions
   ignore("numba - ra24") {
     val floatX = pyArray1.`with`(Array(45.0f, 45.0f, 45.0f, 45.0f))
-    val result1 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/ra_numba-numba-cfunc-float32.bc",
-      source = s"$basePath/numba_examples/ra24.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(
-        new jInt(240),            // doy
-        new jLong(floatX.addr())  // lat
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/ra_numba-numba-cfunc-float32.bc",
+        // source = s"$basePath/numba_examples/ra24.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(
+          new jInt(240),            // doy
+          new jLong(floatX.addr())  // lat
+        )
       )
-    )
-    val resultArray1 = new PyArrayHolder(result1).floatArray()
-    assert(resultArray1 === Seq())
+    }.getMessage
+    // val resultArray1 = new PyArrayHolder(result1).floatArray()
+    // assert(resultArray1 === Seq())
+    assert(errMsg1.contains("FIELD not supported:"))
 
     val doubleX = pyArray1.`with`(Array(45.0, 45.0, 45.0, 45.0))
-    val result2 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/ra_numba-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/ra24.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(
-        new jLong(240),           // doy
-        new jLong(doubleX.addr()) // lat
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/ra_numba-numba-cfunc-float64.bc",
+        // source = s"$basePath/numba_examples/ra24.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(
+          new jLong(240),           // doy
+          new jLong(doubleX.addr()) // lat
+        )
       )
-    )
-    val resultArray2 = new PyArrayHolder(result2).doubleArray()
-    assert(resultArray2 === Seq())
+    }.getMessage
+    // val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    // assert(resultArray2 === Seq())
+    assert(errMsg2.contains("FIELD not supported:"))
   }
 
-  ignore("numba - movemean") {
+  test("numba - movemean (not supported)") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray1.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f))
     val intX = pyArray1.`with`(Array(1, 2, 3, 4))
-    val result1 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/move_mean-numba-cfunc-float32.bc",
-      source = s"$basePath/numba_examples/movemean.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE),
-      arguments = Seq(
-        new jLong(floatX.addr()), // a
-        new jLong(intX.addr()),   // window_arr
-        new jLong(floatY.addr())  // out
+    val errMsg1 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/move_mean-numba-cfunc-float32.bc",
+        // source = s"$basePath/numba_examples/movemean.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE),
+        arguments = Seq(
+          new jLong(floatX.addr()), // a
+          new jLong(intX.addr()),   // window_arr
+          new jLong(floatY.addr())  // out
+        )
       )
-    )
-    val resultArray1 = floatY.floatArray()
-    assert(resultArray1 === Seq())
+    }.getMessage
+    // val resultArray1 = floatY.floatArray()
+    // assert(resultArray1 === Seq())
+    assert(errMsg1.contains("FIELD not supported:"))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
     val doubleY = pyArray1.`with`(Array(0.0, 0.0, 0.0, 0.0))
     val longX = pyArray1.`with`(Array(1L, 2L, 3L, 4L))
-    val result2 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/move_mean-numba-cfunc-float64.bc",
-      source = s"$basePath/numba_examples/movemean.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE),
-      arguments = Seq(
-        new jLong(doubleX.addr()), // a
-        new jLong(longX.addr()),   // window_arr
-        new jLong(doubleY.addr())  // out
+    val errMsg2 = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/move_mean-numba-cfunc-float64.bc",
+        // source = s"$basePath/numba_examples/movemean.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE),
+        arguments = Seq(
+          new jLong(doubleX.addr()), // a
+          new jLong(longX.addr()),   // window_arr
+          new jLong(doubleY.addr())  // out
+        )
       )
-    )
-    val resultArray2 = doubleY.doubleArray()
-    assert(resultArray2 === Seq())
+    }.getMessage
+    // val resultArray2 = doubleY.doubleArray()
+    // assert(resultArray2 === Seq())
+    assert(errMsg2.contains("FIELD not supported:"))
   }
 }

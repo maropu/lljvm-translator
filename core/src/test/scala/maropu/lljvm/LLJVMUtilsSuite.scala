@@ -17,12 +17,10 @@
 
 package maropu.lljvm
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader}
 import java.lang.{Double => jDouble, Integer => jInt}
 
 import scala.collection.JavaConverters._
 
-import jasmin.ClassFile
 import org.scalatest.FunSuite
 
 class TestClass {
@@ -85,27 +83,11 @@ class LLJVMUtilsSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val classFile = new ClassFile()
-    val in = new InputStreamReader(new ByteArrayInputStream(illegalCode.getBytes))
-    classFile.readJasmin(in, "GeneratedClass", true)
-
-    val out = new ByteArrayOutputStream()
-    classFile.write(out)
-    assert(out.size > 0)
-
-    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
-
-    val expectedErrMsg = "Illegal bytecode found: " +
-      "(class: GeneratedClass, method: plus signature: (II)I)"
-
-    val errMsg1 = intercept[LLJVMRuntimeException] {
-      LLJVMUtils.getAllMethods(clazz)
+    val bytecode = TestUtils.compileJvmAsm(illegalCode)
+    val errMsg = intercept[LLJVMRuntimeException] {
+      TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
     }.getMessage
-    assert(errMsg1.contains(expectedErrMsg))
-
-    val errMsg2 = intercept[LLJVMRuntimeException] {
-      LLJVMUtils.getMethod(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
-    }.getMessage
-    assert(errMsg2.contains(expectedErrMsg))
+    assert(errMsg.contains(
+      "Illegal bytecode found: Error at instruction 0: Expected J, but found I"))
   }
 }

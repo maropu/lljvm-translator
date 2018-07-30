@@ -17,20 +17,22 @@
 
 package maropu.lljvm
 
-import java.util.{HashMap => jMap}
-
-import org.codehaus.janino.ClassBodyEvaluator
+import maropu.lljvm.util.analysis.BytecodeVerifier
 import org.scalatest.FunSuite
 
-abstract class JaninoClass {
-   def plus(a: Int, b: Int): Int
-}
+class BytecodeVerifierSuite extends FunSuite {
 
-class JaninoSuite extends FunSuite {
+  private def checkException(code: String, expectedMsg: String): Unit = {
+    val bytecode = TestUtils.compileJvmAsm(code)
+    val errMsg = intercept[LLJVMRuntimeException] {
+      BytecodeVerifier.verify(bytecode)
+    }.getMessage
+    assert(errMsg.contains(expectedMsg))
+  }
 
-  test("invoke gen'd function inside janino-compiled class") {
-    val code =
-      s""".class public final GeneratedFunc
+  test("illegal bytecode") {
+    val illegalCode =
+      s""".class public final GeneratedClass
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -42,7 +44,7 @@ class JaninoSuite extends FunSuite {
          |.method public static plus(II)I
          |.limit stack 2
          |.limit locals 2
-         |        iload_0
+         |        lload_0 ; Push wrong type data onto the operand stack
          |        iload_1
          |        iadd
          |        ireturn
@@ -50,23 +52,28 @@ class JaninoSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = TestUtils.compileJvmAsm(code)
-    val classMap = new jMap[String, Class[_]]()
-    classMap.put("GeneratedFunc", TestUtils.loadClassFromBytecode("GeneratedFunc", bytecode))
-    val classLoader = new LLJVMClassLoader(classMap)
+    checkException(illegalCode,
+      "Illegal bytecode found: Error at instruction 0: Expected J, but found I")
+  }
 
-    // Call gen'd function in janino-compiled class
-    val evaluator = new ClassBodyEvaluator()
-    evaluator.setParentClassLoader(classLoader)
-    evaluator.setClassName("maropu.TestClass")
-    evaluator.setExtendedClass(classOf[JaninoClass])
-    evaluator.cook("generated.java",
-      s"""public int plus(int a, int b) {
-         |  return GeneratedFunc.plus(a, b);
-         |}
+  test("illegal method call") {
+    val illegalCode =
+      s""".class public final GeneratedClass
+         |.super java/lang/Object
+         |
+         |.method public <init>()V
+         |        aload_0
+         |        invokenonvirtual java/lang/Object/<init>()V
+         |        return
+         |.end method
+         |
+         |.method public static test()V
+         |        invokestatic test/dummy/TestObject/func()V
+         |        return
+         |
+         |.end method
        """.stripMargin
-    )
-    val cls = evaluator.getClazz.newInstance().asInstanceOf[JaninoClass]
-    assert(cls.plus(1, 1) === 2)
+
+    checkException(illegalCode, "Package(test/dummy/TestObject) not supported")
   }
 }

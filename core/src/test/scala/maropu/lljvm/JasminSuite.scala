@@ -17,13 +17,9 @@
 
 package maropu.lljvm
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, InputStreamReader}
 import java.lang.{Double => jDouble, Integer => jInt}
 
-import jasmin.ClassFile
 import org.scalatest.FunSuite
-
-import maropu.lljvm.unsafe.Platform
 
 class JasminSuite extends FunSuite {
 
@@ -131,15 +127,8 @@ class JasminSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val classFile = new ClassFile()
-    val in = new InputStreamReader(new ByteArrayInputStream(code.getBytes))
-    classFile.readJasmin(in, "GeneratedClass", true)
-
-    val out = new ByteArrayOutputStream()
-    classFile.write(out)
-    assert(out.size > 0)
-
-    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
+    val bytecode = TestUtils.compileJvmAsm(code)
+    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
     val method = LLJVMUtils.getMethod(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
     val obj = clazz.newInstance()
     val args = Seq(new jInt(1), new jInt(2))
@@ -173,15 +162,8 @@ class JasminSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val classFile = new ClassFile()
-    val in = new InputStreamReader(new ByteArrayInputStream(code.getBytes))
-    classFile.readJasmin(in, "GeneratedClass", true)
-
-    val out = new ByteArrayOutputStream()
-    classFile.write(out)
-    assert(out.size > 0)
-
-    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
+    val bytecode = TestUtils.compileJvmAsm(code)
+    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
     val method = LLJVMUtils.getMethod(clazz, "pow", Seq(jDouble.TYPE, jDouble.TYPE): _*)
     val obj = clazz.newInstance()
     val args = Seq(new jDouble(2.0), new jDouble(2.0))
@@ -226,15 +208,8 @@ class JasminSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val classFile = new ClassFile()
-    val in = new InputStreamReader(new ByteArrayInputStream(code.getBytes))
-    classFile.readJasmin(in, "GeneratedClass", true)
-
-    val out = new ByteArrayOutputStream()
-    classFile.write(out)
-    assert(out.size > 0)
-
-    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
+    val bytecode = TestUtils.compileJvmAsm(code)
+    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
     val method = LLJVMUtils.getMethod(clazz, "log10", Seq(jDouble.TYPE, jDouble.TYPE): _*)
     val obj = clazz.newInstance()
     val args = Seq(new jDouble(100.0), new jDouble(2.0))
@@ -242,15 +217,8 @@ class JasminSuite extends FunSuite {
   }
 
   ignore("jasmin assembly tests from resources") {
-    val code = TestUtils.resourceToBytes("test.jasmin")
-    val classFile = new ClassFile()
-    val in = new InputStreamReader(new ByteArrayInputStream(code))
-    classFile.readJasmin(in, "GeneratedClass", true)
-    val out = new ByteArrayOutputStream()
-    classFile.write(out)
-    assert(out.size > 0)
-
-    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", out.toByteArray)
+    val bytecode = TestUtils.compileJvmAsm(TestUtils.resourceToBytes("test.jasmin"))
+    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
     val obj = clazz.newInstance()
     assert(obj.getClass.getSimpleName === "GeneratedClass")
   }

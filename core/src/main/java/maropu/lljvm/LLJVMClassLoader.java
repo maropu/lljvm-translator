@@ -26,6 +26,8 @@ import java.util.Map;
 
 import jasmin.ClassFile;
 
+import maropu.lljvm.util.analysis.BytecodeVerifier;
+
 /**
  * A custom class loader to handle classes generated on-runtime.
  */
@@ -78,6 +80,7 @@ public class LLJVMClassLoader extends ClassLoader {
   }
 
   public Class<?> loadClassFromBytecode(String className, byte[] bytecode) {
+    BytecodeVerifier.verify(bytecode);
     return defineClass(className, bytecode, 0, bytecode.length);
   }
 

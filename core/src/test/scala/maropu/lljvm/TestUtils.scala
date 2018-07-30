@@ -17,12 +17,13 @@
 
 package maropu.lljvm
 
-import java.io.{ByteArrayOutputStream, File, IOException, PrintWriter, StringWriter}
+import java.io._
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 
 import scala.util.Try
 
+import jasmin.ClassFile
 import org.scalatest.FunSuite
 
 object TestUtils extends FunSuite {
@@ -57,7 +58,7 @@ object TestUtils extends FunSuite {
     }
     actualResult.asInstanceOf[T]
   } catch {
-    case e: Throwable =>
+    case e: LLJVMRuntimeException =>
       val testCode = TestUtils.resourceToBytes(bitcode)
       fail(
         s"""Test failed because: ${e.getMessage}
@@ -78,6 +79,14 @@ object TestUtils extends FunSuite {
       arguments: Seq[AnyRef] = Seq.empty,
       expected: Option[T] = None): T = {
     doTest1(bitcode, source, "", argTypes, arguments, expected)
+  }
+
+  def invokeMethod[T](
+      bitcode: String,
+      argTypes: Seq[Class[_]] = Seq.empty,
+      arguments: Seq[AnyRef] = Seq.empty): T = {
+    val method = LLJVMUtils.getMethod(TestUtils.loadClassFromResource(bitcode), "", argTypes: _*)
+    method.invoke(null, arguments: _*).asInstanceOf[T]
   }
 
   def compareCode(actual: String, expected: String): Unit = {
@@ -101,6 +110,21 @@ object TestUtils extends FunSuite {
     val clazz = classLoader.loadClassFromBitcode("GeneratedClass", bitcode)
     assert(clazz.getCanonicalName === "GeneratedClass")
     clazz
+  }
+
+  def compileJvmAsm(code: Array[Byte]): Array[Byte] = {
+    val classFile = new ClassFile()
+    val in = new InputStreamReader(new ByteArrayInputStream(code))
+    classFile.readJasmin(in, "GeneratedClass", true)
+
+    val out = new ByteArrayOutputStream()
+    classFile.write(out)
+    assert(out.size > 0)
+    out.toByteArray
+  }
+
+  def compileJvmAsm(code: String): Array[Byte] = {
+    compileJvmAsm(code.getBytes(StandardCharsets.UTF_8))
   }
 
   /**
@@ -142,6 +166,9 @@ object TestUtils extends FunSuite {
 
   def resourceToBytes(resource: String): Array[Byte] = {
     val inStream = Thread.currentThread.getContextClassLoader.getResourceAsStream(resource)
+    if (inStream == null) {
+      throw new IOException("Not found: " + resource)
+    }
     val outStream = new ByteArrayOutputStream
     try {
       var reading = true
