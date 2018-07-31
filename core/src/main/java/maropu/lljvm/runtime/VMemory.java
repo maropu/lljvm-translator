@@ -181,7 +181,7 @@ public class VMemory {
   public static void store(long addr, double value) {
     try {
       Platform.putDouble(null, addr, value);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -201,7 +201,7 @@ public class VMemory {
   public static boolean load_i1(long addr) {
     try {
       return Platform.getBoolean(null, addr);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -212,7 +212,7 @@ public class VMemory {
   public static byte load_i8(long addr) {
     try {
       return Platform.getByte(null, addr);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -223,7 +223,7 @@ public class VMemory {
   public static short load_i16(long addr) {
     try {
       return Platform.getShort(null, addr);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -234,7 +234,7 @@ public class VMemory {
   public static int load_i32(long addr) {
     try {
       return Platform.getInt(null, addr);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -245,7 +245,7 @@ public class VMemory {
   public static long load_i64(long addr) {
     try {
       return Platform.getLong(null, addr);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -258,7 +258,7 @@ public class VMemory {
       float d = Platform.getFloat(null, addr);
       return d;
       // return Platform.getFloat(null, addr);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -269,7 +269,7 @@ public class VMemory {
   public static double load_f64(long addr) {
     try {
       return Platform.getDouble(null, addr);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -302,7 +302,7 @@ public class VMemory {
   public static void store(long addr, boolean value) {
     try {
       Platform.putBoolean(null, addr, value);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -313,7 +313,7 @@ public class VMemory {
   public static void store(long addr, byte value) {
     try {
       Platform.putByte(null, addr, value);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -324,7 +324,7 @@ public class VMemory {
   public static void store(long addr, short value) {
     try {
       Platform.putShort(null, addr, value);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -335,7 +335,7 @@ public class VMemory {
   public static void store(long addr, int value) {
     try {
       Platform.putInt(null, addr, value);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -346,7 +346,7 @@ public class VMemory {
   public static void store(long addr, long value) {
     try {
       Platform.putLong(null, addr, value);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }
@@ -357,7 +357,7 @@ public class VMemory {
   public static void store(long addr, float value) {
     try {
       Platform.putFloat(null, addr, value);
-    } catch(NullPointerException e) {
+    } catch (NullPointerException e) {
       throw new SegmentationFault(addr);
     }
   }

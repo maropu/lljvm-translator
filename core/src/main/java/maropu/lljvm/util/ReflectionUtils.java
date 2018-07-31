@@ -62,7 +62,7 @@ public final class ReflectionUtils {
         ClassLoader classLoader;
         try {
             classLoader = new URLClassLoader(new URL[] { new File(".").toURI().toURL() });
-        } catch(MalformedURLException e) {
+        } catch (MalformedURLException e) {
             classLoader = ClassLoader.getSystemClassLoader();
         }
         try {

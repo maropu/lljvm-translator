@@ -2,12 +2,13 @@
 [![Build Status](https://travis-ci.org/maropu/lljvm-translator.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
 [![Coverage Status](https://coveralls.io/repos/github/maropu/lljvm-translator/badge.svg?branch=master)](https://coveralls.io/github/maropu/lljvm-translator?branch=master)
 
-This is an experimental translator to build JVM bytecode from LLVM bitcode.
-Since some existing tools can generate LLVM bitcode from functions written in other languages
-(e.g.,  [Numba](https://numba.pydata.org/) for python functions,
-[clang](https://clang.llvm.org/) for C/C++ functions, and [DragonEgg](https://dragonegg.llvm.org/) for Fortran/Go functions),
+This is an experimental low-level translator from LLVM bitcode to JVM bytecode.
+Since existing tools can generate LLVM bitcode from functions written in some languages
+(e.g.,  [Numba](https://numba.pydata.org/) for Python, [Clang](https://clang.llvm.org/) for C/C++,
+[DragonEgg](https://dragonegg.llvm.org/) for Fortran/Go, and [Weld](https://www.weld.rs/) for cross-library optimization),
 this library targets at easily injecting the bitcode into JVMs.
-This core component has been refactored from [lljvm](https://github.com/davidar/lljvm) (credit should go to the original author).
+
+Note that the core component is refactored from [lljvm](https://github.com/davidar/lljvm) (credit should go to the original author).
 
 ## Python functions to JVM class methods
 
@@ -67,7 +68,7 @@ public final class GeneratedClass {
 }
 ```
 
-You can load this gen'd class file by the code below and run in JVMs:
+You can load this gen'd class file via Java runtime reflection and run in JVMs:
 
 ```java
 import java.lang.reflect.Method;
@@ -78,7 +79,11 @@ public class LLJVMTest {
 
   public static void main(String[] args) {
     try {
-      Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBytecodeFile("GeneratedClass", "pyfunc.class");
+      /**
+       * If you want to load a class from LLVM bitcode directly, you write a line below;
+       * Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBitcodeFile("pyfunc.bc");
+       */
+      Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBytecodeFile("pyfunc.class");
       Method pyfunc = LLJVMUtils.getMethod(clazz, Double.TYPE, Double.TYPE);
       System.out.println(pyfunc.invoke(null, 3, 6));
     } catch (Exception e) {
@@ -140,42 +145,49 @@ public final class GeneratedClass {
 }
 ```
 
-## NumPy-aware translation and runtime
+## Array supports
 
-Most of python users possibly write python functions with `NumPy`, so it is useful to translate these functions for JVMs:
-Let's say you write a python function below with `NumPy` and
-you get [LLVM assembly code](./examples/numpy_logistic_regression.ll) for this function via `Numba`:
+Let's say that you have a function below;
 
-```python
-import numpy as np
+    $ cat cfunc.c
+    #include <stdio.h>
+    long cfunc(long x[], int size) {
+      long sum = 0;
+      for (int i = 0; i < size; i++) {
+        sum += x[i];
+      }
+      return sum;
+    }
 
-def numpy_logistic_regression(Y, X, w, iterations):
-  for i in range(iterations):
-    w -= np.dot(((1.0 / (1.0 + np.exp(-Y * np.dot(X, w))) - 1.0) * Y), X)
-    return w
-```
-
-Then, you can generate [a JVM class file](./examples/numpy_logistic_regression.jasmin) for the function
-via `lljvm-translator` and invoke this as follows:
+Then, you can handle the array in Java like;
 
 ```java
-  // Placeholders for python arrays
-  PyArrayHolder Y = new PyArrayHolder();
-  PyArrayHolder X = new PyArrayHolder();
-  PyArrayHolder w = new PyArrayHolder();
+  import maropu.lljvm.util.ArrayUtils;
 
-  // Loads the gen'd class file
-  Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBytecodeFile("GeneratedClass", "numpy_logistic_regression.class");
-  Method pyfunc = LLJVMUtils.getMethod(clazz, Long.TYPE, Long.TYPE, Long.TYPE, Long.TYPE);
-
-  // Invokes it
-  pyfunc.invoke(
-    null,
-    Y.with(double[] { 1.0, 1.0 }).addr(),
-    X.with(double[] { 1.0, 1.0, 1.0, 1.0 }).reshape(2, 2).addr(),
-    w.with(double[] { 1.0, 1.0 }).addr(),
-    1L);
+  long[] javaArray = {1L, 2L, 3L};
+  Method cfunc = LLJVMUtils.getMethod(clazz, Long.TYPE, Integer.TYPE);
+  System.out.println(cfunc.invoke(null, ArrayUtils.addressOf(javaArray), javaArray.length));
 ```
+
+## Gen'd bytecode verification
+
+An objective of this library is to provide not a full-fledge translator but a restricted one for simple LLVM bitcode.
+So, it is important to verify that gen'd bytecode is correct and supported before execution.
+The library does so when loading it in `LLJVMClassLoader` and, if it detects illegal code, it throws `LLJVMException`;
+
+```java
+  try {
+    Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBitcodeFile("func.bc");
+    ...
+  } catch (LLJVMException e) {
+    // Writes fallback code here
+    ...
+  }
+```
+
+## Current development topics
+
+You can check [a document](./resources/WIP.md) for WIP features.
 
 ## Use cases: injects python UDFs into Apache Spark gen'd code
 
@@ -211,10 +223,10 @@ Other-related papers are lists below:
 
 ## TODO
 
- * Fix many bugs in `lljvm-native` and add tests
- * Add more platform-dependent binaries in `src/main/resources/native`
- * Make less dependencies in the native binaries
- * Register this library in the Maven Central Repository
+ * Supports NumPy-aware translation
+ * Adds more platform-dependent binaries in `src/main/resources/native`
+ * Makes less dependencies in the native binaries
+ * Registers this library in the Maven Central Repository
 
 ## Bug reports
 

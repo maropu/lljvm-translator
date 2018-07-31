@@ -35,7 +35,7 @@ public class JvmAssembler {
     try {
       final LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
       magicNumber = lljvmApi.magicNumber();
-    } catch(LLJVMRuntimeException e) {
+    } catch (LLJVMRuntimeException e) {
       throw e; // Just rethrow the exception
     }
     LLJVM_GENERATED_CLASSNAME = String.format("GeneratedClass%s", magicNumber);
