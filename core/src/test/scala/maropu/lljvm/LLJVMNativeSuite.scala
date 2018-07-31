@@ -32,6 +32,11 @@ class LLJVMNativeSuite extends FunSuite {
     // TODO: Add tests for `LLJVMNative.veryfyBitcode`
   }
 
+  test("magicNumber") {
+    val lljvmApi = LLJVMLoader.loadLLJVMApi()
+    assert(lljvmApi.magicNumber() === "20180731-HMKjwzxmew")
+  }
+
   test("asBitcode") {
     val bitcode = TestUtils.resourceToBytes("pyfunc/add_test-cfunc-float32.bc")
     val lljvmApi = LLJVMLoader.loadLLJVMApi()
