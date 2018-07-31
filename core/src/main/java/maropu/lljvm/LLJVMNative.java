@@ -20,20 +20,23 @@ package maropu.lljvm;
 import java.io.IOException;
 
 /**
- * A JNI interface of the LLJVM implementation.
+ * JNI interfaces of the LLJVM implementation.
  */
 public class LLJVMNative {
 
-  // Calculate the memory address of a given array
+  // Returns a magic number for the LLJVM implementation
+  public native String magicNumber() throws LLJVMRuntimeException;
+
+  // Calculates the memory address of a given array
   public native long addressOf(byte[] ar) throws LLJVMRuntimeException;
 
-  // Parse an input LLVM bitcode and transform it to JVM assembly code
-  public native String parseBitcode(byte[] bitcode) throws IOException, LLJVMRuntimeException;
-
-  // Return a human-readable LLVM bitcode
+  // Checks if given LLVM bitcode is sane
   public native void veryfyBitcode(byte[] bitcode) throws IOException, LLJVMRuntimeException;
 
-  // Return a human-readable LLVM bitcode
+  // Returns JVM assembly for given LLVM bitcode
+  public native String asJVMAssemblyCode(byte[] bitcode) throws IOException, LLJVMRuntimeException;
+
+  // Returns LLVM assembly for given LLVM bitcode
   public native String asLLVMAssemblyCode(byte[] bitcode) throws IOException;
 
   // This exception is mainly used in native code

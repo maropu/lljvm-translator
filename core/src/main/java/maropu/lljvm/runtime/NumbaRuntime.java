@@ -17,12 +17,12 @@
 
 package maropu.lljvm.runtime;
 
+import java.nio.charset.StandardCharsets;
+
 import org.netlib.blas.*;
 
 import maropu.lljvm.LLJVMRuntimeException;
 import maropu.lljvm.unsafe.Platform;
-
-import java.nio.charset.StandardCharsets;
 
 final class NumbaRuntime {
 

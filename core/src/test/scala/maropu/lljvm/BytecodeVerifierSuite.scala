@@ -17,13 +17,15 @@
 
 package maropu.lljvm
 
-import maropu.lljvm.util.analysis.BytecodeVerifier
 import org.scalatest.FunSuite
+
+import maropu.lljvm.util.JvmAssembler
+import maropu.lljvm.util.analysis.BytecodeVerifier
 
 class BytecodeVerifierSuite extends FunSuite {
 
   private def checkException(code: String, expectedMsg: String): Unit = {
-    val bytecode = TestUtils.compileJvmAsm(code)
+    val bytecode = JvmAssembler.compile(code)
     val errMsg = intercept[LLJVMRuntimeException] {
       BytecodeVerifier.verify(bytecode)
     }.getMessage
@@ -32,7 +34,7 @@ class BytecodeVerifierSuite extends FunSuite {
 
   test("illegal bytecode") {
     val illegalCode =
-      s""".class public final GeneratedClass
+      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -58,7 +60,7 @@ class BytecodeVerifierSuite extends FunSuite {
 
   test("illegal method call") {
     val illegalCode =
-      s""".class public final GeneratedClass
+      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V

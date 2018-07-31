@@ -17,12 +17,11 @@
 
 package maropu.lljvm.util.analysis;
 
-import maropu.lljvm.LLJVMRuntimeException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import maropu.lljvm.LLJVMRuntimeException;
 
 public class SupportedMethodPackages {
 

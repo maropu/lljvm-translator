@@ -17,10 +17,10 @@
 
 package maropu.lljvm;
 
+import maropu.lljvm.util.JvmAssembler;
+
 import java.io.*;
 import java.nio.file.Files;
-
-import jasmin.ClassFile;
 
 /**
  * A driver code to translate LLVM bitcode to JVM bytecode.
@@ -39,11 +39,11 @@ public class LLJVMTranslator {
       System.exit(-1);
     }
 
-    // Generate Jasmin code from the given LLVM code
-    String jasminCode = null;
+    // Generate JVM assembly code from the given LLVM code
+    String jvmAsm = null;
     try {
       byte[] bitcode = Files.readAllBytes(bitcodeFile.toPath());
-      jasminCode = LLJVMLoader.loadLLJVMApi().parseBitcode(bitcode);
+      jvmAsm = LLJVMLoader.loadLLJVMApi().asJVMAssemblyCode(bitcode);
     } catch (Exception e) {
       e.printStackTrace(System.err);
       System.exit(-1);
@@ -53,13 +53,8 @@ public class LLJVMTranslator {
     String basename = bitcodeFilename.substring(0, bitcodeFilename.lastIndexOf('.'));
     String outputDir = bitcodeFile.getParentFile().getAbsolutePath();
 
-    try (Reader in = new InputStreamReader(new ByteArrayInputStream(jasminCode.getBytes()));
-          OutputStream os = new FileOutputStream(new File(outputDir, basename + ".class"))) {
-      // Compile the code and write as JVM bytecode
-      ClassFile classFile = new ClassFile();
-      classFile.readJasmin(in, "GeneratedClass", false);
-      classFile.write(os);
-      os.close();
+    try (OutputStream os = new FileOutputStream(new File(outputDir, basename + ".class"))) {
+      os.write(JvmAssembler.compile(jvmAsm));
     } catch (Exception e) {
       e.printStackTrace(System.err);
       System.exit(-1);

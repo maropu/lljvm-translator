@@ -22,6 +22,8 @@ import java.util.{HashMap => jMap}
 import org.codehaus.janino.ClassBodyEvaluator
 import org.scalatest.FunSuite
 
+import maropu.lljvm.util.JvmAssembler
+
 abstract class JaninoClass {
    def plus(a: Int, b: Int): Int
 }
@@ -30,7 +32,7 @@ class JaninoSuite extends FunSuite {
 
   test("invoke gen'd function inside janino-compiled class") {
     val code =
-      s""".class public final GeneratedFunc
+      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -50,9 +52,9 @@ class JaninoSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = TestUtils.compileJvmAsm(code)
+    val bytecode = JvmAssembler.compile(code)
     val classMap = new jMap[String, Class[_]]()
-    classMap.put("GeneratedFunc", TestUtils.loadClassFromBytecode("GeneratedFunc", bytecode))
+    classMap.put(JvmAssembler.LLJVM_GENERATED_CLASSNAME, TestUtils.loadClassFromBytecode(bytecode))
     val classLoader = new LLJVMClassLoader(classMap)
 
     // Call gen'd function in janino-compiled class
@@ -62,7 +64,7 @@ class JaninoSuite extends FunSuite {
     evaluator.setExtendedClass(classOf[JaninoClass])
     evaluator.cook("generated.java",
       s"""public int plus(int a, int b) {
-         |  return GeneratedFunc.plus(a, b);
+         |  return ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}.plus(a, b);
          |}
        """.stripMargin
     )

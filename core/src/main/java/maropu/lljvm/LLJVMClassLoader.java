@@ -19,13 +19,11 @@ package maropu.lljvm;
 
 import java.io.*;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import jasmin.ClassFile;
-
+import maropu.lljvm.util.JvmAssembler;
 import maropu.lljvm.util.analysis.BytecodeVerifier;
 
 /**
@@ -36,6 +34,7 @@ public class LLJVMClassLoader extends ClassLoader {
   // This class is possibly accessed by `ReflectionUtils`
   public static ThreadLocal<LLJVMClassLoader> currentClassLoader =
       new ThreadLocal<LLJVMClassLoader>() {
+
     @Override public LLJVMClassLoader initialValue() {
       return new LLJVMClassLoader();
     }
@@ -79,35 +78,26 @@ public class LLJVMClassLoader extends ClassLoader {
     }
   }
 
-  public Class<?> loadClassFromBytecode(String className, byte[] bytecode) {
+  public Class<?> loadClassFromBytecode(byte[] bytecode) {
     BytecodeVerifier.verify(bytecode);
-    return defineClass(className, bytecode, 0, bytecode.length);
+    return defineClass(JvmAssembler.LLJVM_GENERATED_CLASSNAME, bytecode, 0, bytecode.length);
   }
 
-  public Class<?> loadClassFromBitcode(String className, byte[] bitcode)
+  public Class<?> loadClassFromBitcode(byte[] bitcode)
       throws IOException, LLJVMRuntimeException {
-    String jvmAsm = LLJVMUtils.asJVMAssemblyCode(bitcode);
-    ClassFile classFile = new ClassFile();
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    try (Reader in = new InputStreamReader(
-        new ByteArrayInputStream(jvmAsm.getBytes(StandardCharsets.UTF_8)))) {
-      classFile.readJasmin(in, className, false);
-      classFile.write(out);
-    } catch (Exception e) {
-      throw new LLJVMRuntimeException(e.getMessage());
-    }
-    return loadClassFromBytecode(className, out.toByteArray());
+    byte[] bytecode = JvmAssembler.compile(LLJVMUtils.asJVMAssemblyCode(bitcode));
+    return loadClassFromBytecode(bytecode);
   }
 
-  public Class<?> loadClassFromBytecodeFile(String className, String classFile)
+  public Class<?> loadClassFromBytecodeFile(String classFile)
       throws IOException, LLJVMRuntimeException {
     byte[] bytecode = Files.readAllBytes(new File(classFile).toPath());
-    return loadClassFromBytecode(className, bytecode);
+    return loadClassFromBytecode(bytecode);
   }
 
-  public Class<?> loadClassFromBitcodeFile(String className, String bitcodeFile)
+  public Class<?> loadClassFromBitcodeFile(String bitcodeFile)
       throws IOException, LLJVMRuntimeException {
     byte[] bitcode = Files.readAllBytes(new File(bitcodeFile).toPath());
-    return loadClassFromBitcode(className, bitcode);
+    return loadClassFromBitcode(bitcode);
   }
 }

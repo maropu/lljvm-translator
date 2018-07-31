@@ -24,7 +24,6 @@ import org.objectweb.asm.Opcodes;
 
 import maropu.lljvm.LLJVMRuntimeException;
 
-
 public class SupportedOpcodes {
 
   // A while list for supported opcodes

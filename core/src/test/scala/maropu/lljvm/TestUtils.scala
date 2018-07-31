@@ -23,7 +23,6 @@ import java.util.UUID
 
 import scala.util.Try
 
-import jasmin.ClassFile
 import org.scalatest.FunSuite
 
 object TestUtils extends FunSuite {
@@ -95,36 +94,17 @@ object TestUtils extends FunSuite {
     assert(normalize(actual) === normalize(expected))
   }
 
-  def loadClassFromBytecode(className: String, bytecode: Array[Byte]): Class[_] = {
+  def loadClassFromBytecode(bytecode: Array[Byte]): Class[_] = {
     val classLoader = new LLJVMClassLoader()
     LLJVMClassLoader.currentClassLoader.set(classLoader)
-    val clazz = classLoader.loadClassFromBytecode(className, bytecode)
-    assert(clazz.getCanonicalName === className)
-    clazz
+    classLoader.loadClassFromBytecode(bytecode)
   }
 
   def loadClassFromResource(location: String): Class[_] = {
     val bitcode = TestUtils.resourceToBytes(location)
     val classLoader = new LLJVMClassLoader()
     LLJVMClassLoader.currentClassLoader.set(classLoader)
-    val clazz = classLoader.loadClassFromBitcode("GeneratedClass", bitcode)
-    assert(clazz.getCanonicalName === "GeneratedClass")
-    clazz
-  }
-
-  def compileJvmAsm(code: Array[Byte]): Array[Byte] = {
-    val classFile = new ClassFile()
-    val in = new InputStreamReader(new ByteArrayInputStream(code))
-    classFile.readJasmin(in, "GeneratedClass", true)
-
-    val out = new ByteArrayOutputStream()
-    classFile.write(out)
-    assert(out.size > 0)
-    out.toByteArray
-  }
-
-  def compileJvmAsm(code: String): Array[Byte] = {
-    compileJvmAsm(code.getBytes(StandardCharsets.UTF_8))
+    classLoader.loadClassFromBitcode(bitcode)
   }
 
   /**

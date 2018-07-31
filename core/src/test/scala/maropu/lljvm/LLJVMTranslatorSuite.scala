@@ -35,7 +35,7 @@ class LLJVMTranslatorSuite extends FunSuite {
     LLJVMTranslator.main(Array(inputFile.getAbsolutePath))
     val outputFile = new File(file, "code.class")
     val classLoader = new LLJVMClassLoader()
-    val clazz = classLoader.loadClassFromBytecodeFile("GeneratedClass", outputFile.getAbsolutePath)
+    val clazz = classLoader.loadClassFromBytecodeFile(outputFile.getAbsolutePath)
     val method = LLJVMUtils.getMethod(clazz, "_add_test", jInt.TYPE, jInt.TYPE)
     assert(method.invoke(null, new jInt(4), new jInt(1)) === 5)
   }

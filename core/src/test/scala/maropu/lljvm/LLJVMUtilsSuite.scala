@@ -23,6 +23,8 @@ import scala.collection.JavaConverters._
 
 import org.scalatest.FunSuite
 
+import maropu.lljvm.util.JvmAssembler
+
 class TestClass {
 
   def methodX(a: Int, b: Double): Unit = {}
@@ -63,7 +65,7 @@ class LLJVMUtilsSuite extends FunSuite {
 
   test("throw exceptions if illegal bytecode found") {
     val illegalCode =
-      s""".class public final GeneratedClass
+      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -83,9 +85,9 @@ class LLJVMUtilsSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = TestUtils.compileJvmAsm(illegalCode)
+    val bytecode = JvmAssembler.compile(illegalCode)
     val errMsg = intercept[LLJVMRuntimeException] {
-      TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
+      TestUtils.loadClassFromBytecode(bytecode)
     }.getMessage
     assert(errMsg.contains(
       "Illegal bytecode found: Error at instruction 0: Expected J, but found I"))

@@ -21,12 +21,14 @@ import java.lang.{Double => jDouble, Integer => jInt}
 
 import org.scalatest.FunSuite
 
+import maropu.lljvm.util.JvmAssembler
+
 class JasminSuite extends FunSuite {
 
   test("asBytecode") {
     val bitcode = TestUtils.resourceToBytes("cfunc/add_test.bc")
     TestUtils.compareCode(LLJVMUtils.asJVMAssemblyCode(bitcode),
-      s""".class public final GeneratedClass
+      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |; Fields
@@ -107,7 +109,7 @@ class JasminSuite extends FunSuite {
 
   test("plus") {
     val code =
-      s""".class public final GeneratedClass
+      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -127,8 +129,8 @@ class JasminSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = TestUtils.compileJvmAsm(code)
-    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
+    val bytecode = JvmAssembler.compile(code)
+    val clazz = TestUtils.loadClassFromBytecode(bytecode)
     val method = LLJVMUtils.getMethod(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
     val obj = clazz.newInstance()
     val args = Seq(new jInt(1), new jInt(2))
@@ -137,7 +139,7 @@ class JasminSuite extends FunSuite {
 
   test("pow") {
     val code =
-      s""".class public final GeneratedClass
+      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -162,8 +164,8 @@ class JasminSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = TestUtils.compileJvmAsm(code)
-    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
+    val bytecode = JvmAssembler.compile(code)
+    val clazz = TestUtils.loadClassFromBytecode(bytecode)
     val method = LLJVMUtils.getMethod(clazz, "pow", Seq(jDouble.TYPE, jDouble.TYPE): _*)
     val obj = clazz.newInstance()
     val args = Seq(new jDouble(2.0), new jDouble(2.0))
@@ -172,7 +174,7 @@ class JasminSuite extends FunSuite {
 
   test("log10") {
     val code =
-      s""".class public final GeneratedClass
+      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -208,18 +210,11 @@ class JasminSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = TestUtils.compileJvmAsm(code)
-    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
+    val bytecode = JvmAssembler.compile(code)
+    val clazz = TestUtils.loadClassFromBytecode(bytecode)
     val method = LLJVMUtils.getMethod(clazz, "log10", Seq(jDouble.TYPE, jDouble.TYPE): _*)
     val obj = clazz.newInstance()
     val args = Seq(new jDouble(100.0), new jDouble(2.0))
     assert(method.invoke(obj, args: _*) === 6.0)
-  }
-
-  ignore("jasmin assembly tests from resources") {
-    val bytecode = TestUtils.compileJvmAsm(TestUtils.resourceToBytes("test.jasmin"))
-    val clazz = TestUtils.loadClassFromBytecode("GeneratedClass", bytecode)
-    val obj = clazz.newInstance()
-    assert(obj.getClass.getSimpleName === "GeneratedClass")
   }
 }

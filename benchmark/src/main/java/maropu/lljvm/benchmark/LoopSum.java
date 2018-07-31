@@ -39,7 +39,6 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
 import maropu.lljvm.unsafe.Platform;
-import maropu.lljvm.util.ArrayUtils;
 import maropu.lljvm.LLJVMClassLoader;
 import maropu.lljvm.LLJVMUtils;
 
@@ -123,10 +122,10 @@ public class LoopSum {
       // For python functions
       try {
         Class<?> clazz1 = new LLJVMClassLoader()
-          .loadClassFromBitcode("GeneratedClass", resourceToBytes("benchmark/pyAdd-float32.bc"));
+          .loadClassFromBitcode(resourceToBytes("benchmark/pyAdd-float32.bc"));
         this.pyAdd = LLJVMUtils.getMethod(clazz1, Float.TYPE, Float.TYPE);
         Class<?> clazz2 = new LLJVMClassLoader()
-          .loadClassFromBitcode("GeneratedClass", resourceToBytes("benchmark/pySum-float32.bc"));
+          .loadClassFromBitcode(resourceToBytes("benchmark/pySum-float32.bc"));
         this.pySum = LLJVMUtils.getMethod(clazz2, Long.TYPE);
       } catch (IOException e) {
         throw new RuntimeException(e.getMessage());

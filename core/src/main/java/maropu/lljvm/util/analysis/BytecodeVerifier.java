@@ -36,6 +36,7 @@ public class BytecodeVerifier {
 
   public static void verify(byte[] bytecode) throws LLJVMRuntimeException {
     final ClassReader cr = getClassReader(bytecode);
+    // TODO: Need to check a class name is `JvmAssembler.LLJVM_GENERATED_CLASS`
     verifyBytecode(cr);
     checkIfBytecodeSupported(cr);
   }

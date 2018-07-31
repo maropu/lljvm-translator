@@ -68,26 +68,16 @@ const std::string parseBitcode(const char *bitcode, size_t size, unsigned int db
   return out;
 }
 
+JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_magicNumber
+    (JNIEnv *env, jobject self) {
+  return env->NewStringUTF("20180731-HMKjwzxmew");
+}
+
 JNIEXPORT jlong JNICALL Java_maropu_lljvm_LLJVMNative_addressOf
     (JNIEnv *env, jobject self, jbyteArray ar) {
   void *ptr = env->GetPrimitiveArrayCritical(ar, 0);
   env->ReleasePrimitiveArrayCritical(ar, ptr, 0);
   return (jlong) ptr;
-}
-
-JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_parseBitcode
-    (JNIEnv *env, jobject self, jbyteArray bitcode) {
-  jbyte *src = env->GetByteArrayElements(bitcode, NULL);
-  size_t size = (size_t) env->GetArrayLength(bitcode);
-  try {
-    const std::string out = parseBitcode((const char *)src, size, 0);
-    env->ReleaseByteArrayElements(bitcode, src, 0);
-    return env->NewStringUTF(out.c_str());
-  } catch (const std::string& e) {
-    env->ReleaseByteArrayElements(bitcode, src, 0);
-    throw_exception(env, self, e);
-    return env->NewStringUTF("");
-  }
 }
 
 JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode
@@ -108,6 +98,21 @@ JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode
   raw_string_ostream strbuf(out);
   if (verifyModule(*mod.get(), &strbuf)) {
     throw_exception(env, self, out);
+  }
+}
+
+JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asJVMAssemblyCode
+    (JNIEnv *env, jobject self, jbyteArray bitcode) {
+  jbyte *src = env->GetByteArrayElements(bitcode, NULL);
+  size_t size = (size_t) env->GetArrayLength(bitcode);
+  try {
+    const std::string out = parseBitcode((const char *)src, size, 0);
+    env->ReleaseByteArrayElements(bitcode, src, 0);
+    return env->NewStringUTF(out.c_str());
+  } catch (const std::string& e) {
+    env->ReleaseByteArrayElements(bitcode, src, 0);
+    throw_exception(env, self, e);
+    return env->NewStringUTF("");
   }
 }
 

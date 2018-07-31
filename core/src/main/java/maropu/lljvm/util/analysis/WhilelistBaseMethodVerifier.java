@@ -21,7 +21,6 @@ import org.objectweb.asm.*;
 
 import maropu.lljvm.LLJVMRuntimeException;
 
-
 /**
  * Since this is a base class to verify code in [[BytecodeVerifier]], all the methods are guarded
  * by throwing a runtime exception.

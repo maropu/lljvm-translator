@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     maropu_lljvm_LLJVMNative
+ * Method:    magicNumber
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_magicNumber
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     maropu_lljvm_LLJVMNative
  * Method:    addressOf
  * Signature: ([B)J
  */
@@ -17,18 +25,18 @@ JNIEXPORT jlong JNICALL Java_maropu_lljvm_LLJVMNative_addressOf
 
 /*
  * Class:     maropu_lljvm_LLJVMNative
- * Method:    parseBitcode
- * Signature: ([B)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_parseBitcode
-  (JNIEnv *, jobject, jbyteArray);
-
-/*
- * Class:     maropu_lljvm_LLJVMNative
  * Method:    veryfyBitcode
  * Signature: ([B)V
  */
 JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode
+  (JNIEnv *, jobject, jbyteArray);
+
+/*
+ * Class:     maropu_lljvm_LLJVMNative
+ * Method:    asJVMAssemblyCode
+ * Signature: ([B)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asJVMAssemblyCode
   (JNIEnv *, jobject, jbyteArray);
 
 /*
