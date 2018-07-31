@@ -1,13 +1,11 @@
-dist: trusty
-
-# TODO: Some tests for Compressed OOPs fail if sudo=false
-sudo: true
+sudo: false
 
 language: java
 
 jdk:
   - oraclejdk8
-  - openjdk8
+# Since this wrongly uses java9 compiler, it turns off temporarily
+#  - temporarily openjdk8
 
 addons:
   apt:
