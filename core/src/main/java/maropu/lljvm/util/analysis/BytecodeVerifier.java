@@ -30,13 +30,13 @@ import org.objectweb.asm.tree.*;
 import org.objectweb.asm.util.CheckClassAdapter;
 
 import maropu.lljvm.LLJVMRuntimeException;
+import maropu.lljvm.util.JvmAssembler;
 
 public class BytecodeVerifier {
   private static final int apiCode = Opcodes.ASM6;
 
   public static void verify(byte[] bytecode) throws LLJVMRuntimeException {
     final ClassReader cr = getClassReader(bytecode);
-    // TODO: Need to check a class name is `JvmAssembler.LLJVM_GENERATED_CLASS`
     verifyBytecode(cr);
     checkIfBytecodeSupported(cr);
   }
@@ -87,6 +87,17 @@ public class BytecodeVerifier {
 
     SupportedBytecodeChecker() {
       super(apiCode);
+    }
+
+    @Override
+    public void visit(
+        int version, int access, String name, String signature, String superName,
+        String[] interfaces) {
+      final String clazzName = JvmAssembler.LLJVM_GENERATED_CLASSNAME;
+      if (!name.equals(clazzName)) {
+        throw new LLJVMRuntimeException(
+          String.format("Generated class name must be '%s', but '%s' found", clazzName, name));
+      }
     }
 
     @Override

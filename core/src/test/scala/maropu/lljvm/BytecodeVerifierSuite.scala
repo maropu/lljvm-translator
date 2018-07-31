@@ -32,6 +32,28 @@ class BytecodeVerifierSuite extends FunSuite {
     assert(errMsg.contains(expectedMsg))
   }
 
+  test("illegal class name") {
+     val illegalCode =
+      s""".class public final IllegalClassName
+         |.super java/lang/Object
+         |
+         |.method public <init>()V
+         |        aload_0
+         |        invokenonvirtual java/lang/Object/<init>()V
+         |        return
+         |.end method
+         |
+         |.method public static test(I)I
+         |        iload_0
+         |        ireturn
+         |
+         |.end method
+       """.stripMargin
+
+    checkException(illegalCode,
+      "Generated class name must be 'GeneratedClass', but 'IllegalClassName")
+  }
+
   test("illegal bytecode") {
     val illegalCode =
       s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
