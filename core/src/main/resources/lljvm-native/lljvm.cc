@@ -16,7 +16,7 @@
  */
 
 #include "backend.h"
-#include "lljvm.h"
+#include "maropu_lljvm_LLJVMNative.h"
 #include "lljvm-internals.h"
 
 #include <llvm/Bitcode/BitcodeReader.h>
