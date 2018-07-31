@@ -164,4 +164,12 @@ object TestUtils extends FunSuite {
     }
     outStream.toByteArray
   }
+
+  def resourceToJVMAssemblyCode(resource: String): String = {
+    LLJVMUtils.asJVMAssemblyCode(resourceToBytes(resource))
+  }
+
+  def resourceToLLVMAssemblyCode(resource: String): String = {
+    LLJVMUtils.asLLVMAssemblyCode(resourceToBytes(resource))
+  }
 }
