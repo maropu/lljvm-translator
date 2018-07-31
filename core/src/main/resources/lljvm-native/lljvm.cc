@@ -27,6 +27,9 @@
 
 using namespace llvm;
 
+const std::string LLJVM_GENERATED_CLASSNAME_PREFIX = "GeneratedClass";
+const std::string LLJVM_MAGIC_NUMBER = "20180731HMKjwzxmew";
+
 inline void throw_exception(JNIEnv *env, jobject self, const std::string& err_msg) {
   jclass c = env->FindClass("maropu/lljvm/LLJVMNative");
   assert(c != 0);
@@ -61,7 +64,8 @@ const std::string parseBitcode(const char *bitcode, size_t size, unsigned int db
   pm.add(createLowerSwitchPass());
   pm.add(createCFGSimplificationPass());
 
-  pm.add(new JVMWriter(&td, strbuf, "GeneratedClass", dbg));
+  const std::string clazz = LLJVM_GENERATED_CLASSNAME_PREFIX + LLJVM_MAGIC_NUMBER;
+  pm.add(new JVMWriter(&td, strbuf, clazz, dbg));
   // pm.add(createGCInfoDeleter());
   pm.run(*mod.get());
   strbuf.flush();
@@ -70,7 +74,7 @@ const std::string parseBitcode(const char *bitcode, size_t size, unsigned int db
 
 JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_magicNumber
     (JNIEnv *env, jobject self) {
-  return env->NewStringUTF("20180731-HMKjwzxmew");
+  return env->NewStringUTF(LLJVM_MAGIC_NUMBER.c_str());
 }
 
 JNIEXPORT jlong JNICALL Java_maropu_lljvm_LLJVMNative_addressOf

@@ -51,7 +51,8 @@ class BytecodeVerifierSuite extends FunSuite {
        """.stripMargin
 
     checkException(illegalCode,
-      "Generated class name must be 'GeneratedClass', but 'IllegalClassName")
+      s"Generated class name must be '${JvmAssembler.LLJVM_GENERATED_CLASSNAME}', " +
+        "but 'IllegalClassName")
   }
 
   test("illegal bytecode") {

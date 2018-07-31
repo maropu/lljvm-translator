@@ -27,7 +27,7 @@ public class LLJVMLoader {
   private static volatile LLJVMNative lljvmApi = null;
   private static boolean isLoaded = false;
 
-  public synchronized static LLJVMNative loadLLJVMApi() throws IOException, LLJVMRuntimeException {
+  public synchronized static LLJVMNative loadLLJVMApi() throws LLJVMRuntimeException {
     if (lljvmApi != null) {
       return lljvmApi;
     }

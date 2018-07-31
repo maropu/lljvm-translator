@@ -34,7 +34,7 @@ class LLJVMNativeSuite extends FunSuite {
 
   test("magicNumber") {
     val lljvmApi = LLJVMLoader.loadLLJVMApi()
-    assert(lljvmApi.magicNumber() === "20180731-HMKjwzxmew")
+    assert(lljvmApi.magicNumber() === "20180731HMKjwzxmew")
   }
 
   test("asBitcode") {

@@ -22,12 +22,24 @@ import java.nio.charset.StandardCharsets;
 
 import jasmin.ClassFile;
 
+import maropu.lljvm.LLJVMLoader;
+import maropu.lljvm.LLJVMNative;
 import maropu.lljvm.LLJVMRuntimeException;
 
 public class JvmAssembler {
 
-  // TODO: Adds a magic number in the suffix
-  public static final String LLJVM_GENERATED_CLASSNAME = "GeneratedClass";
+  public static final String LLJVM_GENERATED_CLASSNAME;
+
+  static {
+    String magicNumber = null;
+    try {
+      final LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
+      magicNumber = lljvmApi.magicNumber();
+    } catch(LLJVMRuntimeException e) {
+      throw e; // Just rethrow the exception
+    }
+    LLJVM_GENERATED_CLASSNAME = String.format("GeneratedClass%s", magicNumber);
+  }
 
   public static byte[] compile(String code) {
     return compile(code.getBytes(StandardCharsets.UTF_8));
