@@ -42,6 +42,19 @@ object TestUtils extends FunSuite {
     }
   }
 
+  def asLLVMAssemblyCode(bitcode: Array[Byte]): String = {
+    LLJVMUtils.asLLVMAssemblyCode(bitcode)
+  }
+
+  def asJVMAssemblyCode(bitcode: Array[Byte]): String = {
+    LLJVMUtils.checkLLVMBitcodeFormat(bitcode)
+    val lljvmApi = LLJVMLoader.loadLLJVMApi()
+    // Sets 3 at `debugLevel` for debugging
+    val jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, 3)
+    assert(jvmAsm != null)
+    jvmAsm
+  }
+
   def doTest1[T](
       bitcode: String,
       source: String,
@@ -65,9 +78,9 @@ object TestUtils extends FunSuite {
            |========== Source Code ==========
            |${new String(TestUtils.resourceToBytes(source), StandardCharsets.UTF_8)}
            |========== LLVM Assembly Code =========
-           |${LLJVMUtils.asLLVMAssemblyCode(testCode)}
+           |${asLLVMAssemblyCode(testCode)}
            |========== JVM Assembly Code =========
-           |${Try(LLJVMUtils.asJVMAssemblyCode(testCode)).getOrElse("<invalid>")}
+           |${Try(asJVMAssemblyCode(testCode)).getOrElse("<invalid>")}
          """.stripMargin)
   }
 
@@ -173,10 +186,10 @@ object TestUtils extends FunSuite {
   }
 
   def resourceToJVMAssemblyCode(resource: String): String = {
-    LLJVMUtils.asJVMAssemblyCode(resourceToBytes(resource))
+    asJVMAssemblyCode(resourceToBytes(resource))
   }
 
   def resourceToLLVMAssemblyCode(resource: String): String = {
-    LLJVMUtils.asLLVMAssemblyCode(resourceToBytes(resource))
+    asLLVMAssemblyCode(resourceToBytes(resource))
   }
 }

@@ -28,9 +28,7 @@ void JVMWriter::printBasicBlock(const BasicBlock *block) {
   printLabel(getLabelName(block));
   for (BasicBlock::const_iterator i = block->begin(), e = block->end(); i != e; i++) {
     instNum++;
-    // TODO: Needs to Change code so that JVMs can control this debug flag
-    // if (debug >= 3) {
-    if (true) {
+    if (debug >= 3) {
       // Prints current instruction as comment.
       // note that this block of code significantly increases code generation time.
       std::string str;

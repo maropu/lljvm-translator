@@ -43,7 +43,7 @@ public class LLJVMTranslator {
     String jvmAsm = null;
     try {
       byte[] bitcode = Files.readAllBytes(bitcodeFile.toPath());
-      jvmAsm = LLJVMLoader.loadLLJVMApi().asJVMAssemblyCode(bitcode);
+      jvmAsm = LLJVMLoader.loadLLJVMApi().asJVMAssemblyCode(bitcode, 0);
     } catch (Throwable t) {
       t.printStackTrace(System.err);
       System.exit(-1);

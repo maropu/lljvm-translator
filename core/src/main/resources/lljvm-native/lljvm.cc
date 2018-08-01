@@ -106,11 +106,11 @@ JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode
 }
 
 JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asJVMAssemblyCode
-    (JNIEnv *env, jobject self, jbyteArray bitcode) {
+    (JNIEnv *env, jobject self, jbyteArray bitcode, jint debugLevel) {
   jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);
   try {
-    const std::string out = parseBitcode((const char *)src, size, 0);
+    const std::string out = parseBitcode((const char *)src, size, debugLevel);
     env->ReleaseByteArrayElements(bitcode, src, 0);
     return env->NewStringUTF(out.c_str());
   } catch (const std::string& e) {

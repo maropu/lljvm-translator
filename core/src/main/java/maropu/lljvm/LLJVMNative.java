@@ -34,7 +34,8 @@ public class LLJVMNative {
   public native void veryfyBitcode(byte[] bitcode) throws IOException, LLJVMRuntimeException;
 
   // Returns JVM assembly for given LLVM bitcode
-  public native String asJVMAssemblyCode(byte[] bitcode) throws IOException, LLJVMRuntimeException;
+  public native String asJVMAssemblyCode(byte[] bitcode, int debugLevel)
+    throws IOException, LLJVMRuntimeException;
 
   // Returns LLVM assembly for given LLVM bitcode
   public native String asLLVMAssemblyCode(byte[] bitcode) throws IOException;
