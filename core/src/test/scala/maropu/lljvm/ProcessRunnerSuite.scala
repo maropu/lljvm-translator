@@ -21,16 +21,9 @@ import java.lang.{Double => jDouble}
 
 import org.scalatest.FunSuite
 
-import maropu.lljvm.util.{ClangRunner, ProcessRunner}
+import maropu.lljvm.util.clang.ClangRunner
 
 class ProcessRunnerSuite extends FunSuite {
-
-  test("ProcessRunner") {
-    val errMsg = intercept[LLJVMRuntimeException] {
-      ProcessRunner.exec("unknown")
-    }.getMessage
-    assert(errMsg.contains("""Cannot run program "unknown""""))
-  }
 
   ignore("ClangRunner") {
     val bitcode = ClangRunner.exec(
@@ -51,6 +44,6 @@ class ProcessRunnerSuite extends FunSuite {
            |}
          """.stripMargin)
     }.getMessage
-    assert(errMsg.contains(""))
+    assert(errMsg.contains("use of undeclared identifier 'c'"))
   }
 }

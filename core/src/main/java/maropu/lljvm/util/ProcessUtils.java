@@ -17,17 +17,33 @@
 
 package maropu.lljvm.util;
 
+import java.io.File;
+import java.util.UUID;
+
 import maropu.lljvm.LLJVMRuntimeException;
 
-public class ProcessRunner {
+public class ProcessUtils {
 
-  public static void exec(String... command) {
+  public static void checkIfCmdInstalled(String cmd) {
     try {
-      ProcessBuilder builder = new ProcessBuilder(command);
-      Process process = builder.start();
-      process.waitFor();
-    } catch (Exception e) {
-      throw new LLJVMRuntimeException(e.getMessage());
+      ProcessBuilder builder = new ProcessBuilder(cmd);
+      Process p = builder.start();
+      p.waitFor();
+    } catch (Throwable t) {
+      throw new LLJVMRuntimeException(cmd + " not installed in your platform");
     }
+  }
+
+  public static String makeTempDir() {
+    File tempDir = new File(System.getProperty("java.io.tmpdir"));
+    if (!tempDir.exists()) {
+      tempDir.mkdirs();
+    }
+    ShutdownHookManager.addShutdownHook(new Thread(() -> tempDir.delete()));
+    return tempDir.getAbsolutePath();
+  }
+
+  public static String getTempFileName(String prefix) {
+    return String.format("%s-%s", prefix, UUID.randomUUID().toString());
   }
 }

@@ -15,45 +15,21 @@
  * limitations under the License.
  */
 
-package maropu.lljvm.util;
+package maropu.lljvm.util.clang;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.UUID;
 
 import maropu.lljvm.LLJVMRuntimeException;
+import maropu.lljvm.util.ProcessUtils;
 
 public class ClangRunner {
 
-  private static void checkIfClangInstalled() {
-    try {
-      ProcessRunner.exec("clang");
-    } catch (Throwable t) {
-      throw new LLJVMRuntimeException("clang not installed in your platform");
-    }
-  }
-
-  private static String makeTempDir() {
-    File tempDir = new File(System.getProperty("java.io.tmpdir"));
-    if (!tempDir.exists()) {
-      tempDir.mkdirs();
-    }
-    ShutdownHookManager.addShutdownHook(new Thread(() -> tempDir.delete()));
-    return tempDir.getAbsolutePath();
-  }
-
-  private static String getTempFileName() {
-    return String.format("clang-cfunc-%s", UUID.randomUUID().toString());
-  }
-
   public static byte[] exec(String code) {
-    checkIfClangInstalled();
-    final String tempDir = makeTempDir();
-    final String tempFilename = getTempFileName();
+    ProcessUtils.checkIfCmdInstalled("clang");
+    final String tempDir = ProcessUtils.makeTempDir();
+    final String tempFilename = ProcessUtils.getTempFileName("cfunc");
     final File srcFile = new File(tempDir, tempFilename + ".c");
     final File bitcodeFile = new File(tempDir, tempFilename + ".bc");
     try (OutputStream os = new FileOutputStream(srcFile)) {
@@ -61,13 +37,35 @@ public class ClangRunner {
     } catch (IOException e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }
-    ProcessRunner.exec(
-      "clang", "-c", "-O0", "-emit-llvm", "-o", bitcodeFile.getAbsolutePath(),
-      srcFile.getAbsolutePath());
+
+    final String[] command = {"clang", "-c", "-O0", "-emit-llvm", "-o",
+      bitcodeFile.getAbsolutePath(), srcFile.getAbsolutePath()};
+
+    StringBuilder stderr = new StringBuilder();
     try {
-      return Files.readAllBytes(bitcodeFile.toPath());
-    } catch (IOException e) {
+      ProcessBuilder builder = new ProcessBuilder(command);
+      Process p = builder.start();
+      p.waitFor();
+
+      try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
+        for(String line = br.readLine(); line != null; line = br.readLine()) {
+          stderr.append(line);
+          stderr.append("\n");
+        }
+      }
+    } catch (Exception e) {
       throw new LLJVMRuntimeException(e.getMessage());
+    }
+
+    // If no output exists, it throws an exception with compiler error messages
+    if (bitcodeFile.exists()) {
+      try {
+        return Files.readAllBytes(bitcodeFile.toPath());
+      } catch (IOException e) {
+        throw new LLJVMRuntimeException(e.getMessage());
+      }
+    } else {
+      throw new LLJVMRuntimeException(stderr.toString());
     }
   }
 }
