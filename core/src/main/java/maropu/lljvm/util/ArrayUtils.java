@@ -35,7 +35,6 @@ public class ArrayUtils {
   static {
     final String jvmVendor = System.getProperty("java.vendor");
     final int addrSize = Platform.addressSize() * 8;
-    // TODO: What happens when running this on JRE?
     if (jvmVendor.contains("Oracle")) {
       jvmName = String.format("OpenJDK/Oracle %d-bit JDK", addrSize);
       // Supports 64-bit Hotspot only
