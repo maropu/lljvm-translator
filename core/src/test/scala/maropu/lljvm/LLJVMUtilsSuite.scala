@@ -27,17 +27,107 @@ import maropu.lljvm.util.JvmAssembler
 
 class TestClass {
 
-  def methodX(a: Int, b: Double): Unit = {}
-  def methodY(a: String): Unit = {}
-  def methodZ(a: String): Unit = {}
-  def otherMethod(): Unit = {}
+  def method1(a: Int, b: Double): Unit = {}
+  def method2(a: String): Unit = {}
+  def method3(a: String): Unit = {}
+  def method4(): Unit = {}
+  def method5(a: Int, b: Int): Int = a + b
 }
 
 class LLJVMUtilsSuite extends FunSuite {
 
+  test("asJVMAssemblyCode") {
+    val bitcode = TestUtils.resourceToBytes("cfunc/add_test.bc")
+    TestUtils.compareCode(LLJVMUtils.asJVMAssemblyCode(bitcode),
+      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
+         |.super java/lang/Object
+         |
+         |; Fields
+         |
+         |; External methods
+         |
+         |; Constructor
+         |.method public <init>()V
+         |        aload_0
+         |        invokespecial java/lang/Object/<init>()V
+         |        return
+         |.end method
+         |
+         |.method public <clinit>()V
+         |        .limit stack 4
+         |        invokestatic maropu/lljvm/runtime/VMemory/resetHeap()V
+         |
+         |        ; allocate global variables
+         |
+         |        ; initialise global variables
+         |        return
+         |.end method
+         |
+         |
+         |.method public static _add_test(II)I
+         |        lconst_0
+         |        lstore 2
+         |        lconst_0
+         |        lstore 4
+         |        iconst_0
+         |        istore 6
+         |        iconst_0
+         |        istore 7
+         |        iconst_0
+         |        istore 8
+         |begin_method:
+         |        invokestatic maropu/lljvm/runtime/VMemory/createStackFrame()V
+         |label1:
+         |;  %1 = alloca i32, align 4
+         |        bipush 4
+         |        invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
+         |        lstore_2 ; _2
+         |;  %2 = alloca i32, align 4
+         |        bipush 4
+         |        invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
+         |        lstore 4 ; _4
+         |;  store i32 %x, i32* %1, align 4
+         |        lload_2 ; _2
+         |        iload_0 ; _x
+         |        invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
+         |;  store i32 %y, i32* %2, align 4
+         |        lload 4 ; _4
+         |        iload_1 ; _y
+         |        invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
+         |;  %3 = load i32, i32* %1, align 4
+         |        lload_2 ; _2
+         |        invokestatic maropu/lljvm/runtime/VMemory/load_i32(J)I
+         |        istore 6 ; _6
+         |;  %4 = load i32, i32* %2, align 4
+         |        lload 4 ; _4
+         |        invokestatic maropu/lljvm/runtime/VMemory/load_i32(J)I
+         |        istore 7 ; _7
+         |;  %5 = add nsw i32 %3, %4
+         |        iload 6 ; _6
+         |        iload 7 ; _7
+         |        iadd
+         |        istore 8 ; _8
+         |;  ret i32 %5
+         |        invokestatic maropu/lljvm/runtime/VMemory/destroyStackFrame()V
+         |        iload 8 ; _8
+         |        ireturn
+         |        .limit stack 16
+         |        .limit locals 9
+         |end_method:
+         |.end method
+       """.stripMargin)
+  }
+
+  test("invoke") {
+    val errMsg = intercept[LLJVMRuntimeException] {
+      LLJVMUtils.invoke(classOf[TestClass], "func", "abc")
+    }.getMessage
+    assert(errMsg.contains("Unsupported argument type: String"))
+  }
+
   test("getAllMethods") {
     val methods = LLJVMUtils.getAllMethods(classOf[TestClass]).asScala.map(_.getName)
-    assert(methods.toSet === Set("methodX", "methodY", "methodZ", "otherMethod"))
+    assert(methods.toSet === Set("method1", "method2", "method3", "method4", "method5"))
   }
 
   test("getMethod") {
@@ -46,50 +136,24 @@ class LLJVMUtilsSuite extends FunSuite {
     }.getMessage
     assert(errMsg === "Method not found: unknownMethod(int, class java.lang.String)")
 
-    val m1 = LLJVMUtils.getMethod(classOf[TestClass], "methodX", jInt.TYPE, jDouble.TYPE)
-    assert(m1.getName === "methodX")
+    val m1 = LLJVMUtils.getMethod(classOf[TestClass], "method1", jInt.TYPE, jDouble.TYPE)
+    assert(m1.getName === "method1")
     assert(m1.getParameterTypes.toSeq === Seq(Integer.TYPE, jDouble.TYPE))
 
-    val m2 = LLJVMUtils.getMethod(classOf[TestClass], "methodY", classOf[String])
-    assert(m2.getName === "methodY")
+    val m2 = LLJVMUtils.getMethod(classOf[TestClass], "method2", classOf[String])
+    assert(m2.getName === "method2")
     assert(m2.getParameterTypes.toSeq === Seq(classOf[String]))
 
-    val m3 = LLJVMUtils.getMethod(classOf[TestClass], "methodZ", classOf[String])
-    assert(m3.getName === "methodZ")
+    val m3 = LLJVMUtils.getMethod(classOf[TestClass], "method3", classOf[String])
+    assert(m3.getName === "method3")
     assert(m3.getParameterTypes.toSeq === Seq(classOf[String]))
 
-    val m4 = LLJVMUtils.getMethod(classOf[TestClass], "otherMethod")
-    assert(m4.getName === "otherMethod")
+    val m4 = LLJVMUtils.getMethod(classOf[TestClass], "method4")
+    assert(m4.getName === "method4")
     assert(m4.getParameterTypes.toSeq === Seq.empty)
-  }
 
-  test("throw exceptions if illegal bytecode found") {
-    val illegalCode =
-      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
-         |.super java/lang/Object
-         |
-         |.method public <init>()V
-         |        aload_0
-         |        invokenonvirtual java/lang/Object/<init>()V
-         |        return
-         |.end method
-         |
-         |.method public static plus(II)I
-         |.limit stack 2
-         |.limit locals 2
-         |        lload_0 ; Push wrong type data onto the operand stack
-         |        iload_1
-         |        iadd
-         |        ireturn
-         |
-         |.end method
-       """.stripMargin
-
-    val bytecode = JvmAssembler.compile(illegalCode)
-    val errMsg = intercept[LLJVMRuntimeException] {
-      TestUtils.loadClassFromBytecode(bytecode)
-    }.getMessage
-    assert(errMsg.contains(
-      "Illegal bytecode found: Error at instruction 0: Expected J, but found I"))
+    val m5 = LLJVMUtils.getMethod(classOf[TestClass], "method5", jInt.TYPE, jInt.TYPE)
+    assert(m5.getName === "method5")
+    assert(m5.getParameterTypes.toSeq === Seq(Integer.TYPE, Integer.TYPE))
   }
 }

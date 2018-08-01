@@ -23,7 +23,7 @@ class LLJVMNativeSuite extends FunSuite {
 
   test("broken bitcode tests") {
     val errMsg = intercept[LLJVMRuntimeException] {
-      TestUtils.loadClassFromResource("corrupt.bc")
+      TestUtils.loadClassFromBitcodeInResource("corrupt.bc")
     }.getMessage
     assert(errMsg.contains("Corrupt LLVM bitcode found"))
   }

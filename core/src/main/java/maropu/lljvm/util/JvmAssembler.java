@@ -20,11 +20,13 @@ package maropu.lljvm.util;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+import com.google.common.annotations.VisibleForTesting;
 import jasmin.ClassFile;
 
 import maropu.lljvm.LLJVMLoader;
 import maropu.lljvm.LLJVMNative;
 import maropu.lljvm.LLJVMRuntimeException;
+import maropu.lljvm.util.analysis.BytecodeVerifier;
 
 public class JvmAssembler {
 
@@ -42,10 +44,15 @@ public class JvmAssembler {
   }
 
   public static byte[] compile(String code) {
-    return compile(code.getBytes(StandardCharsets.UTF_8));
+    return doCompile(code.getBytes(StandardCharsets.UTF_8), true);
   }
 
   public static byte[] compile(byte[] code) {
+    return doCompile(code, true);
+  }
+
+  @VisibleForTesting
+  public static byte[] doCompile(byte[] code, boolean verifyCode) {
     ClassFile classFile = new ClassFile();
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     try (Reader in = new InputStreamReader(new ByteArrayInputStream(code))) {
@@ -54,6 +61,8 @@ public class JvmAssembler {
     } catch (Exception e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }
-    return out.toByteArray();
+    byte[] bitcode = out.toByteArray();
+    if (verifyCode) BytecodeVerifier.verify(bitcode);
+    return bitcode;
   }
 }

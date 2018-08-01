@@ -36,6 +36,9 @@ public class BytecodeVerifier {
   private static final int apiCode = Opcodes.ASM6;
 
   public static void verify(byte[] bytecode) throws LLJVMRuntimeException {
+    if (bytecode.length <= 0) {
+      throw new LLJVMRuntimeException("Empty bytecode not allowed");
+    }
     final ClassReader cr = getClassReader(bytecode);
     verifyBytecode(cr);
     checkIfBytecodeSupported(cr);

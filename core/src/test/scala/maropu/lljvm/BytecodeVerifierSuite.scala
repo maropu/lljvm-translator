@@ -17,6 +17,8 @@
 
 package maropu.lljvm
 
+import java.nio.charset.StandardCharsets
+
 import org.scalatest.FunSuite
 
 import maropu.lljvm.util.JvmAssembler
@@ -25,7 +27,7 @@ import maropu.lljvm.util.analysis.BytecodeVerifier
 class BytecodeVerifierSuite extends FunSuite {
 
   private def checkException(code: String, expectedMsg: String): Unit = {
-    val bytecode = JvmAssembler.compile(code)
+    val bytecode = JvmAssembler.doCompile(code.getBytes(StandardCharsets.UTF_8), false)
     val errMsg = intercept[LLJVMRuntimeException] {
       BytecodeVerifier.verify(bytecode)
     }.getMessage

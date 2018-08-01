@@ -88,6 +88,38 @@ public class LLJVMUtils {
     return sb.toString();
   }
 
+  public static Object invoke(Class<?> clazz, String methodName, Object... args) {
+    Class[] argTypes = new Class[args.length];
+    for (int i = 0; i < args.length; i++) {
+      if (args[i] instanceof java.lang.Short) {
+        argTypes[i] = java.lang.Short.TYPE;
+      } else if (args[i] instanceof java.lang.Integer) {
+        argTypes[i] = java.lang.Integer.TYPE;
+      } else if (args[i] instanceof java.lang.Long) {
+        argTypes[i] = java.lang.Long.TYPE;
+      } else if (args[i] instanceof java.lang.Float) {
+        argTypes[i] = java.lang.Float.TYPE;
+      } else if (args[i] instanceof java.lang.Double) {
+        argTypes[i] = java.lang.Double.TYPE;
+      } else if (args[i] instanceof java.lang.Boolean) {
+        argTypes[i] = java.lang.Boolean.TYPE;
+      } else {
+        throw new LLJVMRuntimeException(
+          "Unsupported argument type: " + args[i].getClass().getSimpleName());
+      }
+    }
+    Method method = getMethod(clazz, methodName, argTypes);
+    try {
+      return method.invoke(null, args);
+    } catch (Throwable t) {
+      throw new LLJVMRuntimeException(t.getMessage());
+    }
+  }
+
+  public static Object invoke(Class<?> clazz, Object... args) {
+    return invoke(clazz, "", args);
+  }
+
   private static void throwNotFoundMethodException(String name,  Class<?>... argTypes) {
     final String notFoundMethod = String.format("%s(%s)", name, joinString(argTypes, ", "));
     throw new LLJVMRuntimeException("Method not found: " + notFoundMethod);
@@ -104,7 +136,7 @@ public class LLJVMUtils {
         }
       }
     } catch (Throwable e) { // All the error states caught here
-      throw new LLJVMRuntimeException("Illegal bytecode found: " + e.getMessage());
+      throw new LLJVMRuntimeException(e.getMessage());
     }
     throwNotFoundMethodException(methodName, argTypes);
     return null; // Not hit here

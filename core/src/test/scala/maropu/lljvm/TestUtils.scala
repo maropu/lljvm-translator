@@ -50,7 +50,7 @@ object TestUtils extends FunSuite {
       arguments: Seq[AnyRef] = Seq.empty,
       expected: Option[T] = None): T = try {
     val method = LLJVMUtils.getMethod(
-      TestUtils.loadClassFromResource(bitcode), funcName, argTypes: _*)
+      TestUtils.loadClassFromBitcodeInResource(bitcode), funcName, argTypes: _*)
     val actualResult = method.invoke(null, arguments: _*)
     expected.foreach { expectedResult =>
       assert(actualResult === expectedResult)
@@ -84,7 +84,8 @@ object TestUtils extends FunSuite {
       bitcode: String,
       argTypes: Seq[Class[_]] = Seq.empty,
       arguments: Seq[AnyRef] = Seq.empty): T = {
-    val method = LLJVMUtils.getMethod(TestUtils.loadClassFromResource(bitcode), "", argTypes: _*)
+    val method = LLJVMUtils.getMethod(
+      TestUtils.loadClassFromBitcodeInResource(bitcode), "", argTypes: _*)
     method.invoke(null, arguments: _*).asInstanceOf[T]
   }
 
@@ -100,7 +101,13 @@ object TestUtils extends FunSuite {
     classLoader.loadClassFromBytecode(bytecode)
   }
 
-  def loadClassFromResource(location: String): Class[_] = {
+  def loadClassFromBitcode(bitcode: Array[Byte]): Class[_] = {
+    val classLoader = new LLJVMClassLoader()
+    LLJVMClassLoader.currentClassLoader.set(classLoader)
+    classLoader.loadClassFromBitcode(bitcode)
+  }
+
+  def loadClassFromBitcodeInResource(location: String): Class[_] = {
     val bitcode = TestUtils.resourceToBytes(location)
     val classLoader = new LLJVMClassLoader()
     LLJVMClassLoader.currentClassLoader.set(classLoader)

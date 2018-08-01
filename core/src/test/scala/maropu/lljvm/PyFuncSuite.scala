@@ -305,7 +305,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val errMsg = intercept[InvocationTargetException] {
       val method = LLJVMUtils.getMethod(
-        TestUtils.loadClassFromResource(s"$basePath/numpy_dot_test-cfunc-mm-float32.bc"),
+        TestUtils.loadClassFromBitcodeInResource(s"$basePath/numpy_dot_test-cfunc-mm-float32.bc"),
         jLong.TYPE, jLong.TYPE)
       method.invoke(null, new jLong(floatX.addr()), new jLong(floatY.addr()))
     }.getCause.getMessage

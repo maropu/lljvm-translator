@@ -86,7 +86,7 @@ public class LLJVMClassLoader extends ClassLoader {
   public Class<?> loadClassFromBitcode(byte[] bitcode)
       throws IOException, LLJVMRuntimeException {
     byte[] bytecode = JvmAssembler.compile(LLJVMUtils.asJVMAssemblyCode(bitcode));
-    return loadClassFromBytecode(bytecode);
+    return defineClass(JvmAssembler.LLJVM_GENERATED_CLASSNAME, bytecode, 0, bytecode.length);
   }
 
   public Class<?> loadClassFromBytecodeFile(String classFile)
