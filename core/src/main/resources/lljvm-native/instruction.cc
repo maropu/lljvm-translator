@@ -30,6 +30,40 @@ static unsigned int alignOffset(unsigned int offset, unsigned int align) {
   return offset + ((align - (offset % align)) % align);
 }
 
+static std::string getPredicate(unsigned int predicate) {
+  std::string inst;
+  switch (predicate) {
+    case ICmpInst::ICMP_EQ: inst = "icmp_eq"; break;
+    case ICmpInst::ICMP_NE: inst = "icmp_ne"; break;
+    case ICmpInst::ICMP_ULE: inst = "icmp_ule"; break;
+    case ICmpInst::ICMP_SLE: inst = "icmp_sle"; break;
+    case ICmpInst::ICMP_UGE: inst = "icmp_uge"; break;
+    case ICmpInst::ICMP_SGE: inst = "icmp_sge"; break;
+    case ICmpInst::ICMP_ULT: inst = "icmp_ult"; break;
+    case ICmpInst::ICMP_SLT: inst = "icmp_slt"; break;
+    case ICmpInst::ICMP_UGT: inst = "icmp_ugt"; break;
+    case ICmpInst::ICMP_SGT: inst = "icmp_sgt"; break;
+    case FCmpInst::FCMP_UGT: inst = "fcmp_ugt"; break;
+    case FCmpInst::FCMP_OGT: inst = "fcmp_ogt"; break;
+    case FCmpInst::FCMP_UGE: inst = "fcmp_uge"; break;
+    case FCmpInst::FCMP_OGE: inst = "fcmp_oge"; break;
+    case FCmpInst::FCMP_ULT: inst = "fcmp_ult"; break;
+    case FCmpInst::FCMP_OLT: inst = "fcmp_olt"; break;
+    case FCmpInst::FCMP_ULE: inst = "fcmp_ule"; break;
+    case FCmpInst::FCMP_OLE: inst = "fcmp_ole"; break;
+    case FCmpInst::FCMP_UEQ: inst = "fcmp_ueq"; break;
+    case FCmpInst::FCMP_OEQ: inst = "fcmp_oeq"; break;
+    case FCmpInst::FCMP_UNE: inst = "fcmp_une"; break;
+    case FCmpInst::FCMP_ONE: inst = "fcmp_one"; break;
+    case FCmpInst::FCMP_ORD: inst = "fcmp_ord"; break;
+    case FCmpInst::FCMP_UNO: inst = "fcmp_uno"; break;
+    default:
+      errs() << "Predicate = " << predicate << '\n';
+      llvm_unreachable("Invalid cmp predicate");
+  }
+  return inst;
+}
+
 void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, const Value *right) {
   // First, we need to check if the input is a vector type or not.
   // TODO: We need to support vector types in other types?
@@ -68,74 +102,80 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
         printIndirectLoad(rightSeqTy->getElementType());
       }
 
-      std::string inst;
-      switch (predicate) {
-        case ICmpInst::ICMP_EQ: inst = "icmp_eq"; break;
-        case ICmpInst::ICMP_NE: inst = "icmp_ne"; break;
-        case ICmpInst::ICMP_ULE: inst = "icmp_ule"; break;
-        case ICmpInst::ICMP_SLE: inst = "icmp_sle"; break;
-        case ICmpInst::ICMP_UGE: inst = "icmp_uge"; break;
-        case ICmpInst::ICMP_SGE: inst = "icmp_sge"; break;
-        case ICmpInst::ICMP_ULT: inst = "icmp_ult"; break;
-        case ICmpInst::ICMP_SLT: inst = "icmp_slt"; break;
-        case ICmpInst::ICMP_UGT: inst = "icmp_ugt"; break;
-        case ICmpInst::ICMP_SGT: inst = "icmp_sgt"; break;
-        case FCmpInst::FCMP_UGT: inst = "fcmp_ugt"; break;
-        case FCmpInst::FCMP_OGT: inst = "fcmp_ogt"; break;
-        case FCmpInst::FCMP_UGE: inst = "fcmp_uge"; break;
-        case FCmpInst::FCMP_OGE: inst = "fcmp_oge"; break;
-        case FCmpInst::FCMP_ULT: inst = "fcmp_ult"; break;
-        case FCmpInst::FCMP_OLT: inst = "fcmp_olt"; break;
-        case FCmpInst::FCMP_ULE: inst = "fcmp_ule"; break;
-        case FCmpInst::FCMP_OLE: inst = "fcmp_ole"; break;
-        case FCmpInst::FCMP_UEQ: inst = "fcmp_ueq"; break;
-        case FCmpInst::FCMP_OEQ: inst = "fcmp_oeq"; break;
-        case FCmpInst::FCMP_UNE: inst = "fcmp_une"; break;
-        case FCmpInst::FCMP_ONE: inst = "fcmp_one"; break;
-        case FCmpInst::FCMP_ORD: inst = "fcmp_ord"; break;
-        case FCmpInst::FCMP_UNO: inst = "fcmp_uno"; break;
-        default:
-          errs() << "Predicate = " << predicate << '\n';
-          llvm_unreachable("Invalid cmp predicate");
-      }
+      const std::string inst = getPredicate(predicate);
       printVirtualInstruction(
         inst + "(" + getTypeDescriptor(leftSeqTy->getElementType(), true) +
           getTypeDescriptor(rightSeqTy->getElementType(), true) + ")Z");
       printIndirectStore(rTy);
     }
   } else {
-      std::string inst;
-      switch (predicate) {
-        case ICmpInst::ICMP_EQ: inst = "icmp_eq";  break;
-        case ICmpInst::ICMP_NE: inst = "icmp_ne";  break;
-        case ICmpInst::ICMP_ULE: inst = "icmp_ule"; break;
-        case ICmpInst::ICMP_SLE: inst = "icmp_sle"; break;
-        case ICmpInst::ICMP_UGE: inst = "icmp_uge"; break;
-        case ICmpInst::ICMP_SGE: inst = "icmp_sge"; break;
-        case ICmpInst::ICMP_ULT: inst = "icmp_ult"; break;
-        case ICmpInst::ICMP_SLT: inst = "icmp_slt"; break;
-        case ICmpInst::ICMP_UGT: inst = "icmp_ugt"; break;
-        case ICmpInst::ICMP_SGT: inst = "icmp_sgt"; break;
-        case FCmpInst::FCMP_UGT: inst = "fcmp_ugt"; break;
-        case FCmpInst::FCMP_OGT: inst = "fcmp_ogt"; break;
-        case FCmpInst::FCMP_UGE: inst = "fcmp_uge"; break;
-        case FCmpInst::FCMP_OGE: inst = "fcmp_oge"; break;
-        case FCmpInst::FCMP_ULT: inst = "fcmp_ult"; break;
-        case FCmpInst::FCMP_OLT: inst = "fcmp_olt"; break;
-        case FCmpInst::FCMP_ULE: inst = "fcmp_ule"; break;
-        case FCmpInst::FCMP_OLE: inst = "fcmp_ole"; break;
-        case FCmpInst::FCMP_UEQ: inst = "fcmp_ueq"; break;
-        case FCmpInst::FCMP_OEQ: inst = "fcmp_oeq"; break;
-        case FCmpInst::FCMP_UNE: inst = "fcmp_une"; break;
-        case FCmpInst::FCMP_ONE: inst = "fcmp_one"; break;
-        case FCmpInst::FCMP_ORD: inst = "fcmp_ord"; break;
-        case FCmpInst::FCMP_UNO: inst = "fcmp_uno"; break;
-        default:
-          errs() << "Predicate = " << predicate << '\n';
-          llvm_unreachable("Invalid cmp predicate");
-      }
+      const std::string inst = getPredicate(predicate);
       printVirtualInstruction(inst + "(" + getTypeDescriptor(left->getType(), true) +
         getTypeDescriptor(right->getType(), true) + ")Z", left, right);
+  }
+}
+
+void JVMWriter::printArithmeticInstruction(
+    unsigned int op,
+    const std::string& typeDescriptor,
+    const std::string& typePrefix,
+    int typeBitWidth) {
+  switch (op) {
+    case Instruction::Add:
+    case Instruction::FAdd:
+      printSimpleInstruction(typePrefix + "add");
+      break;
+    case Instruction::Sub:
+    case Instruction::FSub:
+      printSimpleInstruction(typePrefix + "sub");
+      break;
+    case Instruction::Mul:
+    case Instruction::FMul:
+      printSimpleInstruction(typePrefix + "mul");
+      break;
+    case Instruction::SDiv:
+    case Instruction::FDiv:
+      printSimpleInstruction(typePrefix + "div");
+      break;
+    case Instruction::SRem:
+    case Instruction::FRem:
+      printSimpleInstruction(typePrefix + "rem");
+      break;
+    case Instruction::And:
+      printSimpleInstruction(typePrefix + "and");
+      break;
+    case Instruction::Or:
+      printSimpleInstruction(typePrefix + "or");
+      break;
+    case Instruction::Xor:
+      printSimpleInstruction(typePrefix + "xor");
+      break;
+    case Instruction::Shl:
+      if (typeBitWidth == 64) {
+        printSimpleInstruction("l2i");
+      }
+      printSimpleInstruction(typePrefix + "shl");
+      break;
+    case Instruction::LShr:
+      if (typeBitWidth == 64) {
+        printSimpleInstruction("l2i");
+      }
+      printSimpleInstruction(typePrefix + "ushr");
+      break;
+    case Instruction::AShr:
+      if (typeBitWidth == 64) {
+        printSimpleInstruction("l2i");
+      }
+      printSimpleInstruction(typePrefix + "shr");
+      break;
+    case Instruction::UDiv:
+      printVirtualInstruction(
+        "udiv(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
+      break;
+    case Instruction::URem:
+      printVirtualInstruction(
+        "urem(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
+      break;
   }
 }
 
@@ -174,64 +214,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
         printIndirectLoad(seqTy->getElementType());
       }
 
-      switch (op) {
-        case Instruction::Add:
-        case Instruction::FAdd:
-          printSimpleInstruction(typePrefix + "add");
-          break;
-        case Instruction::Sub:
-        case Instruction::FSub:
-          printSimpleInstruction(typePrefix + "sub");
-          break;
-        case Instruction::Mul:
-        case Instruction::FMul:
-          printSimpleInstruction(typePrefix + "mul");
-          break;
-        case Instruction::SDiv:
-        case Instruction::FDiv:
-          printSimpleInstruction(typePrefix + "div");
-          break;
-        case Instruction::SRem:
-        case Instruction::FRem:
-          printSimpleInstruction(typePrefix + "rem");
-          break;
-        case Instruction::And:
-          printSimpleInstruction(typePrefix + "and");
-          break;
-        case Instruction::Or:
-          printSimpleInstruction(typePrefix + "or");
-          break;
-        case Instruction::Xor:
-          printSimpleInstruction(typePrefix + "xor");
-          break;
-        case Instruction::Shl:
-          if (getBitWidth(right->getType()) == 64) {
-            printSimpleInstruction("l2i");
-          }
-          printSimpleInstruction(typePrefix + "shl");
-          break;
-        case Instruction::LShr:
-          if (getBitWidth(right->getType()) == 64) {
-            printSimpleInstruction("l2i");
-          }
-          printSimpleInstruction(typePrefix + "ushr");
-          break;
-        case Instruction::AShr:
-          if (getBitWidth(right->getType()) == 64) {
-            printSimpleInstruction("l2i");
-          }
-          printSimpleInstruction(typePrefix + "shr");
-          break;
-        case Instruction::UDiv:
-          printVirtualInstruction(
-            "udiv(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
-          break;
-        case Instruction::URem:
-          printVirtualInstruction(
-            "urem(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
-          break;
-      }
-
+      printArithmeticInstruction(op, typeDescriptor, typePrefix, getBitWidth(right->getType()));
       printIndirectStore(seqTy->getElementType());
     }
   } else {
@@ -239,63 +222,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
     printValueLoad(right);
     std::string typePrefix = getTypePrefix(left->getType(), true);
     std::string typeDescriptor = getTypeDescriptor(left->getType());
-    switch (op) {
-      case Instruction::Add:
-      case Instruction::FAdd:
-        printSimpleInstruction(typePrefix + "add");
-        break;
-      case Instruction::Sub:
-      case Instruction::FSub:
-        printSimpleInstruction(typePrefix + "sub");
-        break;
-      case Instruction::Mul:
-      case Instruction::FMul:
-        printSimpleInstruction(typePrefix + "mul");
-        break;
-      case Instruction::SDiv:
-      case Instruction::FDiv:
-        printSimpleInstruction(typePrefix + "div");
-        break;
-      case Instruction::SRem:
-      case Instruction::FRem:
-        printSimpleInstruction(typePrefix + "rem");
-        break;
-      case Instruction::And:
-        printSimpleInstruction(typePrefix + "and");
-        break;
-      case Instruction::Or:
-        printSimpleInstruction(typePrefix + "or");
-        break;
-      case Instruction::Xor:
-        printSimpleInstruction(typePrefix + "xor");
-        break;
-      case Instruction::Shl:
-        if (getBitWidth(right->getType()) == 64) {
-          printSimpleInstruction("l2i");
-        }
-        printSimpleInstruction(typePrefix + "shl");
-        break;
-      case Instruction::LShr:
-        if (getBitWidth(right->getType()) == 64) {
-          printSimpleInstruction("l2i");
-        }
-        printSimpleInstruction(typePrefix + "ushr");
-        break;
-      case Instruction::AShr:
-        if (getBitWidth(right->getType()) == 64) {
-          printSimpleInstruction("l2i");
-        }
-        printSimpleInstruction(typePrefix + "shr");
-        break;
-      case Instruction::UDiv:
-        printVirtualInstruction(
-          "udiv(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
-        break;
-      case Instruction::URem:
-        printVirtualInstruction(
-          "urem(" + typeDescriptor + typeDescriptor + ")" + typeDescriptor);
-        break;
-    }
+    printArithmeticInstruction(op, typeDescriptor, typePrefix, getBitWidth(right->getType()));
   }
 }
 
@@ -317,6 +244,57 @@ void JVMWriter::printBitCastInstruction(const Type *ty, const Type *srcTy) {
 void JVMWriter::printCastInstruction(const std::string &typePrefix, const std::string &srcTypePrefix) {
   if (srcTypePrefix != typePrefix) {
     printSimpleInstruction(srcTypePrefix + "2" + typePrefix);
+  }
+}
+
+void JVMWriter::printCastInstruction(unsigned int op, const Type *srcTy, const Type *destTy) {
+  switch (op) {
+    case Instruction::SIToFP:
+    case Instruction::FPToSI:
+    case Instruction::FPTrunc:
+    case Instruction::FPExt:
+    case Instruction::SExt:
+      // if (getBitWidth(srcTy) < 32) {
+      //   printCastInstruction(getTypePrefix(srcTy), "i");
+      // }
+      printCastInstruction(getTypePrefix(destTy, true), getTypePrefix(srcTy, true));
+      break;
+    case Instruction::Trunc:
+      if (getBitWidth(srcTy) == 64 && getBitWidth(destTy) < 32) {
+        printSimpleInstruction("l2i");
+        printCastInstruction(getTypePrefix(destTy), "i");
+      } else {
+        printCastInstruction(getTypePrefix(destTy), getTypePrefix(srcTy, true));
+      }
+      break;
+    case Instruction::IntToPtr:
+      // TODO: "l" is correct?
+      printCastInstruction("l", getTypePrefix(srcTy, true));
+      break;
+    case Instruction::PtrToInt:
+      // TODO: "l" is correct?
+      printCastInstruction(getTypePrefix(destTy), "l");
+      break;
+    case Instruction::ZExt:
+      printVirtualInstruction(
+        "zext_" + getTypePostfix(destTy, true) +
+          "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(destTy, true));
+      break;
+    case Instruction::UIToFP:
+        printVirtualInstruction(
+          "uitofp_" + getTypePostfix(destTy) +
+            "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(destTy));
+        break;
+    case Instruction::FPToUI:
+      printVirtualInstruction(
+        "fptoui_" + getTypePostfix(destTy) +
+          "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(destTy));
+      break;
+    case Instruction::BitCast:
+      printBitCastInstruction(destTy, srcTy); break;
+    default:
+      errs() << "Opcode = " << op << '\n';
+      llvm_unreachable("Invalid cast instruction");
   }
 }
 
@@ -348,106 +326,12 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v, const Type
         printIndirectLoad(seqTy->getElementType());
       }
 
-      switch (op) {
-        case Instruction::SIToFP:
-        case Instruction::FPToSI:
-        case Instruction::FPTrunc:
-        case Instruction::FPExt:
-        case Instruction::SExt:
-          // if (getBitWidth(srcElemTy) < 32) {
-          //   printCastInstruction(getTypePrefix(srcElemTy), "i");
-          // }
-          printCastInstruction(getTypePrefix(destElemTy, true), getTypePrefix(srcElemTy, true));
-          break;
-        case Instruction::Trunc:
-          if (getBitWidth(srcElemTy) == 64 && getBitWidth(destElemTy) < 32) {
-            printSimpleInstruction("l2i");
-            printCastInstruction(getTypePrefix(destElemTy), "i");
-          } else {
-            printCastInstruction(getTypePrefix(destElemTy), getTypePrefix(srcElemTy, true));
-          }
-          break;
-        case Instruction::IntToPtr:
-          // TODO: "l" is correct?
-          printCastInstruction("l", getTypePrefix(srcElemTy, true)); break;
-        case Instruction::PtrToInt:
-          // TODO: "l" is correct?
-          printCastInstruction(getTypePrefix(destElemTy), "l"); break;
-        case Instruction::ZExt:
-          printVirtualInstruction(
-            "zext_" + getTypePostfix(destElemTy, false) +
-              "(" + getTypeDescriptor(srcElemTy) + ")" + getTypeDescriptor(destElemTy, false));
-          break;
-        case Instruction::UIToFP:
-          printVirtualInstruction(
-            "uitofp_" + getTypePostfix(destElemTy) +
-              "(" + getTypeDescriptor(srcElemTy) + ")" + getTypeDescriptor(destElemTy));
-          break;
-        case Instruction::FPToUI:
-          printVirtualInstruction(
-            "fptoui_" + getTypePostfix(destElemTy) +
-              "(" + getTypeDescriptor(srcElemTy) + ")" + getTypeDescriptor(destElemTy));
-          break;
-        case Instruction::BitCast:
-          printBitCastInstruction(destElemTy, srcElemTy);
-          break;
-        default:
-          errs() << "Opcode = " << op << '\n';
-          llvm_unreachable("Invalid cast instruction");
-      }
-
+      printCastInstruction(op, srcElemTy, destElemTy);
       printIndirectStore(destElemTy);
     }
   } else {
     printValueLoad(v);
-    switch (op) {
-      case Instruction::SIToFP:
-      case Instruction::FPToSI:
-      case Instruction::FPTrunc:
-      case Instruction::FPExt:
-      case Instruction::SExt:
-        // if (getBitWidth(srcTy) < 32) {
-        //   printCastInstruction(getTypePrefix(srcTy), "i");
-        // }
-        printCastInstruction(getTypePrefix(ty, true), getTypePrefix(srcTy, true));
-        break;
-      case Instruction::Trunc:
-        if (getBitWidth(srcTy) == 64 && getBitWidth(ty) < 32) {
-          printSimpleInstruction("l2i");
-          printCastInstruction(getTypePrefix(ty), "i");
-        } else {
-          printCastInstruction(getTypePrefix(ty), getTypePrefix(srcTy, true));
-        }
-        break;
-      case Instruction::IntToPtr:
-        // TODO: "l" is correct?
-        printCastInstruction("l", getTypePrefix(srcTy, true));
-        break;
-      case Instruction::PtrToInt:
-        // TODO: "l" is correct?
-        printCastInstruction(getTypePrefix(ty), "l");
-        break;
-      case Instruction::ZExt:
-        printVirtualInstruction(
-          "zext_" + getTypePostfix(ty, true) +
-            "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(ty, true));
-        break;
-      case Instruction::UIToFP:
-          printVirtualInstruction(
-            "uitofp_" + getTypePostfix(ty) +
-              "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(ty));
-          break;
-      case Instruction::FPToUI:
-        printVirtualInstruction(
-          "fptoui_" + getTypePostfix(ty) +
-            "(" + getTypeDescriptor(srcTy) + ")" + getTypeDescriptor(ty));
-        break;
-      case Instruction::BitCast:
-        printBitCastInstruction(ty, srcTy); break;
-      default:
-        errs() << "Opcode = " << op << '\n';
-        llvm_unreachable("Invalid cast instruction");
-    }
+    printCastInstruction(op, srcTy, ty);
   }
 }
 
@@ -759,6 +643,26 @@ void JVMWriter::printMemIntrinsic(const MemIntrinsic *inst) {
   }
 }
 
+void JVMWriter::printMathIntrinsic(unsigned int op) {
+  switch (op) {
+    case Intrinsic::exp:
+      printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
+      break;
+    case Intrinsic::log:
+      printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
+      break;
+    case Intrinsic::log10:
+      printSimpleInstruction("invokestatic", "java/lang/Math/log10(D)D");
+      break;
+    case Intrinsic::sqrt:
+      printSimpleInstruction("invokestatic", "java/lang/Math/sqrt(D)D");
+      break;
+    case Intrinsic::pow:
+      printSimpleInstruction("invokestatic", "java/lang/Math/pow(DD)D");
+      break;
+  }
+}
+
 void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
   assert(inst->getNumOperands() >= 2 && inst->getNumOperands() <= 3);
   // First, we need to check if the input is a vector type or not
@@ -812,23 +716,7 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
         if (f32_2nd) printSimpleInstruction("f2d");
       }
 
-      switch (inst->getIntrinsicID()) {
-        case Intrinsic::exp:
-          printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
-          break;
-        case Intrinsic::log:
-          printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
-          break;
-        case Intrinsic::log10:
-          printSimpleInstruction("invokestatic", "java/lang/Math/log10(D)D");
-          break;
-        case Intrinsic::sqrt:
-          printSimpleInstruction("invokestatic", "java/lang/Math/sqrt(D)D");
-          break;
-        case Intrinsic::pow:
-          printSimpleInstruction("invokestatic", "java/lang/Math/pow(DD)D");
-          break;
-      }
+      printMathIntrinsic(inst->getIntrinsicID());
       if (f32) printSimpleInstruction("d2f");
       printIndirectStore(seqTy->getElementType());
     }
@@ -849,23 +737,8 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
       printValueLoad(inst->getOperand(1));
       if (f32_2nd) printSimpleInstruction("f2d");
     }
-    switch (inst->getIntrinsicID()) {
-      case Intrinsic::exp:
-        printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
-        break;
-      case Intrinsic::log:
-        printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
-        break;
-      case Intrinsic::log10:
-        printSimpleInstruction("invokestatic", "java/lang/Math/log10(D)D");
-        break;
-      case Intrinsic::sqrt:
-        printSimpleInstruction("invokestatic", "java/lang/Math/sqrt(D)D");
-        break;
-      case Intrinsic::pow:
-        printSimpleInstruction("invokestatic", "java/lang/Math/pow(DD)D");
-        break;
-    }
+
+    printMathIntrinsic(inst->getIntrinsicID());
     if (f32) printSimpleInstruction("d2f");
   }
 }

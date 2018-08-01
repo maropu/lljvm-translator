@@ -58,7 +58,7 @@ class JVMWriter : public FunctionPass {
   Module *module;
   // The target data for the platform
   const DataLayout *targetData;
-  //  Pass ID
+  // Pass ID
   static char id;
 
   // Set of external references
@@ -127,8 +127,11 @@ private:
   // instruction.cc
   void printCmpInstruction(unsigned int predicate, const Value *left, const Value *right);
   void printArithmeticInstruction(unsigned int op, const Value *left, const Value *right);
+  void printArithmeticInstruction(
+    unsigned int op, const std::string& typeDescriptor, const std::string& typePrefix, int typeBitWidth);
   void printBitCastInstruction(const Type *ty, const Type *srcTy);
   void printCastInstruction(const std::string &typePrefix, const std::string &srcTypePrefix);
+  void printCastInstruction(unsigned int op, const Type *srcTy, const Type *destTy);
   void printCastInstruction(unsigned int op, const Value *v, const Type *ty, const Type *srcTy);
   void printGepInstruction(const Value *v, gep_type_iterator i, gep_type_iterator e);
   void printAllocaInstruction(const AllocaInst *inst);
@@ -141,6 +144,7 @@ private:
   void printVAIntrinsic(const IntrinsicInst *inst);
   void printMemIntrinsic(const MemIntrinsic *inst);
   void printMathIntrinsic(const IntrinsicInst *inst);
+  void printMathIntrinsic(unsigned int op);
   void printBitIntrinsic(const IntrinsicInst *inst);
   void printAtomicRMW(const AtomicRMWInst *inst);
 
