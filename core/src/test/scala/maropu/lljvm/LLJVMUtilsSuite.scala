@@ -38,7 +38,7 @@ class LLJVMUtilsSuite extends FunSuite {
 
   test("asJVMAssemblyCode") {
     val bitcode = TestUtils.resourceToBytes("cfunc/add_test.bc")
-    TestUtils.compareCode(TestUtils.asJVMAssemblyCode(bitcode),
+    TestUtils.compareCode(LLJVMUtils.asJVMAssemblyCode(bitcode),
       s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
@@ -63,7 +63,6 @@ class LLJVMUtilsSuite extends FunSuite {
          |        return
          |.end method
          |
-         |
          |.method public static _add_test(II)I
          |        lconst_0
          |        lstore 2
@@ -78,36 +77,28 @@ class LLJVMUtilsSuite extends FunSuite {
          |begin_method:
          |        invokestatic maropu/lljvm/runtime/VMemory/createStackFrame()V
          |label1:
-         |;  %1 = alloca i32, align 4
          |        bipush 4
          |        invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
          |        lstore_2 ; _2
-         |;  %2 = alloca i32, align 4
          |        bipush 4
          |        invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
          |        lstore 4 ; _4
-         |;  store i32 %x, i32* %1, align 4
          |        lload_2 ; _2
          |        iload_0 ; _x
          |        invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
-         |;  store i32 %y, i32* %2, align 4
          |        lload 4 ; _4
          |        iload_1 ; _y
          |        invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
-         |;  %3 = load i32, i32* %1, align 4
          |        lload_2 ; _2
          |        invokestatic maropu/lljvm/runtime/VMemory/load_i32(J)I
          |        istore 6 ; _6
-         |;  %4 = load i32, i32* %2, align 4
          |        lload 4 ; _4
          |        invokestatic maropu/lljvm/runtime/VMemory/load_i32(J)I
          |        istore 7 ; _7
-         |;  %5 = add nsw i32 %3, %4
          |        iload 6 ; _6
          |        iload 7 ; _7
          |        iadd
          |        istore 8 ; _8
-         |;  ret i32 %5
          |        invokestatic maropu/lljvm/runtime/VMemory/destroyStackFrame()V
          |        iload 8 ; _8
          |        ireturn
