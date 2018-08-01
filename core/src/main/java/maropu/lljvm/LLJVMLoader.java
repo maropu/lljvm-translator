@@ -28,6 +28,7 @@ public class LLJVMLoader {
   private static boolean isLoaded = false;
 
   public synchronized static LLJVMNative loadLLJVMApi() throws LLJVMRuntimeException {
+    // TODO: Checks if this platform is 64bit
     if (lljvmApi != null) {
       return lljvmApi;
     }

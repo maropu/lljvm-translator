@@ -21,9 +21,10 @@ import maropu.lljvm.LLJVMLoader;
 import maropu.lljvm.LLJVMNative;
 import maropu.lljvm.LLJVMRuntimeException;
 import maropu.lljvm.unsafe.Platform;
+import maropu.lljvm.util.python.PyArrayHolder;
 
 public class ArrayUtils {
-  // Variables below are used to decompress COOPs in JDKs
+  // Variables below are used to decompress COOPs in Hotspot
   //  - https://wiki.openjdk.java.net/display/HotSpot/CompressedOops
   private static long narrowOffsetBase = 0L;
   private static int narrowOffsetShift = 0;
@@ -34,13 +35,13 @@ public class ArrayUtils {
   static {
     final String jvmVendor = System.getProperty("java.vendor");
     final int addrSize = Platform.addressSize() * 8;
-    // TODO: OpenJDK/Oracle JDKs are only supported now
+    // TODO: What happens when running this on JRE?
     if (jvmVendor.contains("Oracle")) {
       jvmName = String.format("OpenJDK/Oracle %d-bit JDK", addrSize);
-      // Only support 64-bit JDKs
+      // Supports 64-bit Hotspot only
       isJavaArrayAddrSupported = (addrSize == 64);
     } else {
-      jvmName = String.format("Unknown %d-bit JDK (vendor=%s)", addrSize, jvmVendor);
+      jvmName = String.format("Unknown %d-bit Java Runtime (vendor=%s)", addrSize, jvmVendor);
       isJavaArrayAddrSupported = false;
     }
     try {

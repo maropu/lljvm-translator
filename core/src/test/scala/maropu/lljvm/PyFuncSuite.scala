@@ -17,12 +17,11 @@
 
 package maropu.lljvm
 
-import java.lang.{Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
+import java.lang.{Long => jLong, Float => jFloat, Integer => jInt, Double => jDouble}
 import java.lang.reflect.InvocationTargetException
 
+import maropu.lljvm.util.python.PyArrayHolder
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
-
-import maropu.lljvm.util.PyArrayHolder
 
 class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
