@@ -1,6 +1,6 @@
 [![License](http://img.shields.io/:license-Apache_v2-blue.svg)](https://github.com/maropu/lljvm-translator/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/maropu/lljvm-translator.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
-[![Coverage Status](https://coveralls.io/repos/github/maropu/lljvm-translator/badge.svg?branch=master)](https://coveralls.io/github/maropu/lljvm-translator?branch=master)
+<!-- [![Coverage Status](https://coveralls.io/repos/github/maropu/lljvm-translator/badge.svg?branch=master)](https://coveralls.io/github/maropu/lljvm-translator?branch=master) -->
 
 This is an experimental low-level translator from LLVM bitcode to JVM bytecode.
 Since existing tools can generate LLVM bitcode from functions written in some languages
@@ -68,12 +68,11 @@ public final class GeneratedClass {
 }
 ```
 
-You can load this gen'd class file via Java runtime reflection and run in JVMs:
+You can load this gen'd class file via Java Runtime Reflection and run in JVMs:
 
 ```java
-import java.lang.reflect.Method;
-
-import maropu.lljvm.*;
+import maropu.lljvm.LLJVMClassLoader;
+import maropu.lljvm.LLJVMUtils;
 
 public class LLJVMTest {
 
@@ -84,8 +83,7 @@ public class LLJVMTest {
        * Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBitcodeFile("pyfunc.bc");
        */
       Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBytecodeFile("pyfunc.class");
-      Method pyfunc = LLJVMUtils.getMethod(clazz, Double.TYPE, Double.TYPE);
-      System.out.println(pyfunc.invoke(null, 3, 6));
+      System.out.println(LLJVMUtils.invoke(clazz, 3, 6));
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -162,11 +160,27 @@ Let's say that you have a function below;
 Then, you can handle the array in Java like;
 
 ```java
-  import maropu.lljvm.util.ArrayUtils;
+import maropu.lljvm.LLJVMClassLoader;
+import maropu.lljvm.LLJVMUtils;
+import maropu.lljvm.util.ArrayUtils;
 
-  long[] javaArray = {1L, 2L, 3L};
-  Method cfunc = LLJVMUtils.getMethod(clazz, Long.TYPE, Integer.TYPE);
-  System.out.println(cfunc.invoke(null, ArrayUtils.addressOf(javaArray), javaArray.length));
+long[] javaArray = {1L, 2L, 3L};
+System.out.println(LLJVMUtils.invoke(clazz, ArrayUtils.addressOf(javaArray), javaArray.length));
+```
+
+## Compilation in Java
+
+If `clang` is installed in your platform, you can say a line to get LLVM bitcode;
+
+```
+import maropu.lljvm.util.ClangRunner;
+
+byte[] bitcode = ClangRunner.exec(
+  "#include <math.h>                     \n" +
+  "double cfunc(double a, double b) {    \n" +
+  "  return pow(2.0 * a, 2.0) + 4.0 * b; \n" +
+  "}");
+...
 ```
 
 ## Gen'd bytecode verification
@@ -176,13 +190,13 @@ So, it is important to verify that gen'd bytecode is correct and supported befor
 The library does so when loading it in `LLJVMClassLoader` and, if it detects illegal code, it throws `LLJVMException`;
 
 ```java
-  try {
-    Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBitcodeFile("func.bc");
-    ...
-  } catch (LLJVMException e) {
-    // Writes fallback code here
-    ...
-  }
+try {
+  Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBitcodeFile("func.bc");
+  ...
+} catch (LLJVMException e) {
+  // Writes fallback code here
+  ...
+}
 ```
 
 ## Current development topics

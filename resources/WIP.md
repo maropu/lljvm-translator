@@ -18,21 +18,19 @@ def numpy_logistic_regression(Y, X, w, iterations):
 Then, you invoke the bitcode of the function as follows:
 
 ```java
-  // Placeholders for Python arrays
-  PyArrayHolder Y = new PyArrayHolder();
-  PyArrayHolder X = new PyArrayHolder();
-  PyArrayHolder w = new PyArrayHolder();
+// Placeholders for Python arrays
+PyArrayHolder Y = new PyArrayHolder();
+PyArrayHolder X = new PyArrayHolder();
+PyArrayHolder w = new PyArrayHolder();
 
-  // Loads the LLVM bitcode
-  Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBitcodeFile("numpy_logistic_regression.bc");
-  Method pyfunc = LLJVMUtils.getMethod(clazz, Long.TYPE, Long.TYPE, Long.TYPE, Long.TYPE);
+// Loads LLVM bitcode and runs it
+Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBitcodeFile("numpy_logistic_regression.bc");
 
-  // Invokes it
-  pyfunc.invoke(
-    null,
-    Y.with(double[] { 1.0, 1.0 }).addr(),
-    X.with(double[] { 1.0, 1.0, 1.0, 1.0 }).reshape(2, 2).addr(),
-    w.with(double[] { 1.0, 1.0 }).addr(),
-    1L);
+LLJVMUtils.invoke(
+  clazz,
+  Y.with(double[] { 1.0, 1.0 }).addr(),
+  X.with(double[] { 1.0, 1.0, 1.0, 1.0 }).reshape(2, 2).addr(),
+  w.with(double[] { 1.0, 1.0 }).addr(),
+  1L);
 ```
 
