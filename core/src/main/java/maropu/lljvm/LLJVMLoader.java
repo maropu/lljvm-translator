@@ -27,15 +27,27 @@ public class LLJVMLoader {
   private static volatile LLJVMNative lljvmApi = null;
   private static boolean isLoaded = false;
 
+  private static final String OS = OSInfo.getOSName();
+  private static final String ARCH = OSInfo.getArchName();
+
   public synchronized static LLJVMNative loadLLJVMApi() throws LLJVMRuntimeException {
-    // TODO: Checks if this platform is 64bit
+    checkIfPlatformSupported();
+
     if (lljvmApi != null) {
       return lljvmApi;
     }
-    loadNativeLibrary();
 
+    loadNativeLibrary();
     lljvmApi = new LLJVMNative();
     return lljvmApi;
+  }
+
+  private static void checkIfPlatformSupported() {
+    if (!((OS.equals("Linux") || OS.equals("Mac")) && ARCH.equals("x86_64"))) {
+      final String errMsg = String.format(
+        "Unsupported platform: os.name=%s and os.arch=%s", OS, ARCH);
+      throw new LLJVMRuntimeException(errMsg);
+    }
   }
 
   private synchronized static void loadNativeLibrary() {
@@ -136,15 +148,9 @@ public class LLJVMLoader {
   private static File findNativeLibrary() {
     // Load an OS-dependent native library inside a jar file
     String lljvmNativeLibraryName = System.mapLibraryName("lljvm");
-    String lljvmNativeLibraryPath = "/lib/" + OSInfo.getNativeLibFolderPathForCurrentOS();
-    boolean hasNativeLib = hasResource(lljvmNativeLibraryPath + "/" + lljvmNativeLibraryName);
-    if (!hasNativeLib) {
-      String errorMessage = String.format(
-        "Unsupported platform: os.name=%s and os.arch=%s",
-        OSInfo.getOSName(),
-        OSInfo.getArchName());
-      throw new LLJVMRuntimeException(errorMessage);
-    }
+    String lljvmNativeLibraryPath = String.format("/lib/%s/%s", OS, ARCH);
+    // We assume that we have already checked if this platform is supported in advance
+    assert(hasResource(lljvmNativeLibraryPath + "/" + lljvmNativeLibraryName));
 
     // Temporary folder for the native lib
     File tempFolder = new File(System.getProperty("java.io.tmpdir"));
