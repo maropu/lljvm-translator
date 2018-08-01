@@ -101,7 +101,7 @@ public class LoopSum {
           }
         }
         outStream.flush();
-      } catch (Exception e) {
+      } catch (IOException e) {
         throw new RuntimeException(e.getMessage());
       }
       return outStream.toByteArray();

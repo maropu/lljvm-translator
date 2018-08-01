@@ -60,7 +60,7 @@ public class ArrayUtils {
           narrowOffsetBase = rawAddr - (jvmAddr << narrowOffsetShift);
         }
       }
-    } catch (Exception e) {
+    } catch (Throwable t) {
       isJavaArrayAddrSupported = false;
     }
   }

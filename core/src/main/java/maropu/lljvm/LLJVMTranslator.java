@@ -44,8 +44,8 @@ public class LLJVMTranslator {
     try {
       byte[] bitcode = Files.readAllBytes(bitcodeFile.toPath());
       jvmAsm = LLJVMLoader.loadLLJVMApi().asJVMAssemblyCode(bitcode);
-    } catch (Exception e) {
-      e.printStackTrace(System.err);
+    } catch (Throwable t) {
+      t.printStackTrace(System.err);
       System.exit(-1);
     }
 
@@ -55,8 +55,8 @@ public class LLJVMTranslator {
 
     try (OutputStream os = new FileOutputStream(new File(outputDir, basename + ".class"))) {
       os.write(JvmAssembler.compile(jvmAsm));
-    } catch (Exception e) {
-      e.printStackTrace(System.err);
+    } catch (Throwable t) {
+      t.printStackTrace(System.err);
       System.exit(-1);
     }
   }

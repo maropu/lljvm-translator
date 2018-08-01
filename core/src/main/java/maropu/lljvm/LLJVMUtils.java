@@ -17,6 +17,7 @@
 
 package maropu.lljvm;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class LLJVMUtils {
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
       lljvmApi.veryfyBitcode(bitcode);
-    } catch (Exception e) {
+    } catch (IOException e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }
   }
@@ -44,7 +45,7 @@ public class LLJVMUtils {
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
       return lljvmApi.asLLVMAssemblyCode(bitcode);
-    } catch (Exception e) {
+    } catch (IOException e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }
   }
@@ -55,7 +56,7 @@ public class LLJVMUtils {
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
       jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode);
-    } catch (Exception e) {
+    } catch (IOException e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }
     assert(jvmAsm != null);
@@ -64,14 +65,10 @@ public class LLJVMUtils {
 
   public static List<Method> getAllMethods(Class<?> clazz) throws LLJVMRuntimeException {
     List<Method> methods = new ArrayList<>();
-    try {
-      for (Method m : clazz.getDeclaredMethods()) {
-        if (Modifier.isPublic(m.getModifiers())) {
-          methods.add(m);
-        }
+    for (Method m : clazz.getDeclaredMethods()) {
+      if (Modifier.isPublic(m.getModifiers())) {
+        methods.add(m);
       }
-    } catch (Throwable e) { // All the error states caught here
-      throw new LLJVMRuntimeException("Illegal bytecode found: " + e.getMessage());
     }
     return methods;
   }
@@ -111,8 +108,8 @@ public class LLJVMUtils {
     Method method = getMethod(clazz, methodName, argTypes);
     try {
       return method.invoke(null, args);
-    } catch (Throwable t) {
-      throw new LLJVMRuntimeException(t.getMessage());
+    } catch (Exception e) {
+      throw new LLJVMRuntimeException(e.getMessage());
     }
   }
 
@@ -127,16 +124,12 @@ public class LLJVMUtils {
 
   public static Method getMethod(Class<?> clazz, String methodName, Class<?>... argTypes)
       throws LLJVMRuntimeException {
-    try {
-      for (Method m : clazz.getDeclaredMethods()) {
-        if (Modifier.isPublic(m.getModifiers()) && Arrays.equals(m.getParameterTypes(), argTypes)) {
-          if (methodName.isEmpty() || m.getName().equals(methodName)) {
-            return m;
-          }
+    for (Method m : clazz.getDeclaredMethods()) {
+      if (Modifier.isPublic(m.getModifiers()) && Arrays.equals(m.getParameterTypes(), argTypes)) {
+        if (methodName.isEmpty() || m.getName().equals(methodName)) {
+          return m;
         }
       }
-    } catch (Throwable e) { // All the error states caught here
-      throw new LLJVMRuntimeException(e.getMessage());
     }
     throwNotFoundMethodException(methodName, argTypes);
     return null; // Not hit here

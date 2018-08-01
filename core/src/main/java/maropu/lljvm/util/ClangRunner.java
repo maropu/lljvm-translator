@@ -19,6 +19,7 @@ package maropu.lljvm.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -57,16 +58,16 @@ public class ClangRunner {
     final File bitcodeFile = new File(tempDir, tempFilename + ".bc");
     try (OutputStream os = new FileOutputStream(srcFile)) {
       os.write(code.getBytes(StandardCharsets.UTF_8));
-    } catch (Throwable t) {
-      throw new LLJVMRuntimeException(t.getMessage());
+    } catch (IOException e) {
+      throw new LLJVMRuntimeException(e.getMessage());
     }
     ProcessRunner.exec(
       "clang", "-c", "-O0", "-emit-llvm", "-o", bitcodeFile.getAbsolutePath(),
       srcFile.getAbsolutePath());
     try {
       return Files.readAllBytes(bitcodeFile.toPath());
-    } catch (Throwable t) {
-      throw new LLJVMRuntimeException(t.getMessage());
+    } catch (IOException e) {
+      throw new LLJVMRuntimeException(e.getMessage());
     }
   }
 }
