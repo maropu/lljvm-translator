@@ -44,6 +44,7 @@
     <maven.version>3.5.4</maven.version>
     <scala.version>2.11.8</scala.version>
     <scala.binary.version>2.11</scala.binary.version>
+    <llvm.version>5.0.2</llvm.version>
 
     <test.java.home>${java.home}</test.java.home>
     <test.exclude.tags></test.exclude.tags>
