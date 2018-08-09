@@ -15,8 +15,7 @@
 # limitations under the License.
 #
 
-import re
-import subprocess
+import os, re, subprocess
 
 from waflib.Tools import waf_unit_test
 from distutils.version import StrictVersion
@@ -41,6 +40,7 @@ def options(opt):
 def configure(ctx):
   ctx.load('compiler_cxx waf_unit_test');
 
+  # Checks if llvm-config can be executed
   ctx.find_program(LLVM_CONFIG)
 
   # Checks if this platform supported
@@ -69,9 +69,9 @@ def configure(ctx):
   # We need to check the libs below in Linux only
   if ctx.env['LLJVM_COMPILE_OS'] == 'Linux':
     ctx.check_cxx(lib = 'pthread')
-    ctx.check_cxx(lib = 'tinfo')
+    # ctx.check_cxx(lib = 'tinfo')
     ctx.check_cxx(lib = 'dl')
-    ctx.check_cxx(lib = 'rt')
+    # ctx.check_cxx(lib = 'rt')
 
   # Uses a linker option `--whole-archive` to bundle the all the image
   # of static LLVM libraries.
@@ -80,10 +80,19 @@ def configure(ctx):
   LLVM_LINKFLAGS += ['-Wl,--no-whole-archive']
 
   if ctx.env['LLJVM_COMPILE_OS'] == 'Linux':
-    LLVM_LINKFLAGS += ['-lm', '-lz', '-pthread', '-ltinfo', '-ldl', '-lrt']
+    # LLVM_LINKFLAGS += ['-lm', '-lz', '-pthread', '-ltinfo', '-ldl', '-lrt']
+    # Checks these licenses and update the NOTICE file
+    path = ['/usr/lib', '/usr/lib/x86_64-linux-gnu']
+    # LLVM_LINKFLAGS += [ctx.find_file('libpthread.a', path)]
+    LLVM_LINKFLAGS += [ctx.find_file('libz.a', path)]
+    LLVM_LINKFLAGS += [ctx.find_file('libtinfo.a', path)]
+    # LLVM_LINKFLAGS += [ctx.find_file('libdl.a', path)]
+    LLVM_LINKFLAGS += [ctx.find_file('librt.a', path)]
+    LLVM_LINKFLAGS += ['-lm', '-pthread', '-ldl']
   else: # For Mac
-    LLVM_LINKFLAGS += [ctx.find_file('libncursesw.a', ['/opt/local/lib'])]
-    LLVM_LINKFLAGS += [ctx.find_file('libz.a', ['/opt/local/lib'])]
+    path = ['/opt/local/lib']
+    LLVM_LINKFLAGS += [ctx.find_file('libncursesw.a', path)]
+    LLVM_LINKFLAGS += [ctx.find_file('libz.a', path)]
     LLVM_LINKFLAGS += ['-lm']
 
   ctx.check_cxx(msg = 'Checking for LLVM configurations',
@@ -102,8 +111,8 @@ def build(bld):
             use = 'llvm',
             uselib_store = 'lljvm')
 
-  # Copys the built library into src/main/java/lib/
-  bld(rule = 'cp ${SRC} ${TGT}',
+  # Strips the built library and copys it into src/main/java/lib/
+  bld(rule = 'strip ${SRC}; cp ${SRC} ${TGT}',
       source = 'liblljvm.%s' % bld.env.LLJVM_COMPILE_SHLIB_SUFFIX,
       target = '../../lib/%s/%s/' % (bld.env.LLJVM_COMPILE_OS, bld.env.LLJVM_COMPILE_ARCH))
 
