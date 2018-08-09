@@ -7,19 +7,19 @@ jdk:
 # Since this wrongly uses java9 compiler, it turns off temporarily
 #  - temporarily openjdk8
 
-addons:
-  apt:
-    sources:
-      - llvm-toolchain-trusty-5.0
-    packages:
-      - clang-5.0
-      - llvm-5.0-dev
-    env:
+# addons:
+#   apt:
+#     sources:
+#       - llvm-toolchain-trusty-5.0
+#     packages:
+#       - clang-5.0
+#       - llvm-5.0-dev
+#     env:
 
-env:
-  global:
-    - CXX=clang++-5.0
-    - LLVM_CONFIG=llvm-config-5.0
+# env:
+#   global:
+#     - CXX=clang++-5.0
+#     - LLVM_CONFIG=llvm-config-5.0
 
 branches:
   only:

@@ -71,6 +71,8 @@ download_app() {
     echo -n "ERROR: Cannot download $2 with cURL or wget; " && \
     echo "please install manually and try again." && \
     exit 2
+
+  echo ""
 }
 
 # Determines the LLVM version from the root pom.xml file and
