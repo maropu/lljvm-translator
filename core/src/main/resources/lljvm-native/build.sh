@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+set -e -o pipefail
+
 # Determines the current working directory
 _DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -35,11 +37,8 @@ install_app() {
     download_app "${remote_archive}" "${local_archive}"
 
     case "$local_archive" in
-      *\.tgz | *\.tar.gz | *\.tar.xz)
-        cd "${_DIR}" && tar -xvf "$2"
-        ;;
-      *\.zip)
-        cd "${_DIR}" && unzip "$2"
+      *\.tar.xz)
+        cd "${_DIR}" && tar xvf "$2"
         ;;
     esac
     rm -rf "$local_archive"
@@ -77,7 +76,12 @@ download_app() {
 # Determines the LLVM version from the root pom.xml file and
 # installs LLVM under the current folder if needed.
 install_llvm() {
-  # TODO: Currently, this script supports Ubuntu 16.04 only
+  # TODO: Currently, this script supports AWS Ubuntu Server
+  # 16.04 LTS on AWS only.
+  #
+  # You must say lines below before you run this script:
+  # $ sudo apt-get update
+  # $ sudo apt-get install build-essential python zlib1g-dev libtinfo-dev
   local platform="linux-gnu-ubuntu-16.04"
   local llvm_version=`grep "<llvm.version>" "${_DIR}/../../../../../pom.xml" | head -n1 | awk -F '[<>]' '{print $3}'`
 
@@ -86,13 +90,13 @@ install_llvm() {
     "clang+llvm-${llvm_version}-x86_64-${platform}.tar.xz" \
     "clang+llvm-${llvm_version}-x86_64-${platform}/bin/llvm-config"
 
-  LLVM_DIR="clang+llvm-${llvm_version}-x86_64-${platform}"
+  LLVM_DIR=${_DIR}/"clang+llvm-${llvm_version}-x86_64-${platform}"
 }
 
 # Installs LLVM first
 install_llvm
 
 # Then, builds a native library for the current platform
-LLVM_CONFIG=${LLVM_DIR}/bin/llvm-config CXX=${LLVM_DIR}/bin/clang ${_DIR}/waf configure
+PATH=${PATH}:${LLVM_DIR}/bin LLVM_CONFIG=llvm-config CXX=${LLVM_DIR}/bin/clang++ ${_DIR}/waf configure
 ${_DIR}/waf -v
 
