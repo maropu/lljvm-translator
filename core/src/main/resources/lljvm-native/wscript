@@ -73,7 +73,11 @@ def configure(ctx):
     ctx.check_cxx(lib = 'dl')
     ctx.check_cxx(lib = 'rt')
 
-  LLVM_LINKFLAGS = llvm_config('--libfiles engine')
+  # Uses a linker option `--whole-archive` to bundle the all the image
+  # of static LLVM libraries.
+  LLVM_LINKFLAGS = ['-Wl,--whole-archive']
+  LLVM_LINKFLAGS += llvm_config('--libfiles engine')
+  LLVM_LINKFLAGS += ['-Wl,--no-whole-archive']
 
   if ctx.env['LLJVM_COMPILE_OS'] == 'Linux':
     LLVM_LINKFLAGS += ['-lm', '-lz', '-pthread', '-ltinfo', '-ldl', '-lrt']
