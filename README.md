@@ -199,6 +199,25 @@ try {
 }
 ```
 
+## Some notes
+
+ * Supports OpenJDK 8 (64bit) only
+ * Bundles native binaries for Linux/x86_64 and Mac/x86_64
+ * The Linux/x86_64 native binary built by GNU g++ v4.8.5 on Amazon Linux 2 AMI (ami-a9d09ed1)
+ * LLVM v5.0.2 used internally
+
+<!--
+## Maven dependency
+
+  <dependency>
+    <groupId>maropu.lljvm</groupId>
+    <artifactId>lljvm-translator</artifactId>
+    <version>0.1.0</version>
+    <type>jar</type>
+    <scope>compile</scope>
+  </dependency>
+-->
+
 ## Current development topics
 
 You can check [a document](./resources/WIP.md) for WIP features.
