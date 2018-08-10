@@ -98,6 +98,9 @@ install_llvm_from_source() {
   #
   # // Installs needed packages first
   # $ sudo yum install -y gcc48-c++ cmake libarchive-devel curl-devel expat-devel zlib-devel xz-devel
+  #
+  # // LLVM requires gcc v4.8.0+, python v2.7+, and zlib v1.2.3.4+
+  # // https://releases.llvm.org/5.0.2/docs/GettingStarted.html#software
   # $ g++ -v
   # Target: x86_64-amazon-linux
   # Thread model: posix
