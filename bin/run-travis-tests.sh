@@ -26,7 +26,7 @@ set -e -o pipefail
 _DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # TODO: Needs to run tests in lljvm-native
-cd ${_DIR}/../core/src/main/resources/lljvm-native
+cd ${_DIR}/../lib/lljvm-native
 # ./build-lljvm.sh
 
 # Run tests for java code
