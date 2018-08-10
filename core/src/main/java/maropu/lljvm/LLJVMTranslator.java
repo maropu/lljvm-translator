@@ -33,7 +33,7 @@ public class LLJVMTranslator {
       System.err.println("Need to specify input LLVM bitcode");
       System.exit(-1);
     }
-    File bitcodeFile = new File(args[0]);
+    File bitcodeFile = new File(args[0]).getAbsoluteFile();
     if (!bitcodeFile.exists()) {
       System.err.println(bitcodeFile + " doesn't exist");
       System.exit(-1);
