@@ -29,50 +29,40 @@ _DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ## Arg2 - Tarball Name
 ## Arg3 - Checkable Binary
 install_app() {
-  local remote_archive="$1/$2"
-  local local_archive="${_DIR}/$2"
+  local remote_tarball="$1/$2"
+  local local_tarball="${_DIR}/$2"
   local binary="${_DIR}/$3"
 
-  if [ -z "$3" -o ! -f "$binary" ]; then
-    download_app "${remote_archive}" "${local_archive}"
-
-    case "$local_archive" in
-      *\.tar.xz)
-        cd "${_DIR}" && tar xvf "$2"
-        ;;
-    esac
-    rm -rf "$local_archive"
+  # setup `curl` and `wget` silent options if we're running on Jenkins
+  local curl_opts="-L"
+  local wget_opts=""
+  if [ -n "$AMPLAB_JENKINS" ]; then
+    curl_opts="-s ${curl_opts}"
+    wget_opts="--quiet ${wget_opts}"
+  else
+    curl_opts="--progress-bar ${curl_opts}"
+    wget_opts="--progress=bar:force ${wget_opts}"
   fi
-}
 
-# Downloads any application given a URL
-## Arg1 - Remote URL
-## Arg2 - Local file name
-download_app() {
-  local remote_url="$1"
-  local local_name="$2"
-
-  # setup `curl` and `wget` options
-  local curl_opts="--progress-bar -L"
-  local wget_opts="--progress=bar:force"
-
-  # checks if we already have the given application
-  # checks if we have curl installed
-  # downloads application
-  [ ! -f "${local_name}" ] && [ $(command -v curl) ] && \
-    echo "exec: curl ${curl_opts} ${remote_url}" 1>&2 && \
-    curl ${curl_opts} "${remote_url}" > "${local_name}"
-  # if the file still doesn't exist, lets try `wget` and cross our fingers
-  [ ! -f "${local_name}" ] && [ $(command -v wget) ] && \
-    echo "exec: wget ${wget_opts} ${remote_url}" 1>&2 && \
-    wget ${wget_opts} -O "${local_name}" "${remote_url}"
-  # if both were unsuccessful, exit
-  [ ! -f "${local_name}" ] && \
-    echo -n "ERROR: Cannot download $2 with cURL or wget; " && \
-    echo "please install manually and try again." && \
-    exit 2
-
-  echo ""
+  if [ -z "$3" -o ! -f "$binary" ]; then
+    # check if we already have the tarball
+    # check if we have curl installed
+    # download application
+    [ ! -f "${local_tarball}" ] && [ $(command -v curl) ] && \
+      echo "exec: curl ${curl_opts} ${remote_tarball}" 1>&2 && \
+      curl ${curl_opts} "${remote_tarball}" > "${local_tarball}"
+    # if the file still doesn't exist, lets try `wget` and cross our fingers
+    [ ! -f "${local_tarball}" ] && [ $(command -v wget) ] && \
+      echo "exec: wget ${wget_opts} ${remote_tarball}" 1>&2 && \
+      wget ${wget_opts} -O "${local_tarball}" "${remote_tarball}"
+    # if both were unsuccessful, exit
+    [ ! -f "${local_tarball}" ] && \
+      echo -n "ERROR: Cannot download $2 with cURL or wget; " && \
+      echo "please install manually and try again." && \
+      exit 2
+    cd "${_DIR}" && tar -xzf "$2"
+    rm -rf "$local_tarball"
+  fi
 }
 
 # Determines the LLVM version from the root pom.xml file and
@@ -99,6 +89,7 @@ install_llvm() {
 install_llvm
 
 # Then, builds a native library for the current platform
-PATH=${PATH}:${LLVM_DIR}/bin LLVM_CONFIG=llvm-config CXX=${LLVM_DIR}/bin/clang++ ${_DIR}/waf configure
+# PATH=${PATH}:${LLVM_DIR}/bin LLVM_CONFIG=llvm-config CXX=${LLVM_DIR}/bin/clang++ ${_DIR}/waf configure
+PATH=${LLVM_DIR}/bin:${PATH} LLVM_CONFIG=llvm-config CXX=clang++ ${_DIR}/waf configure
 ${_DIR}/waf -v
 
