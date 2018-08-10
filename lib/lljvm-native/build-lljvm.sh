@@ -93,13 +93,13 @@ install_llvm_from_source() {
     "llvm-${_LLVM_VERSION}.src.tar.xz" \
     "llvm-${_LLVM_VERSION}.src/configure"
 
-  # On Amazon Linux 2 AMI(ami-a9d09ed1), you need to run lines below
+  # On Amazon Linux AMI (ami-0ad99772), you need to run lines below
   # before running this script:
   #
   # // Installs needed packages first
-  # $ sudo yum install -y gcc48-c++ cmake libarchive-devel curl-devel expat-devel zlib-devel xz-devel
+  # $ sudo yum install -y gcc48-c++ cmake python libarchive-devel curl-devel expat-devel zlib-devel xz-devel
   #
-  # // LLVM requires gcc v4.8.0+, python v2.7+, and zlib v1.2.3.4+
+  # // LLVM requires gcc-c++ v4.8.0+, python v2.7+, and zlib v1.2.3.4+
   # // https://releases.llvm.org/5.0.2/docs/GettingStarted.html#software
   # $ g++ -v
   # Target: x86_64-amazon-linux

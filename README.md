@@ -203,7 +203,7 @@ try {
 
  * Supports OpenJDK 8 (64bit) only
  * Bundles native binaries for Linux/x86_64 and Mac/x86_64
- * The Linux/x86_64 native binary built by GNU g++ v4.8.5 on Amazon Linux 2 AMI (ami-a9d09ed1)
+ * The Linux/x86_64 native binary built by GNU g++ v4.8.5 on Amazon Linux AMI (ami-0ad99772)
  * LLVM v5.0.2 used internally
 
 <!--
