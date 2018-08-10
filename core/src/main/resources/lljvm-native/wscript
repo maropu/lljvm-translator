@@ -88,9 +88,9 @@ def configure(ctx):
   LLVM_LINKFLAGS += llvm_config('--libfiles engine')
 
   if ctx.env['LLJVM_COMPILE_OS'] == 'Linux':
-    # LLVM_LINKFLAGS += ['-lm', '-lz', '-pthread', '-ltinfo', '-ldl', '-lrt']
-    # Checks these licenses and update the NOTICE file
+    # TODO: Checks these licenses and update the NOTICE file
     path = ['/usr/lib', '/usr/lib/x86_64-linux-gnu', '/usr/lib64']
+    # TODO: Needs to statically link these libraries below
     # LLVM_LINKFLAGS += [ctx.find_file('libpthread.a', path)]
     # LLVM_LINKFLAGS += [ctx.find_file('libc++.a', LLVM_LIB)]
     # LLVM_LINKFLAGS += [ctx.find_file('libz.a', path)]
