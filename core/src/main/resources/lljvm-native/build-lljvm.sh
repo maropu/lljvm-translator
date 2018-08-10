@@ -60,7 +60,7 @@ install_app() {
       echo -n "ERROR: Cannot download $2 with cURL or wget; " && \
       echo "please install manually and try again." && \
       exit 2
-    cd "${_DIR}" && tar -xzf "$2"
+    cd "${_DIR}" && tar -xvf "$2"
     rm -rf "$local_tarball"
   fi
 }
@@ -89,7 +89,6 @@ install_llvm() {
 install_llvm
 
 # Then, builds a native library for the current platform
-# PATH=${PATH}:${LLVM_DIR}/bin LLVM_CONFIG=llvm-config CXX=${LLVM_DIR}/bin/clang++ ${_DIR}/waf configure
-PATH=${LLVM_DIR}/bin:${PATH} LLVM_CONFIG=llvm-config CXX=clang++ ${_DIR}/waf configure
+LLVM_DIR=${LLVM_DIR} CXX=${LLVM_DIR}/bin/clang++ ${_DIR}/waf configure
 ${_DIR}/waf -v
 

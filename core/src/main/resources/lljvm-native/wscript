@@ -73,6 +73,10 @@ def configure(ctx):
     ctx.check_cxx(lib = 'dl')
     # ctx.check_cxx(lib = 'rt')
 
+  # TODO: Needs to statically link BSD libc++
+  # LLVM_LINKFLAGS = ['-stdlib=libc++', '-nostdinc++']
+  # LLVM_LINKFLAGS += ['-I%s/include/c++/v1' % LLVM_DIR, '-L%s' %LLVM_LIB, '-Wl,-rpath,%s' % LLVM_LIB]
+
   # Uses a linker option `--whole-archive` to bundle the all the image
   # of static LLVM libraries.
   LLVM_LINKFLAGS = ['-Wl,--whole-archive']
@@ -84,6 +88,7 @@ def configure(ctx):
     # Checks these licenses and update the NOTICE file
     path = ['/usr/lib', '/usr/lib/x86_64-linux-gnu']
     # LLVM_LINKFLAGS += [ctx.find_file('libpthread.a', path)]
+    # LLVM_LINKFLAGS += [ctx.find_file('libc++.a', LLVM_LIB)]
     LLVM_LINKFLAGS += [ctx.find_file('libz.a', path)]
     LLVM_LINKFLAGS += [ctx.find_file('libtinfo.a', path)]
     # LLVM_LINKFLAGS += [ctx.find_file('libdl.a', path)]

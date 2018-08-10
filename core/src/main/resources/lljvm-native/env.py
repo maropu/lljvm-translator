@@ -17,8 +17,10 @@
 
 import os
 
-# Mainly used for travis CI
-LLVM_CONFIG = os.getenv('LLVM_CONFIG', 'llvm-config')
+# LLVM installation dir
+LLVM_DIR = os.getenv('LLVM_DIR')
+LLVM_CONFIG = '%s/bin/llvm-config' % LLVM_DIR
+LLVM_LIB = '%s/lib' % LLVM_DIR
 
 # Package root dir
 BASE_DIR = '../../../../..'
