@@ -22,13 +22,16 @@ set -e -o pipefail
 # Determines the current working directory
 _DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Installs any application tarball given a URL, the expected tarball name,
+# Determines the LLVM version to install
+_LLVM_VERSION=`grep "<llvm.version>" "${_DIR}/../../../../../pom.xml" | head -n1 | awk -F '[<>]' '{print $3}'`
+
+# Downloads any application tarball given a URL, the expected tarball name,
 # and, optionally, a checkable binary path to determine if the binary has
 # already been installed
 ## Arg1 - URL
 ## Arg2 - Tarball Name
 ## Arg3 - Checkable Binary
-install_app() {
+download_app() {
   local remote_tarball="$1/$2"
   local local_tarball="${_DIR}/$2"
   local binary="${_DIR}/$3"
@@ -58,15 +61,14 @@ install_app() {
     # if both were unsuccessful, exit
     [ ! -f "${local_tarball}" ] && \
       echo -n "ERROR: Cannot download $2 with cURL or wget; " && \
-      echo "please install manually and try again." && \
+      echo "please download manually and try again." && \
       exit 2
     cd "${_DIR}" && tar -xvf "$2"
     rm -rf "$local_tarball"
   fi
 }
 
-# Determines the LLVM version from the root pom.xml file and
-# installs LLVM under the current folder if needed.
+# Installs LLVM binaries under the current folder
 install_llvm() {
   # TODO: Currently, this script supports AWS Ubuntu Server
   # 16.04 LTS on AWS only.
@@ -75,18 +77,62 @@ install_llvm() {
   # $ sudo apt-get update
   # $ sudo apt-get install build-essential python zlib1g-dev libtinfo-dev
   local platform="linux-gnu-ubuntu-16.04"
-  local llvm_version=`grep "<llvm.version>" "${_DIR}/../../../../../pom.xml" | head -n1 | awk -F '[<>]' '{print $3}'`
 
-  install_app \
-    "http://releases.llvm.org/${llvm_version}" \
-    "clang+llvm-${llvm_version}-x86_64-${platform}.tar.xz" \
-    "clang+llvm-${llvm_version}-x86_64-${platform}/bin/llvm-config"
+  download_app \
+    "http://releases.llvm.org/${_LLVM_VERSION}" \
+    "clang+llvm-${_LLVM_VERSION}-x86_64-${platform}.tar.xz" \
+    "clang+llvm-${_LLVM_VERSION}-x86_64-${platform}/bin/llvm-config"
 
-  LLVM_DIR=${_DIR}/"clang+llvm-${llvm_version}-x86_64-${platform}"
+  LLVM_DIR=${_DIR}/"clang+llvm-${_LLVM_VERSION}-x86_64-${platform}"
+}
+
+# Installs LLVM from scratch
+install_llvm_from_source() {
+  download_app \
+    "http://releases.llvm.org/${_LLVM_VERSION}" \
+    "llvm-${_LLVM_VERSION}.src.tar.xz" \
+    "llvm-${_LLVM_VERSION}.src/configure"
+
+  # On Amazon Linux 2 AMI(ami-a9d09ed1), you need to run lines below
+  # before running this script:
+  #
+  # // Installs needed packages first
+  # $ sudo yum install -y gcc48-c++ cmake libarchive-devel curl-devel expat-devel zlib-devel xz-devel
+  # $ g++ -v
+  # Target: x86_64-amazon-linux
+  # Thread model: posix
+  # gcc version 4.8.5 20150623 (Red Hat 4.8.5-28) (GCC)
+  #
+  # // Compiles and installs jsoncpp
+  # $ wget https://github.com/open-source-parsers/jsoncpp/archive/1.7.5.tar.gz
+  # $ tar zxvf 1.7.5.tar.gz
+  # $ cd jsoncpp-1.7.5
+  # $ mkdir build
+  # $ cd build
+  # $ cmake ..
+  # $ make
+  # $ sudo make install
+  #
+  # // Compiles and installs newer cmake
+  # $ wget https://cmake.org/files/v3.6/cmake-3.6.1.tar.gz
+  # $ tar zxvf cmake-3.6.1.tar.gz
+  # $ cd cmake-3.6.1
+  # $ ./bootstrap --prefix=/usr --system-libs --mandir=/share/man --docdir=/share/doc/cmake-3.6.1
+  # $ make
+  # $ sudo make install
+  local src_dir=${_DIR}/"llvm-${_LLVM_VERSION}.src"
+  local build_dir=${src_dir}/build
+  local binary=${build_dir}/bin/llvm-config
+
+  [ ! -f "${binary}" ] && [ $(command -v cmake) ] && \
+    echo "exec: cmake" 1>&2 && mkdir ${build_dir} && cd ${build_dir} && \
+    cmake .. && make
+
+  LLVM_DIR=${build_dir}
 }
 
 # Installs LLVM first
-install_llvm
+install_llvm_from_source
 
 # Then, builds a native library for the current platform
 LLVM_DIR=${LLVM_DIR} CXX=${LLVM_DIR}/bin/clang++ ${_DIR}/waf configure
