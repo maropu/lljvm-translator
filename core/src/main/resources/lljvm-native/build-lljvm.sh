@@ -135,6 +135,9 @@ install_llvm_from_source() {
 install_llvm_from_source
 
 # Then, builds a native library for the current platform
-LLVM_DIR=${LLVM_DIR} CXX=${LLVM_DIR}/bin/clang++ ${_DIR}/waf configure
+# You need to run lines below:
+# $ sudo yum install clang glibc-static zlib-static ncurses-static
+LLVM_DIR=${LLVM_DIR} CXX=clang++ ${_DIR}/waf clean configure
+# LLVM_DIR=${LLVM_DIR} CXX=${LLVM_DIR}/bin/clang++ ${_DIR}/waf configure
 ${_DIR}/waf -v
 
