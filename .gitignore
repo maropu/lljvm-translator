@@ -18,6 +18,6 @@ target/
 # For waf
 .lock-waf*
 .waf-*
-core/src/main/resources/lljvm-native/build
+lib/lljvm-native/build
 clang+llvm-*
 llvm-*.src
