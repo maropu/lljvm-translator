@@ -25,7 +25,7 @@ set -e -o pipefail
 # Determine the current working directory
 _DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Run tests for lljvm-native code
+# TODO: Needs to run tests in lljvm-native
 cd ${_DIR}/../core/src/main/resources/lljvm-native
 # ./build-lljvm.sh
 
