@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>maropu</groupId>
+    <groupId>org.maropu</groupId>
     <artifactId>lljvm-translator</artifactId>
     <version>0.1.0-EXPERIMENTAL</version>
     <relativePath>../pom.xml</relativePath>
@@ -29,7 +29,7 @@
   <groupId>maropu</groupId>
   <artifactId>lljvm-benchmark</artifactId>
   <packaging>jar</packaging>
-  <name>lljvm-benchmark</name>
+  <name>LLJVM Benchmark</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

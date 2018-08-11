@@ -19,11 +19,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>maropu</groupId>
+  <groupId>org.maropu</groupId>
   <artifactId>lljvm-translator</artifactId>
   <version>0.1.0-EXPERIMENTAL</version>
   <packaging>pom</packaging>
-  <name>A LLVM bitcode translator for JVMs</name>
+  <name>LLJVM Translator Parent POM</name>
+  <description>A lightweight library to inject LLVM bitcode into JVMs</description>
   <licenses>
     <license>
       <name>Apache 2.0 License</name>
@@ -32,10 +33,59 @@
     </license>
   </licenses>
 
+  <scm>
+    <url>https://github.com/maropu/lljvm-translator.git</url>
+    <connection>scm:git:git://github.com/maropu/lljvm-translator.git</connection>
+    <developerConnection>scm:git:git@github.com:maropu/lljvm-translator.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <developers>
+    <developer>
+      <email>yamamuro@apache.org</email>
+      <name>Takeshi Yamamuro</name>
+      <url>https://github.com/maropu</url>
+      <id>maropu</id>
+    </developer>
+  </developers>
+
   <modules>
     <module>core</module>
     <module>benchmark</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <!-- for release -->
+      <!-- mvn -DperformRelease=true deploy -->
+      <activation>
+      <property>
+        <name>performRelease</name>
+        <value>true</value>
+      </property>
+      </activation>
+      <build>
+        <plugins>
+          <!-- generate PGP Signature -->
+          <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.5</version>
+          <executions>
+            <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+            </execution>
+          </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -111,6 +161,31 @@
           <repoToken></repoToken>
         </configuration>
         -->
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.1</version>
+        <configuration>
+          <show>package</show>
+          <source>${java.version}</source>
+          <encoding>UTF-8</encoding>
+          <docencoding>UTF-8</docencoding>
+          <charset>UTF-8</charset>
+        </configuration>
       </plugin>
     </plugins>
   </build>
