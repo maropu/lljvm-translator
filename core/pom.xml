@@ -22,13 +22,12 @@
   <parent>
     <groupId>maropu</groupId>
     <artifactId>lljvm-translator</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.0-EXPERIMENTAL</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <groupId>maropu</groupId>
   <artifactId>lljvm-core</artifactId>
-  <version>0.1.0</version>
   <packaging>jar</packaging>
   <name>lljvm-core</name>
 

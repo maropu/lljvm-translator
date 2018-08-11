@@ -21,9 +21,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>maropu</groupId>
   <artifactId>lljvm-translator</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.0-EXPERIMENTAL</version>
   <packaging>pom</packaging>
-  <name>An injection library from LLVM bitcode into JVMs</name>
+  <name>A LLVM bitcode translator for JVMs</name>
   <licenses>
     <license>
       <name>Apache 2.0 License</name>
