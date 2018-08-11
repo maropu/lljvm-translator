@@ -71,8 +71,8 @@ public final class GeneratedClass {
 You can load this gen'd class file via Java Runtime Reflection and run in JVMs:
 
 ```java
-import maropu.lljvm.LLJVMClassLoader;
-import maropu.lljvm.LLJVMUtils;
+import org.maropu.lljvm.LLJVMClassLoader;
+import org.maropu.lljvm.LLJVMUtils;
 
 public class LLJVMTest {
 
@@ -160,9 +160,9 @@ Let's say that you have a function below;
 Then, you can handle the array in Java like;
 
 ```java
-import maropu.lljvm.LLJVMClassLoader;
-import maropu.lljvm.LLJVMUtils;
-import maropu.lljvm.util.ArrayUtils;
+import org.maropu.lljvm.LLJVMClassLoader;
+import org.maropu.lljvm.LLJVMUtils;
+import org.maropu.lljvm.util.ArrayUtils;
 
 long[] javaArray = {1L, 2L, 3L};
 System.out.println(LLJVMUtils.invoke(clazz, ArrayUtils.addressOf(javaArray), javaArray.length));
@@ -173,7 +173,7 @@ System.out.println(LLJVMUtils.invoke(clazz, ArrayUtils.addressOf(javaArray), jav
 If `clang` is installed in your platform, you can say a line to get LLVM bitcode;
 
 ```
-import maropu.lljvm.util.ClangRunner;
+import org.maropu.lljvm.util.ClangRunner;
 
 byte[] bitcode = ClangRunner.exec(
   "#include <math.h>                     \n" +
@@ -210,7 +210,7 @@ try {
 ## Maven dependency
 
   <dependency>
-    <groupId>maropu.lljvm</groupId>
+    <groupId>org.maropu.lljvm</groupId>
     <artifactId>lljvm-translator</artifactId>
     <version>0.1.0-EXPERIMENTAL</version>
     <type>jar</type>

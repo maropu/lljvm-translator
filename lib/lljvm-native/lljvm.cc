@@ -16,8 +16,8 @@
  */
 
 #include "backend.h"
-#include "maropu_lljvm_LLJVMNative.h"
 #include "lljvm-internals.h"
+#include "org_maropu_lljvm_LLJVMNative.h"
 
 #include <llvm/Bitcode/BitcodeReader.h>
 #include <llvm/CodeGen/Passes.h>
@@ -31,7 +31,7 @@ const std::string LLJVM_GENERATED_CLASSNAME_PREFIX = "GeneratedClass";
 const std::string LLJVM_MAGIC_NUMBER = "20180731HMKjwzxmew";
 
 inline void throw_exception(JNIEnv *env, jobject self, const std::string& err_msg) {
-  jclass c = env->FindClass("maropu/lljvm/LLJVMNative");
+  jclass c = env->FindClass("org/maropu/lljvm/LLJVMNative");
   assert(c != 0);
   jmethodID mth_throwex = env->GetMethodID(c, "throwException", "(Ljava/lang/String;)V");
   assert(mth_throwex != 0);
@@ -72,19 +72,19 @@ const std::string parseBitcode(const char *bitcode, size_t size, unsigned int db
   return out;
 }
 
-JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_magicNumber
+JNIEXPORT jstring JNICALL Java_org_maropu_lljvm_LLJVMNative_magicNumber
     (JNIEnv *env, jobject self) {
   return env->NewStringUTF(LLJVM_MAGIC_NUMBER.c_str());
 }
 
-JNIEXPORT jlong JNICALL Java_maropu_lljvm_LLJVMNative_addressOf
+JNIEXPORT jlong JNICALL Java_org_maropu_lljvm_LLJVMNative_addressOf
     (JNIEnv *env, jobject self, jbyteArray ar) {
   void *ptr = env->GetPrimitiveArrayCritical(ar, 0);
   env->ReleasePrimitiveArrayCritical(ar, ptr, 0);
   return (jlong) ptr;
 }
 
-JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode
+JNIEXPORT void JNICALL Java_org_maropu_lljvm_LLJVMNative_veryfyBitcode
     (JNIEnv *env, jobject self, jbyteArray bitcode) {
   jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);
@@ -105,7 +105,7 @@ JNIEXPORT void JNICALL Java_maropu_lljvm_LLJVMNative_veryfyBitcode
   }
 }
 
-JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asJVMAssemblyCode
+JNIEXPORT jstring JNICALL Java_org_maropu_lljvm_LLJVMNative_asJVMAssemblyCode
     (JNIEnv *env, jobject self, jbyteArray bitcode, jint debugLevel) {
   jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);
@@ -120,7 +120,7 @@ JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asJVMAssemblyCode
   }
 }
 
-JNIEXPORT jstring JNICALL Java_maropu_lljvm_LLJVMNative_asLLVMAssemblyCode
+JNIEXPORT jstring JNICALL Java_org_maropu_lljvm_LLJVMNative_asLLVMAssemblyCode
     (JNIEnv *env, jobject self, jbyteArray bitcode) {
   jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);

@@ -70,14 +70,14 @@ void JVMWriter::printOperandPack(
   }
 
   printSimpleInstruction("sipush", utostr(size));
-  printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+  printSimpleInstruction("invokestatic", "org/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
   printSimpleInstruction("dup2");
 
   for (unsigned int i = minOperand; i < maxOperand; i++) {
     const Value *v = inst->getOperand(i);
     printValueLoad(v);
     printSimpleInstruction(
-      "invokestatic", "maropu/lljvm/runtime/VMemory/pack(J" + getTypeDescriptor(v->getType()) + ")J");
+      "invokestatic", "org/maropu/lljvm/runtime/VMemory/pack(J" + getTypeDescriptor(v->getType()) + ")J");
   }
   printSimpleInstruction("pop2");
 }
@@ -102,11 +102,11 @@ void JVMWriter::printFunctionCall(const Value *functionVal, const Instruction *i
       // const Type *pt = functionVal->getType();
       const Type *pt = ty->getReturnType();
       if (inst->getNumOperands() > 1) {
-        strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
+        strbuf << "org/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
           "(Ljava/lang/String;Ljava/lang/String;J)" << getTypeDescriptor(pt);
       } else {
         // Case for no argument
-        strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
+        strbuf << "org/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
           "(Ljava/lang/String;Ljava/lang/String;)" << getTypeDescriptor(pt);
       }
       strbuf.flush();
@@ -146,11 +146,11 @@ void JVMWriter::printFunctionCall(const Value *functionVal, const Instruction *i
     // const Type *pt = functionVal->getType();
     const Type *pt = fTy->getReturnType();
     if (inst->getNumOperands() > 1) {
-      strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
+      strbuf << "org/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
         "(Ljava/lang/String;Ljava/lang/String;J)" << getTypeDescriptor(pt);
     } else {
       // Case for no argument
-      strbuf << "maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
+      strbuf << "org/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
         "(Ljava/lang/String;Ljava/lang/String;)" << getTypeDescriptor(pt);
     }
     strbuf.flush();
@@ -214,7 +214,7 @@ void JVMWriter::printInvokeInstruction(const InvokeInst *inst) {
   printSimpleInstruction("pop");
   printBranchInstruction(inst->getParent(), inst->getUnwindDest());
   printSimpleInstruction(
-    ".catch maropu/lljvm/runtime/System$Unwind",
+    ".catch org/maropu/lljvm/runtime/System$Unwind",
     "from " + labelname + "_begin " + "to " + labelname + "_end " + "using " + labelname + "_catch");
 }
 
@@ -280,12 +280,12 @@ unsigned int JVMWriter::getLocalVarNumber(const Value *v) {
 void JVMWriter::printCatchJump(unsigned int numJumps) {
   unsigned int jumpVarNum = usedRegisters++;
   printSimpleInstruction(
-    ".catch maropu/lljvm/runtime/Jump "
+    ".catch org/maropu/lljvm/runtime/Jump "
       "from begin_method to catch_jump using catch_jump");
   printLabel("catch_jump");
   printSimpleInstruction("astore", utostr(jumpVarNum));
   printSimpleInstruction("aload", utostr(jumpVarNum));
-  printSimpleInstruction("getfield", "maropu/lljvm/runtime/Jump/value J");
+  printSimpleInstruction("getfield", "org/maropu/lljvm/runtime/Jump/value J");
   for (unsigned int i = usedRegisters - 1 - numJumps, e = usedRegisters - 1; i < e; i++) {
     if (debug >= 2) {
       printSimpleInstruction(
@@ -293,7 +293,7 @@ void JVMWriter::printCatchJump(unsigned int numJumps) {
           " J from begin_method to end_method");
     }
     printSimpleInstruction("aload", utostr(jumpVarNum));
-    printSimpleInstruction("getfield", "maropu/lljvm/runtime/Jump/id J");
+    printSimpleInstruction("getfield", "org/maropu/lljvm/runtime/Jump/id J");
     printSimpleInstruction("iload", utostr(i));
     printSimpleInstruction("if_icmpeq", "setjmp$" + utostr(i));
   }
@@ -303,7 +303,7 @@ void JVMWriter::printCatchJump(unsigned int numJumps) {
   if (debug >= 2) {
       printSimpleInstruction(
         ".var " + utostr(jumpVarNum) + " is jump "
-          "Lmaropu/lljvm/runtime/Jump; from begin_method to end_method");
+          "Lorg/maropu/lljvm/runtime/Jump; from begin_method to end_method");
   }
 }
 
@@ -363,7 +363,7 @@ void JVMWriter::printFunction(const Function &f) {
   }
 
   printLabel("begin_method");
-  printSimpleInstruction("invokestatic", "maropu/lljvm/runtime/VMemory/createStackFrame()V");
+  printSimpleInstruction("invokestatic", "org/maropu/lljvm/runtime/VMemory/createStackFrame()V");
 
   printFunctionBody(f);
   if (numJumps) {

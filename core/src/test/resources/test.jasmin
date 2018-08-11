@@ -16,7 +16,7 @@
 
 .method public <clinit>()V
 	.limit stack 4
-	invokestatic maropu/lljvm/runtime/VMemory/resetHeap()V
+	invokestatic org/maropu/lljvm/runtime/VMemory/resetHeap()V
 
 	; allocate global variables
 
@@ -119,13 +119,13 @@
 	dconst_0
 	dstore 65
 begin_method:
-	invokestatic maropu/lljvm/runtime/VMemory/createStackFrame()V
+	invokestatic org/maropu/lljvm/runtime/VMemory/createStackFrame()V
 label1:
 ;  %.20 = tail call { i32, [624 x i32], i32, double, i32 }* @numba_get_np_random_state()
 	.line 1
 	ldc ""
 	ldc "_numba_get_np_random_state()J"
-	invokestatic maropu/lljvm/runtime/Function/invoke_i64(Ljava/lang/String;Ljava/lang/String;)J
+	invokestatic org/maropu/lljvm/runtime/Function/invoke_i64(Ljava/lang/String;Ljava/lang/String;)J
 	lstore 6 ; __20
 ;  %.213 = bitcast { i32, [624 x i32], i32, double, i32 }* %.20 to i32*
 	.line 2
@@ -134,13 +134,13 @@ label1:
 ;  %.22 = load i32, i32* %.213, align 4
 	.line 3
 	lload 8 ; __213
-	invokestatic maropu/lljvm/runtime/VMemory/load_i32(J)I
+	invokestatic org/maropu/lljvm/runtime/VMemory/load_i32(J)I
 	istore 10 ; __22
 ;  %.23 = icmp ugt i32 %.22, 623
 	.line 4
 	iload 10 ; __22
 	sipush 623
-	invokestatic maropu/lljvm/runtime/Instruction/icmp_ugt(II)Z
+	invokestatic org/maropu/lljvm/runtime/Instruction/icmp_ugt(II)Z
 	iconst_1
 	iand
 	istore 11 ; __23
@@ -161,17 +161,17 @@ label2:
 	ldc ""
 	ldc "_numba_rnd_shuffle(J)V"
 	sipush 8
-	invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
+	invokestatic org/maropu/lljvm/runtime/VMemory/allocateStack(I)J
 	dup2
 	lload 6 ; __20
-	invokestatic maropu/lljvm/runtime/VMemory/pack(JJ)J
+	invokestatic org/maropu/lljvm/runtime/VMemory/pack(JJ)J
 	pop2
-	invokestatic maropu/lljvm/runtime/Function/invoke_void(Ljava/lang/String;Ljava/lang/String;J)V
+	invokestatic org/maropu/lljvm/runtime/Function/invoke_void(Ljava/lang/String;Ljava/lang/String;J)V
 ;  store i32 0, i32* %0, align 4
 	.line 8
 	lload 12 ; _12
 	iconst_0
-	invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
+	invokestatic org/maropu/lljvm/runtime/VMemory/store(JI)V
 ;  br label %B0.endif
 	.line 9
 	iconst_0
@@ -202,7 +202,7 @@ label3:
 ;  %.31 = load i32, i32* %.30, align 4
 	.line 14
 	lload 19 ; __30
-	invokestatic maropu/lljvm/runtime/VMemory/load_i32(J)I
+	invokestatic org/maropu/lljvm/runtime/VMemory/load_i32(J)I
 	istore 21 ; __31
 ;  %.32 = add i32 %.28, 1
 	.line 15
@@ -214,7 +214,7 @@ label3:
 	.line 16
 	lload 15 ; _15
 	iload 22 ; __32
-	invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
+	invokestatic org/maropu/lljvm/runtime/VMemory/store(JI)V
 ;  %.34 = lshr i32 %.31, 11
 	.line 17
 	iload 21 ; __31
@@ -285,7 +285,7 @@ label3:
 	.line 28
 	iload 22 ; __32
 	sipush 623
-	invokestatic maropu/lljvm/runtime/Instruction/icmp_ugt(II)Z
+	invokestatic org/maropu/lljvm/runtime/Instruction/icmp_ugt(II)Z
 	iconst_1
 	iand
 	istore 34 ; __47
@@ -306,17 +306,17 @@ label4:
 	ldc ""
 	ldc "_numba_rnd_shuffle(J)V"
 	sipush 8
-	invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
+	invokestatic org/maropu/lljvm/runtime/VMemory/allocateStack(I)J
 	dup2
 	lload 6 ; __20
-	invokestatic maropu/lljvm/runtime/VMemory/pack(JJ)J
+	invokestatic org/maropu/lljvm/runtime/VMemory/pack(JJ)J
 	pop2
-	invokestatic maropu/lljvm/runtime/Function/invoke_void(Ljava/lang/String;Ljava/lang/String;J)V
+	invokestatic org/maropu/lljvm/runtime/Function/invoke_void(Ljava/lang/String;Ljava/lang/String;J)V
 ;  store i32 0, i32* %3, align 4
 	.line 32
 	lload 35 ; _35
 	iconst_0
-	invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
+	invokestatic org/maropu/lljvm/runtime/VMemory/store(JI)V
 ;  br label %B0.endif.endif
 	.line 33
 	iconst_0
@@ -347,7 +347,7 @@ label5:
 ;  %.55 = load i32, i32* %.54, align 4
 	.line 38
 	lload 42 ; __54
-	invokestatic maropu/lljvm/runtime/VMemory/load_i32(J)I
+	invokestatic org/maropu/lljvm/runtime/VMemory/load_i32(J)I
 	istore 44 ; __55
 ;  %.56 = add i32 %.52, 1
 	.line 39
@@ -359,7 +359,7 @@ label5:
 	.line 40
 	lload 38 ; _38
 	iload 45 ; __56
-	invokestatic maropu/lljvm/runtime/VMemory/store(JI)V
+	invokestatic org/maropu/lljvm/runtime/VMemory/store(JI)V
 ;  %.58 = lshr i32 %.55, 11
 	.line 41
 	iload 44 ; __55
@@ -429,12 +429,12 @@ label5:
 ;  %.69 = uitofp i32 %.44 to double
 	.line 52
 	iload 33 ; __44
-	invokestatic maropu/lljvm/runtime/Instruction/uitofp_f64(I)D
+	invokestatic org/maropu/lljvm/runtime/Instruction/uitofp_f64(I)D
 	dstore 57 ; __69
 ;  %.70 = uitofp i32 %.68 to double
 	.line 53
 	iload 56 ; __68
-	invokestatic maropu/lljvm/runtime/Instruction/uitofp_f64(I)D
+	invokestatic org/maropu/lljvm/runtime/Instruction/uitofp_f64(I)D
 	dstore 59 ; __70
 ;  %.71 = fmul double %.69, 0x4190000000000000
 	.line 54
@@ -458,10 +458,10 @@ label5:
 	.line 57
 	lload_0 ; _retptr
 	dload 65 ; __73
-	invokestatic maropu/lljvm/runtime/VMemory/store(JD)V
+	invokestatic org/maropu/lljvm/runtime/VMemory/store(JD)V
 ;  ret i32 0
 	.line 58
-	invokestatic maropu/lljvm/runtime/VMemory/destroyStackFrame()V
+	invokestatic org/maropu/lljvm/runtime/VMemory/destroyStackFrame()V
 	iconst_0
 	ireturn
 	.limit stack 16
@@ -477,42 +477,42 @@ end_method:
 	dconst_0
 	dstore 3
 begin_method:
-	invokestatic maropu/lljvm/runtime/VMemory/createStackFrame()V
+	invokestatic org/maropu/lljvm/runtime/VMemory/createStackFrame()V
 label6:
 ;  %.2 = alloca double, align 8
 	.line 59
 	bipush 8
-	invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
+	invokestatic org/maropu/lljvm/runtime/VMemory/allocateStack(I)J
 	lstore_0 ; __2
 ;  store double 0.000000e+00, double* %.2, align 8
 	.line 60
 	lload_0 ; __2
 	dconst_0
-	invokestatic maropu/lljvm/runtime/VMemory/store(JD)V
+	invokestatic org/maropu/lljvm/runtime/VMemory/store(JD)V
 ;  %.4 = call i32 @"_ZN18numpy_random1_test23numpy_random1_test$2441E"(double* nonnull %.2, { i8*, i32 }** undef, i8* undef)
 	.line 61
 	ldc "GeneratedClass"
 	ldc "__ZN18numpy_random1_test23numpy_random1_test_2441E(JJJ)I"
 	sipush 24
-	invokestatic maropu/lljvm/runtime/VMemory/allocateStack(I)J
+	invokestatic org/maropu/lljvm/runtime/VMemory/allocateStack(I)J
 	dup2
 	lload_0 ; __2
-	invokestatic maropu/lljvm/runtime/VMemory/pack(JJ)J
+	invokestatic org/maropu/lljvm/runtime/VMemory/pack(JJ)J
 	lconst_0
-	invokestatic maropu/lljvm/runtime/VMemory/pack(JJ)J
+	invokestatic org/maropu/lljvm/runtime/VMemory/pack(JJ)J
 	lconst_0
-	invokestatic maropu/lljvm/runtime/VMemory/pack(JJ)J
+	invokestatic org/maropu/lljvm/runtime/VMemory/pack(JJ)J
 	pop2
-	invokestatic maropu/lljvm/runtime/Function/invoke_i32(Ljava/lang/String;Ljava/lang/String;J)I
+	invokestatic org/maropu/lljvm/runtime/Function/invoke_i32(Ljava/lang/String;Ljava/lang/String;J)I
 	istore_2 ; __4
 ;  %.14 = load double, double* %.2, align 8
 	.line 62
 	lload_0 ; __2
-	invokestatic maropu/lljvm/runtime/VMemory/load_f64(J)D
+	invokestatic org/maropu/lljvm/runtime/VMemory/load_f64(J)D
 	dstore_3 ; __14
 ;  ret double %.14
 	.line 63
-	invokestatic maropu/lljvm/runtime/VMemory/destroyStackFrame()V
+	invokestatic org/maropu/lljvm/runtime/VMemory/destroyStackFrame()V
 	dload_3 ; __14
 	dreturn
 	.limit stack 16
