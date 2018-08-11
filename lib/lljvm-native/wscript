@@ -87,7 +87,7 @@ def configure(ctx):
     # the all the image of static LLVM libraries.
     LLVM_LINKFLAGS = ['-Wl,--whole-archive']
 
-    LLVM_LINKFLAGS += LLVM_LINKFLAGS
+    LLVM_LINKFLAGS += LLVM_LIBFILES
 
     # path = ['/usr/lib', '/usr/lib/x86_64-linux-gnu', '/usr/lib64']
     path = ['%s/static-lib/%s/%s' % (os.getcwd(), ctx.env['LLJVM_COMPILE_OS'], ctx.env['LLJVM_COMPILE_ARCH'])]
