@@ -1,6 +1,7 @@
 [![License](http://img.shields.io/:license-Apache_v2-blue.svg)](https://github.com/maropu/lljvm-translator/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/maropu/lljvm-translator.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
 <!-- [![Coverage Status](https://coveralls.io/repos/github/maropu/lljvm-translator/badge.svg?branch=master)](https://coveralls.io/github/maropu/lljvm-translator?branch=master) -->
+<!-- [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.maropu.lljvm/lljvm-translator/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.maropu.lljvm/lljvm-translator/) -->
 
 This is an experimental low-level translator from LLVM bitcode to JVM bytecode.
 Since existing tools can generate LLVM bitcode from functions written in some languages
@@ -26,7 +27,7 @@ from numba import cfunc
 def pyfunc(x, y):
   return math.log10(2 * x) + y
 
-# Compiles the python function above and writes as LLVM bitcode
+## Compiles the python function above and writes as LLVM bitcode
 with open("pyfunc.bc", "wb") as out:
   f = cfunc("float64(float64, float64)")(pyfunc)
   out.write(f._library._final_module.as_bitcode())
@@ -143,6 +144,10 @@ public final class GeneratedClass {
 }
 ```
 
+## Example application
+
+See [lljvm-example](https://github.com/maropu/lljvm-example).
+
 ## Array supports
 
 Let's say that you have a function below;
@@ -213,7 +218,6 @@ try {
     <groupId>org.maropu.lljvm</groupId>
     <artifactId>lljvm-translator</artifactId>
     <version>0.1.0-EXPERIMENTAL</version>
-    <type>jar</type>
     <scope>compile</scope>
   </dependency>
 -->
@@ -235,7 +239,7 @@ the performance of the Vectorized UDFs:
 
 ![Python UDF benchmark results](resources/udf_benchmark_results.png)
 
-## Advanced topics: Optimizes UDFs in DBMS-like systems
+## Advanced topics: optimizes UDFs in DBMS-like systems
 
 There are many advanced research activities (listed below) to improve UDF processings in DBMS-like systems.
 This library has the almost same goal with these activities though, it employs more naive and practical approach;
