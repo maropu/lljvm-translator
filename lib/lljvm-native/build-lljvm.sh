@@ -71,11 +71,11 @@ download_app() {
 # Installs LLVM binaries under the current folder
 install_llvm() {
   # TODO: Currently, this script supports AWS Ubuntu Server
-  # 16.04 LTS on AWS only.
+  # 16.04 LTS on AWS (ami-ba602bc2) only.
   #
   # You must say lines below before you run this script:
   # $ sudo apt-get update
-  # $ sudo apt-get install build-essential python zlib1g-dev libtinfo-dev
+  # $ sudo apt-get install build-essential clang python zlib1g-dev libtinfo-dev
   local platform="linux-gnu-ubuntu-16.04"
 
   download_app \
@@ -116,7 +116,7 @@ install_llvm_from_source() {
   # $ make
   # $ sudo make install
   #
-  # // Compiles and installs newer cmake
+  # // Compiles and installs newer cmake (3.4.3 or higher)
   # $ wget https://cmake.org/files/v3.6/cmake-3.6.1.tar.gz
   # $ tar zxvf cmake-3.6.1.tar.gz
   # $ cd cmake-3.6.1

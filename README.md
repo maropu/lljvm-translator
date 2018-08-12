@@ -222,6 +222,39 @@ try {
   </dependency>
 -->
 
+## Builds a native binary for your platform
+
+To comile it, you need to check requirements below;
+
+ * gcc-c++ v4.8.0+ / clang++ v3.1.0+
+ * cmake v3.4.3+
+ * python v2.7+
+ * zlib v1.2.3.4+
+ * ncurses v5.7+
+
+Then, you run lines below;
+
+    $ git clone https://github.com/maropu/lljvm-translator.git
+    $ cd lljvm-translator/lib/lljvm-native
+
+    // Downloads/compiles LLVM, builds a native library based on the compiled LLVM,
+    // and then copys the library into a proper location.
+    //
+    // Or, you can use the pre-built LLVM in http://releases.llvm.org/download.html#5.0.2;
+    //  $ wget http://releases.llvm.org/5.0.2/clang+llvm-5.0.2-<your platform>.tar.xz
+    //  $ tar xvf clang+llvm-5.0.2-<your platform>.tar.xz
+    //  $ LLVM_DIR=`pwd`/clang+llvm-5.0.2-<your platform> CXX=clang++ ./waf configure
+    //  $ ./waf -v
+    $ ./build-lljvm.sh
+
+    // Moves the root and builds jar with the binary above
+    $ cd ../..
+    $ ./build/mvn clean package
+    $ ls target
+    lljvm-core_0.1.0-EXPERIMENTAL-with-dependencies.jar
+    lljvm-core_0.1.0-EXPERIMENTAL.jar
+    ...
+
 ## Current development topics
 
 You can check [a document](./resources/WIP.md) for WIP features.
