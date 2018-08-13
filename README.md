@@ -298,6 +298,7 @@ Other-related papers are lists below:
  - Adds more platform-dependent binaries in `src/main/resources/native`
  - Statically Links BSD libc++ for native binaries
  - Upgrades LLVM to v6.x
+ - Uses docker to build native binaries
 
 ## Bug reports
 
