@@ -208,7 +208,8 @@ try {
 
  * Supports OpenJDK 8 (64bit) only
  * Bundles native binaries for Linux/x86_64 and Mac/x86_64
- * The Linux/x86_64 native binary built by clang++ v3.6.2 (w/ glibc v2.17 and libstdc++ v4.8.5) on Amazon Linux AMI (ami-0ad99772)
+ ** The Linux/x86_64 native binary built by clang++ v3.6.2 (w/ glibc v2.17 and libstdc++ v4.8.5) on Amazon Linux AMI (ami-0ad99772)
+ ** The Mac/x86_64 native binary built by Apple clang++ v900.0.39.2 on macOS Sierra v10.12.1
  * LLVM v5.0.2 used internally
 
 <!--

@@ -89,8 +89,8 @@ def configure(ctx):
 
     LLVM_LINKFLAGS += LLVM_LIBFILES
 
-    # path = ['/usr/lib', '/usr/lib/x86_64-linux-gnu', '/usr/lib64']
     path = ['%s/static-lib/%s/%s' % (os.getcwd(), ctx.env['LLJVM_COMPILE_OS'], ctx.env['LLJVM_COMPILE_ARCH'])]
+    # path += ['/usr/lib', '/usr/lib/x86_64-linux-gnu', '/usr/lib64']
     # LLVM_LINKFLAGS += [ctx.find_file('libc++.a', LLVM_LI]
     # LLVM_LINKFLAGS += [ctx.find_file('libpthread.a', path)]
     # LLVM_LINKFLAGS += [ctx.find_file('libdl.a', path)]
@@ -103,8 +103,9 @@ def configure(ctx):
     LLVM_LINKFLAGS += ['-pthread', '-ldl', '-lrt', '-lm']
   else: # For Mac
     LLVM_LINKFLAGS = LLVM_LIBFILES
-    path = ['/opt/local/lib']
-    LLVM_LINKFLAGS += [ctx.find_file('libncursesw.a', path)]
+    path = ['%s/static-lib/%s/%s' % (os.getcwd(), ctx.env['LLJVM_COMPILE_OS'], ctx.env['LLJVM_COMPILE_ARCH'])]
+    # path += ['/opt/local/lib']
+    LLVM_LINKFLAGS += [ctx.find_file('libncurses.a', path)]
     LLVM_LINKFLAGS += [ctx.find_file('libz.a', path)]
     LLVM_LINKFLAGS += ['-lm']
 
