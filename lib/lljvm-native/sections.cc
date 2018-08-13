@@ -84,7 +84,7 @@ void JVMWriter::printConstructor() {
 void JVMWriter::printClInit() {
   out << ".method public <clinit>()V\n";
   printSimpleInstruction(".limit stack 4");
-  printSimpleInstruction("invokestatic", "org/maropu/lljvm/runtime/VMemory/resetHeap()V");
+  printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/resetHeap()V");
 
   out << "\n\t; allocate global variables\n";
   for (Module::global_iterator i = module->global_begin(), e = module->global_end(); i != e; i++) {
@@ -92,7 +92,7 @@ void JVMWriter::printClInit() {
         const GlobalVariable *g = &*i;
         const Constant *c = g->getInitializer();
         printConstLoad(APInt(32, targetData->getTypeAllocSize(c->getType()), false));
-        printSimpleInstruction("invokestatic", "org/maropu/lljvm/runtime/VMemory/allocateData(I)J");
+        printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateData(I)J");
         printSimpleInstruction("putstatic", classname + "/" + getValueName(g) + " J");
     }
   }
@@ -134,7 +134,7 @@ void JVMWriter::printMainMethod() {
     printSimpleInstruction("arraylength");
     printSimpleInstruction("aload_0");
     printSimpleInstruction(
-      "invokestatic", "org/maropu/lljvm/runtime/VMemory/storeStack([Ljava/lang/String;)J");
+      "invokestatic", "io/github/maropu/lljvm/runtime/VMemory/storeStack([Ljava/lang/String;)J");
     printSimpleInstruction(
       "invokestatic",
       classname + "/main(" + getTypeDescriptor(arg1->getType()) + getTypeDescriptor(arg2->getType()) + ")I");

@@ -68,7 +68,7 @@ void JVMWriter::printInstruction(const Instruction *inst) {
 
   switch (inst->getOpcode()) {
     case Instruction::Ret:
-      printSimpleInstruction("invokestatic", "org/maropu/lljvm/runtime/VMemory/destroyStackFrame()V");
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/destroyStackFrame()V");
       if (inst->getNumOperands() >= 1) {
         printValueLoad(left);
         printSimpleInstruction(getTypePrefix(left->getType(), true) + "return");
@@ -79,8 +79,8 @@ void JVMWriter::printInstruction(const Instruction *inst) {
     case Instruction::Unreachable:
       printSimpleInstruction(
         "getstatic",
-        "org/maropu/lljvm/runtime/Instruction$Unreachable/instance "
-          "Lorg/maropu/lljvm/runtime/Instruction$Unreachable;");
+        "io/github/maropu/lljvm/runtime/Instruction$Unreachable/instance "
+          "Lio/github/maropu/lljvm/runtime/Instruction$Unreachable;");
       printSimpleInstruction("athrow");
       break;
     case Instruction::Add:

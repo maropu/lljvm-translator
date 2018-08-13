@@ -1,7 +1,7 @@
 [![License](http://img.shields.io/:license-Apache_v2-blue.svg)](https://github.com/maropu/lljvm-translator/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/maropu/lljvm-translator.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
 <!-- [![Coverage Status](https://coveralls.io/repos/github/maropu/lljvm-translator/badge.svg?branch=master)](https://coveralls.io/github/maropu/lljvm-translator?branch=master) -->
-<!-- [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.maropu.lljvm/lljvm-translator/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.maropu.lljvm/lljvm-translator/) -->
+<!-- [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.maropu.lljvm/lljvm-translator/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.maropu.lljvm/lljvm-translator/) -->
 
 This is an experimental low-level translator from LLVM bitcode to JVM bytecode.
 Since existing tools can generate LLVM bitcode from functions written in some languages
@@ -72,8 +72,8 @@ public final class GeneratedClass {
 You can load this gen'd class file via Java Runtime Reflection and run in JVMs:
 
 ```java
-import org.maropu.lljvm.LLJVMClassLoader;
-import org.maropu.lljvm.LLJVMUtils;
+import io.github.maropu.lljvm.LLJVMClassLoader;
+import io.github.maropu.lljvm.LLJVMUtils;
 
 public class LLJVMTest {
 
@@ -165,9 +165,9 @@ Let's say that you have a function below;
 Then, you can handle the array in Java like;
 
 ```java
-import org.maropu.lljvm.LLJVMClassLoader;
-import org.maropu.lljvm.LLJVMUtils;
-import org.maropu.lljvm.util.ArrayUtils;
+import io.github.maropu.lljvm.LLJVMClassLoader;
+import io.github.maropu.lljvm.LLJVMUtils;
+import io.github.maropu.lljvm.util.ArrayUtils;
 
 long[] javaArray = {1L, 2L, 3L};
 System.out.println(LLJVMUtils.invoke(clazz, ArrayUtils.addressOf(javaArray), javaArray.length));
@@ -178,7 +178,7 @@ System.out.println(LLJVMUtils.invoke(clazz, ArrayUtils.addressOf(javaArray), jav
 If `clang` is installed in your platform, you can say a line to get LLVM bitcode;
 
 ```
-import org.maropu.lljvm.util.ClangRunner;
+import io.github.maropu.lljvm.util.ClangRunner;
 
 byte[] bitcode = ClangRunner.exec(
   "#include <math.h>                     \n" +
@@ -215,7 +215,7 @@ try {
 ## Maven dependency
 
   <dependency>
-    <groupId>org.maropu.lljvm</groupId>
+    <groupId>io.github.maropu.lljvm</groupId>
     <artifactId>lljvm-translator</artifactId>
     <version>0.1.0-EXPERIMENTAL</version>
     <scope>compile</scope>

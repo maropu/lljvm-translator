@@ -51,7 +51,7 @@ void JVMWriter::printSimpleInstruction(const std::string &inst, const std::strin
 }
 
 void JVMWriter::printVirtualInstruction(const char *sig) {
-  out << '\t' << "invokestatic org/maropu/lljvm/runtime/Instruction/" << sig << '\n';
+  out << '\t' << "invokestatic io/github/maropu/lljvm/runtime/Instruction/" << sig << '\n';
 }
 
 void JVMWriter::printVirtualInstruction(const char *sig, const Value *operand) {
