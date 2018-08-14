@@ -1,0 +1,21 @@
+<settings>
+  <servers>
+    <server>
+      <id>ossrh</id>
+      <username>Sonatype JIRA User Name</username>
+      <password>Sonatype JIRA Password</password>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+      <id>ossrh</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <gpg.executable>gpg2</gpg.executable>
+        <gpg.passphrase>GPG Passphrase</gpg.passphrase>
+      </properties>
+    </profile>
+  </profiles>
+</settings>
