@@ -1,7 +1,7 @@
 [![License](http://img.shields.io/:license-Apache_v2-blue.svg)](https://github.com/maropu/lljvm-translator/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/maropu/lljvm-translator.svg?branch=master)](https://travis-ci.org/maropu/lljvm-translator)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.maropu/lljvm-translator/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.maropu/lljvm-translator/)
 <!-- [![Coverage Status](https://coveralls.io/repos/github/maropu/lljvm-translator/badge.svg?branch=master)](https://coveralls.io/github/maropu/lljvm-translator?branch=master) -->
-<!-- [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.maropu.lljvm/lljvm-translator/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.maropu.lljvm/lljvm-translator/) -->
 
 This is an experimental low-level translator from LLVM bitcode to JVM bytecode.
 Since existing tools can generate LLVM bitcode from functions written in some languages
@@ -144,10 +144,6 @@ public final class GeneratedClass {
 }
 ```
 
-## Example application
-
-See [lljvm-example](https://github.com/maropu/lljvm-example).
-
 ## Array supports
 
 Let's say that you have a function below;
@@ -214,12 +210,17 @@ try {
 
 ## Maven dependency
 
-  <dependency>
-    <groupId>io.github.maropu</groupId>
-    <artifactId>lljvm-core</artifactId>
-    <version>0.1.0-EXPERIMENTAL</version>
-    <scope>compile</scope>
-  </dependency>
+    <dependency>
+      <groupId>io.github.maropu</groupId>
+      <artifactId>lljvm-core</artifactId>
+      <version>0.1.0-EXPERIMENTAL</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+
+## Example application
+
+See [lljvm-example](https://github.com/maropu/lljvm-example).
 
 ## Builds a native binary for your platform
 
@@ -292,12 +293,12 @@ Other-related papers are lists below:
 
 ## TODO
 
+ - Needs more tests to check if the translation works correctly
  - Supports NumPy-aware translation
  - Adds more platform-dependent binaries in `src/main/resources/native`
- - Needs more tests to check if the translation works correctly
+   - Uses docker images (e.g., [dockcross](https://github.com/dockcross/dockcross)) to build binaries
  - Statically Links BSD libc++ for native binaries
  - Upgrades LLVM to v6.x
- - Uses docker to build native binaries
 
 ## Bug reports
 
