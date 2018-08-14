@@ -26,7 +26,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>maropu</groupId>
+  <groupId>io.github.maropu</groupId>
   <artifactId>lljvm-core</artifactId>
   <packaging>jar</packaging>
   <name>LLJVM Translator Core</name>
@@ -52,12 +52,6 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
-      <scope>compile</scope>
-    </dependency>
     <dependency>
       <groupId>org.xerial.snappy</groupId>
       <artifactId>snappy-java</artifactId>
@@ -86,6 +80,12 @@
       <version>${asm.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.binary.version}</artifactId>
@@ -185,6 +185,11 @@
               <goal>testCompile</goal>
             </goals>
           </execution>
+          <!--
+          This configuration causes invalid signatures because
+          the Maven 'deploy' goal leads to jar repackaging
+          after signing javadoc.
+
           <execution>
             <id>attach-scaladocs</id>
             <phase>verify</phase>
@@ -192,6 +197,7 @@
               <goal>doc-jar</goal>
             </goals>
           </execution>
+          -->
         </executions>
         <configuration>
           <scalaVersion>${scala.version}</scalaVersion>

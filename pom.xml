@@ -25,6 +25,7 @@
   <packaging>pom</packaging>
   <name>LLJVM Translator Parent POM</name>
   <description>A lightweight library to inject LLVM bitcode into JVMs</description>
+  <url>https://github.com/maropu/lljvm-translator</url>
   <licenses>
     <license>
       <name>Apache 2.0 License</name>
@@ -50,10 +51,15 @@
   </developers>
 
   <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <name>Sonatype Nexus Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
     <repository>
-      <id>sonatype-nexus-staging</id>
+      <id>ossrh</id>
       <name>Nexus Release Repository</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
 
@@ -184,7 +190,7 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.plugins</groupId>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.0.1</version>
         <configuration>
@@ -193,6 +199,8 @@
           <encoding>UTF-8</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
+          <!-- TODO: Needs to fix all the warning when generating javadoc -->
+          <additionalOptions>-Xdoclint:none</additionalOptions>
         </configuration>
       </plugin>
     </plugins>
