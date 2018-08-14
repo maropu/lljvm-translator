@@ -296,6 +296,7 @@ Other-related papers are lists below:
 
  - Supports NumPy-aware translation
  - Adds more platform-dependent binaries in `src/main/resources/native`
+ - Needs more tests to check if the translation works correctly
  - Statically Links BSD libc++ for native binaries
  - Upgrades LLVM to v6.x
  - Uses docker to build native binaries
