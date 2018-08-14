@@ -212,16 +212,14 @@ try {
    - For Mac, it is built by Apple clang++ v900.0.39.2 on macOS Sierra v10.12.1
  - LLVM v5.0.2 used internally
 
-<!--
 ## Maven dependency
 
   <dependency>
-    <groupId>io.github.maropu.lljvm</groupId>
-    <artifactId>lljvm-translator</artifactId>
+    <groupId>io.github.maropu</groupId>
+    <artifactId>lljvm-core</artifactId>
     <version>0.1.0-EXPERIMENTAL</version>
     <scope>compile</scope>
   </dependency>
--->
 
 ## Builds a native binary for your platform
 
