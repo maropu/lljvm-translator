@@ -296,7 +296,8 @@ Other-related papers are lists below:
  - Needs more tests to check if the translation works correctly
  - Supports NumPy-aware translation
  - Adds more platform-dependent binaries in `src/main/resources/native`
-   - Uses docker images (e.g., [dockcross](https://github.com/dockcross/dockcross)) to build binaries
+   - Uses docker images (e.g., [dockcross](https://github.com/dockcross/dockcross) and [dockbuidl](https://github.com/dockbuild/dockbuild)) to build binaries
+   - Creates a script to test binaries except for Linux/x86_64 with qemu/chroot
  - Statically Links BSD libc++ for native binaries
  - Upgrades LLVM to v6.x
 
