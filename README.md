@@ -7,7 +7,8 @@ This is an experimental low-level translator from LLVM bitcode to JVM bytecode.
 Since existing tools can generate LLVM bitcode from functions written in some languages
 (e.g.,  [Numba](https://numba.pydata.org/) for Python, [Clang](https://clang.llvm.org/) for C/C++,
 [DragonEgg](https://dragonegg.llvm.org/) for Fortran/Go, and [Weld](https://www.weld.rs/) for cross-library optimization),
-this library targets at easily injecting the bitcode into JVMs.
+it is useful to inject the bitcode into JVMs. An objective of this library is to provide not a full-fledge translator
+but a restricted one for easily injecting these functions into JVMs.
 
 Note that the core component is refactored from [lljvm](https://github.com/davidar/lljvm) (credit should go to the original author).
 
@@ -186,7 +187,7 @@ byte[] bitcode = ClangRunner.exec(
 
 ## Gen'd bytecode verification
 
-An objective of this library is to provide not a full-fledge translator but a restricted one for simple LLVM bitcode.
+As described above, our objective is to provide not a full-fledge translator but a restricted one for functions written in other languages.
 So, it is important to verify that gen'd bytecode is correct and supported before execution.
 The library does so when loading it in `LLJVMClassLoader` and, if it detects illegal code, it throws `LLJVMException`;
 
