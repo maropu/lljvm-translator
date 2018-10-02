@@ -79,7 +79,7 @@ fi
 
 # Fetch binutils with the given version
 _BINUTILS=binutils-${BINUTILS_VERSION}
-_BINUTILS_URL="http://ftp.heanet.ie/mirrors/gnu/binutils"
+_BINUTILS_URL="https://ftp.gnu.org/gnu/binutils"
 if [ ! -x "${_HSDIS_DIR}/${_BINUTILS}" ]; then
   run_cmd "wget ${_BINUTILS_URL}/${_BINUTILS}.tar.gz" "${_HSDIS_DIR}"
   run_cmd "tar xvf ${_BINUTILS}.tar.gz" "${_HSDIS_DIR}"
