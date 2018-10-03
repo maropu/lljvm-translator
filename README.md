@@ -5,8 +5,8 @@
 
 This is an experimental low-level translator from LLVM bitcode to JVM bytecode.
 Since existing tools can generate LLVM bitcode from functions written in some languages
-(e.g.,  [Numba](https://numba.pydata.org/) for Python, [Clang](https://clang.llvm.org/) for C/C++,
-[DragonEgg](https://dragonegg.llvm.org/) for Fortran/Go, and [Weld](https://www.weld.rs/) for cross-library optimization),
+(e.g.,  [Numba](https://numba.pydata.org/) for Python, [Clang](https://clang.llvm.org/) for C/C++, [Julia](https://julialang.org/),
+[Gollvm](https://go.googlesource.com/gollvm/) for Go, and [Weld](https://www.weld.rs/) for cross-library optimization),
 it is useful to inject the bitcode into JVMs. An objective of this library is to provide not a full-fledge translator
 but a restricted one for easily injecting these functions into JVMs.
 
@@ -142,6 +142,49 @@ public final class GeneratedClass {
       38: dstore        10
       40: dload         10
       42: dreturn
+}
+```
+
+## For Julia functions
+
+You can generate LLVM bitcode as follows;
+
+    $ cat jlfunc.jl
+    function jlfunc(a, b)
+      return a * 2.0 + b
+    end
+
+    code_llvm(jlfunc, (Float64, Float64))
+
+    $ julia jlfunc.jl > jlfunc.ll
+    $ llvm-as jlfunc.ll
+    $ ./bin/lljvm-translator ./jlfunc.bc
+
+Then, you dump gen'd bytecode:
+
+    $ javap -c jlfunc.class
+
+```java
+public final class GeneratedClass {
+  ...
+  public static double _julia_jlfunc_35021(double, double);
+    Code:
+       0: dconst_0
+       1: dstore        4
+       3: dconst_0
+       4: dstore        6
+       ...
+       9: dload_0
+      10: ldc2_w        #23                 // double 2.0d
+      13: dmul
+      14: dstore        4
+      16: dload         4
+      18: dload_2
+      19: dadd
+      20: dstore        6
+      ...
+      25: dload         6
+      27: dreturn
 }
 ```
 
