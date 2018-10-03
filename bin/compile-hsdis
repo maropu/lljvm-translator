@@ -28,7 +28,12 @@
 
 set -e -o pipefail
 
-# Check an OS name in the current platform
+if [ -z "${JAVA_HOME}" ]; then
+  echo "env JAVA_HOME not defined" 1>&2
+  exit 1
+fi
+
+# Checks an OS name in the current platform
 _OS_NAME="$(uname -s)"
 case "${_OS_NAME}" in
   Linux*)  TARGET_OS="linux";;
@@ -42,13 +47,13 @@ TARGET_ARCH="amd64"
 JDK_VERSION="jdk9"
 BINUTILS_VERSION="2.28"
 
-# Check if mercurial installed
+# Checks if mercurial installed
 if ! type "hg" > /dev/null 2>&1; then
   echo "You need to install mercurial first" 1>&2
   exit 1
 fi
 
-# Determine the current working directory
+# Determines the current working directory
 _DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Function to run a given command
@@ -56,28 +61,28 @@ run_cmd() {
   local command="$1"
   local working_dir="$2"
 
-  # Preserve the calling directory
+  # Preserves the calling directory
   _CALLING_DIR="$(pwd)"
 
-  # Run the given command and check if it works well
+  # Runs the given command and check if it works well
   cd ${working_dir} && ${command}
   if [ $? = 127 ]; then
     echo "Cannot run '${command}', so check if the command works"
     exit 1
   fi
 
-  # Reset the current working directory
+  # Resets the current working directory
   cd "${_CALLING_DIR}"
 }
 
-# Check out hotspot from the repository
+# Checks out hotspot from the repository
 _HOTSPOT_DIR=${_DIR}/hotspot
 _HSDIS_DIR=${_HOTSPOT_DIR}/src/share/tools/hsdis
 if [ ! -x "${_HOTSPOT_DIR}" ]; then
   run_cmd "hg clone http://hg.openjdk.java.net/${JDK_VERSION}/${JDK_VERSION}/hotspot hotspot" "${_DIR}"
 fi
 
-# Fetch binutils with the given version
+# Fetches binutils with the given version
 _BINUTILS=binutils-${BINUTILS_VERSION}
 _BINUTILS_URL="https://ftp.gnu.org/gnu/binutils"
 if [ ! -x "${_HSDIS_DIR}/${_BINUTILS}" ]; then
@@ -85,8 +90,9 @@ if [ ! -x "${_HSDIS_DIR}/${_BINUTILS}" ]; then
   run_cmd "tar xvf ${_BINUTILS}.tar.gz" "${_HSDIS_DIR}"
 fi
 
-# Do compile hsdis
+# Does compile hsdis
+echo "Copying the compiled hsdis(arch=${TARGET_ARCH}) into ${JAVA_HOME}/jre/lib/server/"
 cd ${_HSDIS_DIR} &&                                   \
   make BINUTILS=./${_BINUTILS} ARCH=${TARGET_ARCH} && \
-  cp build/${TARGET_OS}-${TARGET_ARCH}/hsdis-${TARGET_ARCH}.* ${_DIR}/../lib/
+  sudo cp build/${TARGET_OS}-${TARGET_ARCH}/hsdis-${TARGET_ARCH}.* ${JAVA_HOME}/jre/lib/server/
 

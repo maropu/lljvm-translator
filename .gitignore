@@ -4,7 +4,7 @@ hs_err_pid*
 .idea/
 .idea_modules/
 bin/hotspot
-lib/hsdis-amd64.dylib
+# lib/hsdis-amd64.dylib
 build/*.jar
 build/apache-maven*
 build/scala*

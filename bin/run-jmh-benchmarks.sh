@@ -32,10 +32,5 @@ if [ ! -e $_BUILT_JAR ]; then
   cd ${_DIR}/.. && ./build/mvn clean package -DskipTests
 fi
 
-# If `ENABLE_PRINT_ASSEMBLY` defined, prints compiled assembly
-if [ ! -z "${ENABLE_PRINT_ASSEMBLY}" ]; then
-  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${_DIR}/../lib java -jar ${_BUILT_JAR}
-else
-  java -jar ${_BUILT_JAR}
-fi
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${_DIR}/../lib java -jar ${_BUILT_JAR}
 
