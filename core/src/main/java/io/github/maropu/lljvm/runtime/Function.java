@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import io.github.maropu.lljvm.LLJVMUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,13 +92,28 @@ public class Function {
     }
   }
 
-  private static Object _invoke(String className, String methodSignature, long args) {
+  private static void validateMethod(Method method, String signature, Class<?>[] returnType) {
+    boolean validated = false;
+    for (Class<?> tpe : returnType) {
+      if (tpe == method.getReturnType()) {
+        validated = true;
+      }
+    }
+    if (!validated) {
+      throw new LLJVMRuntimeException("Method `" + method.getName() + "` found, " +
+        "but the return type is " + method.getReturnType() +
+        " (expected: " + LLJVMUtils.joinString(returnType, "/") + ")");
+    }
+    logger.debug("Function invoked: signature=" + signature + " returnType=" +
+      method.getReturnType().getSimpleName());
+  }
+
+  private static Object _invoke(String className, String methodSignature, long args, Class<?>... returnType) {
     if (!className.isEmpty()) {
       synchronized (methodCache) {
         try {
           Method method = methodCache.get(new Pair<>(className, methodSignature));
-          logger.debug("Function invoked: signature=" + methodSignature +
-            " returnType=" + method.getReturnType().getSimpleName());
+          validateMethod(method, methodSignature, returnType);
           return _invoke(method, args);
         } catch (ExecutionException e) {
           throw new LLJVMRuntimeException("Cannot load a method from the cache");
@@ -107,6 +123,7 @@ public class Function {
       // Invokes an external function
       if (externalFuncPointers.containsKey(methodSignature)) {
         Method method = externalFuncPointers.get(methodSignature);
+        validateMethod(method, methodSignature, returnType);
         return _invoke(method, args);
       } else {
         throw new LLJVMRuntimeException(
@@ -116,66 +133,66 @@ public class Function {
   }
 
   public static void invoke_void(String className, String methodSignature, long args) {
-    _invoke(className, methodSignature, args);
+    _invoke(className, methodSignature, args, Void.TYPE, Void.class);
   }
 
   public static void invoke_void(String className, String methodSignature) {
-    _invoke(className, methodSignature, 0);
+    invoke_void(className, methodSignature, 0);
   }
 
   public static boolean invoke_i1(String className, String methodSignature, long args) {
-    return (Boolean) _invoke(className, methodSignature, args);
+    return (Boolean) _invoke(className, methodSignature, args, Boolean.TYPE, Boolean.class);
   }
 
   public static boolean invoke_i1(String className, String methodSignature) {
-    return (Boolean) _invoke(className, methodSignature, 0);
+    return invoke_i1(className, methodSignature, 0);
   }
 
   public static byte invoke_i8(String className, String methodSignature, long args) {
-    return (Byte) _invoke(className, methodSignature, args);
+    return (Byte) _invoke(className, methodSignature, args, Byte.TYPE, Byte.class);
   }
 
   public static byte invoke_i8(String className, String methodSignature) {
-    return (Byte) _invoke(className, methodSignature, 0);
+    return invoke_i8(className, methodSignature, 0);
   }
 
   public static short invoke_i16(String className, String methodSignature, long args) {
-    return (Short) _invoke(className, methodSignature, args);
+    return (Short) _invoke(className, methodSignature, args, Short.TYPE);
   }
 
   public static short invoke_i16(String className, String methodSignature) {
-    return (Short) _invoke(className, methodSignature, 0);
+    return invoke_i16(className, methodSignature, 0);
   }
 
   public static int invoke_i32(String className, String methodSignature, long args) {
-    return (Integer) _invoke(className, methodSignature, args);
+    return (Integer) _invoke(className, methodSignature, args, Integer.TYPE, Integer.class);
   }
 
   public static int invoke_i32(String className, String methodSignature) {
-    return (Integer) _invoke(className, methodSignature, 0);
+    return invoke_i32(className, methodSignature, 0);
   }
 
   public static long invoke_i64(String className, String methodSignature, long args) {
-    return (Long) _invoke(className, methodSignature, args);
+    return (Long) _invoke(className, methodSignature, args, Long.TYPE, Long.class);
   }
 
   public static long invoke_i64(String className, String methodSignature) {
-    return (Long) _invoke(className, methodSignature, 0);
+    return invoke_i64(className, methodSignature, 0);
   }
 
   public static float invoke_f32(String className, String methodSignature, long args) {
-    return (Float) _invoke(className, methodSignature, args);
+    return (Float) _invoke(className, methodSignature, args, Float.TYPE, Float.class);
   }
 
   public static float invoke_f32(String className, String methodSignature) {
-    return (Float) _invoke(className, methodSignature, 0);
+    return invoke_f32(className, methodSignature, 0);
   }
 
   public static double invoke_f64(String className, String methodSignature, long args) {
-    return (Double) _invoke(className, methodSignature, args);
+    return (Double) _invoke(className, methodSignature, args, Double.TYPE, Double.class);
   }
 
   public static double invoke_f64(String className, String methodSignature) {
-    return (Double) _invoke(className, methodSignature, 0);
+    return invoke_f64(className, methodSignature, 0);
   }
 }

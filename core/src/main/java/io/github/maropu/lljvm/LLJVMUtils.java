@@ -76,7 +76,7 @@ public class LLJVMUtils {
     return methods;
   }
 
-  private static String joinString(Object[] list, String delim) {
+  public static String joinString(Object[] list, String delim) {
     int len = list.length;
     if (len == 0)
       return "";
