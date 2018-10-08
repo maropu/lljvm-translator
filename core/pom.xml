@@ -29,7 +29,7 @@
   <groupId>io.github.maropu</groupId>
   <artifactId>lljvm-core</artifactId>
   <packaging>jar</packaging>
-  <name>LLJVM Translator Core</name>
+  <name>LLJVM Core</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
