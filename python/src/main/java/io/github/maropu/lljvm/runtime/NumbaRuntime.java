@@ -20,6 +20,8 @@ package io.github.maropu.lljvm.runtime;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.github.maropu.lljvm.util.ReflectionUtils;
 import org.netlib.blas.*;
@@ -35,21 +37,37 @@ final public class NumbaRuntime {
 
   private NumbaRuntime() {}
 
+  private static final Set<String> fieldWhileList = new HashSet<String>() {{
+    add("_PyExc_SystemError");
+    add("_PyExc_StopIteration");
+  }};
+
+  private static final Set<String> methodWhileList = new HashSet<String>() {{
+    add("_numba_get_np_random_state");
+    add("_numba_rnd_shuffle");
+    add("_NRT_MemInfo_alloc_safe_aligned");
+    add("_NRT_MemInfo_call_dtor");
+  }};
+
   // Injects the Numba environment into the LLJVM runtime
   // TODO: Can we initialize implicitly?
   public static void initialize() {
     for (Field f : ReflectionUtils.getPublicStaticFields(NumbaRuntime.class)) {
-      try {
-        logger.debug("Numba Runtime field added: name=" + f.getName() + " value=" + f.get(null));
-        FieldValue.put(f.getName(), f.get(null));
-      } catch (IllegalAccessException e) {
-        // Just ignores it
+      if (fieldWhileList.contains(f.getName())) {
+        try {
+          logger.debug("Numba Runtime field added: name=" + f.getName() + " value=" + f.get(null));
+          FieldValue.put(f.getName(), f.get(null));
+        } catch (IllegalAccessException e) {
+          // Just ignores it
+        }
       }
     }
     for (Method m : ReflectionUtils.getPublicStaticMethods(NumbaRuntime.class)) {
-      final String signature = ReflectionUtils.getSignature(m);
-      logger.debug("Numba Runtime method added: signature=" + signature);
-      Function.put(signature, m);
+      if (methodWhileList.contains(m.getName())) {
+        final String signature = ReflectionUtils.getSignature(m);
+        logger.debug("Numba Runtime method added: signature=" + signature);
+        Function.put(signature, m);
+      }
     }
   }
 
