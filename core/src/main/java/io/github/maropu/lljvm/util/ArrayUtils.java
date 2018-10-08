@@ -63,13 +63,6 @@ public class ArrayUtils {
     }
   }
 
-  // We assume multiple threads possibly access this
-  // private static ThreadLocal<PyArrayHolder> pyArrayHolderAddr = new ThreadLocal<PyArrayHolder>() {
-  //   @Override public PyArrayHolder initialValue() {
-  //     return new PyArrayHolder();
-  //   }
-  // };
-
   private static long _addressOf(Object o) {
     // If not supported, just throws an exception
     if (!isJavaArrayAddrSupported) {
@@ -91,7 +84,7 @@ public class ArrayUtils {
     }
   }
 
-  public static boolean isIsJavaArrayAddrSupported() {
+  public static boolean isJavaArrayAddrSupported() {
     return isJavaArrayAddrSupported;
   }
 

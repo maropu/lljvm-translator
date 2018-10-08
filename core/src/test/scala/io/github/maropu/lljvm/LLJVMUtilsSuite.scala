@@ -37,7 +37,7 @@ class TestClass {
 class LLJVMUtilsSuite extends FunSuite {
 
   test("asJVMAssemblyCode") {
-    val bitcode = TestUtils.resourceToBytes("cfunc/add_test.bc")
+    val bitcode = TestUtils.resourceToBytes("cfunc-add-int32.bc")
     TestUtils.compareCode(LLJVMUtils.asJVMAssemblyCode(bitcode),
       s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object

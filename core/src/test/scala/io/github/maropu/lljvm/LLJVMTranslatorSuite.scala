@@ -26,7 +26,7 @@ class LLJVMTranslatorSuite extends FunSuite {
 
   test("simple test") {
     val file = TestUtils.createTempDir()
-    val bitcode = TestUtils.resourceToBytes("cfunc/add_test.bc")
+    val bitcode = TestUtils.resourceToBytes("cfunc-add-int32.bc")
     val inputFile = new File(file, "code.bc")
     val os = new FileOutputStream(inputFile)
     os.write(bitcode)
