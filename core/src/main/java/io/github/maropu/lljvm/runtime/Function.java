@@ -110,6 +110,7 @@ public class Function {
 
   private static Object _invoke(String className, String methodSignature, long args, Class<?>... returnType) {
     if (!className.isEmpty()) {
+      // Invokes a static method in a class loaded via a classloader
       synchronized (methodCache) {
         try {
           Method method = methodCache.get(new Pair<>(className, methodSignature));
@@ -120,7 +121,7 @@ public class Function {
         }
       }
     } else {
-      // Invokes an external function
+      // Invokes an external function registered in `externalFucPointers`
       if (externalFuncPointers.containsKey(methodSignature)) {
         Method method = externalFuncPointers.get(methodSignature);
         validateMethod(method, methodSignature, returnType);
