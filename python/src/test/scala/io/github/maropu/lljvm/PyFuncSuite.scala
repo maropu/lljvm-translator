@@ -318,7 +318,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     assert(errMsg.contains("Numba runtime exception <Numba C callback 'numpy_dot_test'>"))
   }
 
-  ignore("numpy random") {
+  test("numpy random") {
     val rvalues1 = (0 until 100).map { _ =>
       TestUtils.doTest2[Double](
         bitcode = s"$basePath/numpy_random1_test-cfunc-float64.bc",
@@ -332,19 +332,23 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
         assert(Math.abs(value - rvalues1(y)) > 0.000001)
       }
     }
-    val result = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_random2_test-cfunc-float64.bc",
-      source = s"$basePath/numpy_random2_test.py",
-      argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(100))
-    )
-    val rvalues2 = new PyArrayHolder(result).doubleArray()
-    (0 until rvalues2.size).foreach { x =>
-      val value = rvalues2(x)
-      (x + 1 until rvalues2.size).foreach { y =>
-        assert(Math.abs(value - rvalues2(y)) > 0.000001)
-      }
-    }
+
+    val errMsg = intercept[LLJVMRuntimeException] {
+      TestUtils.invokeMethod[Long](
+        bitcode = s"$basePath/numpy_random2_test-cfunc-float64.bc",
+        // source = s"$basePath/numpy_random2_test.py",
+        argTypes = Seq(jLong.TYPE),
+        arguments = Seq(new jLong(100))
+      )
+    }.getMessage
+    // val rvalues2 = new PyArrayHolder(result).doubleArray()
+    // (0 until rvalues2.size).foreach { x =>
+    //   val value = rvalues2(x)
+    //   (x + 1 until rvalues2.size).foreach { y =>
+    //     assert(Math.abs(value - rvalues2(y)) > 0.000001)
+    //   }
+    // }
+    assert(errMsg.contains("FIELD not supported:"))
   }
 
   test("numba - linear regression (not supported)") {

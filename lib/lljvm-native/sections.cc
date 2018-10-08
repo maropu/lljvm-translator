@@ -25,13 +25,24 @@
 #include <sstream>
 
 void JVMWriter::printHeader() {
-  // if (debug >= 1) out << ".source " << sourcename << "\n";
+  if (debug >= 1) {
+    out << ".source ";
+    if (!sourcename.empty()) {
+      out << sourcename;
+    } else {
+      out << "<unknown>";
+    }
+    out << '\n';
+  }
   out << ".class public final " << classname << "\n" ".super java/lang/Object\n\n";
 }
 
 void JVMWriter::printFields() {
   out << "; Fields\n";
   for (Module::global_iterator i = module->global_begin(), e = module->global_end(); i != e; i++) {
+    if (debug >= 3) {
+      out << "; " << *i << '\n';
+    }
     if (i->isDeclaration()) {
       // Since the directives for external references are pseudo-ones,
       // we need to comment out them here.
@@ -40,12 +51,7 @@ void JVMWriter::printFields() {
     } else {
       out << ".field " << (i->hasLocalLinkage() ? "private " : "public ") << "static final ";
     }
-    out << getValueName(&*i) << ' ' << getTypeDescriptor(i->getType());
-    if (debug >= 3) {
-      out << " ; " << *i;
-    } else {
-      out << '\n';
-    }
+    out << getValueName(&*i) << ' ' << getTypeDescriptor(i->getType()) << '\n';
   }
   out << '\n';
 }
