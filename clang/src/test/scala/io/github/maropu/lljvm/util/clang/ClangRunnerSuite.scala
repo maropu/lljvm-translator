@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package io.github.maropu.lljvm
+package io.github.maropu.lljvm.util.clang
 
 import java.lang.{Double => jDouble}
 
 import org.scalatest.FunSuite
 
-import io.github.maropu.lljvm.util.clang.ClangRunner
+import io.github.maropu.lljvm.{LLJVMRuntimeException, LLJVMUtils, TestUtils}
 
-class ProcessRunnerSuite extends FunSuite {
+class ClangRunnerSuite extends FunSuite {
 
   ignore("ClangRunner") {
     val bitcode = ClangRunner.exec(
