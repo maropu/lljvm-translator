@@ -144,13 +144,6 @@ This file is divided into 3 sections:
       // scalastyle:on println]]></customMessage>
   </check>
 
-  <check customId="visiblefortesting" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
-    <parameters><parameter name="regex">@VisibleForTesting</parameter></parameters>
-    <customMessage><![CDATA[
-      @VisibleForTesting causes classpath issues. Please note this in the java doc instead (SPARK-11615).
-    ]]></customMessage>
-  </check>
-
   <check customId="runtimeaddshutdownhook" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
     <parameters><parameter name="regex">Runtime\.getRuntime\.addShutdownHook</parameter></parameters>
     <customMessage><![CDATA[
@@ -232,8 +225,8 @@ This file is divided into 3 sections:
       <parameter name="groups">java,scala,3rdParty,spark</parameter>
       <parameter name="group.java">javax?\..*</parameter>
       <parameter name="group.scala">scala\..*</parameter>
-      <parameter name="group.3rdParty">(?!org\.apache\.spark\.).*</parameter>
-      <parameter name="group.spark">org\.apache\.spark\..*</parameter>
+      <parameter name="group.3rdParty">(?!io\.github\.maropu\.lljvm\.).*</parameter>
+      <parameter name="group.spark">io\.githube\.maropu\.lljvm\..*</parameter>
     </parameters>
   </check>
 
