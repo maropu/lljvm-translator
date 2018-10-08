@@ -23,11 +23,15 @@ import java.nio.charset.StandardCharsets;
 
 import io.github.maropu.lljvm.util.ReflectionUtils;
 import org.netlib.blas.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.github.maropu.lljvm.LLJVMRuntimeException;
 import io.github.maropu.lljvm.unsafe.Platform;
 
 final public class NumbaRuntime {
+
+  private static final Logger logger = LoggerFactory.getLogger(NumbaRuntime.class);
 
   private NumbaRuntime() {}
 
@@ -36,13 +40,16 @@ final public class NumbaRuntime {
   public static void initialize() {
     for (Field f : ReflectionUtils.getPublicStaticFields(NumbaRuntime.class)) {
       try {
+        logger.debug("Numba Runtime field added: name=" + f.getName() + " value=" + f.get(null));
         FieldValue.put(f.getName(), f.get(null));
       } catch (IllegalAccessException e) {
         // Just ignores it
       }
     }
     for (Method m : ReflectionUtils.getPublicStaticMethods(NumbaRuntime.class)) {
-      Function.put(ReflectionUtils.getSignature(m), m);
+      final String signature = ReflectionUtils.getSignature(m);
+      logger.debug("Numba Runtime method added: signature=" + signature);
+      Function.put(signature, m);
     }
   }
 

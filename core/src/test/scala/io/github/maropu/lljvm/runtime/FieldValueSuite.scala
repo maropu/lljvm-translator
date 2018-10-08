@@ -19,19 +19,58 @@ package io.github.maropu.lljvm.runtime
 
 import java.util.concurrent.Executors
 
-import org.scalatest.FunSuite
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.TimeLimits
 import org.scalatest.time.SpanSugar._
 
-import io.github.maropu.lljvm.LLJVMRuntimeException
+import io.github.maropu.lljvm.{LLJVMFuncSuite, LLJVMRuntimeException}
 
-class FieldValueSuite extends FunSuite with TimeLimits {
+class FieldValueSuite extends LLJVMFuncSuite with BeforeAndAfterEach with TimeLimits {
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+    FieldValue.clear()
+  }
+
+  override protected def afterEach(): Unit = {
+    FieldValue.clear()
+    super.afterEach()
+  }
 
   test("non-existent values") {
     val errMsg = intercept[LLJVMRuntimeException] {
       FieldValue.get_i64("unknown value")
     }.getMessage
     assert(errMsg === "Cannot resolve an external field for `unknown value`")
+  }
+
+  test("illegal type exception") {
+    FieldValue.put("booleanValue", true)
+    FieldValue.put("byteValue", 1.toByte)
+    FieldValue.put("shortValue", 1.toShort)
+    FieldValue.put("intValue", 1)
+    FieldValue.put("longValue", 1L)
+    FieldValue.put("floatValue", 1.0f)
+    FieldValue.put("doubleValue", 1.0)
+
+    def assertExceptionMessage(
+        f: String => Unit,
+        fieldName: String,
+        actual: String,
+        expected: String): Unit = {
+      val errMsg = intercept[LLJVMRuntimeException] {
+        f(fieldName)
+      }.getMessage
+      assert(errMsg === s"Field '$fieldName' found, but the type is $actual (expected: $expected)")
+    }
+
+    assertExceptionMessage(FieldValue.get_i1, "byteValue", "Byte", "Boolean")
+    assertExceptionMessage(FieldValue.get_i8, "shortValue", "Short", "Byte")
+    assertExceptionMessage(FieldValue.get_i16, "intValue", "Integer", "Short")
+    assertExceptionMessage(FieldValue.get_i32, "longValue", "Long", "Integer")
+    assertExceptionMessage(FieldValue.get_i64, "floatValue", "Float", "Long")
+    assertExceptionMessage(FieldValue.get_f32, "doubleValue", "Double", "Float")
+    assertExceptionMessage(FieldValue.get_f64, "booleanValue", "Boolean", "Double")
   }
 
   test("put/remove field values") {

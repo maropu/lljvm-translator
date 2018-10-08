@@ -20,12 +20,12 @@ package io.github.maropu.lljvm
 import java.lang.{Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
 import java.lang.reflect.InvocationTargetException
 
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.scalatest.BeforeAndAfterAll
 
 import io.github.maropu.lljvm.runtime.NumbaRuntime
 import io.github.maropu.lljvm.util.python.PyArrayHolder
 
-class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
+class PyFuncSuite extends LLJVMFuncSuite with BeforeAndAfterAll {
 
   private val basePath = "pyfunc"
 
@@ -329,7 +329,7 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
     (0 until rvalues1.size).foreach { x =>
       val value = rvalues1(x)
       (x + 1 until rvalues1.size).foreach { y =>
-        assert(Math.abs(value - rvalues1(y)) > 0.000001)
+        assert(Math.abs(value - rvalues1(y)) > 1.0e-8)
       }
     }
 

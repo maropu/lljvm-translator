@@ -25,10 +25,12 @@ class FunctionSuite extends FunSuite with BeforeAndAfterAll {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
+    Function.clear()
     VMemory.createStackFrame()
   }
 
   override def afterAll(): Unit = {
+    Function.clear()
     VMemory.destroyStackFrame()
     super.afterAll()
   }
