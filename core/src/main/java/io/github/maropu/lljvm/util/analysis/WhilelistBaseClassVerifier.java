@@ -60,10 +60,10 @@ public abstract class WhilelistBaseClassVerifier extends ClassVisitor {
     throw new LLJVMRuntimeException("INNERCLASS not supported: " + name);
   }
 
-  public FieldVisitor visitField(
-      int access, String name, String descriptor, String signature, Object value) {
-    throw new LLJVMRuntimeException("FIELD not supported: " + name);
-  }
+  // public FieldVisitor visitField(
+  //     int access, String name, String descriptor, String signature, Object value) {
+  //   throw new LLJVMRuntimeException("FIELD not supported: " + name);
+  // }
 
   public MethodVisitor visitMethod(
       int access, String name, String descriptor, String signature, String[] exceptions) {

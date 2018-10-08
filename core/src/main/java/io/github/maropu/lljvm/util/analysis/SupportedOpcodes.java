@@ -164,11 +164,11 @@ public class SupportedOpcodes {
     add(Opcodes.DRETURN);
     add(Opcodes.ARETURN);
     add(Opcodes.RETURN);
-    // add(Opcodes.GETSTATIC);
-    // add(Opcodes.PUTSTATIC);
+    add(Opcodes.GETSTATIC);
+    add(Opcodes.PUTSTATIC);
     // add(Opcodes.GETFIELD);
     // add(Opcodes.PUTFIELD);
-    // add(Opcodes.INVOKEVIRTUAL);
+    add(Opcodes.INVOKEVIRTUAL);
     add(Opcodes.INVOKESPECIAL);
     add(Opcodes.INVOKESTATIC);
     // add(Opcodes.INVOKEINTERFACE);
@@ -177,7 +177,7 @@ public class SupportedOpcodes {
     // add(Opcodes.NEWARRAY);
     // add(Opcodes.ANEWARRAY);
     // add(Opcodes.ARRAYLENGTH);
-    // add(Opcodes.ATHROW);
+    add(Opcodes.ATHROW);
     // add(Opcodes.CHECKCAST);
     // add(Opcodes.INSTANCEOF);
     // add(Opcodes.MONITORENTER);
