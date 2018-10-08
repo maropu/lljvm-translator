@@ -34,15 +34,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.8</java.version>
-    <maven.version>3.3.9</maven.version>
-    <scala.version>2.11.8</scala.version>
-    <scala.binary.version>2.11</scala.binary.version>
-    <scalatest.version>3.0.3</scalatest.version>
-    <scalacheck.version>1.13.5</scalacheck.version>
-
-    <test.java.home>${java.home}</test.java.home>
-    <test.exclude.tags></test.exclude.tags>
   </properties>
 
   <dependencies>
