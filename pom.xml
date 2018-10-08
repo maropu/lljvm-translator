@@ -66,6 +66,7 @@
   <modules>
     <module>core</module>
     <module>clang</module>
+    <module>python</module>
     <module>benchmark</module>
   </modules>
 

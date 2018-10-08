@@ -21,7 +21,6 @@ import io.github.maropu.lljvm.LLJVMLoader;
 import io.github.maropu.lljvm.LLJVMNative;
 import io.github.maropu.lljvm.LLJVMRuntimeException;
 import io.github.maropu.lljvm.unsafe.Platform;
-import io.github.maropu.lljvm.util.python.PyArrayHolder;
 
 public class ArrayUtils {
   // Variables below are used to decompress COOPs in Hotspot
@@ -65,11 +64,11 @@ public class ArrayUtils {
   }
 
   // We assume multiple threads possibly access this
-  private static ThreadLocal<PyArrayHolder> pyArrayHolderAddr = new ThreadLocal<PyArrayHolder>() {
-    @Override public PyArrayHolder initialValue() {
-      return new PyArrayHolder();
-    }
-  };
+  // private static ThreadLocal<PyArrayHolder> pyArrayHolderAddr = new ThreadLocal<PyArrayHolder>() {
+  //   @Override public PyArrayHolder initialValue() {
+  //     return new PyArrayHolder();
+  //   }
+  // };
 
   private static long _addressOf(Object o) {
     // If not supported, just throws an exception

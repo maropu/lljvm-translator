@@ -17,16 +17,39 @@
 
 package io.github.maropu.lljvm
 
-import java.lang.{Long => jLong, Float => jFloat, Integer => jInt, Double => jDouble}
+import java.lang.{Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
 import java.lang.reflect.InvocationTargetException
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
+import io.github.maropu.lljvm.runtime.NumbaRuntime
 import io.github.maropu.lljvm.util.python.PyArrayHolder
 
 class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
 
   private val basePath = "pyfunc"
+
+  private var pyArray1: PyArrayHolder = _
+  private var pyArray2: PyArrayHolder = _
+  private var pyArray3: PyArrayHolder = _
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+
+    // TODO: We would like to drop this initialization in future
+    NumbaRuntime.initialize()
+
+    pyArray1 = new PyArrayHolder()
+    pyArray2 = new PyArrayHolder()
+    pyArray3 = new PyArrayHolder()
+  }
+
+  override def afterAll(): Unit = {
+    pyArray1.close()
+    pyArray2.close()
+    pyArray3.close()
+    super.afterAll()
+  }
 
   test("add") {
     TestUtils.doTest2(
@@ -125,24 +148,6 @@ class PyFuncSuite extends FunSuite with BeforeAndAfterAll {
       arguments = Seq(new jDouble(2.0), new jDouble(2.0)),
       expected = Some(8.0)
     )
-  }
-
-  private var pyArray1: PyArrayHolder = _
-  private var pyArray2: PyArrayHolder = _
-  private var pyArray3: PyArrayHolder = _
-
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    pyArray1 = new PyArrayHolder()
-    pyArray2 = new PyArrayHolder()
-    pyArray3 = new PyArrayHolder()
-  }
-
-  override def afterAll(): Unit = {
-    pyArray1.close()
-    pyArray2.close()
-    pyArray3.close()
-    super.afterAll()
   }
 
   test("loop") {

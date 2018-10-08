@@ -57,12 +57,6 @@ public class Function {
     }
   });
 
-  static {
-    for (Method m : ReflectionUtils.getPublicStaticMethods(NumbaRuntime.class)) {
-      externalFuncPointers.put(ReflectionUtils.getSignature(m), m);
-    }
-  }
-
   private Function() {}
 
   public static void put(String methodSignature, Method m) {

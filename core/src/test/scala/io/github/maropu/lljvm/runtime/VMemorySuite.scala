@@ -20,6 +20,7 @@ package io.github.maropu.lljvm.runtime
 import java.util.concurrent.Executors
 
 import scala.util.Random
+
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import org.scalatest.concurrent.TimeLimits
 import org.scalatest.time.SpanSugar._

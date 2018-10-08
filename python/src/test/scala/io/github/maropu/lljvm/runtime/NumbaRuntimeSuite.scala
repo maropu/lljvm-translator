@@ -19,26 +19,32 @@ package io.github.maropu.lljvm.runtime
 
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
-import io.github.maropu.lljvm.LLJVMRuntimeException
-
-class FunctionSuite extends FunSuite with BeforeAndAfterAll {
+class NumbaRuntimeSuite extends FunSuite with BeforeAndAfterAll {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    VMemory.createStackFrame()
+
+    // TODO: We would like to drop this initialization in future
+    NumbaRuntime.initialize()
   }
 
-  override def afterAll(): Unit = {
-    VMemory.destroyStackFrame()
-    super.afterAll()
+  test("field values for Numba") {
+    assert(FieldValue.get_i64("_PyExc_StopIteration") === 0L)
+    assert(FieldValue.get_i64("_PyExc_SystemError") === 0L)
   }
 
-  test("non-existent functions") {
-    val errMsg = intercept[LLJVMRuntimeException] {
-      Function.invoke_void("", "unknown function", 0)
-    }.getMessage
-    assert(errMsg === "Cannot resolve an external function for `unknown function`")
-  }
+  test("functions for Numba") {
+    // Invokes `_NRT_MemInfo_alloc_safe_aligned(12, 8)`
+    val args1 = VMemory.allocateStack(12)
+    VMemory.pack(VMemory.pack(args1, 12L), 8)
+    val addr1 = Function.invoke_i64("", "_NRT_MemInfo_alloc_safe_aligned(JI)J", args1)
+    assert(addr1 != 0L)
 
-  ignore("put/remove functions") {}
+    // Invokes `_NRT_MemInfo_call_dtor(addr1)`
+    val args2 = VMemory.allocateStack(8)
+    VMemory.pack(args2, addr1)
+    Function.invoke_void("", "_NRT_MemInfo_call_dtor(J)V", args2)
+
+    // TODO: Adds tests for `_numba_xxgemm`, `_numba_xxgemv`, and `_numba_xxdot`
+  }
 }

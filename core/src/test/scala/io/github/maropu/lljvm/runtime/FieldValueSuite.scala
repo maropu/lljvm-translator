@@ -27,11 +27,6 @@ import io.github.maropu.lljvm.LLJVMRuntimeException
 
 class FieldValueSuite extends FunSuite with TimeLimits {
 
-  test("field values for Numba") {
-    assert(FieldValue.get_i64("_PyExc_StopIteration") === 0L)
-    assert(FieldValue.get_i64("_PyExc_SystemError") === 0L)
-  }
-
   test("non-existent values") {
     val errMsg = intercept[LLJVMRuntimeException] {
       FieldValue.get_i64("unknown value")

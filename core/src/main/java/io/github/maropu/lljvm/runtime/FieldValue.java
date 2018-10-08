@@ -17,26 +17,14 @@
 
 package io.github.maropu.lljvm.runtime;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.maropu.lljvm.LLJVMRuntimeException;
-import io.github.maropu.lljvm.util.ReflectionUtils;
 
 public class FieldValue {
 
   private static Map<String, Object> externalFieldValues = new ConcurrentHashMap<>();
-
-  static {
-    for (Field f : ReflectionUtils.getPublicStaticFields(NumbaRuntime.class)) {
-      try {
-        externalFieldValues.put(f.getName(), f.get(null));
-      } catch (IllegalAccessException e) {
-        // Just ignores it
-      }
-    }
-  }
 
   private FieldValue() {}
 

@@ -38,7 +38,7 @@ class LLJVMNativeSuite extends FunSuite {
   }
 
   test("asBitcode") {
-    val bitcode = TestUtils.resourceToBytes("pyfunc/add_test-cfunc-float32.bc")
+    val bitcode = TestUtils.resourceToBytes("pyfunc-add-float32.bc")
     val lljvmApi = LLJVMLoader.loadLLJVMApi()
     TestUtils.compareCode(lljvmApi.asLLVMAssemblyCode(bitcode),
       s"""source_filename = "<string>"

@@ -17,16 +17,34 @@
 
 package io.github.maropu.lljvm.runtime;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 
+import io.github.maropu.lljvm.util.ReflectionUtils;
 import org.netlib.blas.*;
 
 import io.github.maropu.lljvm.LLJVMRuntimeException;
 import io.github.maropu.lljvm.unsafe.Platform;
 
-final class NumbaRuntime {
+final public class NumbaRuntime {
 
   private NumbaRuntime() {}
+
+  // Injects the Numba environment into the LLJVM runtime
+  // TODO: Can we initialize implicitly?
+  public static void initialize() {
+    for (Field f : ReflectionUtils.getPublicStaticFields(NumbaRuntime.class)) {
+      try {
+        FieldValue.put(f.getName(), f.get(null));
+      } catch (IllegalAccessException e) {
+        // Just ignores it
+      }
+    }
+    for (Method m : ReflectionUtils.getPublicStaticMethods(NumbaRuntime.class)) {
+      Function.put(ReflectionUtils.getSignature(m), m);
+    }
+  }
 
   /******************************************************************
    * External field values for Numba runtime.
