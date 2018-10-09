@@ -178,7 +178,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  test("numpy power") {
+  test("NumPy power") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val result1 = TestUtils.doTest2[Long](
@@ -202,7 +202,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(1.0, 8.0, 27.0, 64.0))
   }
 
-  ignore("numpy dot - vv (not supported)") {
+  test("NumPy dot - vv") {
     // Vector * Vector case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
@@ -225,7 +225,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  ignore("numpy dot - mv (not supported)") {
+  test("NumPy dot - mv") {
     // Matrix * Vector case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f)).reshape(2, 1)
@@ -250,7 +250,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(1.0, 3.0))
   }
 
-  ignore("numpy dot - mm (not supported)") {
+  test("NumPy dot - mm") {
     // Matrix * Matrix case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
@@ -275,7 +275,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(7.0, 10.0, 15.0, 22.0))
   }
 
-  ignore("numpy dot - throws an exception when hitting incompatible shapes") {
+  test("NumPy dot - throws an exception when hitting incompatible shapes") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val errMsg = intercept[InvocationTargetException] {
@@ -287,7 +287,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(errMsg.contains("Numba runtime exception <Numba C callback 'numpy_dot_test'>"))
   }
 
-  test("numpy random") {
+  test("NumPy random") {
     val rvalues1 = (0 until 100).map { _ =>
       TestUtils.doTest2[Double](
         bitcode = s"$basePath/numpy_random1_test-cfunc-float64.bc",
@@ -298,7 +298,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     (0 until rvalues1.size).foreach { x =>
       val value = rvalues1(x)
       (x + 1 until rvalues1.size).foreach { y =>
-        assert(Math.abs(value - rvalues1(y)) > 1.0e-8)
+        assert(Math.abs(value - rvalues1(y)) > Double.MinValue)
       }
     }
 
@@ -312,7 +312,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     (0 until rvalues2.size).foreach { x =>
       val value = rvalues2(x)
       (x + 1 until rvalues2.size).foreach { y =>
-        assert(Math.abs(value - rvalues2(y)) > 0.000001)
+        assert(Math.abs(value - rvalues2(y)) > Double.MinValue)
       }
     }
   }
@@ -369,7 +369,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(doubleArray === Seq())
   }
 
-  test("numba - bubble sort") {
+  test("NumPy - bubble sort") {
     val floatX = new PyArrayHolder().`with`(Array(4.0f, 2.0f, 1.0f, 3.0f))
     TestUtils.doTest1[Unit](
       bitcode = s"$basePath/bubblesort-numba-cfunc-float32.bc",
@@ -481,7 +481,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  test("numba - sum") {
+  test("NumPy - sum") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f)).reshape(2, 3)
     TestUtils.doTest2[Float](
       bitcode = s"$basePath/sum2d-numba-cfunc-float32.bc",

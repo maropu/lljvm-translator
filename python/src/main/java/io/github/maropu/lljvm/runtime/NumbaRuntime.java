@@ -41,10 +41,25 @@ public final class NumbaRuntime implements RuntimeInterface {
   }};
 
   private static final Set<String> methodWhileList = new HashSet<String>() {{
-    add("_numba_get_np_random_state");
-    add("_numba_rnd_shuffle");
+    // For internal memory operations
     add("_NRT_MemInfo_alloc_safe_aligned");
     add("_NRT_MemInfo_call_dtor");
+
+    // For NumPy random
+    add("_numba_get_np_random_state");
+    add("_numba_rnd_shuffle");
+
+    // For Numpy dot
+    add("_numba_xxdot");
+    add("_numba_xxgemv");
+    add("_numba_xxgemm");
+
+    // For error handling (e.g., NumPy dot between incompatible shapes)
+    add("_PyString_FromString");
+    add("_PyErr_WriteUnraisable");
+    add("_PyErr_Clear");
+    add("_numba_unpickle");
+    add("_numba_gil_ensure");
   }};
 
   // Injects the Numba environment into the LLJVM runtime
