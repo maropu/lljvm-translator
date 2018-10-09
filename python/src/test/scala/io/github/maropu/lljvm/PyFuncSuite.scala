@@ -463,22 +463,22 @@ class PyFuncSuite extends LLJVMFuncSuite {
   }
 
   ignore("numba - pi (not supported)") {
-    TestUtils.doTest2[Float](
+    val result1 = TestUtils.doTest2[Float](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/pi.py",
       argTypes = Seq(jInt.TYPE),
-      arguments = Seq(new jInt(10)),
-      expected = Some(3.0f)
+      arguments = Seq(new jInt(512))
     )
+    assert(result1 === 0.0f)
 
-    TestUtils.doTest1[Double](
+    val result2 = TestUtils.doTest1[Double](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/pi.py",
-      funcName = "_cfunc__ZN14numba_examples2pi12calc_pi_2474Ex",
+      funcName = "_cfunc__ZN14numba_examples2pi12calc_pi_2476Ex",
       argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(10)),
-      expected = Some(3.0)
+      arguments = Seq(new jLong(512))
     )
+    assert(result2 === 0.0)
   }
 
   test("NumPy - sum") {

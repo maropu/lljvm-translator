@@ -68,9 +68,9 @@ object TestUtils extends LLJVMFuncSuite {
     }
     actualResult.asInstanceOf[T]
   } catch {
-    case e: LLJVMRuntimeException =>
+    case e: Throwable =>
       val testCode = TestUtils.resourceToBytes(bitcode)
-      fail(
+      logError(
         s"""Test failed because: ${e.getMessage}
            |${exceptionString(e)}
            |========== Source Code ==========
@@ -78,8 +78,9 @@ object TestUtils extends LLJVMFuncSuite {
            |========== LLVM Assembly Code =========
            |${asLLVMAssemblyCode(testCode)}
            |========== JVM Assembly Code =========
-           |${Try(asJVMAssemblyCode(testCode)).getOrElse("<invalid>")}
+           |${Try(asJVMAssemblyCode(testCode)).getOrElse("<unknown>")}
          """.stripMargin)
+      throw e
   }
 
   def doTest2[T](
