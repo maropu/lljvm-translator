@@ -123,6 +123,8 @@ public final class NumbaRuntime implements RuntimeInterface {
     Platform.putLong(null, base, 1L); // starts with 1 refct
     Platform.putLong(null, base + 24, data);
     Platform.putLong(null, base + 32, size);
+    logger.debug("Method '_NRT_MemInfo_alloc_safe_aligned' invoked: size=" + size +
+      " align=" + align + " addr=" + base);
     return base;
   }
 
@@ -131,6 +133,7 @@ public final class NumbaRuntime implements RuntimeInterface {
     long dtor = Platform.getLong(null, addr + 8);
     long dtor_info = Platform.getLong(null, addr + 16);
     assert(dtor == 0L && dtor_info == 0L);
+    logger.debug("Method '_NRT_MemInfo_call_dtor' invoked: addr=" + addr);
   }
 
   private static String toChar(byte b) {

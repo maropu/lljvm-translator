@@ -486,4 +486,12 @@ public final class VMemory {
   public static void memset(long dest, byte val, long len, int align) {
     memset(dest, val, (int) len, align);
   }
+
+  /**
+   * Fill the first len bytes of memory area dest with 0.
+   */
+  public static long zero(long dest, long len) {
+    memset(dest, (byte) 0, len, 1);
+    return dest + len;
+  }
 }

@@ -104,7 +104,7 @@ public final class Function {
         "but the return type is " + method.getReturnType() +
         " (expected: " + LLJVMUtils.joinString(returnType, "/") + ")");
     }
-    logger.debug("Function invoked: signature=" + signature + " returnType=" +
+    logger.debug("Method invoked: signature=" + signature + " returnType=" +
       method.getReturnType().getSimpleName());
   }
 

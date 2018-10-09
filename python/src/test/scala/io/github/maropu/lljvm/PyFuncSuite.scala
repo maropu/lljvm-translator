@@ -178,7 +178,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  test("NumPy power") {
+  ignore("NumPy power") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val result1 = TestUtils.doTest2[Long](
@@ -202,7 +202,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(1.0, 8.0, 27.0, 64.0))
   }
 
-  test("NumPy dot - vv") {
+  ignore("NumPy dot - vv") {
     // Vector * Vector case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
@@ -225,7 +225,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  test("NumPy dot - mv") {
+  ignore("NumPy dot - mv") {
     // Matrix * Vector case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f)).reshape(2, 1)
@@ -250,7 +250,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(1.0, 3.0))
   }
 
-  test("NumPy dot - mm") {
+  ignore("NumPy dot - mm") {
     // Matrix * Matrix case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
@@ -275,7 +275,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(7.0, 10.0, 15.0, 22.0))
   }
 
-  test("NumPy dot - throws an exception when hitting incompatible shapes") {
+  ignore("NumPy dot - throws an exception when hitting incompatible shapes") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val errMsg = intercept[InvocationTargetException] {
