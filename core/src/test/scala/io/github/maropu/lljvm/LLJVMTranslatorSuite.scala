@@ -20,9 +20,7 @@ package io.github.maropu.lljvm
 import java.io.{File, FileOutputStream}
 import java.lang.{Integer => jInt}
 
-import org.scalatest.FunSuite
-
-class LLJVMTranslatorSuite extends FunSuite {
+class LLJVMTranslatorSuite extends LLJVMFuncSuite {
 
   test("simple test") {
     val file = TestUtils.createTempDir()

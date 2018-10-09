@@ -244,8 +244,9 @@ public class PyArrayHolder implements AutoCloseable {
     return data;
   }
 
+  // TODO: Better to release the allocated via the weak reference logic?
   @Override
-  public void close() throws Exception {
+  public void close() {
     if (isArrayOwner) {
       Platform.freeMemory(holderAddr);
       Platform.freeMemory(meminfoAddr);

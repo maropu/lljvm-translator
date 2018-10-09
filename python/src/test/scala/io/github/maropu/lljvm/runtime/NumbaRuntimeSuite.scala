@@ -17,16 +17,9 @@
 
 package io.github.maropu.lljvm.runtime
 
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import io.github.maropu.lljvm.LLJVMFuncSuite
 
-class NumbaRuntimeSuite extends FunSuite with BeforeAndAfterAll {
-
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-
-    // TODO: We would like to drop this initialization in future
-    NumbaRuntime.initialize()
-  }
+class NumbaRuntimeSuite extends LLJVMFuncSuite {
 
   test("field values for Numba") {
     assert(FieldValue.get_i64("_PyExc_StopIteration") === 0L)

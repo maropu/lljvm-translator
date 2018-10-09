@@ -19,15 +19,13 @@ package io.github.maropu.lljvm
 
 import java.lang.{Double => jDouble, Integer => jInt}
 
-import org.scalatest.FunSuite
+import io.github.maropu.lljvm.util.JVMAssembler
 
-import io.github.maropu.lljvm.util.JvmAssembler
-
-class JvmAssemblerSuite extends FunSuite {
+class JVMAssemblerSuite extends LLJVMFuncSuite {
 
   test("plus") {
     val code =
-      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
+      s""".class public final ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -47,7 +45,7 @@ class JvmAssemblerSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = JvmAssembler.compile(code)
+    val bytecode = JVMAssembler.compile(code)
     val clazz = TestUtils.loadClassFromBytecode(bytecode)
     val method = LLJVMUtils.getMethod(clazz, "plus", Seq(jInt.TYPE, jInt.TYPE): _*)
     val obj = clazz.newInstance()
@@ -57,7 +55,7 @@ class JvmAssemblerSuite extends FunSuite {
 
   test("pow") {
     val code =
-      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
+      s""".class public final ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -82,7 +80,7 @@ class JvmAssemblerSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = JvmAssembler.compile(code)
+    val bytecode = JVMAssembler.compile(code)
     val clazz = TestUtils.loadClassFromBytecode(bytecode)
     val method = LLJVMUtils.getMethod(clazz, "pow", Seq(jDouble.TYPE, jDouble.TYPE): _*)
     val obj = clazz.newInstance()
@@ -92,7 +90,7 @@ class JvmAssemblerSuite extends FunSuite {
 
   test("log10") {
     val code =
-      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
+      s""".class public final ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -128,7 +126,7 @@ class JvmAssemblerSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = JvmAssembler.compile(code)
+    val bytecode = JVMAssembler.compile(code)
     val clazz = TestUtils.loadClassFromBytecode(bytecode)
     val method = LLJVMUtils.getMethod(clazz, "log10", Seq(jDouble.TYPE, jDouble.TYPE): _*)
     val obj = clazz.newInstance()
@@ -138,7 +136,7 @@ class JvmAssemblerSuite extends FunSuite {
 
   test("throw exceptions if illegal bytecode found") {
     val illegalCode =
-      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
+      s""".class public final ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -159,7 +157,7 @@ class JvmAssemblerSuite extends FunSuite {
        """.stripMargin
 
     val errMsg = intercept[LLJVMRuntimeException] {
-      JvmAssembler.compile(illegalCode)
+      JVMAssembler.compile(illegalCode)
     }.getMessage
     assert(errMsg.contains(
       "Illegal bytecode found: Error at instruction 0: Expected J, but found I"))

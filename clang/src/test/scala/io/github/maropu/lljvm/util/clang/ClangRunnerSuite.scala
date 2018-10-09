@@ -19,11 +19,9 @@ package io.github.maropu.lljvm.util.clang
 
 import java.lang.{Double => jDouble}
 
-import org.scalatest.FunSuite
+import io.github.maropu.lljvm.{LLJVMFuncSuite, LLJVMRuntimeException, LLJVMUtils, TestUtils}
 
-import io.github.maropu.lljvm.{LLJVMRuntimeException, LLJVMUtils, TestUtils}
-
-class ClangRunnerSuite extends FunSuite {
+class ClangRunnerSuite extends LLJVMFuncSuite {
 
   ignore("ClangRunner") {
     val bitcode = ClangRunner.exec(

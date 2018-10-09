@@ -19,15 +19,13 @@ package io.github.maropu.lljvm
 
 import java.nio.charset.StandardCharsets
 
-import org.scalatest.FunSuite
-
-import io.github.maropu.lljvm.util.JvmAssembler
+import io.github.maropu.lljvm.util.JVMAssembler
 import io.github.maropu.lljvm.util.analysis.BytecodeVerifier
 
-class BytecodeVerifierSuite extends FunSuite {
+class BytecodeVerifierSuite extends LLJVMFuncSuite {
 
   private def checkException(code: String, expectedMsg: String): Unit = {
-    val bytecode = JvmAssembler.doCompile(code.getBytes(StandardCharsets.UTF_8), false)
+    val bytecode = JVMAssembler.doCompile(code.getBytes(StandardCharsets.UTF_8), false)
     val errMsg = intercept[LLJVMRuntimeException] {
       BytecodeVerifier.verify(bytecode)
     }.getMessage
@@ -53,13 +51,13 @@ class BytecodeVerifierSuite extends FunSuite {
        """.stripMargin
 
     checkException(illegalCode,
-      s"Generated class name must be '${JvmAssembler.LLJVM_GENERATED_CLASSNAME}', " +
+      s"Generated class name must be '${JVMAssembler.LLJVM_GENERATED_CLASSNAME}', " +
         "but 'IllegalClassName")
   }
 
   test("illegal bytecode") {
     val illegalCode =
-      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
+      s""".class public final ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -85,7 +83,7 @@ class BytecodeVerifierSuite extends FunSuite {
 
   test("illegal method call") {
     val illegalCode =
-      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
+      s""".class public final ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V

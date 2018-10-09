@@ -17,12 +17,10 @@
 
 package io.github.maropu.lljvm
 
-import org.scalatest.FunSuite
-
 import io.github.maropu.lljvm.unsafe.Platform
 import io.github.maropu.lljvm.util.ArrayUtils
 
-class ArrayUtilsSuite extends FunSuite {
+class ArrayUtilsSuite extends LLJVMFuncSuite {
 
   test("boolean") {
     val booleanArray = Array(true, false, true, true, false, false, true)

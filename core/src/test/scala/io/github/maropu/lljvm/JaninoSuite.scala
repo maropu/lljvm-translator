@@ -19,20 +19,18 @@ package io.github.maropu.lljvm
 
 import java.util.{HashMap => jMap}
 
+import io.github.maropu.lljvm.util.JVMAssembler
 import org.codehaus.janino.ClassBodyEvaluator
-import org.scalatest.FunSuite
-
-import io.github.maropu.lljvm.util.JvmAssembler
 
 abstract class JaninoClass {
    def plus(a: Int, b: Int): Int
 }
 
-class JaninoSuite extends FunSuite {
+class JaninoSuite extends LLJVMFuncSuite {
 
   test("invoke gen'd function inside janino-compiled class") {
     val code =
-      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
+      s""".class public final ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |.method public <init>()V
@@ -52,9 +50,9 @@ class JaninoSuite extends FunSuite {
          |.end method
        """.stripMargin
 
-    val bytecode = JvmAssembler.compile(code)
+    val bytecode = JVMAssembler.compile(code)
     val classMap = new jMap[String, Class[_]]()
-    classMap.put(JvmAssembler.LLJVM_GENERATED_CLASSNAME, TestUtils.loadClassFromBytecode(bytecode))
+    classMap.put(JVMAssembler.LLJVM_GENERATED_CLASSNAME, TestUtils.loadClassFromBytecode(bytecode))
     val classLoader = new LLJVMClassLoader(classMap)
 
     // Call gen'd function in janino-compiled class
@@ -64,7 +62,7 @@ class JaninoSuite extends FunSuite {
     evaluator.setExtendedClass(classOf[JaninoClass])
     evaluator.cook("generated.java",
       s"""public int plus(int a, int b) {
-         |  return ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}.plus(a, b);
+         |  return ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}.plus(a, b);
          |}
        """.stripMargin
     )

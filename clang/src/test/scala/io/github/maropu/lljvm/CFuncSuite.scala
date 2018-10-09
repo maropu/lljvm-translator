@@ -23,7 +23,7 @@ import org.scalatest.FunSuite
 
 import io.github.maropu.lljvm.util.ArrayUtils
 
-class CFuncSuite extends FunSuite {
+class CFuncSuite extends LLJVMFuncSuite {
 
   val basePath = "cfunc"
 

@@ -31,11 +31,9 @@ import org.slf4j.LoggerFactory;
 import io.github.maropu.lljvm.LLJVMRuntimeException;
 import io.github.maropu.lljvm.unsafe.Platform;
 
-final public class NumbaRuntime {
+public final class NumbaRuntime implements RuntimeInterface {
 
   private static final Logger logger = LoggerFactory.getLogger(NumbaRuntime.class);
-
-  private NumbaRuntime() {}
 
   private static final Set<String> fieldWhileList = new HashSet<String>() {{
     add("_PyExc_SystemError");
@@ -50,8 +48,8 @@ final public class NumbaRuntime {
   }};
 
   // Injects the Numba environment into the LLJVM runtime
-  // TODO: Can we initialize implicitly?
-  public static void initialize() {
+  @Override
+  public void initialize() {
     for (Field f : ReflectionUtils.getPublicStaticFields(NumbaRuntime.class)) {
       if (fieldWhileList.contains(f.getName())) {
         try {
@@ -347,7 +345,8 @@ final public class NumbaRuntime {
     //     state->gauss = 0.0;
     //     state->is_initialized = 1;
     // }
-    @Override public Long initialValue() {
+    @Override
+    public Long initialValue() {
       // A return type of this function is `{ i32, [624 x i32], i32, double, i32 }*`
       long holderSize = 4 + MT_N * 4 + 4 + 8 + 4;
       long holderAddr = Platform.allocateMemory(holderSize);
@@ -364,7 +363,8 @@ final public class NumbaRuntime {
       return holderAddr;
     }
 
-    @Override public void remove() {
+    @Override
+    public void remove() {
       Platform.freeMemory(this.get());
       super.remove();
     }

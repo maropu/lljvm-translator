@@ -34,7 +34,7 @@ import io.github.maropu.lljvm.LLJVMRuntimeException;
 import io.github.maropu.lljvm.util.Pair;
 import io.github.maropu.lljvm.util.ReflectionUtils;
 
-public class Function {
+public final class Function {
 
   private static final Logger logger = LoggerFactory.getLogger(FieldValue.class);
 

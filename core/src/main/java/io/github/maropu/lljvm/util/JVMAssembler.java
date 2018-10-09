@@ -28,7 +28,7 @@ import io.github.maropu.lljvm.LLJVMNative;
 import io.github.maropu.lljvm.LLJVMRuntimeException;
 import io.github.maropu.lljvm.util.analysis.BytecodeVerifier;
 
-public class JvmAssembler {
+public class JVMAssembler {
 
   public static final String LLJVM_GENERATED_CLASSNAME;
 

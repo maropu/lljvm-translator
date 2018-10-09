@@ -19,11 +19,9 @@ package io.github.maropu.lljvm
 
 import java.lang.{Double => jDouble, Integer => jInt}
 
+import io.github.maropu.lljvm.util.JVMAssembler
+
 import scala.collection.JavaConverters._
-
-import org.scalatest.FunSuite
-
-import io.github.maropu.lljvm.util.JvmAssembler
 
 class TestClass {
 
@@ -34,12 +32,12 @@ class TestClass {
   def method5(a: Int, b: Int): Int = a + b
 }
 
-class LLJVMUtilsSuite extends FunSuite {
+class LLJVMUtilsSuite extends LLJVMFuncSuite {
 
   test("asJVMAssemblyCode") {
     val bitcode = TestUtils.resourceToBytes("cfunc-add-int32.bc")
     TestUtils.compareCode(LLJVMUtils.asJVMAssemblyCode(bitcode),
-      s""".class public final ${JvmAssembler.LLJVM_GENERATED_CLASSNAME}
+      s""".class public final ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}
          |.super java/lang/Object
          |
          |; Fields

@@ -20,12 +20,9 @@ package io.github.maropu.lljvm
 import java.lang.{Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
 import java.lang.reflect.InvocationTargetException
 
-import org.scalatest.BeforeAndAfterAll
-
-import io.github.maropu.lljvm.runtime.NumbaRuntime
 import io.github.maropu.lljvm.util.python.PyArrayHolder
 
-class PyFuncSuite extends LLJVMFuncSuite with BeforeAndAfterAll {
+class PyFuncSuite extends LLJVMFuncSuite {
 
   private val basePath = "pyfunc"
 
@@ -35,10 +32,6 @@ class PyFuncSuite extends LLJVMFuncSuite with BeforeAndAfterAll {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-
-    // TODO: We would like to drop this initialization in future
-    NumbaRuntime.initialize()
-
     pyArray1 = new PyArrayHolder()
     pyArray2 = new PyArrayHolder()
     pyArray3 = new PyArrayHolder()

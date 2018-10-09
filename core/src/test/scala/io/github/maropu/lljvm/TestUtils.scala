@@ -23,9 +23,7 @@ import java.util.UUID
 
 import scala.util.Try
 
-import org.scalatest.FunSuite
-
-object TestUtils extends FunSuite {
+object TestUtils extends LLJVMFuncSuite {
 
   /**
    * Return a nice string representation of the exception. It will call "printStackTrace" to

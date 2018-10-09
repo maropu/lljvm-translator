@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.maropu.lljvm.util.JvmAssembler;
+import io.github.maropu.lljvm.util.JVMAssembler;
 import io.github.maropu.lljvm.util.analysis.BytecodeVerifier;
 
 /**
@@ -35,7 +35,8 @@ public class LLJVMClassLoader extends ClassLoader {
   public static ThreadLocal<LLJVMClassLoader> currentClassLoader =
       new ThreadLocal<LLJVMClassLoader>() {
 
-    @Override public LLJVMClassLoader initialValue() {
+    @Override
+    public LLJVMClassLoader initialValue() {
       return new LLJVMClassLoader();
     }
   };
@@ -79,14 +80,15 @@ public class LLJVMClassLoader extends ClassLoader {
   }
 
   public Class<?> loadClassFromBytecode(byte[] bytecode) {
+    LLJVMUtils.checkIfLLJVMRuntimeInitialized();
     BytecodeVerifier.verify(bytecode);
-    return defineClass(JvmAssembler.LLJVM_GENERATED_CLASSNAME, bytecode, 0, bytecode.length);
+    return defineClass(JVMAssembler.LLJVM_GENERATED_CLASSNAME, bytecode, 0, bytecode.length);
   }
 
-  public Class<?> loadClassFromBitcode(byte[] bitcode)
-      throws IOException, LLJVMRuntimeException {
-    byte[] bytecode = JvmAssembler.compile(LLJVMUtils.asJVMAssemblyCode(bitcode));
-    return defineClass(JvmAssembler.LLJVM_GENERATED_CLASSNAME, bytecode, 0, bytecode.length);
+  public Class<?> loadClassFromBitcode(byte[] bitcode) throws IOException, LLJVMRuntimeException {
+    LLJVMUtils.checkIfLLJVMRuntimeInitialized();
+    byte[] bytecode = JVMAssembler.compile(LLJVMUtils.asJVMAssemblyCode(bitcode));
+    return defineClass(JVMAssembler.LLJVM_GENERATED_CLASSNAME, bytecode, 0, bytecode.length);
   }
 
   public Class<?> loadClassFromBytecodeFile(String classFile)

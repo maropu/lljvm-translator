@@ -15,30 +15,23 @@
  * limitations under the License.
  */
 
-package io.github.maropu.lljvm.runtime
+package io.github.maropu.lljvm.runtime;
 
-import io.github.maropu.lljvm.{LLJVMFuncSuite, LLJVMRuntimeException}
+import java.util.ServiceLoader;
 
-class FunctionSuite extends LLJVMFuncSuite {
+public final class LLJVMRuntime {
 
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    Function.clear()
-    VMemory.createStackFrame()
+  public static volatile boolean isInitialized = false;
+
+  private LLJVMRuntime() {}
+
+  // Initializes the LLJVM runtime before running any compiled code
+  public synchronized static void initialize() {
+    if (!isInitialized) {
+      for (RuntimeInterface rt : ServiceLoader.load(RuntimeInterface.class)) {
+        rt.initialize();
+      }
+      isInitialized = true;
+    }
   }
-
-  override def afterAll(): Unit = {
-    Function.clear()
-    VMemory.destroyStackFrame()
-    super.afterAll()
-  }
-
-  test("non-existent functions") {
-    val errMsg = intercept[LLJVMRuntimeException] {
-      Function.invoke_void("", "unknown function", 0)
-    }.getMessage
-    assert(errMsg === "Cannot resolve an external function for `unknown function`")
-  }
-
-  ignore("put/remove functions") {}
 }

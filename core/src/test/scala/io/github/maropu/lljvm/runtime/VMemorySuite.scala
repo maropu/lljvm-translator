@@ -21,13 +21,12 @@ import java.util.concurrent.Executors
 
 import scala.util.Random
 
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import org.scalatest.concurrent.TimeLimits
 import org.scalatest.time.SpanSugar._
 
-import io.github.maropu.lljvm.LLJVMRuntimeException
+import io.github.maropu.lljvm.{LLJVMFuncSuite, LLJVMRuntimeException}
 
-class VMemorySuite extends FunSuite with BeforeAndAfterAll with TimeLimits {
+class VMemorySuite extends LLJVMFuncSuite with TimeLimits {
 
   override def beforeAll(): Unit = {
     super.beforeAll()

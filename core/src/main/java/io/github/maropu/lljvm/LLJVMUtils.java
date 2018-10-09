@@ -25,8 +25,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.github.maropu.lljvm.runtime.LLJVMRuntime;
 
 public class LLJVMUtils {
+
+  public static void checkIfLLJVMRuntimeInitialized() {
+    if (!LLJVMRuntime.isInitialized) {
+      throw new LLJVMRuntimeException(
+        "To initialize the runtime, you need to call `LLJVMRuntime.initialize()` first");
+    }
+  }
 
   @VisibleForTesting
   public static void checkLLVMBitcodeFormat(byte[] bitcode) {

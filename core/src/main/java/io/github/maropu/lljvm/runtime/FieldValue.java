@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import io.github.maropu.lljvm.LLJVMRuntimeException;
 
-public class FieldValue {
+public final class FieldValue {
 
   private static final Logger logger = LoggerFactory.getLogger(FieldValue.class);
 

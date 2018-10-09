@@ -28,7 +28,7 @@ import io.github.maropu.lljvm.unsafe.Platform;
  * Virtual memory for storing/loading values to/from specified 64bit addresses. This class should
  * be thread-safe because multiple threads possibly access the memory.
  */
-public class VMemory {
+public final class VMemory {
 
   // 8-byte alignment for this memory model
   private static final int ALIGNMENT = 8;
@@ -71,7 +71,8 @@ public class VMemory {
   private static ThreadLocal<Pair<VMemFragment, Stack<Long>>> _stack =
        new ThreadLocal<Pair<VMemFragment, Stack<Long>>>() {
 
-     @Override public Pair<VMemFragment, Stack<Long>> initialValue() {
+     @Override
+     public Pair<VMemFragment, Stack<Long>> initialValue() {
        final String sizeStr = System.getProperty(
          "maropu.lljvm.runtime.vmem.stacksize", String.valueOf(8 * 1024 * 1024));
        int size = Integer.parseInt(sizeStr);
@@ -79,7 +80,8 @@ public class VMemory {
        return new Pair<>(new VMemFragment(baseAddr , size), new Stack<Long>());
     }
 
-    @Override public void remove() {
+    @Override
+    public void remove() {
       Platform.freeMemory(this.get().getKey().getBaseAddr());
       super.remove();
     }
@@ -88,7 +90,8 @@ public class VMemory {
   // For heap
   private static ThreadLocal<VMemFragment> _heap = new ThreadLocal<VMemFragment>() {
 
-     @Override public VMemFragment initialValue() {
+     @Override
+     public VMemFragment initialValue() {
        final String sizeStr = System.getProperty(
          "maropu.lljvm.runtime.vmem.heapsize", String.valueOf(2 * 1024 * 1024));
        int size = Integer.parseInt(sizeStr);
@@ -96,7 +99,8 @@ public class VMemory {
        return new VMemFragment(baseAddr , size);
     }
 
-    @Override public void remove() {
+    @Override
+    public void remove() {
       Platform.freeMemory(this.get().getBaseAddr());
       super.remove();
     }

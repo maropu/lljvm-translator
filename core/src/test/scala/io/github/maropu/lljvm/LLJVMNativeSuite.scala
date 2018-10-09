@@ -17,9 +17,7 @@
 
 package io.github.maropu.lljvm
 
-import org.scalatest.FunSuite
-
-class LLJVMNativeSuite extends FunSuite {
+class LLJVMNativeSuite extends LLJVMFuncSuite {
 
   test("broken bitcode tests") {
     val errMsg = intercept[LLJVMRuntimeException] {

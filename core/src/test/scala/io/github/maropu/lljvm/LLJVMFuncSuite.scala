@@ -17,12 +17,25 @@
 
 package io.github.maropu.lljvm
 
-import org.scalatest.{FunSuite, Outcome}
+import org.scalatest.{BeforeAndAfterAll, FunSuite, Outcome}
+
+import io.github.maropu.lljvm.runtime.LLJVMRuntime
 
 /**
  * Base abstract class for all unit tests in LLJVM for handling common functionality.
  */
-abstract class LLJVMFuncSuite extends FunSuite with Logging {
+abstract class LLJVMFuncSuite extends FunSuite with BeforeAndAfterAll with Logging {
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+
+    // Does initialization before running tests
+    LLJVMRuntime.initialize()
+  }
+
+  override def afterAll(): Unit = {
+    super.afterAll()
+  }
 
   /**
    * Log the suite name and the test name before and after each test.

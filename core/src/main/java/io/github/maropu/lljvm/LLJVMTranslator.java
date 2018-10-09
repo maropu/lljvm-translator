@@ -20,7 +20,7 @@ package io.github.maropu.lljvm;
 import java.io.*;
 import java.nio.file.Files;
 
-import io.github.maropu.lljvm.util.JvmAssembler;
+import io.github.maropu.lljvm.util.JVMAssembler;
 
 /**
  * A driver code to translate LLVM bitcode to JVM bytecode.
@@ -54,7 +54,7 @@ public class LLJVMTranslator {
     String outputDir = bitcodeFile.getParentFile().getAbsolutePath();
 
     try (OutputStream os = new FileOutputStream(new File(outputDir, basename + ".class"))) {
-      os.write(JvmAssembler.compile(jvmAsm));
+      os.write(JVMAssembler.compile(jvmAsm));
     } catch (Throwable t) {
       t.printStackTrace(System.err);
       System.exit(-1);
