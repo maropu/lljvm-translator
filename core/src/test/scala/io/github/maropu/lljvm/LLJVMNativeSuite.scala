@@ -19,7 +19,7 @@ package io.github.maropu.lljvm
 
 class LLJVMNativeSuite extends LLJVMFuncSuite {
 
-  test("broken bitcode tests") {
+  ignore("broken bitcode tests") {
     val errMsg = intercept[LLJVMRuntimeException] {
       TestUtils.loadClassFromBitcodeInResource("corrupt.bc")
     }.getMessage

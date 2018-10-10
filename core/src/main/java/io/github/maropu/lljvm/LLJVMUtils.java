@@ -40,10 +40,11 @@ public class LLJVMUtils {
   public static void checkLLVMBitcodeFormat(byte[] bitcode) {
     // A format of LLVM bitcode is as follows:
     //  - https://llvm.org/docs/BitCodeFormat.html
-    if (bitcode.length < 4 ||
-        !(bitcode[0] == -34 && bitcode[1] == -64 && bitcode[2] == 23 && bitcode[3] == 11)) {
-      throw new LLJVMRuntimeException("Corrupt LLVM bitcode found");
-    }
+    // if (bitcode.length < 4 ||
+    //     // This magic number in only valid for `target triple = "x86_64-apple-macosx10.12.0"`?
+    //     !(bitcode[0] == -34 && bitcode[1] == -64 && bitcode[2] == 23 && bitcode[3] == 11)) {
+    //   throw new LLJVMRuntimeException("Corrupt LLVM bitcode found");
+    // }
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
       lljvmApi.veryfyBitcode(bitcode);
