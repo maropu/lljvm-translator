@@ -178,25 +178,32 @@ void JVMWriter::printInstruction(const Instruction *inst) {
 
     // TODO: LLVM 7.x unsupported instructions are listed below and
     // need to be supported in future.
-    case Instruction::IndirectBr:
+    case Instruction::AtomicCmpXchg:
+    case Instruction::AddrSpaceCast:
+    case Instruction::IndirectBr: {
+      std::stringstream err_msg;
+      err_msg << "Unsupported LLVM instruction: " << inst->getOpcodeName() <<
+        " (Opcode=" << inst->getOpcode() << ")";
+      throw err_msg.str();
+    }
+    // LLVM exception handling insructions are listed below:
+    // - https://releases.llvm.org/7.0.0/docs/ExceptionHandling.html#overview
     case Instruction::Resume:
     case Instruction::CatchSwitch:
     case Instruction::CatchRet:
     case Instruction::CleanupRet:
-    case Instruction::AtomicCmpXchg:
-    case Instruction::AddrSpaceCast:
     case Instruction::LandingPad:
     case Instruction::CatchPad:
     case Instruction::CleanupPad: {
       std::stringstream err_msg;
-      err_msg << "Unsupported Instruction: " << inst->getOpcodeName() <<
+      err_msg << "Unsupported LLVM exception handling instruction: " << inst->getOpcodeName() <<
         " (Opcode=" << inst->getOpcode() << ")";
       throw err_msg.str();
     }
 
     default: {
       std::stringstream err_msg;
-      err_msg << "Unknown Instruction: " << inst->getOpcodeName() <<
+      err_msg << "Unknown LLVM instruction: " << inst->getOpcodeName() <<
         " (Opcode=" << inst->getOpcode() << ")";
       throw err_msg.str();
     }
