@@ -35,9 +35,17 @@ struct Version {
     if (revision <= other.revision) return true;
     return false;
   }
+
+  bool operator <(const Version& other) {
+    if (major < other.major) return true;
+    if (minor < other.minor) return true;
+    if (revision < other.revision) return true;
+    return false;
+  }
 };
 
 GTEST_TEST(LLJVMUnitTest, SimpleTest) {
-  EXPECT_TRUE(Version("5.0.0") <= Version(LLVM_VERSION_STRING));
+  EXPECT_TRUE(Version("7.0.0") <= Version(LLVM_VERSION_STRING) &&
+    Version(LLVM_VERSION_STRING) < Version("7.1.0"));
 }
 
