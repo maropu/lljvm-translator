@@ -19,7 +19,8 @@ import math
 
 from numba import cfunc, jit
 
-# Python v2.7.15, Numba v0.40.0, and Scipy v1.1.0 were used to run this script
+# LLVM v6.0.0, Python v2.7.15, Numba v0.40.0, and Scipy v1.1.0
+# were used to run this script.
 
 # A helper function to write a python function as LLVM bitcode
 # by using the `cfunc` decorator.
