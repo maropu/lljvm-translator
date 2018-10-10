@@ -156,6 +156,12 @@ public class BytecodeVerifier {
         public void visitLdcInsn(Object value) {}
 
         @Override
+        public void visitTableSwitchInsn(int min, int max, Label dflt, Label... labels) {}
+
+        @Override
+        public void visitLookupSwitchInsn(Label dflt, int[] keys, Label[] labels) {}
+
+        @Override
         public void visitMaxs(int maxStack, int maxLocals) {}
 
         @Override
