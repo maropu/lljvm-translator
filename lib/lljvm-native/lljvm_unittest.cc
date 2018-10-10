@@ -49,3 +49,6 @@ GTEST_TEST(LLJVMUnitTest, SimpleTest) {
     Version(LLVM_VERSION_STRING) < Version("7.1.0"));
 }
 
+// Basic unit tests (e.g., checking if lljvm can parse bitcode and
+// convert into valid JVM assembly) should be put
+// in `io.github.maropu.lljvm.LLJVMInstSuite`.

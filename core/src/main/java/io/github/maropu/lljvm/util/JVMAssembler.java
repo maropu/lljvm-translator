@@ -61,8 +61,8 @@ public class JVMAssembler {
     } catch (Exception e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }
-    byte[] bitcode = out.toByteArray();
-    if (verifyCode) BytecodeVerifier.verify(bitcode);
-    return bitcode;
+    byte[] bytecode = out.toByteArray();
+    if (verifyCode) BytecodeVerifier.verify(bytecode);
+    return bytecode;
   }
 }

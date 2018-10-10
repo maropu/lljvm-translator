@@ -21,6 +21,8 @@ import java.io._
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 
+import io.github.maropu.lljvm.util.JVMAssembler
+
 import scala.util.Try
 
 object TestUtils extends LLJVMFuncSuite {
@@ -190,5 +192,9 @@ object TestUtils extends LLJVMFuncSuite {
 
   def resourceToLLVMAssemblyCode(resource: String): String = {
     asLLVMAssemblyCode(resourceToBytes(resource))
+  }
+
+  def resourceToJVMBytecode(resource: String): Array[Byte] = {
+    JVMAssembler.compile(asJVMAssemblyCode(resourceToBytes(resource)))
   }
 }
