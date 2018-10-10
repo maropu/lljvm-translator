@@ -20,6 +20,7 @@
 #
 # Shell script for compling C/C++ functions with clang
 
+# LLVM v6.0.0 and Clang v9.0.0 was used to run this script.
 for file in `\find . -name '*.c'`; do
   clang -c -emit-llvm -o ${file%.*}.bc ${file}
 done
