@@ -66,6 +66,8 @@ void JVMWriter::printInstruction(const Instruction *inst) {
     right = inst->getOperand(1);
   }
 
+  // LLVM 7 instructions are listed below:
+  // - https://releases.llvm.org/7.0.0/docs/LangRef.html#instruction-reference
   switch (inst->getOpcode()) {
     case Instruction::Ret:
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/destroyStackFrame()V");
@@ -171,11 +173,32 @@ void JVMWriter::printInstruction(const Instruction *inst) {
       printAtomicRMW(cast<AtomicRMWInst>(inst));
       break;
     case Instruction::Fence:
-      // Does thing for this instruction group
+      // Does nothing for this instruction group
       break;
-    default:
+
+    // TODO: LLVM 7.x unsupported instructions are listed below and
+    // need to be supported in future.
+    case Instruction::IndirectBr:
+    case Instruction::Resume:
+    case Instruction::CatchSwitch:
+    case Instruction::CatchRet:
+    case Instruction::CleanupRet:
+    case Instruction::AtomicCmpXchg:
+    case Instruction::AddrSpaceCast:
+    case Instruction::LandingPad:
+    case Instruction::CatchPad:
+    case Instruction::CleanupPad: {
       std::stringstream err_msg;
-      err_msg << "Unsupported Instruction: " << inst->getOpcodeName() << " (Opcode=" << inst->getOpcode() << ")";
+      err_msg << "Unsupported Instruction: " << inst->getOpcodeName() <<
+        " (Opcode=" << inst->getOpcode() << ")";
       throw err_msg.str();
+    }
+
+    default: {
+      std::stringstream err_msg;
+      err_msg << "Unknown Instruction: " << inst->getOpcodeName() <<
+        " (Opcode=" << inst->getOpcode() << ")";
+      throw err_msg.str();
+    }
   }
 }
