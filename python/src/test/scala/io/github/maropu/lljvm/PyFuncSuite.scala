@@ -178,7 +178,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  ignore("NumPy power") {
+  test("NumPy power") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val result1 = TestUtils.doTest2[Long](

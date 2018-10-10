@@ -170,6 +170,9 @@ void JVMWriter::printInstruction(const Instruction *inst) {
     case Instruction::AtomicRMW:
       printAtomicRMW(cast<AtomicRMWInst>(inst));
       break;
+    case Instruction::Fence:
+      // Does thing for this instruction group
+      break;
     default:
       std::stringstream err_msg;
       err_msg << "Unsupported Instruction: " << inst->getOpcodeName() << " (Opcode=" << inst->getOpcode() << ")";
