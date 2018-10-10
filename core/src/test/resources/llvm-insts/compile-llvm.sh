@@ -20,8 +20,11 @@
 #
 # Shell script for compling LLVM IR files with llvm-as
 
-# LLVM v6.0.0 was used to run this script.
+# LLVM v6.0.0 and Clang v9.0.0 was used to run this script.
 for file in `\find . -name '*.ll'`; do
   llvm-as ${file}
 done
+
+# For more tests
+clang++ -O0 -c -emit-llvm exception.cc
 

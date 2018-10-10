@@ -186,7 +186,7 @@ void JVMWriter::printInstruction(const Instruction *inst) {
         " (Opcode=" << inst->getOpcode() << ")";
       throw err_msg.str();
     }
-    // LLVM exception handling insructions are listed below:
+    // LLVM exception handling instruction are listed below:
     // - https://releases.llvm.org/7.0.0/docs/ExceptionHandling.html#overview
     case Instruction::Resume:
     case Instruction::CatchSwitch:
