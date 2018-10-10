@@ -61,7 +61,8 @@ const std::string parseBitcode(const char *bitcode, size_t size, unsigned int db
   pm.add(createVerifierPass());
   pm.add(createGCLoweringPass());
   // TODO: fix switch generation so the following pass is not needed
-  pm.add(createLowerSwitchPass());
+  // The pass below exists in LLVM v5.x, but not in LLVM v7.x?
+  // pm.add(createLowerSwitchPass());
   pm.add(createCFGSimplificationPass());
 
   const std::string clazz = LLJVM_GENERATED_CLASSNAME_PREFIX + LLJVM_MAGIC_NUMBER;

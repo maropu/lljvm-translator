@@ -287,7 +287,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(errMsg.contains("Numba runtime exception <Numba C callback 'numpy_dot_test'>"))
   }
 
-  test("NumPy random") {
+  ignore("NumPy random") {
     val rvalues1 = (0 until 100).map { _ =>
       TestUtils.doTest2[Double](
         bitcode = s"$basePath/numpy_random1_test-cfunc-float64.bc",

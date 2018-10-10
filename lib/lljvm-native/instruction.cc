@@ -624,7 +624,9 @@ void JVMWriter::printMemIntrinsic(const MemIntrinsic *inst) {
     printValueLoad(minst->getValue());
   }
   printValueLoad(inst->getLength());
-  printConstLoad(inst->getAlignmentCst());
+  // In LLVM v7.x, getVolatileCst() instead of getAlignmentCst() in LLVM 5.x?
+  // printConstLoad(inst->getAlignmentCst());
+  printConstLoad(inst->getVolatileCst());
 
   std::string lenDescriptor = getTypeDescriptor(inst->getLength()->getType(), true);
   switch (inst->getIntrinsicID()) {
