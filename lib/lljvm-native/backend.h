@@ -114,6 +114,8 @@ private:
   // function.cc
   std::string getCallSignature(const FunctionType *ty);
   void printOperandPack(const Instruction *inst, unsigned int minOperand, unsigned int maxOperand);
+  void printDirectFunctionCall(const Instruction *inst, const Function *f);
+  void printIndirectFunctionCall(const Instruction *inst, const FunctionType *fTy);
   void printFunctionCall(const Value *functionVal, const Instruction *inst);
   void printIntrinsicCall(const IntrinsicInst *inst);
   void printCallInstruction(const Instruction *inst);

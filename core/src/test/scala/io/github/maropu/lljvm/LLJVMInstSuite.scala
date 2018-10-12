@@ -93,7 +93,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
 
   // The instructions for exception handling (resume, catchswitch, catchret, cleanupret,
   // landingpad, catchpad, and cleanuppad) are not supported in LLJVM.
-  ignore("exception handling (unsupported)") {
+  test("exception handling (unsupported)") {
     val bitcode = TestUtils.resourceToBytes(s"$basePath/exception.bc")
     val errMsg = intercept[LLJVMRuntimeException] {
       TestUtils.asJVMAssemblyCode(bitcode)

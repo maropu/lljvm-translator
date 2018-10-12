@@ -66,7 +66,9 @@ void JVMWriter::printOperandPack(
     size += targetData->getTypeAllocSize(inst->getOperand(i)->getType());
   }
   if (size <= 0 || size > 32767) {
-    throw "Stack size must be higher than 0 and smaller than 32768";
+    std::stringstream err_msg;
+    err_msg << "Stack size must be higher than 0 and smaller than 32768";
+    throw err_msg.str();
   }
 
   printSimpleInstruction("sipush", utostr(size));
@@ -82,46 +84,81 @@ void JVMWriter::printOperandPack(
   printSimpleInstruction("pop2");
 }
 
-void JVMWriter::printFunctionCall(const Value *functionVal, const Instruction *inst) {
-  unsigned int origin = isa<InvokeInst>(inst) ? 3 : 1;
-  if (const Function *f = dyn_cast<Function>(functionVal)) { // direct call
-    const FunctionType *ty = f->getFunctionType();
-    if (externRefs.count(f)) {
-      // printSimpleInstruction("invokestatic", getValueName(f) + getCallSignature(ty));
-      printValueLoad(inst->getOperand(inst->getNumOperands() - 1));
-      // TODO: Is `origin` is correct?
-      if (inst->getNumOperands() > 1) {
-        printOperandPack(inst, origin - 1, inst->getNumOperands() - 1);
-      }
+// Handles a direct function call, e.g.,
+//
+// ; %.34.le.i.3 = tail call double @llvm.pow.f64(double %.16.i.3, double 4.000000e+00) #3
+//      dload 552 ; __16_i_3
+//      ldc2_w 4.0000000000000000
+//      invokestatic java/lang/Math/pow(DD)D
+//      dstore 554 ; __34_le_i_3
+//
+void JVMWriter::printDirectFunctionCall(const Instruction *inst, const Function *f) {
+  const FunctionType *fTy = f->getFunctionType();
+  for (unsigned int i = 0, e = fTy->getNumParams(); i < e; i++) {
+    printValueLoad(inst->getOperand(i));
+  }
+  // TODO: Support a function call with variable arguments
+  if (fTy->isVarArg()) {
+    // unsigned int origin = isa<InvokeInst>(inst) ? 3 : 1;
+    // for (unsigned int i = origin, e = inst->getNumOperands(); i < e; i++) {
+    //   printValueLoad(inst->getOperand(i));
+    // }
+    // if (fTy->isVarArg() && inst) {
+    //   printOperandPack(inst, fTy->getNumParams() + origin, inst->getNumOperands());
+    // }
+    std::stringstream err_msg;
+    err_msg << "Unsupported function call with variable arguments";
+    throw err_msg.str();
+  }
 
-      // TODO: Reconsider this
-      std::string funcName;
-      raw_string_ostream strbuf(funcName);
-      // const Type *pt = cast<PointerType>(functionVal->getType())->getElementType();
-      // const FunctionType *fTy = cast<CallInst>(inst)->getFunctionType();
-      // const Type *pt = functionVal->getType();
-      const Type *pt = ty->getReturnType();
-      if (inst->getNumOperands() > 1) {
-        strbuf << "io/github/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
-          "(Ljava/lang/String;Ljava/lang/String;J)" << getTypeDescriptor(pt);
-      } else {
-        // Case for no argument
-        strbuf << "io/github/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
-          "(Ljava/lang/String;Ljava/lang/String;)" << getTypeDescriptor(pt);
-      }
-      strbuf.flush();
-      printSimpleInstruction("invokestatic", funcName);
+  printSimpleInstruction("invokestatic", classname + "/" + getValueName(f) + getCallSignature(fTy));
+}
+
+// Handles an indirect function call, e.g.,
+//
+// ; External methods
+// ; .extern method _PyString_FromString(J)J ; i8* (i8*)
+//   ...
+// ; %.50 = call i8* @PyString_FromString(i8* getelementptr inbounds ([40 x i8], [40 x i8]* @".const.<Numba C callback 'numpy_random2_test'>", i64 0, i64 0))
+//      ldc ""
+//      ldc "_PyString_FromString(J)J"
+//      sipush 8
+//      invokestatic io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J
+//      dup2
+//      getstatic GeneratedClass20180731HMKjwzxmew/__const__Numba_C_callback__numpy_random2_test__ J
+//      invokestatic io/github/maropu/lljvm/runtime/VMemory/pack(JJ)J
+//      pop2
+//      invokestatic io/github/maropu/lljvm/runtime/Function/invoke_i64(Ljava/lang/String;Ljava/lang/String;J)J
+//      lstore 60 ; __50
+//
+void JVMWriter::printIndirectFunctionCall(const Instruction *inst, const FunctionType *fTy) {
+  printValueLoad(inst->getOperand(fTy->getNumParams()));
+  if (fTy->getNumParams() > 0) {
+    printOperandPack(inst, 0, fTy->getNumParams());
+  }
+
+  std::string funcName;
+  raw_string_ostream strbuf(funcName);
+  const Type *pt = fTy->getReturnType();
+  if (inst->getNumOperands() > 1) {
+    strbuf << "io/github/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
+      "(Ljava/lang/String;Ljava/lang/String;J)" << getTypeDescriptor(pt);
+  } else {
+    // Case for no argument
+    strbuf << "io/github/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
+      "(Ljava/lang/String;Ljava/lang/String;)" << getTypeDescriptor(pt);
+  }
+  strbuf.flush();
+  printSimpleInstruction("invokestatic", funcName);
+}
+
+void JVMWriter::printFunctionCall(const Value *functionVal, const Instruction *inst) {
+  if (const Function *f = dyn_cast<Function>(functionVal)) {
+    if (externRefs.count(f)) {
+      const FunctionType *fTy = f->getFunctionType();
+      printIndirectFunctionCall(inst, fTy);
     } else {
-      for (unsigned int i = origin, e = inst->getNumOperands(); i < e; i++) {
-        printValueLoad(inst->getOperand(i));
-      }
-      for (unsigned int i = 0, e = ty->getNumParams(); i < e; i++) {
-        printValueLoad(inst->getOperand(i + origin));
-      }
-      if (ty->isVarArg() && inst) {
-        printOperandPack(inst, ty->getNumParams() + origin, inst->getNumOperands());
-      }
-      printSimpleInstruction("invokestatic", classname + "/" + getValueName(f) + getCallSignature(ty));
+      printDirectFunctionCall(inst, f);
     }
 
     if (getValueName(f) == "setjmp") {
@@ -130,35 +167,14 @@ void JVMWriter::printFunctionCall(const Value *functionVal, const Instruction *i
       printSimpleInstruction("iconst_0");
       printLabel("setjmp$" + utostr(varNum));
     }
-  } else { // indirect call
-    // printValueLoad(functionVal);
-    printValueLoad(inst->getOperand(inst->getNumOperands() - 1));
-    // TODO: Is `origin` is correct?
-    if (inst->getNumOperands() > 1) {
-      printOperandPack(inst, origin - 1, inst->getNumOperands() - 1);
-    }
-
-    // TODO: Reconsiders this
-    std::string funcName;
-    raw_string_ostream strbuf(funcName);
-    // const Type *pt = cast<PointerType>(functionVal->getType())->getElementType();
+  } else {
     const FunctionType *fTy = cast<CallInst>(inst)->getFunctionType();
-    // const Type *pt = functionVal->getType();
-    const Type *pt = fTy->getReturnType();
-    if (inst->getNumOperands() > 1) {
-      strbuf << "io/github/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
-        "(Ljava/lang/String;Ljava/lang/String;J)" << getTypeDescriptor(pt);
-    } else {
-      // Case for no argument
-      strbuf << "io/github/maropu/lljvm/runtime/Function/invoke_" << getTypePostfix(pt, true) <<
-        "(Ljava/lang/String;Ljava/lang/String;)" << getTypeDescriptor(pt);
-    }
-    strbuf.flush();
-    printSimpleInstruction("invokestatic", funcName);
+    printIndirectFunctionCall(inst, fTy);
   }
 }
 
 void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
+  // See IR/IntrinsicEnums.inc
   switch (inst->getIntrinsicID()) {
     case Intrinsic::vastart:
     case Intrinsic::vacopy:
@@ -186,10 +202,29 @@ void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
     case Intrinsic::bswap:
       printBitIntrinsic(inst);
       break;
-    default:
+
+    case Intrinsic::eh_dwarf_cfa:
+    case Intrinsic::eh_exceptioncode:
+    case Intrinsic::eh_exceptionpointer:
+    case Intrinsic::eh_return_i32:
+    case Intrinsic::eh_return_i64:
+    case Intrinsic::eh_sjlj_callsite:
+    case Intrinsic::eh_sjlj_functioncontext:
+    case Intrinsic::eh_sjlj_longjmp:
+    case Intrinsic::eh_sjlj_lsda:
+    case Intrinsic::eh_sjlj_setjmp:
+    case Intrinsic::eh_sjlj_setup_dispatch:
+    case Intrinsic::eh_typeid_for:
+    case Intrinsic::eh_unwind_init: {
+      std::stringstream err_msg;
+      err_msg << "Unsupported intrinsic function for error handling (Intrinsic::eh_XXX)";
+      throw err_msg.str();
+    }
+    default: {
       std::stringstream err_msg;
       err_msg << "Unsupported intrinsic function: Intrinsic=" << inst->getIntrinsicID();
       throw err_msg.str();
+    }
   }
 }
 
