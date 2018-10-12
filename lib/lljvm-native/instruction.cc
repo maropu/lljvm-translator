@@ -58,8 +58,9 @@ static std::string getPredicate(unsigned int predicate) {
     case FCmpInst::FCMP_ORD: inst = "fcmp_ord"; break;
     case FCmpInst::FCMP_UNO: inst = "fcmp_uno"; break;
     default:
-      errs() << "Predicate = " << predicate << '\n';
-      llvm_unreachable("Invalid cmp predicate");
+      std::stringstream err_msg;
+      err_msg << "Invalid cmp predicate: Predicate=" << predicate;
+      lljvm_unreachable(err_msg.str());
   }
   return inst;
 }
@@ -293,8 +294,9 @@ void JVMWriter::printCastInstruction(unsigned int op, const Type *srcTy, const T
     case Instruction::BitCast:
       printBitCastInstruction(destTy, srcTy); break;
     default:
-      errs() << "Opcode = " << op << '\n';
-      llvm_unreachable("Invalid cast instruction");
+      std::stringstream err_msg;
+      err_msg << "Invalid cast instruction: Opcode=" << op;
+      lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -449,7 +451,9 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
       printSimpleInstruction("ladd");
       printIndirectLoad(aggType);
     } else {
-      llvm_unreachable("Invalid type");
+      std::stringstream err_msg;
+      err_msg << "Invalid type: Type=" << aggType->getTypeID();
+      lljvm_unreachable(err_msg.str());
     }
   }
 }
@@ -545,7 +549,9 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
       printIndirectStore(inst->getOperand(1)->getType());
     }
   } else {
-    llvm_unreachable("Invalid type");
+    std::stringstream err_msg;
+    err_msg << "Invalid type: Type=" << aggType->getTypeID();
+    lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -565,8 +571,9 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
     // printValueLoad(inst->getOperand(2));
   } else {
-    // errs() << "Aggregate Operand= " << inst->getOperand(2)->getName() << '\n';
-    llvm_unreachable("Unsupported mask type");
+    std::stringstream err_msg;
+    err_msg << "Unsupported mask type: Operand=" << inst->getOperand(2);
+    lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -588,7 +595,7 @@ void JVMWriter::printAtomicRMW(const AtomicRMWInst *inst) {
     default:
       std::stringstream err_msg;
       err_msg << "Unsupported Atomic operation: " << inst->getOperation();
-      throw err_msg.str();
+      lljvm_unreachable(err_msg.str());
   }
   printIndirectStore(inst->getValOperand()->getType());
   printIndirectLoad(cast<PointerType>(ptr->getType())->getElementType());

@@ -22,6 +22,8 @@
 
 #include "backend.h"
 
+#include <sstream>
+
 char JVMWriter::id = 0;
 
 /**
@@ -86,4 +88,11 @@ bool JVMWriter::doInitialization(Module &m) {
 
 bool JVMWriter::doFinalization(Module &m) {
   return false;
+}
+
+void lljvm_unreachable_internal(
+    const std::string& err_msg, const char *file, unsigned line) {
+  std::stringstream msg;
+  msg << "!!UNREACHABLE!! (file=" << file << " line=" << line << ") " << err_msg;
+  throw msg.str();
 }

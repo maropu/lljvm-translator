@@ -187,8 +187,9 @@ void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
       printBitIntrinsic(inst);
       break;
     default:
-      errs() << "Intrinsic = " << *inst << '\n';
-      llvm_unreachable("Invalid intrinsic function");
+      std::stringstream err_msg;
+      err_msg << "Unsupported intrinsic function: Intrinsic=" << inst->getIntrinsicID();
+      throw err_msg.str();
   }
 }
 

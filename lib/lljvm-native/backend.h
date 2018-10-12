@@ -194,4 +194,13 @@ private:
   std::string getTypePrefix(const Type *ty, bool expand = false);
 };
 
+// `llvm_unreachable` leads to abortion, and then JVMs crash.
+// So, we throw an C++ exception instead of `llvm_unreachable` to translate it
+// into a JVM exception.
+#define lljvm_unreachable(msg) \
+   lljvm_unreachable_internal(msg, __FILE__, __LINE__)
+
+extern void lljvm_unreachable_internal(
+  const std::string& err_msg, const char *file, unsigned line);
+
 #endif

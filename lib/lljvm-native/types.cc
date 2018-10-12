@@ -22,6 +22,8 @@
 
 #include "backend.h"
 
+#include <sstream>
+
 unsigned int JVMWriter::getBitWidth(const Type *ty, bool expand) {
   switch (ty->getTypeID()) {
     case Type::ArrayTyID:
@@ -45,8 +47,9 @@ unsigned int JVMWriter::getBitWidth(const Type *ty, bool expand) {
     case 64:
       return n;
     default:
-      errs() << "Bits = " << n << '\n';
-      llvm_unreachable("Unsupported integer width");
+      std::stringstream err_msg;
+      err_msg << "Unsupported integer width: Bits=" << n;
+      lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -79,8 +82,9 @@ char JVMWriter::getTypeID(const Type *ty, bool expand) {
     case Type::PointerTyID:
       return 'J';
     default:
-      // errs() << "Type = " << *ty << '\n';
-      llvm_unreachable("Invalid type");
+      std::stringstream err_msg;
+      err_msg << "Invalid type: Type=" << ty->getTypeID();
+      lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -138,8 +142,9 @@ std::string JVMWriter::getTypePostfix(const Type *ty, bool expand) {
   case Type::PointerTyID:
     return "i64";
   default:
-    errs() << "TypeID = " << ty->getTypeID() << '\n';
-    llvm_unreachable("Invalid type");
+    std::stringstream err_msg;
+    err_msg << "Invalid type: Type=" << ty->getTypeID();
+    lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -159,6 +164,9 @@ std::string JVMWriter::getTypePrefix(const Type *ty, bool expand) {
     case 'J': return "l";
     case 'F': return "f";
     case 'D': return "d";
-    case 'V': llvm_unreachable("void has no prefix");
+    case 'V':
+      std::stringstream err_msg;
+      err_msg << "Invalid type: void has no prefix";
+      lljvm_unreachable(err_msg.str());
   }
 }

@@ -22,9 +22,9 @@
 
 #include "backend.h"
 
-#include <sstream>
 #include <iomanip>
 #include <ios>
+#include <sstream>
 
 /**
  * Loads the given pointer.
@@ -125,8 +125,9 @@ void JVMWriter::printConstLoad(const Constant *c) {
   } else if (isa<UndefValue>(c)) {
     printPtrLoad(0);
   } else {
-    errs() << "Constant = " << *c << '\n';
-    llvm_unreachable("Invalid constant value");
+    std::stringstream err_msg;
+    err_msg << "Invalid constant value: Type=" << c->getType()->getTypeID();
+    lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -210,15 +211,17 @@ void JVMWriter::printStaticConstant(const Constant *c) {
       } else if (const ConstantExpr *ce = dyn_cast<ConstantExpr>(c)) {
         printConstantExpr(ce);
       } else {
-        errs() << "Constant = " << *c << '\n';
-        llvm_unreachable("Invalid static initializer");
+        std::stringstream err_msg;
+        err_msg << "Invalid static initializer: Type=" << c->getType()->getTypeID();
+        lljvm_unreachable(err_msg.str());
       }
       printSimpleInstruction(
         "invokestatic", "io/github/maropu/lljvm/runtime/VMemory/pack(J" + typeDescriptor + ")J");
       break;
     default:
-      errs() << "TypeID = " << c->getType()->getTypeID() << '\n';
-      llvm_unreachable("Invalid type in printStaticConstant()");
+      std::stringstream err_msg;
+      err_msg << "Invalid type in printStaticConstant(): Type=" << c->getType()->getTypeID();
+      lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -280,7 +283,8 @@ void JVMWriter::printConstantExpr(const ConstantExpr *ce) {
       printSelectInstruction(ce->getOperand(0), ce->getOperand(1), ce->getOperand(2));
       break;
     default:
-      errs() << "Expression = " << *ce << '\n';
-      llvm_unreachable("Invalid constant expression");
+      std::stringstream err_msg;
+      err_msg << "Invalid constant expression: Opcode=" << ce->getOpcode();
+      lljvm_unreachable(err_msg.str());
   }
 }

@@ -134,7 +134,9 @@ void JVMWriter::printMainMethod() {
     Function::const_arg_iterator arg1, arg2;
     arg1 = arg2 = f->arg_begin(); arg2++;
     if (!arg1->getType()->isIntegerTy() || arg2->getType()->getTypeID() != Type::PointerTyID) {
-      llvm_unreachable("main function has invalid type signature");
+      std::stringstream err_msg;
+      err_msg << "main function has invalid type signature";
+      lljvm_unreachable(err_msg.str());
     }
     printSimpleInstruction("aload_0");
     printSimpleInstruction("arraylength");
@@ -145,7 +147,9 @@ void JVMWriter::printMainMethod() {
       "invokestatic",
       classname + "/main(" + getTypeDescriptor(arg1->getType()) + getTypeDescriptor(arg2->getType()) + ")I");
   } else {
-    llvm_unreachable("main function has invalid number of arguments");
+    std::stringstream err_msg;
+    err_msg << "main function has invalid number of arguments";
+    lljvm_unreachable(err_msg.str());
   }
 
   printSimpleInstruction("invokestatic", "lljvm/lib/c/exit(I)V");

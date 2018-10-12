@@ -22,6 +22,8 @@
 
 #include "backend.h"
 
+#include <sstream>
+
 void JVMWriter::printValueLoad(const Value *v) {
   if (const Function *f = dyn_cast<Function>(v)) {
     std::string sig = getValueName(f) + getCallSignature(f->getFunctionType());
@@ -68,8 +70,9 @@ void JVMWriter::printValueLoad(const Value *v) {
  */
 void JVMWriter::printValueStore(const Value *v) {
   if (isa<Function>(v) || isa<GlobalVariable>(v) || isa<Constant>(v)) {
-    errs() << "Value  = " << *v << '\n';
-    llvm_unreachable("Invalid value");
+    std::stringstream err_msg;
+    err_msg << "Invalid value: Value=" << getValueName(v);
+    lljvm_unreachable(err_msg.str());
   }
 
   unsigned int bitWidth = getBitWidth(v->getType());
