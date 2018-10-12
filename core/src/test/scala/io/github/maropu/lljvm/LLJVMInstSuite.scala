@@ -98,7 +98,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     val errMsg = intercept[LLJVMRuntimeException] {
       TestUtils.asJVMAssemblyCode(bitcode)
     }.getMessage
-    assert(errMsg.contains("Unsupported LLVM exception handling instruction:"))
+    assert(errMsg.contains("Unsupported"))
     logDebug(
       s"""
          |========== Source Code ==========

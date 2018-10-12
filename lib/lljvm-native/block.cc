@@ -142,9 +142,6 @@ void JVMWriter::printInstruction(const Instruction *inst) {
     case Instruction::Call:
       printCallInstruction(cast<CallInst>(inst));
       break;
-    case Instruction::Invoke:
-      printInvokeInstruction(cast<InvokeInst>(inst));
-      break;
     case Instruction::Switch:
       printSwitchInstruction(cast<SwitchInst>(inst));
       break;
@@ -178,6 +175,9 @@ void JVMWriter::printInstruction(const Instruction *inst) {
 
     // TODO: LLVM 7.x unsupported instructions are listed below and
     // need to be supported in future.
+    case Instruction::Invoke:
+    //   printInvokeInstruction(cast<InvokeInst>(inst));
+    //   break;
     case Instruction::AtomicCmpXchg:
     case Instruction::AddrSpaceCast:
     case Instruction::IndirectBr: {

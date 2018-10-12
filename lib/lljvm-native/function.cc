@@ -107,7 +107,7 @@ void JVMWriter::printDirectFunctionCall(const Instruction *inst, const Function 
     //   printOperandPack(inst, fTy->getNumParams() + origin, inst->getNumOperands());
     // }
     std::stringstream err_msg;
-    err_msg << "Unsupported function call with variable arguments";
+    err_msg << "Unsupported function calls with variable arguments";
     throw err_msg.str();
   }
 
@@ -158,7 +158,10 @@ void JVMWriter::printFunctionCall(const Value *functionVal, const Instruction *i
       const FunctionType *fTy = f->getFunctionType();
       printIndirectFunctionCall(inst, fTy);
     } else {
-      printDirectFunctionCall(inst, f);
+      // printDirectFunctionCall(inst, f);
+      std::stringstream err_msg;
+      err_msg << "Unsupported direct function calls";
+      throw err_msg.str();
     }
 
     if (getValueName(f) == "setjmp") {
@@ -220,6 +223,7 @@ void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
       err_msg << "Unsupported intrinsic function for error handling (Intrinsic::eh_XXX)";
       throw err_msg.str();
     }
+
     default: {
       std::stringstream err_msg;
       err_msg << "Unsupported intrinsic function: Intrinsic=" << inst->getIntrinsicID();
