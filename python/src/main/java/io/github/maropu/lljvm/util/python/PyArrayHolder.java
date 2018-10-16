@@ -130,6 +130,7 @@ public class PyArrayHolder implements AutoCloseable {
     return this;
   }
 
+  // TODO: reconsiders the current API design: `.reshape(4, 1)` != `.reshape(4)`
   public PyArrayHolder reshape(long length) {
     long nitem = Platform.getLong(null, nitemsAddr());
     long itemsize = Platform.getLong(null, itemsizeAddr());

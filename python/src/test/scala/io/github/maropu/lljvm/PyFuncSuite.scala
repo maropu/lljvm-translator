@@ -204,76 +204,84 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   test("NumPy dot - vv") {
     // Vector * Vector case
-    // TODO: reconsiders the current API design: `.reshape(4, 1)` != `.reshape(4)`
-    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4)
-    val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4)
-    TestUtils.doTest2[Float](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float32.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
-      expected = Some(30.0f)
-    )
+    Seq(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384).foreach { n =>
+      // TODO: reconsiders the current API design: `.reshape(4, 1)` != `.reshape(4)`
+      val floatX = pyArray1.`with`(Array.fill[Float](n)(1.0f)).reshape(n)
+      val floatY = pyArray2.`with`(Array.fill[Float](n)(2.0f)).reshape(n)
+      TestUtils.doTest2[Float](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float32.bc",
+        source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
+        expected = Some(2.0f * n)
+      )
 
-    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4)
-    val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4)
-    TestUtils.doTest2[Double](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float64.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr())),
-      expected = Some(30.0)
-    )
+      val doubleX = pyArray1.`with`(Array.fill[Double](n)(3.0)).reshape(n)
+      val doubleY = pyArray2.`with`(Array.fill[Double](n)(1.0)).reshape(n)
+      TestUtils.doTest2[Double](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float64.bc",
+        source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr())),
+        expected = Some(3.0 * n)
+      )
+    }
   }
 
   test("NumPy dot - mv") {
     // Matrix * Vector case
-    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
-    val floatY = pyArray2.`with`(Array(1.0f, 2.0f)).reshape(2)
-    val result1 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float32.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
-    )
-    val resultArray1 = new PyArrayHolder(result1).floatArray()
-    assert(resultArray1 === Seq(5.0f, 11.0f))
+    Seq(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096).foreach { n =>
+      // TODO: if the length is 8192+, it throws an exception because stack is not enough
+      val floatX = pyArray1.`with`(Array.fill[Float](n * n)(1.0f)).reshape(n, n)
+      val floatY = pyArray2.`with`(Array.fill[Float](n)(2.0f)).reshape(n)
+      val result1 = TestUtils.doTest2[Long](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float32.bc",
+        source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
+      )
+      val resultArray1 = new PyArrayHolder(result1).floatArray()
+      assert(resultArray1 === Array.fill[Float](n)(2.0f * n))
 
-    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
-    val doubleY = pyArray2.`with`(Array(1.0, 2.0)).reshape(2)
-    val result2 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float64.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
-    )
-    val resultArray2 = new PyArrayHolder(result2).doubleArray()
-    assert(resultArray2 === Seq(5.0, 11.0))
+      val doubleX = pyArray1.`with`(Array.fill[Double](n * n)(3.0)).reshape(n, n)
+      val doubleY = pyArray2.`with`(Array.fill[Double](n)(1.0)).reshape(n)
+      val result2 = TestUtils.doTest2[Long](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float64.bc",
+        source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
+      )
+      val resultArray2 = new PyArrayHolder(result2).doubleArray()
+      assert(resultArray2 === Array.fill[Double](n)(3.0 * n))
+    }
   }
 
   test("NumPy dot - mm") {
     // Matrix * Matrix case
-    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
-    val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
-    val result1 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float32.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
-    )
-    val resultArray1 = new PyArrayHolder(result1).floatArray()
-    assert(resultArray1 === Seq(7.0f, 10.0f, 15.0f, 22.0f))
+    Seq(2, 4, 8, 16, 32, 64, 128, 256, 1024, 2048).foreach { n =>
+      // TODO: if the length is 4096+, it throws an exception because stack is not enough
+      val floatX = pyArray1.`with`(Array.fill[Float](n * n)(1.0f)).reshape(n, n)
+      val floatY = pyArray2.`with`(Array.fill[Float](n * n)(1.0f)).reshape(n, n)
+      val result1 = TestUtils.doTest2[Long](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float32.bc",
+        source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
+      )
+      val resultArray1 = new PyArrayHolder(result1).floatArray()
+      assert(resultArray1 === Array.fill[Float](n * n)(1.0f * n))
 
-    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
-    val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
-    val result2 = TestUtils.doTest2[Long](
-      bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float64.bc",
-      source = s"$basePath/numpy_dot_test.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
-    )
-    val resultArray2 = new PyArrayHolder(result2).doubleArray()
-    assert(resultArray2 === Seq(7.0, 10.0, 15.0, 22.0))
+      val doubleX = pyArray1.`with`(Array.fill[Double](n * n)(1.0)).reshape(n, n)
+      val doubleY = pyArray2.`with`(Array.fill[Double](n * n)(1.0)).reshape(n, n)
+      val result2 = TestUtils.doTest2[Long](
+        bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float64.bc",
+        source = s"$basePath/numpy_dot_test.py",
+        argTypes = Seq(jLong.TYPE, jLong.TYPE),
+        arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
+      )
+      val resultArray2 = new PyArrayHolder(result2).doubleArray()
+      assert(resultArray2 === Array.fill[Double](n * n)(1.0 * n))
+    }
   }
 
   test("NumPy dot - throws an exception when hitting incompatible shapes") {

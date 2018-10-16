@@ -74,7 +74,7 @@ public final class VMemory {
      @Override
      public Pair<VMemFragment, Stack<Long>> initialValue() {
        final String sizeStr = System.getProperty(
-         "maropu.lljvm.runtime.vmem.stacksize", String.valueOf(8 * 1024 * 1024));
+         "maropu.lljvm.runtime.vmem.stacksize", String.valueOf(256 * 1024 * 1024));
        int size = Integer.parseInt(sizeStr);
        long baseAddr = Platform.allocateMemory(size + ALIGNMENT);
        return new Pair<>(new VMemFragment(baseAddr , size), new Stack<Long>());
@@ -93,7 +93,7 @@ public final class VMemory {
      @Override
      public VMemFragment initialValue() {
        final String sizeStr = System.getProperty(
-         "maropu.lljvm.runtime.vmem.heapsize", String.valueOf(2 * 1024 * 1024));
+         "maropu.lljvm.runtime.vmem.heapsize", String.valueOf(256 * 1024 * 1024));
        int size = Integer.parseInt(sizeStr);
        long baseAddr = Platform.allocateMemory(size + ALIGNMENT);
        return new VMemFragment(baseAddr , size);
