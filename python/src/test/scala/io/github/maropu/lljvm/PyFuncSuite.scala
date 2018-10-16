@@ -202,33 +202,34 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(1.0, 8.0, 27.0, 64.0))
   }
 
-  ignore("NumPy dot - vv") {
+  test("NumPy dot - vv") {
     // Vector * Vector case
-    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
-    val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
+    // TODO: reconsiders the current API design: `.reshape(4, 1)` != `.reshape(4)`
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4)
+    val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4)
     TestUtils.doTest2[Float](
       bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float32.bc",
       source = s"$basePath/numpy_dot_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
-      expected = Some(1.0f)
+      expected = Some(30.0f)
     )
 
-    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4, 1)
-    val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4, 1)
+    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4)
+    val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4)
     TestUtils.doTest2[Double](
       bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float64.bc",
       source = s"$basePath/numpy_dot_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr())),
-      expected = Some(1.0)
+      expected = Some(30.0)
     )
   }
 
-  ignore("NumPy dot - mv") {
+  test("NumPy dot - mv") {
     // Matrix * Vector case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
-    val floatY = pyArray2.`with`(Array(1.0f, 2.0f)).reshape(2, 1)
+    val floatY = pyArray2.`with`(Array(1.0f, 2.0f)).reshape(2)
     val result1 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float32.bc",
       source = s"$basePath/numpy_dot_test.py",
@@ -236,10 +237,10 @@ class PyFuncSuite extends LLJVMFuncSuite {
       arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
     )
     val resultArray1 = new PyArrayHolder(result1).floatArray()
-    assert(resultArray1 === Seq(1.0f, 3.0f))
+    assert(resultArray1 === Seq(5.0f, 11.0f))
 
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(2, 2)
-    val doubleY = pyArray2.`with`(Array(1.0, 2.0)).reshape(2, 1)
+    val doubleY = pyArray2.`with`(Array(1.0, 2.0)).reshape(2)
     val result2 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float64.bc",
       source = s"$basePath/numpy_dot_test.py",
@@ -247,10 +248,10 @@ class PyFuncSuite extends LLJVMFuncSuite {
       arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
     )
     val resultArray2 = new PyArrayHolder(result2).doubleArray()
-    assert(resultArray2 === Seq(1.0, 3.0))
+    assert(resultArray2 === Seq(5.0, 11.0))
   }
 
-  ignore("NumPy dot - mm") {
+  test("NumPy dot - mm") {
     // Matrix * Matrix case
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
@@ -275,7 +276,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(7.0, 10.0, 15.0, 22.0))
   }
 
-  ignore("NumPy dot - throws an exception when hitting incompatible shapes") {
+  test("NumPy dot - throws an exception when hitting incompatible shapes") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val errMsg = intercept[InvocationTargetException] {

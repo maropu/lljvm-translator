@@ -130,6 +130,17 @@ public class PyArrayHolder implements AutoCloseable {
     return this;
   }
 
+  public PyArrayHolder reshape(long length) {
+    long nitem = Platform.getLong(null, nitemsAddr());
+    long itemsize = Platform.getLong(null, itemsizeAddr());
+    if (nitem != length) {
+      throw new LLJVMRuntimeException("Total size of new array must be unchanged");
+    }
+    long arrayAddr = Platform.getLong(null, dataAddr());
+    setArrayData(arrayAddr, length, itemsize);
+    return this;
+  }
+
   private void setArrayData(long arrayAddr, long length, long size) {
     assert(isArrayOwner);
     Platform.putLong(null, nitemsAddr(), length);
