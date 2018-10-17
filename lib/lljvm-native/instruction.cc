@@ -494,7 +494,7 @@ void JVMWriter::printExtractElement(const ExtractElementInst *inst) {
   printCastInstruction("l", getTypePrefix(inst->getOperand(1)->getType(), true));
   printSimpleInstruction("lmul");
   printSimpleInstruction("ladd");
-  printIndirectLoad(inst->getOperand(0)->getType());
+  printIndirectLoad(vecTy->getElementType());
 }
 
 void JVMWriter::printInsertValue(const InsertValueInst *inst) {
