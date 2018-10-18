@@ -21,11 +21,13 @@ import java.io._
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 
-import io.github.maropu.lljvm.util.JVMAssembler
-
 import scala.util.Try
 
+import io.github.maropu.lljvm.util.JVMAssembler
+
 object TestUtils extends LLJVMFuncSuite {
+
+  private val lljvmApi = LLJVMLoader.loadLLJVMApi()
 
   /**
    * Return a nice string representation of the exception. It will call "printStackTrace" to
@@ -44,12 +46,14 @@ object TestUtils extends LLJVMFuncSuite {
 
   def asLLVMAssemblyCode(bitcode: Array[Byte]): String = {
     LLJVMUtils.asLLVMAssemblyCode(bitcode)
+    val llvmAsm = lljvmApi.asLLVMAssemblyCode(bitcode, 0, 0)
+    assert(llvmAsm != null)
+    llvmAsm
   }
 
   def asJVMAssemblyCode(bitcode: Array[Byte]): String = {
     LLJVMUtils.checkLLVMBitcodeFormat(bitcode)
-    val lljvmApi = LLJVMLoader.loadLLJVMApi()
-    // Sets 3 at `debugLevel` for debugging
+    // No optimization and `debugLevel = 3` for verbose output
     val jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, 0, 0, 3)
     assert(jvmAsm != null)
     jvmAsm
