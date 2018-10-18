@@ -163,6 +163,9 @@ void JVMWriter::printInstruction(const Instruction *inst) {
     case Instruction::InsertValue:
       printInsertValue(cast<InsertValueInst>(inst));
       break;
+    case Instruction::ShuffleVector:
+      printShuffleVector(cast<ShuffleVectorInst>(inst));
+      break;
     case Instruction::AtomicRMW:
       printAtomicRMW(cast<AtomicRMWInst>(inst));
       break;
@@ -172,9 +175,6 @@ void JVMWriter::printInstruction(const Instruction *inst) {
 
     // TODO: LLVM 7.x unsupported instructions are listed below and
     // need to be supported in future.
-    case Instruction::ShuffleVector:
-      // printShuffleVector(cast<ShuffleVectorInst>(inst));
-      // break;
     case Instruction::Invoke:
     //   printInvokeInstruction(cast<InvokeInst>(inst));
     //   break;

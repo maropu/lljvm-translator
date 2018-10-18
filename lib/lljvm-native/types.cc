@@ -83,7 +83,7 @@ char JVMWriter::getTypeID(const Type *ty, bool expand) {
       return 'J';
     default:
       std::stringstream err_msg;
-      err_msg << "Invalid type: Type=" << ty->getTypeID();
+      err_msg << "Invalid type: Type=" << getTypeIDName(ty);
       lljvm_unreachable(err_msg.str());
   }
 }
@@ -132,7 +132,7 @@ std::string JVMWriter::getTypeIDName(const Type *ty) {
       return "VectorTyID";
     default:
       std::stringstream err_msg;
-      err_msg << "Invalid type: Type=" << ty->getTypeID();
+      err_msg << "Invalid type: Type=" << getTypeIDName(ty);
       lljvm_unreachable(err_msg.str());
   }
 }
@@ -192,7 +192,7 @@ std::string JVMWriter::getTypePostfix(const Type *ty, bool expand) {
     return "i64";
   default:
     std::stringstream err_msg;
-    err_msg << "Invalid type: Type=" << ty->getTypeID();
+    err_msg << "Invalid type: Type=" << getTypeIDName(ty);
     lljvm_unreachable(err_msg.str());
   }
 }

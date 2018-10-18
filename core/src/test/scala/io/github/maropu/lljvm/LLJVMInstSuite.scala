@@ -275,16 +275,66 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       assert(ar(3) === 4)
     }),
 
-    // ("shufflevector", (clazz, obj) => {
-    //   val method = LLJVMUtils.getMethod(clazz, "_shufflevector", Seq(jLong.TYPE): _*)
-    //   val ar = Array(-5, 6, -7, 8)
-    //   val addr = ArrayUtils.addressOf(ar)
-    //   val shuffled = method.invoke(obj, Seq(new jLong(addr)): _*).asInstanceOf[Long]
-    //   assert(Platform.getInt(null, shuffled) === 6)
-    //   assert(Platform.getInt(null, shuffled + 4) === 8)
-    //   assert(Platform.getInt(null, shuffled + 8) === -7)
-    //   assert(Platform.getInt(null, shuffled + 12) === -5)
-    // }),
+    ("shufflevector", (clazz, obj) => {
+      {
+        val method = LLJVMUtils.getMethod(clazz, "_shufflevector1", Seq(jLong.TYPE): _*)
+        val ar = Array(-3, 6, -7, 8)
+        val addr = ArrayUtils.addressOf(ar)
+        val shuffled = method.invoke(obj, Seq(new jLong(addr)): _*).asInstanceOf[Long]
+        assert(addr != shuffled)
+        assert(Platform.getInt(null, shuffled) === 6)
+        assert(Platform.getInt(null, shuffled + 4) === 8)
+        assert(Platform.getInt(null, shuffled + 8) === -7)
+        assert(Platform.getInt(null, shuffled + 12) === -3)
+      }
+      {
+        val method = LLJVMUtils.getMethod(clazz, "_shufflevector2", Seq(jLong.TYPE): _*)
+        val ar = Array(1.0f, 1.0f, 1.0f, 1.0f, 2.0f, 2.0f, 2.0f, 2.0f)
+        val addr = ArrayUtils.addressOf(ar)
+        val shuffled = method.invoke(obj, Seq(new jLong(addr)): _*).asInstanceOf[Long]
+        assert(addr != shuffled)
+        assert(Platform.getFloat(null, shuffled) === 0.0f)
+        assert(Platform.getFloat(null, shuffled + 4) === 0.0f)
+        assert(Platform.getFloat(null, shuffled + 8) === 0.0f)
+        assert(Platform.getFloat(null, shuffled + 12) === 0.0f)
+        assert(Platform.getFloat(null, shuffled + 16) === 0.0f)
+        assert(Platform.getFloat(null, shuffled + 20) === 0.0f)
+        assert(Platform.getFloat(null, shuffled + 24) === 0.0f)
+        assert(Platform.getFloat(null, shuffled + 28) === 0.0f)
+      }
+      {
+        val method = LLJVMUtils.getMethod(clazz, "_shufflevector3", Seq(jLong.TYPE, jLong.TYPE): _*)
+        val ar1 = Array(5, 2, 7, 6)
+        val ar2 = Array(3, 0, 1, 4)
+        val addr1 = ArrayUtils.addressOf(ar1)
+        val addr2 = ArrayUtils.addressOf(ar2)
+        val args = Seq(new jLong(addr1), new jLong(addr2))
+        val shuffled = method.invoke(obj, args: _*).asInstanceOf[Long]
+        assert(addr1 != shuffled && addr2 != shuffled)
+        assert(Platform.getInt(null, shuffled) === 5)
+        assert(Platform.getInt(null, shuffled + 4) === 3)
+        assert(Platform.getInt(null, shuffled + 8) === 2)
+        assert(Platform.getInt(null, shuffled + 12) === 0)
+      }
+      {
+        val method = LLJVMUtils.getMethod(clazz, "_shufflevector4", Seq(jLong.TYPE, jLong.TYPE): _*)
+        val ar1 = Array(7, 6, 5, 4)
+        val ar2 = Array(3, 2, 1, 0)
+        val addr1 = ArrayUtils.addressOf(ar1)
+        val addr2 = ArrayUtils.addressOf(ar2)
+        val args = Seq(new jLong(addr1), new jLong(addr2))
+        val shuffled = method.invoke(obj, args: _*).asInstanceOf[Long]
+        assert(addr1 != shuffled && addr2 != shuffled)
+        assert(Platform.getInt(null, shuffled) === 4)
+        assert(Platform.getInt(null, shuffled + 4) === 4)
+        assert(Platform.getInt(null, shuffled + 8) === 6)
+        assert(Platform.getInt(null, shuffled + 12) === 6)
+        assert(Platform.getInt(null, shuffled + 16) === 2)
+        assert(Platform.getInt(null, shuffled + 20) === 2)
+        assert(Platform.getInt(null, shuffled + 24) === 0)
+        assert(Platform.getInt(null, shuffled + 28) === 0)
+      }
+    }),
 
     ("extractvalue", (clazz, obj) => {
       val method = LLJVMUtils.getMethod(clazz, "_extractvalue", Seq(jLong.TYPE): _*)

@@ -556,26 +556,104 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
 }
 
 void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
-  const Value *vec1 = inst->getOperand(0);
-  const Value *vec2 = inst->getOperand(1);
-  const SequentialType *vecTy = cast<SequentialType>(vec1->getType());
-  if (const ConstantAggregateZero *mask = dyn_cast<ConstantAggregateZero>(inst->getOperand(2))) {
-    // zeroinitializer
-    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
-    printSimpleInstruction("bipush", utostr(vecSize * vecTy->getNumElements()));
+  if (const ConstantAggregateZero *zeroinit = dyn_cast<ConstantAggregateZero>(inst->getOperand(2))) {
+    const Value *vec1 = inst->getOperand(0);
+    const SequentialType *vecTy = cast<SequentialType>(vec1->getType());
+    uint64_t vecElemSize = targetData->getTypeAllocSize(vecTy->getElementType());
+    int vecElemNum = zeroinit->getNumElements();
+    printSimpleInstruction("bipush", utostr(vecElemSize * vecElemNum));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-  } else if (const ConstantVector *mask = dyn_cast<ConstantVector>(inst->getOperand(2))) {
-    // out << "; ConstantVector:" << *mask->getAggregateElement((unsigned) 1) << "\n";
-    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
-    printSimpleInstruction("bipush", utostr(vecSize * vecTy->getNumElements()));
-    printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-    // printValueLoad(inst->getOperand(2));
-  } else if (const ConstantDataVector *mask = dyn_cast<ConstantDataVector>(inst->getOperand(2))) {
-    // TODO: Needs to implement
+    for (int i = 0; i < vecElemNum; i++) {
+      // Locate a store position
+      printSimpleInstruction("dup2");
+      printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
+      printSimpleInstruction("ladd");
+      // Then, initialize it with 0
+      printSimpleInstruction("iconst_0");
+      printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
+      printIndirectStore(vecTy->getElementType());
+    }
   } else {
-    std::stringstream err_msg;
-    err_msg << "Unsupported mask type: Operand=" << getTypeIDName(inst->getOperand(2)->getType());
-    lljvm_unreachable(err_msg.str());
+    unsigned numInputElems = 0;
+    const Value *vec1 = inst->getOperand(0);
+    const SequentialType *vec1Ty = cast<SequentialType>(vec1->getType());
+    numInputElems += vec1Ty->getNumElements();
+
+    const Value *vec2 = inst->getOperand(1);
+    const SequentialType *vec2Ty = dyn_cast<SequentialType>(vec2->getType());
+    const bool vec2IsUndef = isa<UndefValue>(vec2);
+    if (!vec2IsUndef) {
+      numInputElems += vec2Ty->getNumElements();
+    }
+
+    uint64_t vecElemSize = targetData->getTypeAllocSize(vec1Ty->getElementType());
+    printSimpleInstruction("bipush", utostr(vecElemSize * numInputElems));
+    printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+
+    unsigned storePos = 0;
+    for (int i = 0; i < vec1Ty->getNumElements(); i++) {
+      // Locate a store position
+      printSimpleInstruction("dup2");
+      printSimpleInstruction("ldc2_w", utostr(storePos));
+      printSimpleInstruction("ladd");
+      // Load a value from a given input address
+      printValueLoad(vec1);
+      printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
+      printSimpleInstruction("ladd");
+      printIndirectLoad(vec1Ty->getElementType());
+      // Then, store it
+      printIndirectStore(vec1Ty->getElementType());
+      storePos += vecElemSize;
+    }
+    for (int i = 0; !vec2IsUndef && i < vec2Ty->getNumElements(); i++) {
+      // Locate a store position
+      printSimpleInstruction("dup2");
+      printSimpleInstruction("ldc2_w", utostr(storePos));
+      printSimpleInstruction("ladd");
+      // Load a value from a given input address
+      printValueLoad(vec2);
+      printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
+      printSimpleInstruction("ladd");
+      printIndirectLoad(vec2Ty->getElementType());
+      // Then, store it
+      printIndirectStore(vec2Ty->getElementType());
+      storePos += vecElemSize;
+    }
+
+    // TODO: Reuse the local variable of `vec1` here (revisit this)
+    printValueStore(vec1);
+
+    if (const ConstantDataVector *mask = dyn_cast<ConstantDataVector>(inst->getOperand(2))) {
+      printSimpleInstruction("bipush", utostr(vecElemSize * mask->getNumElements()));
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+      for (int i = 0; i < mask->getNumElements(); i++) {
+        // Locate a store position
+        printSimpleInstruction("dup2");
+        printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
+        printSimpleInstruction("ladd");
+        // Load a value from a given index
+        printValueLoad(vec1);
+        printSimpleInstruction("ldc2_w", utostr(vecElemSize));
+        printValueLoad(mask->getElementAsConstant(i));
+        printCastInstruction("l", getTypePrefix(mask->getElementType(), true));
+        printSimpleInstruction("lmul");
+        printSimpleInstruction("ladd");
+        printIndirectLoad(vec1Ty->getElementType());
+        // Then, store it
+        printIndirectStore(vec1Ty->getElementType());
+      }
+    } else if (const ConstantVector *mask = dyn_cast<ConstantVector>(inst->getOperand(2))) {
+      // uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
+      // printSimpleInstruction("bipush", utostr(vecSize * vecTy->getNumElements()));
+      // printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+      std::stringstream err_msg;
+      err_msg << "Unsupported mask type: Type=" << getTypeIDName(mask->getType());
+      throw err_msg.str();
+    } else {
+      std::stringstream err_msg;
+      err_msg << "Unsupported mask type: Type=" << getTypeIDName(inst->getOperand(2)->getType());
+      lljvm_unreachable(err_msg.str());
+    }
   }
 }
 
