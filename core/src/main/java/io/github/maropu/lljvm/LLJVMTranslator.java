@@ -27,6 +27,9 @@ import io.github.maropu.lljvm.util.JVMAssembler;
  */
 public class LLJVMTranslator {
 
+  private static int optLevel = 2;
+  private static int sizeLevel = 0;
+
   public static void main(String args[]) {
     // Validate an input file name
     if (args.length < 1) {
@@ -43,7 +46,7 @@ public class LLJVMTranslator {
     String jvmAsm = null;
     try {
       byte[] bitcode = Files.readAllBytes(bitcodeFile.toPath());
-      jvmAsm = LLJVMLoader.loadLLJVMApi().asJVMAssemblyCode(bitcode, 0);
+      jvmAsm = LLJVMLoader.loadLLJVMApi().asJVMAssemblyCode(bitcode, optLevel, sizeLevel, 0);
     } catch (Throwable t) {
       t.printStackTrace(System.err);
       System.exit(-1);

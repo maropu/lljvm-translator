@@ -19,6 +19,8 @@ package io.github.maropu.lljvm
 
 class LLJVMNativeSuite extends LLJVMFuncSuite {
 
+  val lljvmApi = LLJVMLoader.loadLLJVMApi()
+
   ignore("broken bitcode tests") {
     val errMsg = intercept[LLJVMRuntimeException] {
       TestUtils.loadClassFromBitcodeInResource("corrupt.bc")
@@ -31,7 +33,6 @@ class LLJVMNativeSuite extends LLJVMFuncSuite {
   }
 
   test("magicNumber") {
-    val lljvmApi = LLJVMLoader.loadLLJVMApi()
     assert(lljvmApi.magicNumber() === "20180731HMKjwzxmew")
   }
 
@@ -60,6 +61,65 @@ class LLJVMNativeSuite extends LLJVMFuncSuite {
          |
          |attributes #0 = { norecurse nounwind }
          |attributes #1 = { norecurse nounwind readnone }
+       """.stripMargin)
+  }
+
+  test("optimization level: -Oz") {
+    val bitcode = TestUtils.resourceToBytes("cfunc-add-int32.bc")
+    logDebug(
+      s"""
+         |========== LLVM Assembly Code =========
+         |${TestUtils.asLLVMAssemblyCode(bitcode)}
+         |========== JVM Assembly Code (-O0) =========
+         |${lljvmApi.asJVMAssemblyCode(bitcode, 0, 0, 3)}
+         |========== JVM Assembly Code (-Oz) =========
+         |${lljvmApi.asJVMAssemblyCode(bitcode, 2, 2, 3)}
+       """.stripMargin)
+
+    val (optLevel, sizeLevel, debugLevel) = (2, 2, 0)
+    TestUtils.compareCode(lljvmApi.asJVMAssemblyCode(bitcode, optLevel, sizeLevel, debugLevel),
+      s""".class public final GeneratedClass20180731HMKjwzxmew
+         |.super java/lang/Object
+         |
+         |; Fields
+         |
+         |; External methods
+         |
+         |; Constructor
+         |.method public <init>()V
+         |	aload_0
+         |	invokespecial java/lang/Object/<init>()V
+         |	return
+         |.end method
+         |
+         |.method public <clinit>()V
+         |	.limit stack 4
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/resetHeap()V
+         |
+         |	; allocate global variables
+         |
+         |	; initialise global variables
+         |	return
+         |.end method
+         |
+         |
+         |.method public static _add_test(II)I
+         |	iconst_0
+         |	istore 2
+         |begin_method:
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/createStackFrame()V
+         |label1:
+         |	iload_1 ; _y
+         |	iload_0 ; _x
+         |	iadd
+         |	istore_2 ; _2
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/destroyStackFrame()V
+         |	iload_2 ; _2
+         |	ireturn
+         |	.limit stack 16
+         |	.limit locals 3
+         |end_method:
+         |.end method
        """.stripMargin)
   }
 }

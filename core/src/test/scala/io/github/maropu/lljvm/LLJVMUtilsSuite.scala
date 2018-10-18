@@ -19,8 +19,6 @@ package io.github.maropu.lljvm
 
 import java.lang.{Double => jDouble, Integer => jInt}
 
-import io.github.maropu.lljvm.util.JVMAssembler
-
 import scala.collection.JavaConverters._
 
 class TestClass {
@@ -37,7 +35,7 @@ class LLJVMUtilsSuite extends LLJVMFuncSuite {
   test("asJVMAssemblyCode") {
     val bitcode = TestUtils.resourceToBytes("cfunc-add-int32.bc")
     TestUtils.compareCode(LLJVMUtils.asJVMAssemblyCode(bitcode),
-      s""".class public final ${JVMAssembler.LLJVM_GENERATED_CLASSNAME}
+      s""".class public final GeneratedClass20180731HMKjwzxmew
          |.super java/lang/Object
          |
          |; Fields
@@ -46,62 +44,37 @@ class LLJVMUtilsSuite extends LLJVMFuncSuite {
          |
          |; Constructor
          |.method public <init>()V
-         |        aload_0
-         |        invokespecial java/lang/Object/<init>()V
-         |        return
+         |	aload_0
+         |	invokespecial java/lang/Object/<init>()V
+         |	return
          |.end method
          |
          |.method public <clinit>()V
-         |        .limit stack 4
-         |        invokestatic io/github/maropu/lljvm/runtime/VMemory/resetHeap()V
+         |	.limit stack 4
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/resetHeap()V
          |
-         |        ; allocate global variables
+         |	; allocate global variables
          |
-         |        ; initialise global variables
-         |        return
+         |	; initialise global variables
+         |	return
          |.end method
          |
+         |
          |.method public static _add_test(II)I
-         |        lconst_0
-         |        lstore 2
-         |        lconst_0
-         |        lstore 4
-         |        iconst_0
-         |        istore 6
-         |        iconst_0
-         |        istore 7
-         |        iconst_0
-         |        istore 8
+         |	iconst_0
+         |	istore 2
          |begin_method:
-         |        invokestatic io/github/maropu/lljvm/runtime/VMemory/createStackFrame()V
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/createStackFrame()V
          |label1:
-         |        bipush 4
-         |        invokestatic io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J
-         |        lstore_2 ; _2
-         |        bipush 4
-         |        invokestatic io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J
-         |        lstore 4 ; _4
-         |        lload_2 ; _2
-         |        iload_0 ; _x
-         |        invokestatic io/github/maropu/lljvm/runtime/VMemory/store(JI)V
-         |        lload 4 ; _4
-         |        iload_1 ; _y
-         |        invokestatic io/github/maropu/lljvm/runtime/VMemory/store(JI)V
-         |        lload_2 ; _2
-         |        invokestatic io/github/maropu/lljvm/runtime/VMemory/load_i32(J)I
-         |        istore 6 ; _6
-         |        lload 4 ; _4
-         |        invokestatic io/github/maropu/lljvm/runtime/VMemory/load_i32(J)I
-         |        istore 7 ; _7
-         |        iload 6 ; _6
-         |        iload 7 ; _7
-         |        iadd
-         |        istore 8 ; _8
-         |        invokestatic io/github/maropu/lljvm/runtime/VMemory/destroyStackFrame()V
-         |        iload 8 ; _8
-         |        ireturn
-         |        .limit stack 16
-         |        .limit locals 9
+         |	iload_1 ; _y
+         |	iload_0 ; _x
+         |	iadd
+         |	istore_2 ; _2
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/destroyStackFrame()V
+         |	iload_2 ; _2
+         |	ireturn
+         |	.limit stack 16
+         |	.limit locals 3
          |end_method:
          |.end method
        """.stripMargin)

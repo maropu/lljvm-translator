@@ -23,7 +23,11 @@
 #include <llvm/CodeGen/Passes.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/IR/Verifier.h>
+#include <llvm/Transforms/IPO.h>
+#include <llvm/Transforms/IPO/AlwaysInliner.h>
+#include <llvm/Transforms/IPO/PassManagerBuilder.h>
 #include <llvm/Transforms/Scalar.h>
+#include <llvm/Target/TargetMachine.h>
 
 using namespace llvm;
 
@@ -38,7 +42,40 @@ inline void throw_exception(JNIEnv *env, jobject self, const std::string& err_ms
   env->CallVoidMethod(self, mth_throwex, env->NewStringUTF(err_msg.c_str()));
 }
 
-const std::string parseBitcode(const char *bitcode, size_t size, unsigned int dbg) {
+// Adds optimization passes based on the selected optimization level.
+// This function was copied from `llvm/tools/opt/opt.cpp` and modified a little.
+static void addOptimizationPasses(legacy::PassManager& pm, unsigned optLevel, unsigned sizeLevel) {
+  PassManagerBuilder pmBuilder;
+
+  pmBuilder.OptLevel = optLevel;
+  pmBuilder.SizeLevel = sizeLevel;
+
+  if (optLevel > 1) {
+    pmBuilder.Inliner = createFunctionInliningPass(optLevel, sizeLevel, false);
+  } else {
+    pmBuilder.Inliner = createAlwaysInlinerLegacyPass();
+  }
+  pmBuilder.DisableUnitAtATime = false;
+  pmBuilder.DisableUnrollLoops = false;
+
+  // If option wasn't forced via cmd line (-vectorize-loops, -loop-vectorize)
+  if (!pmBuilder.LoopVectorize) {
+    pmBuilder.LoopVectorize = optLevel > 1 && sizeLevel < 2;
+  }
+
+  // When #pragma vectorize is on for SLP, do the same as above
+  pmBuilder.SLPVectorize = optLevel > 1 && sizeLevel < 2;
+
+  pmBuilder.populateModulePassManager(pm);
+}
+
+const std::string parseBitcode(
+    const char *bitcode,
+    size_t size,
+    unsigned optLevel,
+    unsigned sizeLevel,
+    unsigned debugLevel) {
+
   LLVMContext context;
   auto buf = MemoryBuffer::getMemBuffer(StringRef((const char *)bitcode, size));
   auto mod = parseBitcodeFile(buf.get()->getMemBufferRef(), context);
@@ -61,15 +98,22 @@ const std::string parseBitcode(const char *bitcode, size_t size, unsigned int db
   // TODO: Check more useful other passes to optimize LLVM bitcode
 
   // pm.add(new DataLayoutPass(td));
-  pm.add(createVerifierPass());
-  pm.add(createGCLoweringPass());
+  if (debugLevel > 0) {
+    pm.add(createVerifierPass());
+  }
   // TODO: fix switch generation so the following pass is not needed
   // The pass below exists in LLVM v5.x, but not in LLVM v7.x?
   // pm.add(createLowerSwitchPass());
   pm.add(createCFGSimplificationPass());
 
+  pm.add(createGCLoweringPass());
+
+  // Apply optimization passes into the given bitcode
+  // TODO: Add an optimization level and a size level in this function argument
+  addOptimizationPasses(pm, optLevel, sizeLevel);
+
   const std::string clazz = LLJVM_GENERATED_CLASSNAME_PREFIX + LLJVM_MAGIC_NUMBER;
-  pm.add(new JVMWriter(&td, strbuf, clazz, dbg));
+  pm.add(new JVMWriter(&td, strbuf, clazz, debugLevel));
   // pm.add(createGCInfoDeleter());
   pm.run(*mod.get());
   strbuf.flush();
@@ -110,11 +154,11 @@ JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_LLJVMNative_veryfyBitcode
 }
 
 JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asJVMAssemblyCode
-    (JNIEnv *env, jobject self, jbyteArray bitcode, jint debugLevel) {
+    (JNIEnv *env, jobject self, jbyteArray bitcode, jint optLevel, jint sizeLevel, jint debugLevel) {
   jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);
   try {
-    const std::string out = parseBitcode((const char *)src, size, debugLevel);
+    const std::string out = parseBitcode((const char *)src, size, optLevel, sizeLevel, debugLevel);
     env->ReleaseByteArrayElements(bitcode, src, 0);
     return env->NewStringUTF(out.c_str());
   } catch (const std::string& e) {

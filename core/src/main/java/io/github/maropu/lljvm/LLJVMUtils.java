@@ -67,7 +67,7 @@ public class LLJVMUtils {
     String jvmAsm = null;
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
-      jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, 0);
+      jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, 2, 0, 0);
     } catch (IOException e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }

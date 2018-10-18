@@ -34,10 +34,10 @@ JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_LLJVMNative_veryfyBitcode
 /*
  * Class:     io_github_maropu_lljvm_LLJVMNative
  * Method:    asJVMAssemblyCode
- * Signature: ([BI)Ljava/lang/String;
+ * Signature: ([BIII)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asJVMAssemblyCode
-  (JNIEnv *, jobject, jbyteArray, jint);
+  (JNIEnv *, jobject, jbyteArray, jint, jint, jint);
 
 /*
  * Class:     io_github_maropu_lljvm_LLJVMNative

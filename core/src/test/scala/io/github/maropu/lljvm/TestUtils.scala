@@ -50,7 +50,7 @@ object TestUtils extends LLJVMFuncSuite {
     LLJVMUtils.checkLLVMBitcodeFormat(bitcode)
     val lljvmApi = LLJVMLoader.loadLLJVMApi()
     // Sets 3 at `debugLevel` for debugging
-    val jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, 3)
+    val jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, 0, 0, 3)
     assert(jvmAsm != null)
     jvmAsm
   }

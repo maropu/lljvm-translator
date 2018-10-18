@@ -61,8 +61,8 @@ def configure(ctx):
 
   # Checks the LLVM version
   LLVM_VERSION = re.findall("^(\d+.\d+.\d+)", llvm_config('--version')[0])[0]
-  if StrictVersion(LLVM_VERSION) < StrictVersion('5.0.0'):
-    ctx.fatal('LLVM version must be 5.0+, but LLVM %s found' % LLVM_VERSION)
+  if StrictVersion(LLVM_VERSION) < StrictVersion('7.0.0'):
+    ctx.fatal('LLVM version must be 7.0+, but LLVM %s found' % LLVM_VERSION)
 
   # We assume 'llvm-config --system-libs' returns libs below
   ctx.check_cxx(lib = 'm')
@@ -80,7 +80,8 @@ def configure(ctx):
   # LLVM_LINKFLAGS = ['-stdlib=libc++', '-nostdinc++']
   # LLVM_LINKFLAGS += ['-I%s/include/c++/v1' % LLVM_DIR, '-L%s' %LLVM_LIB, '-Wl,-rpath,%s' % LLVM_LIB]
 
-  LLVM_LIBFILES = llvm_config('--libfiles engine')
+  LLVM_LIBFILES = llvm_config('--libfiles all')
+  # LLVM_LIBFILES = llvm_config('--libfiles engine')
 
   if ctx.env['LLJVM_COMPILE_OS'] == 'Linux':
     # For Linux platforms, uses a linker option `--whole-archive` to bundle
