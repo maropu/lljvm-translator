@@ -93,6 +93,11 @@ void JVMWriter::printOperandPack(
 //      dstore 554 ; __34_le_i_3
 //
 void JVMWriter::printDirectFunctionCall(const Instruction *inst, const Function *f) {
+  std::stringstream err_msg;
+  err_msg << "Unsupported direct function calls";
+  throw err_msg.str();
+
+  // TODO: Need to implement a direct function call
   const FunctionType *fTy = f->getFunctionType();
   for (unsigned int i = 0, e = fTy->getNumParams(); i < e; i++) {
     printValueLoad(inst->getOperand(i));
