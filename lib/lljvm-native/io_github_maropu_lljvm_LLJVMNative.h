@@ -42,10 +42,10 @@ JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asJVMAssemblyC
 /*
  * Class:     io_github_maropu_lljvm_LLJVMNative
  * Method:    asLLVMAssemblyCode
- * Signature: ([B)Ljava/lang/String;
+ * Signature: ([BII)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asLLVMAssemblyCode
-  (JNIEnv *, jobject, jbyteArray);
+  (JNIEnv *, jobject, jbyteArray, jint, jint);
 
 #ifdef __cplusplus
 }

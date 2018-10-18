@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
       case Oz: optLevel = 2; sizeLevel = 2; break;
       case O3: optLevel = 3; sizeLevel = 0; break;
     }
-    std::string jvmAsm = parseBitcode(str.c_str(), str.size(), optLevel, sizeLevel, debugLevel);
+    std::string jvmAsm = toJVMAssemblyCode(str.c_str(), str.size(), optLevel, sizeLevel, debugLevel);
     std::cout << jvmAsm << "\n";
   } catch (const std::string& e) {
     std::cerr << e << std::endl;

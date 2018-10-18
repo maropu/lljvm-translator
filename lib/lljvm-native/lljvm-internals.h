@@ -20,7 +20,14 @@
 
 #include <string>
 
-extern const std::string parseBitcode(
+extern const std::string toJVMAssemblyCode(
+  const char *bitcode,
+  size_t size,
+  unsigned optLevel,
+  unsigned sizeLevel,
+  unsigned debugLevel);
+
+extern const std::string toLLVMAssemblyCode(
   const char *bitcode,
   size_t size,
   unsigned optLevel,

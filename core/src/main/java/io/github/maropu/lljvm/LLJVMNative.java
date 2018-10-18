@@ -38,7 +38,8 @@ public class LLJVMNative {
     throws IOException, LLJVMRuntimeException;
 
   // Returns LLVM assembly for given LLVM bitcode
-  public native String asLLVMAssemblyCode(byte[] bitcode) throws IOException;
+  public native String asLLVMAssemblyCode(
+    byte[] bitcode, int optLevel, int sizeLevel) throws IOException;
 
   // This exception is mainly used in native code
   public void throwException(String message) throws LLJVMRuntimeException {

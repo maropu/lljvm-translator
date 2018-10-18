@@ -56,7 +56,7 @@ public class LLJVMUtils {
   public static String asLLVMAssemblyCode(byte[] bitcode) throws LLJVMRuntimeException {
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
-      return lljvmApi.asLLVMAssemblyCode(bitcode);
+      return lljvmApi.asLLVMAssemblyCode(bitcode, 0, 0);
     } catch (IOException e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }

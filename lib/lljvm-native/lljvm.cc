@@ -22,11 +22,13 @@
 #include <llvm/Bitcode/BitcodeReader.h>
 #include <llvm/CodeGen/Passes.h>
 #include <llvm/IR/LegacyPassManager.h>
+#include <llvm/IR/IRPrintingPasses.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/Transforms/IPO.h>
 #include <llvm/Transforms/IPO/AlwaysInliner.h>
 #include <llvm/Transforms/IPO/PassManagerBuilder.h>
 #include <llvm/Transforms/Scalar.h>
+#include <llvm/Transforms/Utils.h>
 #include <llvm/Target/TargetMachine.h>
 
 using namespace llvm;
@@ -34,7 +36,7 @@ using namespace llvm;
 const std::string LLJVM_GENERATED_CLASSNAME_PREFIX = "GeneratedClass";
 const std::string LLJVM_MAGIC_NUMBER = "20180731HMKjwzxmew";
 
-inline void throw_exception(JNIEnv *env, jobject self, const std::string& err_msg) {
+static void throwException(JNIEnv *env, jobject self, const std::string& err_msg) {
   jclass c = env->FindClass("io/github/maropu/lljvm/LLJVMNative");
   assert(c != 0);
   jmethodID mth_throwex = env->GetMethodID(c, "throwException", "(Ljava/lang/String;)V");
@@ -69,12 +71,13 @@ static void addOptimizationPasses(legacy::PassManager& pm, unsigned optLevel, un
   pmBuilder.populateModulePassManager(pm);
 }
 
-const std::string parseBitcode(
+static void runOptimizationPasses(
     const char *bitcode,
     size_t size,
     unsigned optLevel,
     unsigned sizeLevel,
-    unsigned debugLevel) {
+    unsigned debugLevel,
+    Pass *outputPass) {
 
   LLVMContext context;
   auto buf = MemoryBuffer::getMemBuffer(StringRef((const char *)bitcode, size));
@@ -84,10 +87,40 @@ const std::string parseBitcode(
   //     return 1;
   // }
 
+  // TODO: Add more optimization logics based on `llvm/tools/opt/opt.cpp`
+  legacy::PassManager pm;
+
+  if (debugLevel > 0) {
+    pm.add(createVerifierPass());
+  }
+
+  // Apply optimization passes into the given bitcode
+  addOptimizationPasses(pm, optLevel, sizeLevel);
+
+  // List up other optimization passes
+  // TODO: fix switch generation so the following pass is not needed
+  pm.add(createLowerSwitchPass());
+  pm.add(createCFGSimplificationPass());
+  pm.add(createGCLoweringPass());
+  // pm.add(createGCInfoDeleter());
+
+  // Finally, add a pass for output
+  pm.add(outputPass);
+
+  pm.run(*mod.get());
+}
+
+const std::string toJVMAssemblyCode(
+    const char *bitcode,
+    size_t size,
+    unsigned optLevel,
+    unsigned sizeLevel,
+    unsigned debugLevel) {
+
+  // Prepare an output pass for printing LLVM IR into the JVM assembly code
+  const std::string clazz = LLJVM_GENERATED_CLASSNAME_PREFIX + LLJVM_MAGIC_NUMBER;
   std::string out;
   raw_string_ostream strbuf(out);
-
-  legacy::PassManager pm;
   DataLayout td(
     // Support 64bit platforms only
     "e-p:64:64:64"
@@ -95,27 +128,25 @@ const std::string parseBitcode(
     "-f32:32:32-f64:64:64"
   );
 
-  // TODO: Check more useful other passes to optimize LLVM bitcode
+  Pass *outputPass = new JVMWriter(&td, strbuf, clazz, debugLevel);
+  runOptimizationPasses(bitcode, size, optLevel, sizeLevel, debugLevel, outputPass);
+  strbuf.flush();
+  return out;
+}
 
-  // pm.add(new DataLayoutPass(td));
-  if (debugLevel > 0) {
-    pm.add(createVerifierPass());
-  }
-  // TODO: fix switch generation so the following pass is not needed
-  // The pass below exists in LLVM v5.x, but not in LLVM v7.x?
-  // pm.add(createLowerSwitchPass());
-  pm.add(createCFGSimplificationPass());
+const std::string toLLVMAssemblyCode(
+    const char *bitcode,
+    size_t size,
+    unsigned optLevel,
+    unsigned sizeLevel,
+    unsigned debugLevel) {
 
-  pm.add(createGCLoweringPass());
+  // Prepare an output pass for printing LLVM IR into the assembly code
+  std::string out;
+  raw_string_ostream strbuf(out);
 
-  // Apply optimization passes into the given bitcode
-  // TODO: Add an optimization level and a size level in this function argument
-  addOptimizationPasses(pm, optLevel, sizeLevel);
-
-  const std::string clazz = LLJVM_GENERATED_CLASSNAME_PREFIX + LLJVM_MAGIC_NUMBER;
-  pm.add(new JVMWriter(&td, strbuf, clazz, debugLevel));
-  // pm.add(createGCInfoDeleter());
-  pm.run(*mod.get());
+  Pass *outputPass = createPrintModulePass(strbuf, "", false);
+  runOptimizationPasses(bitcode, size, optLevel, sizeLevel, debugLevel, outputPass);
   strbuf.flush();
   return out;
 }
@@ -149,7 +180,7 @@ JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_LLJVMNative_veryfyBitcode
   std::string out;
   raw_string_ostream strbuf(out);
   if (verifyModule(*mod.get(), &strbuf)) {
-    throw_exception(env, self, out);
+    throwException(env, self, out);
   }
 }
 
@@ -158,33 +189,27 @@ JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asJVMAssemblyC
   jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);
   try {
-    const std::string out = parseBitcode((const char *)src, size, optLevel, sizeLevel, debugLevel);
+    const std::string out = toJVMAssemblyCode((const char *)src, size, optLevel, sizeLevel, debugLevel);
     env->ReleaseByteArrayElements(bitcode, src, 0);
     return env->NewStringUTF(out.c_str());
   } catch (const std::string& e) {
     env->ReleaseByteArrayElements(bitcode, src, 0);
-    throw_exception(env, self, e);
+    throwException(env, self, e);
     return env->NewStringUTF("");
   }
 }
 
 JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asLLVMAssemblyCode
-    (JNIEnv *env, jobject self, jbyteArray bitcode) {
+    (JNIEnv *env, jobject self, jbyteArray bitcode, jint optLevel, jint sizeLevel) {
   jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);
-
-  LLVMContext context;
-  auto buf = MemoryBuffer::getMemBuffer(StringRef((char *)src, size));
-  auto mod = parseBitcodeFile(buf.get()->getMemBufferRef(), context);
-  env->ReleaseByteArrayElements(bitcode, src, 0);
-  // if(check if error happens) {
-  //     std::cerr << "Unable to parse bitcode file" << std::endl;
-  //     return 1;
-  // }
-
-  std::string out;
-  raw_string_ostream strbuf(out);
-  mod.get()->print(strbuf, nullptr);
-  strbuf.flush();
-  return env->NewStringUTF(out.c_str());
+  try {
+    const std::string out = toLLVMAssemblyCode((const char *)src, size, optLevel, sizeLevel, 0);
+    env->ReleaseByteArrayElements(bitcode, src, 0);
+    return env->NewStringUTF(out.c_str());
+  } catch (const std::string& e) {
+    env->ReleaseByteArrayElements(bitcode, src, 0);
+    throwException(env, self, e);
+    return env->NewStringUTF("");
+  }
 }
