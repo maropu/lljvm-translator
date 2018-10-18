@@ -80,8 +80,8 @@ def configure(ctx):
   # LLVM_LINKFLAGS = ['-stdlib=libc++', '-nostdinc++']
   # LLVM_LINKFLAGS += ['-I%s/include/c++/v1' % LLVM_DIR, '-L%s' %LLVM_LIB, '-Wl,-rpath,%s' % LLVM_LIB]
 
-  LLVM_LIBFILES = llvm_config('--libfiles all')
-  # LLVM_LIBFILES = llvm_config('--libfiles engine')
+  # To list up all the LLVM components, say 'llvm-config --components'
+  LLVM_LIBFILES = llvm_config('--libfiles engine lto')
 
   if ctx.env['LLJVM_COMPILE_OS'] == 'Linux':
     # For Linux platforms, uses a linker option `--whole-archive` to bundle
