@@ -89,6 +89,55 @@ char JVMWriter::getTypeID(const Type *ty, bool expand) {
 }
 
 /**
+ * Returns the ID name of the given type.
+ *
+ * @param ty the type
+ * @return the type ID name
+ */
+std::string JVMWriter::getTypeIDName(const Type *ty) {
+  switch (ty->getTypeID()) {
+    case Type::VoidTyID:
+      return "VoidTyID";
+    case Type::HalfTyID:
+      return "HalfTyID";
+    case Type::FloatTyID:
+      return "FloatTyID";
+    case Type::DoubleTyID:
+      return "DoubleTyID";
+    case Type::X86_FP80TyID:
+      return "X86_FP80TyID";
+    case Type::FP128TyID:
+      return "FP128TyID";
+    case Type::PPC_FP128TyID:
+      return "PPC_FP128TyID";
+    case Type::LabelTyID:
+      return "LabelTyID";
+    case Type::MetadataTyID:
+      return "MetadataTyID";
+    case Type::X86_MMXTyID:
+      return "X86_MMXTyID";
+    case Type::TokenTyID:
+      return "X86_MMXTyID";
+    case Type::IntegerTyID:
+      return "IntegerTyID";
+    case Type::FunctionTyID:
+      return "FunctionTyID";
+    case Type::StructTyID:
+      return "StructTyID";
+    case Type::ArrayTyID:
+      return "ArrayTyID";
+    case Type::PointerTyID:
+      return "PointerTyID";
+    case Type::VectorTyID:
+      return "VectorTyID";
+    default:
+      std::stringstream err_msg;
+      err_msg << "Invalid type: Type=" << ty->getTypeID();
+      lljvm_unreachable(err_msg.str());
+  }
+}
+
+/**
  * Returns the name of the given type.
  *
  * @param ty the type

@@ -190,6 +190,7 @@ private:
   // types.cc
   unsigned int getBitWidth(const Type *ty, bool expand = false);
   char getTypeID(const Type *ty, bool expand = false);
+  std::string getTypeIDName(const Type *ty);
   std::string getTypeName(const Type *ty, bool expand = false);
   std::string getTypeDescriptor(const Type *ty, bool expand = false);
   std::string getTypePostfix(const Type *ty, bool expand = false);

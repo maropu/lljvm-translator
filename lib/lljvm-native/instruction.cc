@@ -452,7 +452,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
       printIndirectLoad(aggType);
     } else {
       std::stringstream err_msg;
-      err_msg << "Invalid type: Type=" << aggType->getTypeID();
+      err_msg << "Invalid type: Type=" << getTypeIDName(aggType);
       lljvm_unreachable(err_msg.str());
     }
   }
@@ -550,7 +550,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     }
   } else {
     std::stringstream err_msg;
-    err_msg << "Invalid type: Type=" << aggType->getTypeID();
+    err_msg << "Invalid type: Type=" << getTypeIDName(aggType);
     lljvm_unreachable(err_msg.str());
   }
 }
@@ -570,9 +570,11 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
     printSimpleInstruction("bipush", utostr(vecSize * vecTy->getNumElements()));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
     // printValueLoad(inst->getOperand(2));
+  } else if (const ConstantDataVector *mask = dyn_cast<ConstantDataVector>(inst->getOperand(2))) {
+    // TODO: Needs to implement
   } else {
     std::stringstream err_msg;
-    err_msg << "Unsupported mask type: Operand=" << inst->getOperand(2);
+    err_msg << "Unsupported mask type: Operand=" << getTypeIDName(inst->getOperand(2)->getType());
     lljvm_unreachable(err_msg.str());
   }
 }

@@ -126,7 +126,7 @@ void JVMWriter::printConstLoad(const Constant *c) {
     printPtrLoad(0);
   } else {
     std::stringstream err_msg;
-    err_msg << "Invalid constant value: Type=" << c->getType()->getTypeID();
+    err_msg << "Invalid constant value: Type=" << getTypeIDName(c->getType());
     lljvm_unreachable(err_msg.str());
   }
 }
@@ -212,7 +212,7 @@ void JVMWriter::printStaticConstant(const Constant *c) {
         printConstantExpr(ce);
       } else {
         std::stringstream err_msg;
-        err_msg << "Invalid static initializer: Type=" << c->getType()->getTypeID();
+        err_msg << "Invalid static initializer: Type=" << getTypeIDName(c->getType());
         lljvm_unreachable(err_msg.str());
       }
       printSimpleInstruction(
@@ -220,7 +220,7 @@ void JVMWriter::printStaticConstant(const Constant *c) {
       break;
     default:
       std::stringstream err_msg;
-      err_msg << "Invalid type in printStaticConstant(): Type=" << c->getType()->getTypeID();
+      err_msg << "Invalid type in printStaticConstant(): Type=" << getTypeIDName(c->getType());
       lljvm_unreachable(err_msg.str());
   }
 }
