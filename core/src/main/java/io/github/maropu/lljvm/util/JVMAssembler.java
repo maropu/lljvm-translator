@@ -47,8 +47,16 @@ public class JVMAssembler {
     return doCompile(code.getBytes(StandardCharsets.UTF_8), true);
   }
 
+  public static byte[] compile(String code, boolean verifyCode) {
+    return doCompile(code.getBytes(StandardCharsets.UTF_8), verifyCode);
+  }
+
   public static byte[] compile(byte[] code) {
     return doCompile(code, true);
+  }
+
+  public static byte[] compile(byte[] code, boolean verifyCode) {
+    return doCompile(code, verifyCode);
   }
 
   @VisibleForTesting

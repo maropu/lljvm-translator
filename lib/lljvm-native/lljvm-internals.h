@@ -23,15 +23,15 @@
 extern const std::string toJVMAssemblyCode(
   const char *bitcode,
   size_t size,
-  unsigned optLevel,
-  unsigned sizeLevel,
+  int optLevel,
+  int sizeLevel,
   unsigned debugLevel);
 
 extern const std::string toLLVMAssemblyCode(
   const char *bitcode,
   size_t size,
-  unsigned optLevel,
-  unsigned sizeLevel,
+  int optLevel,
+  int sizeLevel,
   unsigned debugLevel);
 
 #endif

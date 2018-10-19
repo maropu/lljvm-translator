@@ -91,7 +91,8 @@ class LLJVMNativeSuite extends LLJVMFuncSuite {
     val bitcode = TestUtils.resourceToBytes("cfunc-add-int32.bc")
     val optO0 = (0, 0) // -O0
     TestUtils.compareCode(lljvmApi.asJVMAssemblyCode(bitcode, optO0._1, optO0._2, 0),
-      s""".class public final GeneratedClass20180731HMKjwzxmew
+      s""".bytecode 50.0 ; Java v1.6 compatible bytecode
+         |.class public final GeneratedClass20180731HMKjwzxmew
          |.super java/lang/Object
          |
          |; Fields
@@ -163,7 +164,8 @@ class LLJVMNativeSuite extends LLJVMFuncSuite {
 
     val optOz = (2, 2) // -Oz
     TestUtils.compareCode(lljvmApi.asJVMAssemblyCode(bitcode, optOz._1, optOz._2, 0),
-      s""".class public final GeneratedClass20180731HMKjwzxmew
+      s""".bytecode 50.0 ; Java v1.6 compatible bytecode
+         |.class public final GeneratedClass20180731HMKjwzxmew
          |.super java/lang/Object
          |
          |; Fields

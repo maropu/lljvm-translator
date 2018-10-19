@@ -35,7 +35,8 @@ class LLJVMUtilsSuite extends LLJVMFuncSuite {
   test("asJVMAssemblyCode") {
     val bitcode = TestUtils.resourceToBytes("cfunc-add-int32.bc")
     TestUtils.compareCode(LLJVMUtils.asJVMAssemblyCode(bitcode),
-      s""".class public final GeneratedClass20180731HMKjwzxmew
+      s""".bytecode 50.0 ; Java v1.6 compatible bytecode
+         |.class public final GeneratedClass20180731HMKjwzxmew
          |.super java/lang/Object
          |
          |; Fields

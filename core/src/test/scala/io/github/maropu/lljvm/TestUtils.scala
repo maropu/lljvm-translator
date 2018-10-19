@@ -45,8 +45,8 @@ object TestUtils extends LLJVMFuncSuite {
   }
 
   def asLLVMAssemblyCode(bitcode: Array[Byte]): String = {
-    LLJVMUtils.asLLVMAssemblyCode(bitcode)
-    val llvmAsm = lljvmApi.asLLVMAssemblyCode(bitcode, 0, 0)
+    LLJVMUtils.checkLLVMBitcodeFormat(bitcode)
+    val llvmAsm = lljvmApi.asLLVMAssemblyCode(bitcode, -1, -1)
     assert(llvmAsm != null)
     llvmAsm
   }
@@ -54,7 +54,7 @@ object TestUtils extends LLJVMFuncSuite {
   def asJVMAssemblyCode(bitcode: Array[Byte]): String = {
     LLJVMUtils.checkLLVMBitcodeFormat(bitcode)
     // No optimization and `debugLevel = 3` for verbose output
-    val jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, 0, 0, 3)
+    val jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, -1, -1, 3)
     assert(jvmAsm != null)
     jvmAsm
   }

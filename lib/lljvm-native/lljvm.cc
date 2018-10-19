@@ -46,7 +46,7 @@ static void throwException(JNIEnv *env, jobject self, const std::string& err_msg
 
 // Adds optimization passes based on the selected optimization level.
 // This function was copied from `llvm/tools/opt/opt.cpp` and modified a little.
-static void addOptimizationPasses(legacy::PassManager& pm, unsigned optLevel, unsigned sizeLevel) {
+static void addOptimizationPasses(legacy::PassManager& pm, int optLevel, int sizeLevel) {
   PassManagerBuilder pmBuilder;
 
   pmBuilder.OptLevel = optLevel;
@@ -74,8 +74,8 @@ static void addOptimizationPasses(legacy::PassManager& pm, unsigned optLevel, un
 static void runOptimizationPasses(
     const char *bitcode,
     size_t size,
-    unsigned optLevel,
-    unsigned sizeLevel,
+    int optLevel,
+    int sizeLevel,
     unsigned debugLevel,
     Pass *outputPass) {
 
@@ -87,22 +87,25 @@ static void runOptimizationPasses(
   //     return 1;
   // }
 
-  // TODO: Add more optimization logics based on `llvm/tools/opt/opt.cpp`
   legacy::PassManager pm;
 
   if (debugLevel > 0) {
     pm.add(createVerifierPass());
   }
 
-  // Apply optimization passes into the given bitcode
-  addOptimizationPasses(pm, optLevel, sizeLevel);
+  if (optLevel >= 0 && sizeLevel >= 0) {
+    // TODO: Add more optimization logics based on `llvm/tools/opt/opt.cpp`
 
-  // List up other optimization passes
-  // TODO: fix switch generation so the following pass is not needed
-  pm.add(createLowerSwitchPass());
-  pm.add(createCFGSimplificationPass());
-  pm.add(createGCLoweringPass());
-  // pm.add(createGCInfoDeleter());
+    // Apply optimization passes into the given bitcode
+    addOptimizationPasses(pm, optLevel, sizeLevel);
+
+    // List up other optimization passes
+    // TODO: fix switch generation so the following pass is not needed
+    pm.add(createLowerSwitchPass());
+    pm.add(createCFGSimplificationPass());
+    pm.add(createGCLoweringPass());
+    // pm.add(createGCInfoDeleter());
+  }
 
   // Finally, add a pass for output
   pm.add(outputPass);
@@ -113,8 +116,8 @@ static void runOptimizationPasses(
 const std::string toJVMAssemblyCode(
     const char *bitcode,
     size_t size,
-    unsigned optLevel,
-    unsigned sizeLevel,
+    int optLevel,
+    int sizeLevel,
     unsigned debugLevel) {
 
   // Prepare an output pass for printing LLVM IR into the JVM assembly code
@@ -137,8 +140,8 @@ const std::string toJVMAssemblyCode(
 const std::string toLLVMAssemblyCode(
     const char *bitcode,
     size_t size,
-    unsigned optLevel,
-    unsigned sizeLevel,
+    int optLevel,
+    int sizeLevel,
     unsigned debugLevel) {
 
   // Prepare an output pass for printing LLVM IR into the assembly code

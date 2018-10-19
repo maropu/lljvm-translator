@@ -25,6 +25,8 @@
 #include <sstream>
 
 void JVMWriter::printHeader() {
+  // TODO: Need to change this into '52.0' (Java v1.8)
+  out << ".bytecode 50.0 ; Java v1.6 compatible bytecode\n";
   if (debug >= 1) {
     out << ".source ";
     if (!sourcename.empty()) {
