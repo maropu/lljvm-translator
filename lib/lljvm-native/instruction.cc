@@ -92,6 +92,9 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
           }
         } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
           printValueLoad(vec->getElementAsConstant(i));
+        } else if (isa<ConstantAggregateZero>(left)) {
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(leftSeqTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
           err_msg << "Invalid left constant value type: Type=" << getTypeIDName(left->getType());
@@ -114,6 +117,9 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
           }
         } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
           printValueLoad(vec->getElementAsConstant(i));
+        } else if (isa<ConstantAggregateZero>(right)) {
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(rightSeqTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
           err_msg << "Invalid right constant value type: Type=" << getTypeIDName(right->getType());
@@ -231,6 +237,9 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
           }
         } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
           printValueLoad(vec->getElementAsConstant(i));
+        } else if (isa<ConstantAggregateZero>(left)) {
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
           err_msg << "Invalid left constant value type: Type=" << getTypeIDName(left->getType());
@@ -252,6 +261,9 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
           }
         } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
           printValueLoad(vec->getElementAsConstant(i));
+        } else if (isa<ConstantAggregateZero>(right)) {
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
           err_msg << "Invalid right constant value type: Type=" << getTypeIDName(right->getType());

@@ -15,4 +15,3 @@ define <4 x float> @fsub3(<4 x float> %x) {
   %ret = fsub <4 x float> <float -0.000000e+00, float undef, float undef, float undef>, %x
   ret <4 x float> %ret
 }
-

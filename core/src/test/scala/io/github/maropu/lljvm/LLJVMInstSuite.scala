@@ -260,9 +260,35 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("icmp", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_icmp", Seq(jInt.TYPE, jInt.TYPE): _*)
-      val args = Seq(new jInt(2), new jInt(3))
-      assert(method.invoke(obj, args: _*) === true)
+      {
+        val method = LLJVMUtils.getMethod(clazz, "_icmp1", Seq(jInt.TYPE, jInt.TYPE): _*)
+        val args = Seq(new jInt(2), new jInt(3))
+        assert(method.invoke(obj, args: _*) === true)
+      }
+
+      def cmpTest(name: String, arg: Long, expected: Seq[Boolean]): Unit = {
+        val method = LLJVMUtils.getMethod(clazz, name, Seq(jLong.TYPE): _*)
+        val result = method.invoke(obj, Seq(new jLong(arg)): _*).asInstanceOf[Long]
+        expected.zipWithIndex.foreach { case (v, offset) =>
+          assert(Platform.getBoolean(null, result + offset) === v, s": test=$name offset=$offset")
+        }
+      }
+      cmpTest("_icmp2", ArrayUtils.addressOf(Array(-1, 1, -2, 3)),
+        expected = true :: false :: true :: false :: Nil)
+      cmpTest("_icmp3", ArrayUtils.addressOf(Array(-1, 1, -2, 3)),
+        expected = true :: false :: true :: false :: Nil)
+      cmpTest("_icmp4", ArrayUtils.addressOf(Array(2, -4, 4, -6)),
+        expected = false :: true :: true :: false :: Nil)
+      cmpTest("_icmp5", ArrayUtils.addressOf(Array(3, 5, 1, 8)),
+        expected = true :: false :: true :: false :: Nil)
+      cmpTest("_icmp6", ArrayUtils.addressOf(Array(-1, 1, -2, 3)),
+        expected = false :: true :: false :: true :: Nil)
+      cmpTest("_icmp7", ArrayUtils.addressOf(Array(-1, 1, -2, 3)),
+        expected = false :: true :: false :: true :: Nil)
+      cmpTest("_icmp8", ArrayUtils.addressOf(Array(2, -4, 4, -6)),
+        expected = true :: false :: false :: true :: Nil)
+      cmpTest("_icmp9", ArrayUtils.addressOf(Array(3, 5, 1, 8)),
+        expected = false :: true :: false :: true :: Nil)
     }),
 
     ("fcmp", (clazz, obj) => {
