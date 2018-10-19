@@ -81,9 +81,31 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("fsub", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_fsub", Seq(jFloat.TYPE, jFloat.TYPE): _*)
-      val args = Seq(new jFloat(5.5), new jFloat(1.5))
-      assert(method.invoke(obj, args: _*) === 4.0f)
+      {
+        val method = LLJVMUtils.getMethod(clazz, "_fsub1", Seq(jFloat.TYPE, jFloat.TYPE): _*)
+        val args = Seq(new jFloat(5.5), new jFloat(1.5))
+        assert(method.invoke(obj, args: _*) === 4.0f)
+      }
+      {
+        val method = LLJVMUtils.getMethod(clazz, "_fsub2", Seq(jLong.TYPE): _*)
+        val addr = ArrayUtils.addressOf(Array(3.0f, 2.0f, 0.0f, 1.0f))
+        val result = method.invoke(obj, Seq(new jLong(addr)): _*).asInstanceOf[Long]
+        assert(result != addr)
+        assert(Platform.getFloat(null, result) === -3.0f)
+        assert(Platform.getFloat(null, result + 4) === -2.0f)
+        assert(Platform.getFloat(null, result + 8) === 0.0f)
+        assert(Platform.getFloat(null, result + 12) === -1.0f)
+      }
+      {
+        val method = LLJVMUtils.getMethod(clazz, "_fsub3", Seq(jLong.TYPE): _*)
+        val addr = ArrayUtils.addressOf(Array(0.0f, 3.0f, 1.0f, 2.0f))
+        val result = method.invoke(obj, Seq(new jLong(addr)): _*).asInstanceOf[Long]
+        assert(result != addr)
+        assert(Platform.getFloat(null, result) === 0.0f)
+        assert(Platform.getFloat(null, result + 4) === -3.0f)
+        assert(Platform.getFloat(null, result + 8) === -1.0f)
+        assert(Platform.getFloat(null, result + 12) === -2.0f)
+      }
     }),
 
     ("fmul", (clazz, obj) => {

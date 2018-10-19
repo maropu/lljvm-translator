@@ -83,19 +83,44 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       printSimpleInstruction("ldc2_w", utostr(i * size));
       printSimpleInstruction("ladd");
 
-      if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
-        printValueLoad(vec->getElementAsConstant(i));
+      if (const Constant *c = dyn_cast<Constant>(left)) {
+        if (const ConstantVector *vec = dyn_cast<ConstantVector>(left)) {
+          if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
+            printValueLoad(vec->getAggregateElement((unsigned) 0));
+          } else {
+            printValueLoad(vec->getAggregateElement(i));
+          }
+        } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
+          printValueLoad(vec->getElementAsConstant(i));
+        } else {
+          std::stringstream err_msg;
+          err_msg << "Invalid left constant value type: Type=" << getTypeIDName(left->getType());
+          lljvm_unreachable(err_msg.str());
+        }
       } else {
+        // We assume a pointer case here
         printValueLoad(left);
         int lsize = targetData->getTypeAllocSize(leftSeqTy->getElementType());
         printSimpleInstruction("ldc2_w", utostr(i * lsize));
         printSimpleInstruction("ladd");
         printIndirectLoad(leftSeqTy->getElementType());
       }
-
-      if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
-        printValueLoad(vec->getElementAsConstant(i));
+      if (const Constant *c = dyn_cast<Constant>(right)) {
+        if (const ConstantVector *vec = dyn_cast<ConstantVector>(right)) {
+          if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
+            printValueLoad(vec->getAggregateElement((unsigned) 0));
+          } else {
+            printValueLoad(vec->getAggregateElement(i));
+          }
+        } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
+          printValueLoad(vec->getElementAsConstant(i));
+        } else {
+          std::stringstream err_msg;
+          err_msg << "Invalid right constant value type: Type=" << getTypeIDName(right->getType());
+          lljvm_unreachable(err_msg.str());
+        }
       } else {
+        // We assume a pointer case here
         printValueLoad(right);
         int rsize = targetData->getTypeAllocSize(rightSeqTy->getElementType());
         printSimpleInstruction("ldc2_w", utostr(i * rsize));
@@ -192,23 +217,48 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
     // TODO: Needs to support vector computation?
-    for (int i = 0; i < seqTy->getNumElements(); i++) {
+    for (unsigned i = 0; i < seqTy->getNumElements(); i++) {
       printSimpleInstruction("dup2");
       printSimpleInstruction("ldc2_w", utostr(i * size));
       printSimpleInstruction("ladd");
 
-      if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
-        printValueLoad(vec->getElementAsConstant(i));
+      if (const Constant *c = dyn_cast<Constant>(left)) {
+        if (const ConstantVector *vec = dyn_cast<ConstantVector>(left)) {
+          if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
+            printValueLoad(vec->getAggregateElement((unsigned) 0));
+          } else {
+            printValueLoad(vec->getAggregateElement(i));
+          }
+        } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
+          printValueLoad(vec->getElementAsConstant(i));
+        } else {
+          std::stringstream err_msg;
+          err_msg << "Invalid left constant value type: Type=" << getTypeIDName(left->getType());
+          lljvm_unreachable(err_msg.str());
+        }
       } else {
+        // We assume a pointer case here
         printValueLoad(left);
         printSimpleInstruction("ldc2_w", utostr(i * size));
         printSimpleInstruction("ladd");
         printIndirectLoad(seqTy->getElementType());
       }
-
-      if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
-        printValueLoad(vec->getElementAsConstant(i));
+      if (const Constant *c = dyn_cast<Constant>(right)) {
+        if (const ConstantVector *vec = dyn_cast<ConstantVector>(right)) {
+          if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
+            printValueLoad(vec->getAggregateElement((unsigned) 0));
+          } else {
+            printValueLoad(vec->getAggregateElement(i));
+          }
+        } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
+          printValueLoad(vec->getElementAsConstant(i));
+        } else {
+          std::stringstream err_msg;
+          err_msg << "Invalid right constant value type: Type=" << getTypeIDName(right->getType());
+          lljvm_unreachable(err_msg.str());
+        }
       } else {
+        // We assume a pointer case here
         printValueLoad(right);
         printSimpleInstruction("ldc2_w", utostr(i * size));
         printSimpleInstruction("ladd");

@@ -123,7 +123,16 @@ void JVMWriter::printConstLoad(const Constant *c) {
       printConstLoad(fp->getValueAPF().convertToDouble());
     }
   } else if (isa<UndefValue>(c)) {
+    // TODO: Revisit this: this can be correctly handled?
     printPtrLoad(0);
+  } else if (isa<ConstantVector>(c)) {
+    std::stringstream err_msg;
+    err_msg << "Invalid ConstantVector value: Value=" + getValueName(c);
+    lljvm_unreachable(err_msg.str());
+  } else if (isa<ConstantDataVector>(c)) {
+    std::stringstream err_msg;
+    err_msg << "Invalid ConstantDataVector value: Value=" + getValueName(c);
+    lljvm_unreachable(err_msg.str());
   } else {
     std::stringstream err_msg;
     err_msg << "Invalid constant value: Type=" << getTypeIDName(c->getType());
