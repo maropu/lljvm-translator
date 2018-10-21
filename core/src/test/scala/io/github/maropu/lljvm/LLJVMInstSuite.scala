@@ -17,7 +17,7 @@
 
 package io.github.maropu.lljvm
 
-import java.lang.{Boolean => jBoolean, Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong}
+import java.lang.{Boolean => jBoolean, Double => jDouble, Float => jFloat, Integer => jInt, Long => jLong, Short => jShort}
 import java.nio.charset.{StandardCharsets => Charsets}
 
 import scala.reflect.ClassTag
@@ -44,10 +44,16 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     def getValue(i: Int): Any = implicitly[ClassTag[T]].runtimeClass match {
       case t if t == jBoolean.TYPE =>
         Platform.getBoolean(null, result + i)
+      case t if t == jShort.TYPE =>
+        Platform.getShort(null, result + 2 * i)
       case t if t == jInt.TYPE =>
         Platform.getInt(null, result + 4 * i)
+      case t if t == jLong.TYPE =>
+        Platform.getLong(null, result + 8 * i)
       case t if t == jFloat.TYPE =>
         Platform.getFloat(null, result + 4 * i)
+      case t if t == jDouble.TYPE =>
+        Platform.getDouble(null, result + 8 * i)
     }
     expected.zipWithIndex.foreach { case (v, i) =>
       assert(getValue(i) === v, s": test=$name index=$i")
@@ -373,6 +379,9 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
         },
         argTypes = jLong.TYPE :: jLong.TYPE :: Nil,
         expected = 4 :: 4 :: 6 :: 6 :: 2 :: 2 :: 0 :: 0 :: Nil)
+      vectorTypeTest("_shufflevector5", clazz, obj,
+        args = new jLong(ArrayUtils.addressOf(Array(1L, 2L, 3L, 4L))) :: Nil,
+        expected = 3L :: 4L :: 0L :: 0L :: Nil)
     }),
 
     ("extractvalue", (clazz, obj) => {

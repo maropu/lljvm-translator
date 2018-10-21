@@ -705,12 +705,37 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
         printIndirectStore(vec1Ty->getElementType());
       }
     } else if (const ConstantVector *mask = dyn_cast<ConstantVector>(inst->getOperand(2))) {
-      // uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
-      // printSimpleInstruction("bipush", utostr(vecSize * vecTy->getNumElements()));
-      // printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-      std::stringstream err_msg;
-      err_msg << "Unsupported mask type: Type=" << getTypeIDName(mask->getType());
-      throw err_msg.str();
+      // Computes the number of elements for `ConstantVector`
+      unsigned numElements = 0;
+      for (unsigned i = 0; NULL != mask->getAggregateElement(i); i++) {
+        numElements++;
+      }
+      printSimpleInstruction("bipush", utostr(vecElemSize * numElements));
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+      for (int i = 0; i < numElements; i++) {
+        // Locate a store position
+        printSimpleInstruction("dup2");
+        printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
+        printSimpleInstruction("ladd");
+
+        // Load a value....
+        if (const UndefValue *undef = dyn_cast<UndefValue>(mask->getAggregateElement(i))) {
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(vec1Ty->getElementType(), true), "i");
+        } else {
+          // Load from a given index
+          const Constant *elem = mask->getAggregateElement(i);
+          printValueLoad(vec1);
+          printSimpleInstruction("ldc2_w", utostr(vecElemSize));
+          printValueLoad(mask->getAggregateElement(i));
+          printCastInstruction("l", getTypePrefix(elem->getType(), true));
+          printSimpleInstruction("lmul");
+          printSimpleInstruction("ladd");
+          printIndirectLoad(vec1Ty->getElementType());
+        }
+        // Then, store it
+        printIndirectStore(vec1Ty->getElementType());
+      }
     } else {
       std::stringstream err_msg;
       err_msg << "Unsupported mask type: Type=" << getTypeIDName(inst->getOperand(2)->getType());
