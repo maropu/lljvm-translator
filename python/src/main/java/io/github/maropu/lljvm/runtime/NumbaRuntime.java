@@ -49,6 +49,11 @@ public final class NumbaRuntime implements RuntimeInterface {
     add("_numba_get_np_random_state");
     add("_numba_rnd_shuffle");
 
+    // Math functions
+    add("_tanf");
+    add("_tan");
+    add("_acos");
+
     // For Numpy dot
     add("_numba_xxdot");
     add("_numba_xxgemv");
@@ -390,6 +395,18 @@ public final class NumbaRuntime implements RuntimeInterface {
 
   public static long _numba_get_np_random_state() {
     return _rnd_state_t.get();
+  }
+
+  public static float _tanf(float d) {
+    return (float) Math.tan(d);
+  }
+
+  public static double _tan(double d) {
+    return Math.tan(d);
+  }
+
+  public static double _acos(double d) {
+    return Math.acos(d);
   }
 
   public static void _numba_rnd_shuffle(long stateAddr) {

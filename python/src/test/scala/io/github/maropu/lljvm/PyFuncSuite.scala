@@ -506,31 +506,31 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   // TODO: Needs to implement unsupported LLVM instructions
   ignore("numba - ra24 (not supported)") {
-    val floatX = pyArray1.`with`(Array(45.0f, 45.0f, 45.0f, 45.0f))
+    val floatX = pyArray1.`with`(Array(20.0f, 24.0f, 16.0f, 28.0f))
     val result1 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/ra_numba-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/ra24.py",
-      argTypes = Seq(jLong.TYPE, jLong.TYPE),
+      argTypes = Seq(jInt.TYPE, jLong.TYPE),
       arguments = Seq(
-        new jInt(240),            // doy
-        new jLong(floatX.addr())  // lat
+        new jInt(4),             // doy
+        new jLong(floatX.addr()) // lat
       )
     )
     val resultArray1 = new PyArrayHolder(result1).floatArray()
-    assert(resultArray1 === Seq())
+    assert(resultArray1 === Seq(0.0f, 0.0f, 0.0f, 0.0f))
 
-    val doubleX = pyArray1.`with`(Array(45.0, 45.0, 45.0, 45.0))
+    val doubleX = pyArray1.`with`(Array(20.0, 24.0, 16.0, 28.0))
     val result2 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/ra_numba-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/ra24.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(
-        new jLong(240),           // doy
+        new jLong(4),             // doy
         new jLong(doubleX.addr()) // lat
       )
     )
     val resultArray2 = new PyArrayHolder(result2).doubleArray()
-    assert(resultArray2 === Seq())
+    assert(resultArray2 === Seq(0.0, 0.0, 0.0, 0.0))
   }
 
   ignore("numba - movemean (not supported)") {
