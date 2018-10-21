@@ -342,7 +342,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
         new jDouble(0.1))          // alphaN
     )
     val doubleArray = new PyArrayHolder(result).doubleArray()
-    assert(doubleArray === Seq())
+    assert(doubleArray === Seq(0.0, 0.0))
   }
 
   ignore("numba - logistic regression (not supported)") {
@@ -360,7 +360,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
         new jLong(100))            // iterations
     )
     val doubleArray = new PyArrayHolder(result).doubleArray()
-    assert(doubleArray === Seq())
+    assert(doubleArray === Seq(0.0, 0.0))
   }
 
   ignore("numba - blur image (not supported)") {
@@ -375,7 +375,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
         new jLong(doubleY.addr())) // filt
     )
     val doubleArray = new PyArrayHolder(result).doubleArray()
-    assert(doubleArray === Seq())
+    assert(doubleArray === Seq(0.0, 0.0, 0.0, 0.0))
   }
 
   test("NumPy - bubble sort") {
@@ -424,31 +424,26 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  // TODO: Needs to implement unsupported LLVM instructions
-  ignore("numba - laplace2d") {
+  ignore("numba - laplace2d (not supported)") {
     val floatX = pyArray1.`with`(Array(1.0f, 1.0f, 1.0f, 1.0f)).reshape(2, 2)
-    val floatY = pyArray2.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f)).reshape(2, 2)
-    TestUtils.doTest2[Float](
+    val floatY = pyArray2.`with`(Array(3.0f, 1.0f, 2.0f, 4.0f)).reshape(2, 2)
+    val result1 = TestUtils.doTest2[Float](
       bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/laplace2d.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
       expected = Some(0.0f)
     )
-    val resultArray1 = floatY.floatArray()
-    assert(resultArray1 === Seq())
 
-    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
-    val doubleY = pyArray2.`with`(Array(0.0, 0.0, 0.0, 0.0)).reshape(2, 2)
+    val doubleX = pyArray1.`with`(Array(0.0, 0.0, 0.0, 0.0)).reshape(2, 2)
+    val doubleY = pyArray2.`with`(Array(3.0, 1.0, 2.0, 4.0)).reshape(2, 2)
     TestUtils.doTest2[Double](
       bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/laplace2d.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
-      expected = Some(0.0)
+      arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr())),
+      expected = Some(0.0f)
     )
-    val resultArray2 = floatX.floatArray()
-    assert(resultArray2 === Seq())
   }
 
   ignore("numba - mandel (not supported)") {
@@ -510,7 +505,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   }
 
   // TODO: Needs to implement unsupported LLVM instructions
-  ignore("numba - ra24") {
+  ignore("numba - ra24 (not supported)") {
     val floatX = pyArray1.`with`(Array(45.0f, 45.0f, 45.0f, 45.0f))
     val result1 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/ra_numba-numba-cfunc-float32.bc",
@@ -569,6 +564,6 @@ class PyFuncSuite extends LLJVMFuncSuite {
       )
     )
     val resultArray2 = doubleY.doubleArray()
-    assert(resultArray2 === Seq())
+    assert(resultArray2 === Seq(0.0, 0.0, 0.0, 0.0))
   }
 }

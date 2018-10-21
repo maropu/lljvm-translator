@@ -796,6 +796,9 @@ void JVMWriter::printMemIntrinsic(const MemIntrinsic *inst) {
 
 void JVMWriter::printMathIntrinsic(unsigned int op) {
   switch (op) {
+    case Intrinsic::fabs:
+      printSimpleInstruction("invokestatic", "java/lang/Math/abs(D)D");
+      break;
     case Intrinsic::exp:
       printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
       break;
@@ -810,6 +813,12 @@ void JVMWriter::printMathIntrinsic(unsigned int op) {
       break;
     case Intrinsic::pow:
       printSimpleInstruction("invokestatic", "java/lang/Math/pow(DD)D");
+      break;
+    case Intrinsic::sin:
+      printSimpleInstruction("invokestatic", "java/lang/Math/sin(D)D");
+      break;
+    case Intrinsic::cos:
+      printSimpleInstruction("invokestatic", "java/lang/Math/cos(D)D");
       break;
   }
 }

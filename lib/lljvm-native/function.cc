@@ -183,7 +183,12 @@ void JVMWriter::printFunctionCall(const Value *functionVal, const Instruction *i
 
 void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
   // See IR/IntrinsicEnums.inc
+  //
+  // TODO: Adds more Intrinsic functions:
+  //  - https://releases.llvm.org/7.0.0/docs/LangRef.html#intrinsic-functions
   switch (inst->getIntrinsicID()) {
+    // Standard C Library Intrinsics
+    //  - https://releases.llvm.org/7.0.0/docs/LangRef.html#standard-c-library-intrinsics
     case Intrinsic::vastart:
     case Intrinsic::vacopy:
     case Intrinsic::vaend:
@@ -200,11 +205,14 @@ void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
     case Intrinsic::dbg_declare:
       // Ignores debugging intrinsics
       break;
+    case Intrinsic::fabs:
     case Intrinsic::pow:
     case Intrinsic::exp:
     case Intrinsic::log10:
     case Intrinsic::log:
     case Intrinsic::sqrt:
+    case Intrinsic::sin:
+    case Intrinsic::cos:
       printMathIntrinsic(inst);
       break;
     case Intrinsic::bswap:
@@ -225,13 +233,13 @@ void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
     case Intrinsic::eh_typeid_for:
     case Intrinsic::eh_unwind_init: {
       std::stringstream err_msg;
-      err_msg << "Unsupported intrinsic function for error handling (Intrinsic::eh_XXX)";
+      err_msg << "Unsupported intrinsic function for error handling (Name::eh_XXX)";
       throw err_msg.str();
     }
 
     default: {
       std::stringstream err_msg;
-      err_msg << "Unsupported intrinsic function: Intrinsic=" << inst->getIntrinsicID();
+      err_msg << "Unsupported intrinsic function: Name=" << Intrinsic::getName(inst->getIntrinsicID()).str();
       throw err_msg.str();
     }
   }
