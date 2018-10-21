@@ -133,10 +133,9 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       vectorTypeTest("_fsub8", clazz, obj,
         args = new jLong(ArrayUtils.addressOf(Array(2.0f, 1.0f, 0.0f, 3.0f))) :: Nil,
         expected = 3.0f :: 4.0f :: 0.0f :: 5.0f :: Nil)
-      // TODO: Needs to fix this test failure
-      // vectorTypeTest("_fsub9", clazz, obj,
-      //   args = new jLong(ArrayUtils.addressOf(Array(1.0f, 4.0f, 2.0f, 0.0f))) :: Nil,
-      //   expected = 0.0f :: 0.0f :: 0.0f :: 0.0f :: Nil)
+      vectorTypeTest("_fsub9", clazz, obj,
+        args = new jLong(ArrayUtils.addressOf(Array(1.0f, 4.0f, 2.0f, 0.0f))) :: Nil,
+        expected = 1.0f :: 4.0f :: 2.0f :: 0.0f :: Nil)
     }),
 
     ("fmul", (clazz, obj) => {
