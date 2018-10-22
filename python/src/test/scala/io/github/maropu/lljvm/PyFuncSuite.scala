@@ -326,7 +326,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     }
   }
 
-  ignore("numba - linear regression (not supported)") {
+  ignore("numba - linear regression (NEEDS TO BE FIXED)") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
@@ -345,7 +345,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(doubleArray === Seq(0.0, 0.0))
   }
 
-  ignore("numba - logistic regression (not supported)") {
+  ignore("numba - logistic regression (NEEDS TO BE FIXED)") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
@@ -363,7 +363,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(doubleArray === Seq(0.0, 0.0))
   }
 
-  ignore("numba - blur image (not supported)") {
+  ignore("numba - blur image (NEEDS TO BE FIXED)") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val result = TestUtils.doTest2[Long](
@@ -404,7 +404,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(1.0, 2.0, 3.0, 4.0))
   }
 
-  ignore("numba - kernel density estimation (not supported)") {
+  ignore("numba - kernel density estimation (NEEDS TO BE FIXED)") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     TestUtils.doTest2[Float](
       bitcode = s"$basePath/kde-numba-cfunc-float32.bc",
@@ -424,7 +424,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  ignore("numba - laplace2d (not supported)") {
+  ignore("numba - laplace2d (NEEDS TO BE FIXED)") {
     val floatX = pyArray1.`with`(Array(1.0f, 1.0f, 1.0f, 1.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(3.0f, 1.0f, 2.0f, 4.0f)).reshape(2, 2)
     val result1 = TestUtils.doTest2[Float](
@@ -446,7 +446,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  ignore("numba - mandel (not supported)") {
+  ignore("numba - mandel (NEEDS TO BE FIXED)") {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
     val result = TestUtils.doTest2[Long](
       bitcode = s"$basePath/create_fractal-numba-cfunc-float64.bc",
@@ -466,7 +466,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray === Seq(2.0, 2.0, 3.0, 5.0))
   }
 
-  ignore("numba - pi (not supported)") {
+  ignore("numba - pi (NEEDS TO BE FIXED)") {
     val result1 = TestUtils.doTest2[Float](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/pi.py",
@@ -505,7 +505,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   }
 
   // TODO: Needs to implement unsupported LLVM instructions
-  ignore("numba - ra24 (not supported)") {
+  ignore("numba - ra24 (NEEDS TO BE FIXED)") {
     val floatX = pyArray1.`with`(Array(20.0f, 24.0f, 16.0f, 28.0f))
     val result1 = TestUtils.doTest2[Long](
       bitcode = s"$basePath/ra_numba-numba-cfunc-float32.bc",
@@ -533,7 +533,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(0.0, 0.0, 0.0, 0.0))
   }
 
-  ignore("numba - movemean (not supported)") {
+  ignore("numba - movemean (NEEDS TO BE FIXED)") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray1.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f))
     val intX = pyArray1.`with`(Array(1, 2, 3, 4))
