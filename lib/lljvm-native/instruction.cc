@@ -830,23 +830,8 @@ void JVMWriter::printMemIntrinsic(const MemIntrinsic *inst) {
 
 void JVMWriter::printMathIntrinsic(unsigned int op) {
   switch (op) {
-    case Intrinsic::fabs:
-      printSimpleInstruction("invokestatic", "java/lang/Math/abs(D)D");
-      break;
-    case Intrinsic::exp:
-      printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
-      break;
-    case Intrinsic::log:
-      printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
-      break;
-    case Intrinsic::log10:
-      printSimpleInstruction("invokestatic", "java/lang/Math/log10(D)D");
-      break;
     case Intrinsic::sqrt:
       printSimpleInstruction("invokestatic", "java/lang/Math/sqrt(D)D");
-      break;
-    case Intrinsic::pow:
-      printSimpleInstruction("invokestatic", "java/lang/Math/pow(DD)D");
       break;
     case Intrinsic::sin:
       printSimpleInstruction("invokestatic", "java/lang/Math/sin(D)D");
@@ -854,6 +839,46 @@ void JVMWriter::printMathIntrinsic(unsigned int op) {
     case Intrinsic::cos:
       printSimpleInstruction("invokestatic", "java/lang/Math/cos(D)D");
       break;
+    case Intrinsic::pow:
+      printSimpleInstruction("invokestatic", "java/lang/Math/pow(DD)D");
+      break;
+    case Intrinsic::exp:
+      printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
+      break;
+    case Intrinsic::exp2:
+    case Intrinsic::log:
+      printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
+      break;
+    case Intrinsic::log10:
+      printSimpleInstruction("invokestatic", "java/lang/Math/log10(D)D");
+      break;
+    case Intrinsic::log2: // Math.log(x) / Math.log(2)
+      printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
+      printConstLoad(2.0);
+      printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
+      printSimpleInstruction("ddiv");
+      break;
+    case Intrinsic::fabs:
+      printSimpleInstruction("invokestatic", "java/lang/Math/abs(D)D");
+      break;
+    case Intrinsic::floor:
+      printSimpleInstruction("invokestatic", "java/lang/Math/floor(D)D");
+      break;
+    case Intrinsic::ceil:
+      printSimpleInstruction("invokestatic", "java/lang/Math/ceil(D)D");
+      break;
+    case Intrinsic::rint:
+      printSimpleInstruction("invokestatic", "java/lang/Math/rint(D)D");
+      break;
+    case Intrinsic::round:
+      printSimpleInstruction("invokestatic", "java/lang/Math/round(D)J");
+      printCastInstruction("d", "l");
+      break;
+
+    // TODO: Unsupported math intrinsic functions below
+    case Intrinsic::powi:
+    case Intrinsic::trunc:
+    case Intrinsic::nearbyint:
     default:
       std::stringstream err_msg;
       err_msg << "Unsupported math intrinsic function: Name=" << Intrinsic::getName((Intrinsic::ID) op).str();
@@ -861,6 +886,8 @@ void JVMWriter::printMathIntrinsic(unsigned int op) {
   }
 }
 
+// TODO: Needs to support Intrinsic::fma, Intrinsic::minnum, Intrinsic::maxnum,
+// and Intrinsic::copysign here.
 void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
   assert(inst->getNumOperands() >= 2 && inst->getNumOperands() <= 3);
   // First, we need to check if the input is a vector type or not
@@ -949,6 +976,14 @@ void JVMWriter::printBitIntrinsic(const IntrinsicInst *inst) {
     case Intrinsic::bswap:
       printVirtualInstruction("bswap(" + typeDescriptor + ")" + typeDescriptor, value);
       break;
+
+    // TODO: Unsupported bit intrinsic functions below
+    case Intrinsic::bitreverse:
+    case Intrinsic::ctpop:
+    case Intrinsic::ctlz:
+    case Intrinsic::cttz:
+    case Intrinsic::fshl:
+    case Intrinsic::fshr:
     default:
       std::stringstream err_msg;
       err_msg << "Unsupported bit intrinsic function: Name=" << Intrinsic::getName(inst->getIntrinsicID()).str();
