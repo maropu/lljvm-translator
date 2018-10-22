@@ -396,7 +396,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       val addr = ArrayUtils.addressOf(ar)
       assert(method.invoke(obj, Seq(new jLong(addr)): _*) === addr)
       assert(ar(1) === 7.0)
-    })
+    }),
 
     // ("atomicrmw", (clazz, obj) => {
     //   // add
@@ -413,7 +413,17 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     //
     //   // TODO: Adds tests for instructions below:
     //   // atomicrmw (xchg, and, nand, or, xor, max, min, umax, umin)
-    // })
+    // }),
+
+    ("intrinsics", (clazz, obj) => {
+      // math intrinsic functions
+      Seq(("log2", 32.0f, 5.0f), ("round", 3.8f, 4.0f)).foreach { case (func, input, expected) =>
+        val method1 = LLJVMUtils.getMethod(clazz, s"_${func}_f32", Seq(jFloat.TYPE): _*)
+        assert(method1.invoke(obj, Seq(new jFloat(input)): _*) === expected)
+        val method2 = LLJVMUtils.getMethod(clazz, s"_${func}_f64", Seq(jDouble.TYPE): _*)
+        assert(method2.invoke(obj, Seq(new jDouble(input)): _*) === expected)
+      }
+    })
   ).foreach { case (inst, testFunc) =>
 
     test(s"basic LLJVM translation test - $inst") {

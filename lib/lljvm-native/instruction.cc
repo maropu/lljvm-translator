@@ -845,7 +845,6 @@ void JVMWriter::printMathIntrinsic(unsigned int op) {
     case Intrinsic::exp:
       printSimpleInstruction("invokestatic", "java/lang/Math/exp(D)D");
       break;
-    case Intrinsic::exp2:
     case Intrinsic::log:
       printSimpleInstruction("invokestatic", "java/lang/Math/log(D)D");
       break;
@@ -876,6 +875,7 @@ void JVMWriter::printMathIntrinsic(unsigned int op) {
       break;
 
     // TODO: Unsupported math intrinsic functions below
+    case Intrinsic::exp2:
     case Intrinsic::powi:
     case Intrinsic::trunc:
     case Intrinsic::nearbyint:
