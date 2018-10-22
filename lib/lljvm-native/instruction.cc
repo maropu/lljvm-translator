@@ -59,7 +59,7 @@ static std::string getPredicate(unsigned int predicate) {
     case FCmpInst::FCMP_UNO: inst = "fcmp_uno"; break;
     default:
       std::stringstream err_msg;
-      err_msg << "Invalid cmp predicate: Predicate=" << predicate;
+      err_msg << "Unknown cmp predicate: Predicate=" << predicate;
       lljvm_unreachable(err_msg.str());
   }
   return inst;
@@ -97,7 +97,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
           printCastInstruction(getTypePrefix(leftSeqTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
-          err_msg << "Invalid left constant value type: Type=" << getTypeIDName(left->getType());
+          err_msg << "Unknown left constant value type: Type=" << getTypeIDName(left->getType());
           lljvm_unreachable(err_msg.str());
         }
       } else {
@@ -122,7 +122,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
           printCastInstruction(getTypePrefix(rightSeqTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
-          err_msg << "Invalid right constant value type: Type=" << getTypeIDName(right->getType());
+          err_msg << "Unknown right constant value type: Type=" << getTypeIDName(right->getType());
           lljvm_unreachable(err_msg.str());
         }
       } else {
@@ -242,7 +242,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
           printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
-          err_msg << "Invalid left constant value type: Type=" << getTypeIDName(left->getType());
+          err_msg << "Unknown left constant value type: Type=" << getTypeIDName(left->getType());
           lljvm_unreachable(err_msg.str());
         }
       } else {
@@ -266,7 +266,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
           printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
-          err_msg << "Invalid right constant value type: Type=" << getTypeIDName(right->getType());
+          err_msg << "Unknown right constant value type: Type=" << getTypeIDName(right->getType());
           lljvm_unreachable(err_msg.str());
         }
       } else {
@@ -357,7 +357,7 @@ void JVMWriter::printCastInstruction(unsigned int op, const Type *srcTy, const T
       printBitCastInstruction(destTy, srcTy); break;
     default:
       std::stringstream err_msg;
-      err_msg << "Invalid cast instruction: Opcode=" << op;
+      err_msg << "Unknown cast instruction: Opcode=" << op;
       lljvm_unreachable(err_msg.str());
   }
 }
@@ -514,7 +514,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
       printIndirectLoad(aggType);
     } else {
       std::stringstream err_msg;
-      err_msg << "Invalid type: Type=" << getTypeIDName(aggType);
+      err_msg << "Unknown type: Type=" << getTypeIDName(aggType);
       lljvm_unreachable(err_msg.str());
     }
   }
@@ -612,7 +612,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     }
   } else {
     std::stringstream err_msg;
-    err_msg << "Invalid type: Type=" << getTypeIDName(aggType);
+    err_msg << "Unknown type: Type=" << getTypeIDName(aggType);
     lljvm_unreachable(err_msg.str());
   }
 }
@@ -636,6 +636,7 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
       printIndirectStore(vecTy->getElementType());
     }
   } else {
+    // TODO: If an one-side argument is undef, we don't copy input data
     unsigned numInputElems = 0;
     const Value *vec1 = inst->getOperand(0);
     const SequentialType *vec1Ty = cast<SequentialType>(vec1->getType());
@@ -738,7 +739,7 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
       }
     } else {
       std::stringstream err_msg;
-      err_msg << "Unsupported mask type: Type=" << getTypeIDName(inst->getOperand(2)->getType());
+      err_msg << "Unknown mask type: Type=" << getTypeIDName(inst->getOperand(2)->getType());
       lljvm_unreachable(err_msg.str());
     }
   }
@@ -761,7 +762,7 @@ void JVMWriter::printAtomicRMW(const AtomicRMWInst *inst) {
       break;
     default:
       std::stringstream err_msg;
-      err_msg << "Unsupported Atomic operation: " << inst->getOperation();
+      err_msg << "Unknown Atomic operation: " << inst->getOperation();
       lljvm_unreachable(err_msg.str());
   }
   printIndirectStore(inst->getValOperand()->getType());
@@ -787,6 +788,10 @@ void JVMWriter::printVAIntrinsic(const IntrinsicInst *inst) {
       break;
     case Intrinsic::vaend:
       break;
+    default:
+      std::stringstream err_msg;
+      err_msg << "Unknown vararg intrinsic function: Name=" << Intrinsic::getName(inst->getIntrinsicID()).str();
+      lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -816,6 +821,10 @@ void JVMWriter::printMemIntrinsic(const MemIntrinsic *inst) {
       printSimpleInstruction(
         "invokestatic", "io/github/maropu/lljvm/runtime/VMemory/memset(JB" + lenDescriptor + "I)V");
       break;
+    default:
+      std::stringstream err_msg;
+      err_msg << "Unknown mem intrinsic function: Name=" << Intrinsic::getName(inst->getIntrinsicID()).str();
+      lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -845,6 +854,10 @@ void JVMWriter::printMathIntrinsic(unsigned int op) {
     case Intrinsic::cos:
       printSimpleInstruction("invokestatic", "java/lang/Math/cos(D)D");
       break;
+    default:
+      std::stringstream err_msg;
+      err_msg << "Unsupported math intrinsic function: Name=" << Intrinsic::getName((Intrinsic::ID) op).str();
+      throw err_msg.str();
   }
 }
 
@@ -933,9 +946,12 @@ void JVMWriter::printBitIntrinsic(const IntrinsicInst *inst) {
   const Value *value = inst->getOperand(1);
   const std::string typeDescriptor = getTypeDescriptor(value->getType());
   switch (inst->getIntrinsicID()) {
-  case Intrinsic::bswap:
-    printVirtualInstruction(
-      "bswap(" + typeDescriptor + ")" + typeDescriptor, value);
-    break;
+    case Intrinsic::bswap:
+      printVirtualInstruction("bswap(" + typeDescriptor + ")" + typeDescriptor, value);
+      break;
+    default:
+      std::stringstream err_msg;
+      err_msg << "Unsupported bit intrinsic function: Name=" << Intrinsic::getName(inst->getIntrinsicID()).str();
+      throw err_msg.str();
   }
 }

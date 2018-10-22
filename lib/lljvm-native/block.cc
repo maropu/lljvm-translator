@@ -175,9 +175,6 @@ void JVMWriter::printInstruction(const Instruction *inst) {
 
     // TODO: LLVM 7.x unsupported instructions are listed below and
     // need to be supported in future.
-    case Instruction::Invoke:
-    //   printInvokeInstruction(cast<InvokeInst>(inst));
-    //   break;
     case Instruction::AtomicCmpXchg:
     case Instruction::AddrSpaceCast:
     case Instruction::IndirectBr: {
@@ -188,6 +185,9 @@ void JVMWriter::printInstruction(const Instruction *inst) {
     }
     // LLVM exception handling instruction are listed below:
     // - https://releases.llvm.org/7.0.0/docs/ExceptionHandling.html#overview
+    case Instruction::Invoke:
+    //   printInvokeInstruction(cast<InvokeInst>(inst));
+    //   break;
     case Instruction::Resume:
     case Instruction::CatchSwitch:
     case Instruction::CatchRet:

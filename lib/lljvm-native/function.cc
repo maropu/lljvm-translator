@@ -93,11 +93,6 @@ void JVMWriter::printOperandPack(
 //      dstore 554 ; __34_le_i_3
 //
 void JVMWriter::printDirectFunctionCall(const Instruction *inst, const Function *f) {
-  std::stringstream err_msg;
-  err_msg << "Unsupported direct function calls";
-  throw err_msg.str();
-
-  // TODO: Need to implement a direct function call
   const FunctionType *fTy = f->getFunctionType();
   for (unsigned int i = 0, e = fTy->getNumParams(); i < e; i++) {
     printValueLoad(inst->getOperand(i));
@@ -184,64 +179,66 @@ void JVMWriter::printFunctionCall(const Value *functionVal, const Instruction *i
 void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
   // See IR/IntrinsicEnums.inc
   //
-  // TODO: Adds more Intrinsic functions:
+  // TODO: Support more Intrinsic functions:
   //  - https://releases.llvm.org/7.0.0/docs/LangRef.html#intrinsic-functions
   switch (inst->getIntrinsicID()) {
-    // Standard C Library Intrinsics
-    //  - https://releases.llvm.org/7.0.0/docs/LangRef.html#standard-c-library-intrinsics
+    // Variable Argument Handling Intrinsics
     case Intrinsic::vastart:
-    case Intrinsic::vacopy:
     case Intrinsic::vaend:
+    case Intrinsic::vacopy:
       printVAIntrinsic(inst);
       break;
+
+    // Standard C Library Intrinsics
     case Intrinsic::memcpy:
     case Intrinsic::memmove:
     case Intrinsic::memset:
       printMemIntrinsic(cast<MemIntrinsic>(inst));
       break;
-    case Intrinsic::flt_rounds:
-      printSimpleInstruction("iconst_m1");
-      break;
-    case Intrinsic::dbg_declare:
-      // Ignores debugging intrinsics
-      break;
-    case Intrinsic::fabs:
-    case Intrinsic::pow:
-    case Intrinsic::exp:
-    case Intrinsic::log10:
-    case Intrinsic::log:
     case Intrinsic::sqrt:
+    case Intrinsic::powi:
     case Intrinsic::sin:
     case Intrinsic::cos:
+    case Intrinsic::pow:
+    case Intrinsic::exp:
+    case Intrinsic::exp2:
+    case Intrinsic::log:
+    case Intrinsic::log10:
+    case Intrinsic::log2:
+    case Intrinsic::fma:
+    case Intrinsic::fabs:
+    case Intrinsic::minnum:
+    case Intrinsic::maxnum:
+    case Intrinsic::copysign:
+    case Intrinsic::floor:
+    case Intrinsic::ceil:
+    case Intrinsic::trunc:
+    case Intrinsic::rint:
+    case Intrinsic::nearbyint:
+    case Intrinsic::round:
       printMathIntrinsic(inst);
       break;
+
+    // Bit Manipulation Intrinsics
+    case Intrinsic::bitreverse:
     case Intrinsic::bswap:
+    case Intrinsic::ctpop:
+    case Intrinsic::ctlz:
+    case Intrinsic::cttz:
+    case Intrinsic::fshl:
+    case Intrinsic::fshr:
       printBitIntrinsic(inst);
       break;
 
-    case Intrinsic::eh_dwarf_cfa:
-    case Intrinsic::eh_exceptioncode:
-    case Intrinsic::eh_exceptionpointer:
-    case Intrinsic::eh_return_i32:
-    case Intrinsic::eh_return_i64:
-    case Intrinsic::eh_sjlj_callsite:
-    case Intrinsic::eh_sjlj_functioncontext:
-    case Intrinsic::eh_sjlj_longjmp:
-    case Intrinsic::eh_sjlj_lsda:
-    case Intrinsic::eh_sjlj_setjmp:
-    case Intrinsic::eh_sjlj_setup_dispatch:
-    case Intrinsic::eh_typeid_for:
-    case Intrinsic::eh_unwind_init: {
-      std::stringstream err_msg;
-      err_msg << "Unsupported intrinsic function for error handling (Name::eh_XXX)";
-      throw err_msg.str();
-    }
+    // Debugger Intrinsics
+    case Intrinsic::dbg_declare:
+      // Ignores debugging intrinsics
+      break;
 
-    default: {
+    default:
       std::stringstream err_msg;
       err_msg << "Unsupported intrinsic function: Name=" << Intrinsic::getName(inst->getIntrinsicID()).str();
       throw err_msg.str();
-    }
   }
 }
 
