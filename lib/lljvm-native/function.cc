@@ -84,36 +84,6 @@ void JVMWriter::printOperandPack(
   printSimpleInstruction("pop2");
 }
 
-// Handles a direct function call, e.g.,
-//
-// ; %.34.le.i.3 = tail call double @llvm.pow.f64(double %.16.i.3, double 4.000000e+00) #3
-//      dload 552 ; __16_i_3
-//      ldc2_w 4.0000000000000000
-//      invokestatic java/lang/Math/pow(DD)D
-//      dstore 554 ; __34_le_i_3
-//
-void JVMWriter::printDirectFunctionCall(const Instruction *inst, const Function *f) {
-  const FunctionType *fTy = f->getFunctionType();
-  for (unsigned int i = 0, e = fTy->getNumParams(); i < e; i++) {
-    printValueLoad(inst->getOperand(i));
-  }
-  // TODO: Support a function call with variable arguments
-  if (fTy->isVarArg()) {
-    // unsigned int origin = isa<InvokeInst>(inst) ? 3 : 1;
-    // for (unsigned int i = origin, e = inst->getNumOperands(); i < e; i++) {
-    //   printValueLoad(inst->getOperand(i));
-    // }
-    // if (fTy->isVarArg() && inst) {
-    //   printOperandPack(inst, fTy->getNumParams() + origin, inst->getNumOperands());
-    // }
-    std::stringstream err_msg;
-    err_msg << "Unsupported function calls with variable arguments";
-    throw err_msg.str();
-  }
-
-  printSimpleInstruction("invokestatic", classname + "/" + getValueName(f) + getCallSignature(fTy));
-}
-
 // Handles an indirect function call, e.g.,
 //
 // ; External methods
@@ -158,10 +128,9 @@ void JVMWriter::printFunctionCall(const Value *functionVal, const Instruction *i
       const FunctionType *fTy = f->getFunctionType();
       printIndirectFunctionCall(inst, fTy);
     } else {
-      // printDirectFunctionCall(inst, f);
       std::stringstream err_msg;
-      err_msg << "Unsupported direct function calls";
-      throw err_msg.str();
+      err_msg << "Unknown function call: Name=" << f->getName().str();
+      lljvm_unreachable(err_msg.str());
     }
 
     if (getValueName(f) == "setjmp") {
@@ -244,6 +213,14 @@ void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
 
 void JVMWriter::printCallInstruction(const Instruction *inst) {
   if (isa<IntrinsicInst>(inst)) {
+    // All the intrinsic function calls should be called directly, e.g.,
+    //
+    // ; %.34.le.i.3 = tail call double @llvm.pow.f64(double %.16.i.3, double 4.000000e+00) #3
+    //      dload 552 ; __16_i_3
+    //      ldc2_w 4.0000000000000000
+    //      invokestatic java/lang/Math/pow(DD)D
+    //      dstore 554 ; __34_le_i_3
+    //
     printIntrinsicCall(cast<IntrinsicInst>(inst));
   } else {
     printFunctionCall(inst->getOperand(0), inst);
