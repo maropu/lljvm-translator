@@ -27,7 +27,8 @@ import io.github.maropu.lljvm.util.JVMAssembler;
  */
 public class LLJVMTranslator {
 
-  private static int optLevel = 2;
+  // TODO: Uses `-O0` because of unresolved bugs
+  private static int optLevel = 0;
   private static int sizeLevel = 0;
 
   public static void main(String args[]) {

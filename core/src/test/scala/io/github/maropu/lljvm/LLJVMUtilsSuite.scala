@@ -62,20 +62,46 @@ class LLJVMUtilsSuite extends LLJVMFuncSuite {
          |
          |
          |.method public static _add_test(II)I
+         |	lconst_0
+         |	lstore 2
+         |	lconst_0
+         |	lstore 4
          |	iconst_0
-         |	istore 2
+         |	istore 6
+         |	iconst_0
+         |	istore 7
+         |	iconst_0
+         |	istore 8
          |begin_method:
          |	invokestatic io/github/maropu/lljvm/runtime/VMemory/createStackFrame()V
          |label1:
-         |	iload_1 ; _y
+         |	bipush 4
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J
+         |	lstore_2 ; _2
+         |	bipush 4
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J
+         |	lstore 4 ; _4
+         |	lload_2 ; _2
          |	iload_0 ; _x
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/store(JI)V
+         |	lload 4 ; _4
+         |	iload_1 ; _y
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/store(JI)V
+         |	lload_2 ; _2
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/load_i32(J)I
+         |	istore 6 ; _6
+         |	lload 4 ; _4
+         |	invokestatic io/github/maropu/lljvm/runtime/VMemory/load_i32(J)I
+         |	istore 7 ; _7
+         |	iload 6 ; _6
+         |	iload 7 ; _7
          |	iadd
-         |	istore_2 ; _2
+         |	istore 8 ; _8
          |	invokestatic io/github/maropu/lljvm/runtime/VMemory/destroyStackFrame()V
-         |	iload_2 ; _2
+         |	iload 8 ; _8
          |	ireturn
          |	.limit stack 16
-         |	.limit locals 3
+         |	.limit locals 9
          |end_method:
          |.end method
        """.stripMargin)

@@ -56,6 +56,7 @@ public class LLJVMUtils {
   public static String asLLVMAssemblyCode(byte[] bitcode) throws LLJVMRuntimeException {
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
+      // TODO: Uses `-O0` because of unresolved bugs
       return lljvmApi.asLLVMAssemblyCode(bitcode, 0, 0);
     } catch (IOException e) {
       throw new LLJVMRuntimeException(e.getMessage());
@@ -67,7 +68,8 @@ public class LLJVMUtils {
     String jvmAsm = null;
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
-      jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, 2, 0, 0);
+      // TODO: Uses `-O0` because of unresolved bugs
+      jvmAsm = lljvmApi.asJVMAssemblyCode(bitcode, 0, 0, 0);
     } catch (IOException e) {
       throw new LLJVMRuntimeException(e.getMessage());
     }
