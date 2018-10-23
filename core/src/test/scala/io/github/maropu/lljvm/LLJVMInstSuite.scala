@@ -312,7 +312,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
         expected = false :: true :: true :: false :: Nil)
       vectorTypeTest("_icmp5", clazz, obj,
         args = new jLong(ArrayUtils.addressOf(Array(3, 5, 1, 8))) :: Nil,
-        expected = true :: false :: true :: false :: Nil)
+        expected = true :: Nil)
       vectorTypeTest("_icmp6", clazz, obj,
         args = new jLong(ArrayUtils.addressOf(Array(-1, 1, -2, 3))) :: Nil,
         expected = false :: true :: false :: true :: Nil)
@@ -324,7 +324,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
         expected = true :: false :: false :: true :: Nil)
       vectorTypeTest("_icmp9", clazz, obj,
         args = new jLong(ArrayUtils.addressOf(Array(3, 5, 1, 8))) :: Nil,
-        expected = false :: true :: false :: true :: Nil)
+        expected = false :: Nil)
     }),
 
     ("fcmp", (clazz, obj) => {

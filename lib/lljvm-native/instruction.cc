@@ -86,7 +86,9 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       if (const Constant *c = dyn_cast<Constant>(left)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(left)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
-            printValueLoad(vec->getAggregateElement((unsigned) 0));
+            // In case of undef, we set 0
+            printSimpleInstruction("iconst_0");
+            printCastInstruction(getTypePrefix(leftSeqTy->getElementType(), true), "i");
           } else {
             printValueLoad(vec->getAggregateElement(i));
           }
@@ -111,7 +113,9 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       if (const Constant *c = dyn_cast<Constant>(right)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(right)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
-            printValueLoad(vec->getAggregateElement((unsigned) 0));
+            // In case of undef, we set 0
+            printSimpleInstruction("iconst_0");
+            printCastInstruction(getTypePrefix(rightSeqTy->getElementType(), true), "i");
           } else {
             printValueLoad(vec->getAggregateElement(i));
           }
@@ -231,7 +235,9 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
       if (const Constant *c = dyn_cast<Constant>(left)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(left)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
-            printValueLoad(vec->getAggregateElement((unsigned) 0));
+            // In case of undef, we set 0
+            printSimpleInstruction("iconst_0");
+            printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
           } else {
             printValueLoad(vec->getAggregateElement(i));
           }
@@ -255,7 +261,9 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
       if (const Constant *c = dyn_cast<Constant>(right)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(right)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
-            printValueLoad(vec->getAggregateElement((unsigned) 0));
+            // In case of undef, we set 0
+            printSimpleInstruction("iconst_0");
+            printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
           } else {
             printValueLoad(vec->getAggregateElement(i));
           }
