@@ -73,12 +73,12 @@ void JVMWriter::printConstLoad(float f) {
       printSimpleInstruction("fconst_1");
   } else if (f == 2.0) {
       printSimpleInstruction("fconst_2");
-  // } else if (IsNAN(f)) {
-  //   printSimpleInstruction("getstatic", "java/lang/Float/NaN F");
-  // } else if (IsInf(f) > 0) {
-  //   printSimpleInstruction("getstatic", "java/lang/Float/POSITIVE_INFINITY F");
-  // } else if (IsInf(f) < 0) {
-  //   printSimpleInstruction("getstatic", "java/lang/Float/NEGATIVE_INFINITY F");
+  } else if (std::isnan(f)) {
+    printSimpleInstruction("getstatic", "java/lang/Float/NaN F");
+  } else if (std::isinf(f) > 0) {
+    printSimpleInstruction("getstatic", "java/lang/Float/POSITIVE_INFINITY F");
+  } else if (std::isinf(f) < 0) {
+    printSimpleInstruction("getstatic", "java/lang/Float/NEGATIVE_INFINITY F");
   } else {
     std::stringstream strbuf;
     // TODO: Needs to use scientific formats?
@@ -95,13 +95,12 @@ void JVMWriter::printConstLoad(double d) {
     printSimpleInstruction("dconst_0");
   } else if (d == 1.0) {
     printSimpleInstruction("dconst_1");
-  // TODO: Needs to implement
-  // } else if (IsNAN(d)) {
-  //   printSimpleInstruction("getstatic", "java/lang/Double/NaN D");
-  // } else if (IsInf(d) > 0)
-  //   printSimpleInstruction("getstatic", "java/lang/Double/POSITIVE_INFINITY D");
-  // } else if (IsInf(d) < 0) {
-  //   printSimpleInstruction("getstatic", "java/lang/Double/NEGATIVE_INFINITY D");
+  } else if (std::isnan(d)) {
+    printSimpleInstruction("getstatic", "java/lang/Double/NaN D");
+  } else if (std::isinf(d) > 0) {
+    printSimpleInstruction("getstatic", "java/lang/Double/POSITIVE_INFINITY D");
+  } else if (std::isinf(d) < 0) {
+    printSimpleInstruction("getstatic", "java/lang/Double/NEGATIVE_INFINITY D");
   } else {
     std::stringstream strbuf;
     // TODO: Needs to use scientific formats?
