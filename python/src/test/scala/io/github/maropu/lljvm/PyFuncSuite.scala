@@ -262,6 +262,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   ignore("NumPy arange") {
     // int64[:,:]()
+    // TODO: !!UNREACHABLE!! (file=../types.cc line=52) Unsupported integer width: Bits=63
     val result = TestUtils.doTest[Long](
       bitcode = s"$basePath/numpy_arange_test-cfunc-int64.bc",
       source = s"$basePath/numpy_arange_test.py"
