@@ -64,59 +64,59 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
   // - https://releases.llvm.org/7.0.0/docs/LangRef.html#instruction-reference
   Seq[(String, (Class[_], Any) => Unit)](
     ("add", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_add", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val add = LLJVMUtils.getMethod(clazz, "_add", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(1), new jInt(3))
-      assert(method.invoke(obj, args: _*) === 4)
+      assert(add.invoke(obj, args: _*) === 4)
     }),
 
     ("sub", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_sub", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val sub = LLJVMUtils.getMethod(clazz, "_sub", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(8), new jInt(7))
-      assert(method.invoke(obj, args: _*) === 1)
+      assert(sub.invoke(obj, args: _*) === 1)
     }),
 
     ("mul", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_mul", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val mul = LLJVMUtils.getMethod(clazz, "_mul", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(4), new jInt(2))
-      assert(method.invoke(obj, args: _*) === 8)
+      assert(mul.invoke(obj, args: _*) === 8)
     }),
 
     ("ret", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_ret")
-      assert(method.invoke(obj) === 0)
+      val ret = LLJVMUtils.getMethod(clazz, "_ret")
+      assert(ret.invoke(obj) === 0)
     }),
 
     ("br", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_br", Seq(jBoolean.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jBoolean(true)): _*) === 1)
-      assert(method.invoke(obj, Seq(new jBoolean(false)): _*) === 0)
+      val br = LLJVMUtils.getMethod(clazz, "_br", Seq(jBoolean.TYPE): _*)
+      assert(br.invoke(obj, Seq(new jBoolean(true)): _*) === 1)
+      assert(br.invoke(obj, Seq(new jBoolean(false)): _*) === 0)
     }),
 
     ("switch", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_switch", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(0)): _*) === 1)
-      assert(method.invoke(obj, Seq(new jInt(1)): _*) === 2)
-      assert(method.invoke(obj, Seq(new jInt(-1)): _*) === 3)
+      val switch = LLJVMUtils.getMethod(clazz, "_switch", Seq(jInt.TYPE): _*)
+      assert(switch.invoke(obj, Seq(new jInt(0)): _*) === 1)
+      assert(switch.invoke(obj, Seq(new jInt(1)): _*) === 2)
+      assert(switch.invoke(obj, Seq(new jInt(-1)): _*) === 3)
     }),
 
     ("call", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_call", Seq(jDouble.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jDouble(2.0)): _*) === 4.0)
+      val call = LLJVMUtils.getMethod(clazz, "_call", Seq(jDouble.TYPE): _*)
+      assert(call.invoke(obj, Seq(new jDouble(2.0)): _*) === 4.0)
     }),
 
     ("unreachable", (clazz, obj) => {}),
 
     ("fadd", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_fadd", Seq(jDouble.TYPE, jDouble.TYPE): _*)
+      val fadd = LLJVMUtils.getMethod(clazz, "_fadd", Seq(jDouble.TYPE, jDouble.TYPE): _*)
       val args = Seq(new jDouble(9.2), new jDouble(0.8))
-      assert(method.invoke(obj, args: _*) === 10.0)
+      assert(fadd.invoke(obj, args: _*) === 10.0)
     }),
 
     ("fsub", (clazz, obj) => {
       {
-        val method = LLJVMUtils.getMethod(clazz, "_fsub1", Seq(jFloat.TYPE, jFloat.TYPE): _*)
+        val fsub1 = LLJVMUtils.getMethod(clazz, "_fsub1", Seq(jFloat.TYPE, jFloat.TYPE): _*)
         val args = Seq(new jFloat(5.5), new jFloat(1.5))
-        assert(method.invoke(obj, args: _*) === 4.0f)
+        assert(fsub1.invoke(obj, args: _*) === 4.0f)
       }
       vectorTypeTest("_fsub2", clazz, obj,
         args = new jLong(ArrayUtils.addressOf(Array(3.0f, 2.0f, 0.0f, 1.0f))) :: Nil,
@@ -145,161 +145,177 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("fmul", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_fmul", Seq(jFloat.TYPE, jFloat.TYPE): _*)
+      val fmul = LLJVMUtils.getMethod(clazz, "_fmul", Seq(jFloat.TYPE, jFloat.TYPE): _*)
       val args = Seq(new jFloat(1.5), new jFloat(4.0))
-      assert(method.invoke(obj, args: _*) === 6.0f)
+      assert(fmul.invoke(obj, args: _*) === 6.0f)
     }),
 
     ("fdiv", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_fdiv", Seq(jDouble.TYPE, jDouble.TYPE): _*)
+      val fdiv = LLJVMUtils.getMethod(clazz, "_fdiv", Seq(jDouble.TYPE, jDouble.TYPE): _*)
       val args = Seq(new jDouble(6.0), new jDouble(2.0))
-      assert(method.invoke(obj, args: _*) === 3.0)
+      assert(fdiv.invoke(obj, args: _*) === 3.0)
     }),
 
     ("sdiv", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_sdiv", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val sdiv = LLJVMUtils.getMethod(clazz, "_sdiv", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(12), new jInt(2))
-      assert(method.invoke(obj, args: _*) === 6)
+      assert(sdiv.invoke(obj, args: _*) === 6)
     }),
 
     ("udiv", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_udiv", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val udiv = LLJVMUtils.getMethod(clazz, "_udiv", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(30), new jInt(15))
-      assert(method.invoke(obj, args: _*) === 2)
+      assert(udiv.invoke(obj, args: _*) === 2)
     }),
 
     ("frem", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_frem", Seq(jDouble.TYPE, jDouble.TYPE): _*)
+      val frem = LLJVMUtils.getMethod(clazz, "_frem", Seq(jDouble.TYPE, jDouble.TYPE): _*)
       val args = Seq(new jDouble(10.5), new jDouble(3.0))
-      assert(method.invoke(obj, args: _*) === 1.5)
+      assert(frem.invoke(obj, args: _*) === 1.5)
     }),
 
     ("srem", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_srem", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val srem = LLJVMUtils.getMethod(clazz, "_srem", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(7), new jInt(4))
-      assert(method.invoke(obj, args: _*) === 3)
+      assert(srem.invoke(obj, args: _*) === 3)
     }),
 
     ("urem", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_urem", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val urem = LLJVMUtils.getMethod(clazz, "_urem", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(13), new jInt(2))
-      assert(method.invoke(obj, args: _*) === 1)
+      assert(urem.invoke(obj, args: _*) === 1)
     }),
 
     ("shl", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_shl", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(2)): _*) === 8)
+      val shl = LLJVMUtils.getMethod(clazz, "_shl", Seq(jInt.TYPE): _*)
+      assert(shl.invoke(obj, Seq(new jInt(2)): _*) === 8)
     }),
 
     ("ashr", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_ashr", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(8)): _*) === 2)
+      val ashr = LLJVMUtils.getMethod(clazz, "_ashr", Seq(jInt.TYPE): _*)
+      assert(ashr.invoke(obj, Seq(new jInt(8)): _*) === 2)
     }),
 
     ("lshr", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_lshr", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(32)): _*) === 8)
+      val lshr = LLJVMUtils.getMethod(clazz, "_lshr", Seq(jInt.TYPE): _*)
+      assert(lshr.invoke(obj, Seq(new jInt(32)): _*) === 8)
     }),
 
     ("and", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_and", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val and = LLJVMUtils.getMethod(clazz, "_and", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(15), new jInt(3))
-      assert(method.invoke(obj, args: _*) === 3)
+      assert(and.invoke(obj, args: _*) === 3)
     }),
 
     ("or", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_or", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val or = LLJVMUtils.getMethod(clazz, "_or", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(15), new jInt(3))
-      assert(method.invoke(obj, args: _*) === 15)
+      assert(or.invoke(obj, args: _*) === 15)
     }),
 
     ("xor", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_xor", Seq(jInt.TYPE, jInt.TYPE): _*)
+      val xor = LLJVMUtils.getMethod(clazz, "_xor", Seq(jInt.TYPE, jInt.TYPE): _*)
       val args = Seq(new jInt(15), new jInt(3))
-      assert(method.invoke(obj, args: _*) === 12)
+      assert(xor.invoke(obj, args: _*) === 12)
     }),
 
     ("alloca", (clazz, obj) => { // "load" and "store"
-      val method = LLJVMUtils.getMethod(clazz, "_alloca", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(6)): _*) === 10)
+      val alloca = LLJVMUtils.getMethod(clazz, "_alloca", Seq(jInt.TYPE): _*)
+      assert(alloca.invoke(obj, Seq(new jInt(6)): _*) === 10)
+
+      // Inf/NaN for float values
+      val plus_finf = LLJVMUtils.getMethod(clazz, "_plus_finf")
+      assert(plus_finf.invoke(obj) === Float.PositiveInfinity)
+      val minus_finf = LLJVMUtils.getMethod(clazz, "_minus_finf")
+      assert(minus_finf.invoke(obj) === Float.NegativeInfinity)
+      val fnan = LLJVMUtils.getMethod(clazz, "_fnan")
+      assert(fnan.invoke(obj).asInstanceOf[Float].isNaN)
+
+      // Inf/NaN for double values
+      val plus_dinf = LLJVMUtils.getMethod(clazz, "_plus_dinf")
+      assert(plus_dinf.invoke(obj) === Double.PositiveInfinity)
+      val minus_dinf = LLJVMUtils.getMethod(clazz, "_minus_dinf")
+      assert(minus_dinf.invoke(obj) === Double.NegativeInfinity)
+      val dnan = LLJVMUtils.getMethod(clazz, "_dnan")
+      assert(dnan.invoke(obj).asInstanceOf[Double].isNaN)
     }),
 
     ("fence", (clazz, obj) => {}),
 
     ("getelementptr", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_getelementptr", Seq(jLong.TYPE): _*)
+      val getelementptr = LLJVMUtils.getMethod(clazz, "_getelementptr", Seq(jLong.TYPE): _*)
       val addr = ArrayUtils.addressOf(Array(0, 2, 4, -6, 8, 10))
-      assert(method.invoke(obj, Seq(new jLong(addr)): _*) === -6)
+      assert(getelementptr.invoke(obj, Seq(new jLong(addr)): _*) === -6)
     }),
 
     ("sext", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_sext", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(3)): _*) === 3L)
+      val sext = LLJVMUtils.getMethod(clazz, "_sext", Seq(jInt.TYPE): _*)
+      assert(sext.invoke(obj, Seq(new jInt(3)): _*) === 3L)
     }),
 
     ("zext", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_zext", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(3)): _*) === 3L)
+      val zext = LLJVMUtils.getMethod(clazz, "_zext", Seq(jInt.TYPE): _*)
+      assert(zext.invoke(obj, Seq(new jInt(3)): _*) === 3L)
     }),
 
     ("fptosi", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_fptosi", Seq(jFloat.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jFloat(2.3)): _*) === 2)
+      val fptosi = LLJVMUtils.getMethod(clazz, "_fptosi", Seq(jFloat.TYPE): _*)
+      assert(fptosi.invoke(obj, Seq(new jFloat(2.3)): _*) === 2)
     }),
 
     ("fptoui", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_fptoui", Seq(jFloat.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jFloat(2.3)): _*) === 2)
+      val fptoui = LLJVMUtils.getMethod(clazz, "_fptoui", Seq(jFloat.TYPE): _*)
+      assert(fptoui.invoke(obj, Seq(new jFloat(2.3)): _*) === 2)
     }),
 
     ("sitofp", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_sitofp", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(6)): _*) === 6.0f)
+      val sitofp = LLJVMUtils.getMethod(clazz, "_sitofp", Seq(jInt.TYPE): _*)
+      assert(sitofp.invoke(obj, Seq(new jInt(6)): _*) === 6.0f)
     }),
 
     ("uitofp", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_uitofp", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(6)): _*) === 6.0f)
+      val uitofp = LLJVMUtils.getMethod(clazz, "_uitofp", Seq(jInt.TYPE): _*)
+      assert(uitofp.invoke(obj, Seq(new jInt(6)): _*) === 6.0f)
     }),
 
     ("fpext", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_fpext", Seq(jFloat.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jFloat(2.5f)): _*) === 2.5)
+      val fpext = LLJVMUtils.getMethod(clazz, "_fpext", Seq(jFloat.TYPE): _*)
+      assert(fpext.invoke(obj, Seq(new jFloat(2.5f)): _*) === 2.5)
     }),
 
     ("ptrtoint", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_ptrtoint", Seq(jLong.TYPE): _*)
+      val ptrtoint = LLJVMUtils.getMethod(clazz, "_ptrtoint", Seq(jLong.TYPE): _*)
       val addr = ArrayUtils.addressOf(Array(0, 1, 2))
-      assert(method.invoke(obj, Seq(new jLong(addr)): _*) === addr)
+      assert(ptrtoint.invoke(obj, Seq(new jLong(addr)): _*) === addr)
     }),
 
     ("inttoptr", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_inttoptr", Seq(jLong.TYPE): _*)
+      val inttoptr = LLJVMUtils.getMethod(clazz, "_inttoptr", Seq(jLong.TYPE): _*)
       val addr = ArrayUtils.addressOf(Array(0, 1, 2))
-      assert(method.invoke(obj, Seq(new jLong(addr)): _*) === addr)
+      assert(inttoptr.invoke(obj, Seq(new jLong(addr)): _*) === addr)
     }),
 
     ("trunc", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_trunc", Seq(jLong.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jLong(-7)): _*) === -7.toShort)
+      val trunc = LLJVMUtils.getMethod(clazz, "_trunc", Seq(jLong.TYPE): _*)
+      assert(trunc.invoke(obj, Seq(new jLong(-7)): _*) === -7.toShort)
     }),
 
     ("fptrunc", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_fptrunc", Seq(jDouble.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jDouble(1.0)): _*) === 1.0f)
+      val fptrunc = LLJVMUtils.getMethod(clazz, "_fptrunc", Seq(jDouble.TYPE): _*)
+      assert(fptrunc.invoke(obj, Seq(new jDouble(1.0)): _*) === 1.0f)
     }),
 
     ("bitcast", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_bitcast", Seq(jLong.TYPE): _*)
+      val bitcast = LLJVMUtils.getMethod(clazz, "_bitcast", Seq(jLong.TYPE): _*)
       val addr = ArrayUtils.addressOf(Array(0.0, 4.0, 8.0))
-      assert(method.invoke(obj, Seq(new jLong(addr)): _*) === addr)
+      assert(bitcast.invoke(obj, Seq(new jLong(addr)): _*) === addr)
     }),
 
     ("icmp", (clazz, obj) => {
       {
-        val method = LLJVMUtils.getMethod(clazz, "_icmp1", Seq(jInt.TYPE, jInt.TYPE): _*)
+        val icmp1 = LLJVMUtils.getMethod(clazz, "_icmp1", Seq(jInt.TYPE, jInt.TYPE): _*)
         val args = Seq(new jInt(2), new jInt(3))
-        assert(method.invoke(obj, args: _*) === true)
+        assert(icmp1.invoke(obj, args: _*) === true)
       }
       vectorTypeTest("_icmp2", clazz, obj,
         args = new jLong(ArrayUtils.addressOf(Array(-1, 1, -2, 3))) :: Nil,
@@ -328,34 +344,34 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("fcmp", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_fcmp", Seq(jFloat.TYPE, jFloat.TYPE): _*)
+      val fcmp = LLJVMUtils.getMethod(clazz, "_fcmp", Seq(jFloat.TYPE, jFloat.TYPE): _*)
       val args = Seq(new jFloat(1.0f), new jFloat(3.0f))
-      assert(method.invoke(obj, args: _*) === false)
+      assert(fcmp.invoke(obj, args: _*) === false)
     }),
 
     ("phi", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_phi", Seq(jInt.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jInt(1)): _*) === 3)
-      assert(method.invoke(obj, Seq(new jInt(0)): _*) === -3)
+      val phi = LLJVMUtils.getMethod(clazz, "_phi", Seq(jInt.TYPE): _*)
+      assert(phi.invoke(obj, Seq(new jInt(1)): _*) === 3)
+      assert(phi.invoke(obj, Seq(new jInt(0)): _*) === -3)
     }),
 
     ("select", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_select", Seq(jBoolean.TYPE): _*)
-      assert(method.invoke(obj, Seq(new jBoolean(true)): _*) === 1.0)
-      assert(method.invoke(obj, Seq(new jBoolean(false)): _*) === 9.0)
+      val select = LLJVMUtils.getMethod(clazz, "_select", Seq(jBoolean.TYPE): _*)
+      assert(select.invoke(obj, Seq(new jBoolean(true)): _*) === 1.0)
+      assert(select.invoke(obj, Seq(new jBoolean(false)): _*) === 9.0)
     }),
 
     ("extractelement", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_extractelement", Seq(jLong.TYPE): _*)
+      val extractelement = LLJVMUtils.getMethod(clazz, "_extractelement", Seq(jLong.TYPE): _*)
       val ar = Array(-5, 6, -7, 8)
-      assert(method.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar))): _*) === -7)
+      assert(extractelement.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar))): _*) === -7)
     }),
 
     ("insertelement", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_insertelement", Seq(jLong.TYPE): _*)
+      val insertelement = LLJVMUtils.getMethod(clazz, "_insertelement", Seq(jLong.TYPE): _*)
       val ar = Array(-5, 6, -7, 8)
       val addr = ArrayUtils.addressOf(ar)
-      assert(method.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar))): _*) === addr)
+      assert(insertelement.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar))): _*) === addr)
       assert(ar(3) === 4)
     }),
 
@@ -385,30 +401,30 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("extractvalue", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_extractvalue", Seq(jLong.TYPE): _*)
+      val extractvalue = LLJVMUtils.getMethod(clazz, "_extractvalue", Seq(jLong.TYPE): _*)
       val ar = Array(3, -4)
-      assert(method.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar))): _*) === -4)
+      assert(extractvalue.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar))): _*) === -4)
     }),
 
     ("insertvalue", (clazz, obj) => {
-      val method = LLJVMUtils.getMethod(clazz, "_insertvalue", Seq(jLong.TYPE): _*)
+      val insertvalue = LLJVMUtils.getMethod(clazz, "_insertvalue", Seq(jLong.TYPE): _*)
       val ar = Array(0.0, 0.0)
       val addr = ArrayUtils.addressOf(ar)
-      assert(method.invoke(obj, Seq(new jLong(addr)): _*) === addr)
+      assert(insertvalue.invoke(obj, Seq(new jLong(addr)): _*) === addr)
       assert(ar(1) === 7.0)
     }),
 
     // ("atomicrmw", (clazz, obj) => {
     //   // add
-    //   val method1 = LLJVMUtils.getMethod(clazz, "_add", Seq(jLong.TYPE): _*)
+    //   val add = LLJVMUtils.getMethod(clazz, "_add", Seq(jLong.TYPE): _*)
     //   val ar1 = Array(3)
-    //   assert(method1.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar1))): _*) === 3)
+    //   assert(add.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar1))): _*) === 3)
     //   assert(ar1(0) === 4)
     //
     //   // sub
-    //   val method2 = LLJVMUtils.getMethod(clazz, "_sub", Seq(jLong.TYPE): _*)
+    //   val sub = LLJVMUtils.getMethod(clazz, "_sub", Seq(jLong.TYPE): _*)
     //   val ar2 = Array(3)
-    //   assert(method2.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar2))): _*) === 3)
+    //   assert(sub.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar2))): _*) === 3)
     //   assert(ar2(0) === 2)
     //
     //   // TODO: Adds tests for instructions below:

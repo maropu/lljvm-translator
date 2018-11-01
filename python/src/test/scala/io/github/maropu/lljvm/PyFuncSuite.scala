@@ -315,8 +315,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
         argTypes = Seq(jLong.TYPE, jLong.TYPE),
         arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr()))
       )
-      val resultArray1 = new PyArrayHolder(result1).floatArray()
-      assert(resultArray1 === Array.fill[Float](n)(2.0f * n))
+      assert(floatArray(result1) === Array.fill[Float](n)(2.0f * n))
 
       // float64[:](float64[:,:], float64[:])
       val doubleX = pyArray1.`with`(Array.fill[Double](n * n)(3.0)).reshape(n, n)
@@ -327,8 +326,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
         argTypes = Seq(jLong.TYPE, jLong.TYPE),
         arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr()))
       )
-      val resultArray2 = new PyArrayHolder(result2).doubleArray()
-      assert(resultArray2 === Array.fill[Double](n)(3.0 * n))
+      assert(doubleArray(result2) === Array.fill[Double](n)(3.0 * n))
     }
   }
 

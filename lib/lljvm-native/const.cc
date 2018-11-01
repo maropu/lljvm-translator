@@ -75,9 +75,9 @@ void JVMWriter::printConstLoad(float f) {
       printSimpleInstruction("fconst_2");
   } else if (std::isnan(f)) {
     printSimpleInstruction("getstatic", "java/lang/Float/NaN F");
-  } else if (std::isinf(f) > 0) {
+  } else if (f == std::numeric_limits<float>::infinity()) {
     printSimpleInstruction("getstatic", "java/lang/Float/POSITIVE_INFINITY F");
-  } else if (std::isinf(f) < 0) {
+  } else if (f == -std::numeric_limits<float>::infinity()) {
     printSimpleInstruction("getstatic", "java/lang/Float/NEGATIVE_INFINITY F");
   } else {
     std::stringstream strbuf;
@@ -97,9 +97,9 @@ void JVMWriter::printConstLoad(double d) {
     printSimpleInstruction("dconst_1");
   } else if (std::isnan(d)) {
     printSimpleInstruction("getstatic", "java/lang/Double/NaN D");
-  } else if (std::isinf(d) > 0) {
+  } else if (d == std::numeric_limits<double>::infinity()) {
     printSimpleInstruction("getstatic", "java/lang/Double/POSITIVE_INFINITY D");
-  } else if (std::isinf(d) < 0) {
+  } else if (d == -std::numeric_limits<double>::infinity()) {
     printSimpleInstruction("getstatic", "java/lang/Double/NEGATIVE_INFINITY D");
   } else {
     std::stringstream strbuf;
