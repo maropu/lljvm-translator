@@ -28,7 +28,7 @@ class CFuncSuite extends LLJVMFuncSuite {
   val basePath = "cfunc"
 
   test("add") {
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/add_test.bc",
       source = s"$basePath/add_test.c",
       argTypes = Seq(jInt.TYPE, jInt.TYPE),
@@ -38,14 +38,14 @@ class CFuncSuite extends LLJVMFuncSuite {
   }
 
   test("pow") {
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/math_pow1_test.bc",
       source = s"$basePath/math_pow1_test.c",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
       arguments = Seq(new jDouble(2.0), new jDouble(3.0)),
       expected = Some(8.0)
     )
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/math_pow2_test.bc",
       source = s"$basePath/math_pow2_test.c",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
@@ -56,7 +56,7 @@ class CFuncSuite extends LLJVMFuncSuite {
 
   test("for") {
     val longArray = Array(3, 5, 8, 2, 1).map(_.toLong)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/for1_test.bc",
       source = s"$basePath/for2_test.c",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -65,7 +65,7 @@ class CFuncSuite extends LLJVMFuncSuite {
     )
 
     val doubleArray = Array(2.0, 1.0)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/for2_test.bc",
       source = s"$basePath/for2_test.c",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -76,7 +76,7 @@ class CFuncSuite extends LLJVMFuncSuite {
 
   test("while") {
     val intArray = Array(3, 1, 2, 8, 7, 2, 8, 9, 1, 3, 5, 8)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/while1_test.bc",
       source = s"$basePath/while1_test.c",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -85,7 +85,7 @@ class CFuncSuite extends LLJVMFuncSuite {
     )
 
     val floatArray = Array(5, 1, 1, 0, 3, 2, 9, 1, 2, 3).map(_.toFloat)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/while2_test.bc",
       source = s"$basePath/while2_test.c",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -95,14 +95,14 @@ class CFuncSuite extends LLJVMFuncSuite {
   }
 
   test("if") {
-     TestUtils.doTest2(
+     TestUtils.doTest(
       bitcode = s"$basePath/if_test.bc",
       source = s"$basePath/if_test.c",
       argTypes = Seq(jInt.TYPE),
       arguments = Seq(new jInt(0)),
       expected = Some(1)
     )
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/ternary_if_test.bc",
       source = s"$basePath/ternary_if_test.c",
       argTypes = Seq(jInt.TYPE),
@@ -112,7 +112,7 @@ class CFuncSuite extends LLJVMFuncSuite {
   }
 
   test("function call chains") {
-    TestUtils.doTest1(
+    TestUtils.doTestWithFuncName(
       bitcode = s"$basePath/func_call_test.bc",
       source = s"$basePath/func_call_test.c",
       funcName = "_func_call_test",

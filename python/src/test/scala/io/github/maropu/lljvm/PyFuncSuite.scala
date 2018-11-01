@@ -46,7 +46,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   test("add") {
     // int32(int32, int32)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/add_test-cfunc-int32.bc",
       source = s"$basePath/add_test.py",
       argTypes = Seq(jInt.TYPE, jInt.TYPE),
@@ -55,7 +55,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
 
     // int64(int64, int64)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/add_test-cfunc-int64.bc",
       source = s"$basePath/add_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -64,7 +64,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
 
     // float32(float32, float32)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/add_test-cfunc-float32.bc",
       source = s"$basePath/add_test.py",
       argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
@@ -73,7 +73,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
 
     // float64(float64, float64)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/add_test-cfunc-float64.bc",
       source = s"$basePath/add_test.py",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
@@ -84,7 +84,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   test("pow") {
     // float32(float32, float32)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/math_pow_test-cfunc-float32.bc",
       source = s"$basePath/math_pow_test.py",
       argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
@@ -93,7 +93,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
 
     // float64(float64, float64)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/math_pow_test-cfunc-float64.bc",
       source = s"$basePath/math_pow_test.py",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
@@ -104,7 +104,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   test("log10") {
     // float32(float32, float32)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/math_log10_test-cfunc-float32.bc",
       source = s"$basePath/math_log10_test.py",
       argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
@@ -113,7 +113,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
 
     // float64(float64, float64)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/math_log10_test-cfunc-float64.bc",
       source = s"$basePath/math_log10_test.py",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
@@ -124,7 +124,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   test("if") {
     // int32(int32)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/if1_test-cfunc-int32.bc",
       source = s"$basePath/if1_test.py",
       argTypes = Seq(jInt.TYPE),
@@ -133,7 +133,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
 
     // int32(int32)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/if2_test-cfunc-int32.bc",
       source = s"$basePath/if2_test.py",
       argTypes = Seq(jInt.TYPE),
@@ -144,7 +144,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   test("function call chains") {
     // float32(float32, float32)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/func_call_test-cfunc-float32.bc",
       source = s"$basePath/func_call_test.py",
       argTypes = Seq(jFloat.TYPE, jFloat.TYPE),
@@ -153,7 +153,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
 
     // float64(float64, float64)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/func_call_test-cfunc-float64.bc",
       source = s"$basePath/func_call_test.py",
       argTypes = Seq(jDouble.TYPE, jDouble.TYPE),
@@ -181,7 +181,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   test("loop") {
     // float32(float32[:]
     val floatArray1 = Array(1.0, 8.0, 2.0, 3.0, 4.0, 1.0, 1.0, 2.0).map(_.toFloat)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/for1_test-cfunc-float32.bc",
       source = s"$basePath/for1_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
@@ -191,7 +191,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
     // float64(float64[:]
     val doubleArray1 = Array(2.0, 1.0, 5.0, 13.0, 4.0)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/for1_test-cfunc-float64.bc",
       source = s"$basePath/for1_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
@@ -201,7 +201,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
     // float32(float32[:]
     val floatArray2 = Array(4.0, -5.0, 2.0, 8.0).map(_.toFloat)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/for2_test-cfunc-float32.bc",
       source = s"$basePath/for2_test.py",
       argTypes = Seq(jLong.TYPE),
@@ -211,7 +211,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
     // float64(float64[:]
     val doubleArray2 = Array(5.0, 3.0, -9.0, 5.0, 1.0, 2.0, 2.0, 9.0, 1.0, 3.0)
-    TestUtils.doTest2(
+    TestUtils.doTest(
       bitcode = s"$basePath/for2_test-cfunc-float64.bc",
       source = s"$basePath/for2_test.py",
       argTypes = Seq(jLong.TYPE),
@@ -223,7 +223,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   test("range") {
     // float32[:](float32[:], int32)
     val floatX = pyArray1.`with`(Array(3.0f, 5.0f, 3.0f, 4.0f))
-    val result1 = TestUtils.doTest2[Long](
+    val result1 = TestUtils.doTest[Long](
       bitcode = s"$basePath/range_test-cfunc-float32-1d.bc",
       source = s"$basePath/range_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
@@ -232,7 +232,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(floatArray(result1) === Seq(0.0f, 2.0f, 0.0f, 1.0f))
 
     // float32[:,:](float32[:,:], int32)
-    val result2 = TestUtils.doTest2[Long](
+    val result2 = TestUtils.doTest[Long](
       bitcode = s"$basePath/range_test-cfunc-float32-2d.bc",
       source = s"$basePath/range_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
@@ -242,7 +242,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
     // float64[:](float64[:], int32)
     val doubleX = pyArray1.`with`(Array(0.0, 3.0, 8.0, 9.0))
-    val result3 = TestUtils.doTest2[Long](
+    val result3 = TestUtils.doTest[Long](
       bitcode = s"$basePath/range_test-cfunc-float64-1d.bc",
       source = s"$basePath/range_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
@@ -251,7 +251,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(doubleArray(result3) === Seq(-6.0, -3.0, 2.0, 3.0))
 
     // float64[:,:](float64[:,:], int32)
-    val result4 = TestUtils.doTest2[Long](
+    val result4 = TestUtils.doTest[Long](
       bitcode = s"$basePath/range_test-cfunc-float64-2d.bc",
       source = s"$basePath/range_test.py",
       argTypes = Seq(jLong.TYPE, jInt.TYPE),
@@ -262,7 +262,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   ignore("NumPy arange") {
     // int64[:,:]()
-    val result = TestUtils.doTest2[Long](
+    val result = TestUtils.doTest[Long](
       bitcode = s"$basePath/numpy_arange_test-cfunc-int64.bc",
       source = s"$basePath/numpy_arange_test.py"
     )
@@ -273,7 +273,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     // float32[:](float32[:], float32[:])
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
-    val result1 = TestUtils.doTest2[Long](
+    val result1 = TestUtils.doTest[Long](
       bitcode = s"$basePath/numpy_power_test-cfunc-float32.bc",
       source = s"$basePath/numpy_power_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -284,7 +284,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     // float64[:](float64[:], float64[:])
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
     val doubleY = pyArray2.`with`(Array(1.0, 2.0, 3.0, 4.0))
-    val result2 = TestUtils.doTest2[Long](
+    val result2 = TestUtils.doTest[Long](
       bitcode = s"$basePath/numpy_power_test-cfunc-float64.bc",
       source = s"$basePath/numpy_power_test.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -299,7 +299,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
       // TODO: reconsiders the current API design: `.reshape(4, 1)` != `.reshape(4)`
       val floatX = pyArray1.`with`(Array.fill[Float](n)(1.0f)).reshape(n)
       val floatY = pyArray2.`with`(Array.fill[Float](n)(2.0f)).reshape(n)
-      TestUtils.doTest2[Float](
+      TestUtils.doTest[Float](
         bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float32.bc",
         source = s"$basePath/numpy_dot_test.py",
         argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -310,7 +310,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
       // float64[:,:](float64[:,:], float64[:,:])
       val doubleX = pyArray1.`with`(Array.fill[Double](n)(3.0)).reshape(n)
       val doubleY = pyArray2.`with`(Array.fill[Double](n)(1.0)).reshape(n)
-      TestUtils.doTest2[Double](
+      TestUtils.doTest[Double](
         bitcode = s"$basePath/numpy_dot_test-cfunc-vv-float64.bc",
         source = s"$basePath/numpy_dot_test.py",
         argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -326,7 +326,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
       // TODO: if the length is 8192+, it throws an exception because stack is not enough
       val floatX = pyArray1.`with`(Array.fill[Float](n * n)(1.0f)).reshape(n, n)
       val floatY = pyArray2.`with`(Array.fill[Float](n)(2.0f)).reshape(n)
-      val result1 = TestUtils.doTest2[Long](
+      val result1 = TestUtils.doTest[Long](
         bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float32.bc",
         source = s"$basePath/numpy_dot_test.py",
         argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -337,7 +337,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
       // float64[:](float64[:,:], float64[:])
       val doubleX = pyArray1.`with`(Array.fill[Double](n * n)(3.0)).reshape(n, n)
       val doubleY = pyArray2.`with`(Array.fill[Double](n)(1.0)).reshape(n)
-      val result2 = TestUtils.doTest2[Long](
+      val result2 = TestUtils.doTest[Long](
         bitcode = s"$basePath/numpy_dot_test-cfunc-mv-float64.bc",
         source = s"$basePath/numpy_dot_test.py",
         argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -353,7 +353,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
       // TODO: if the length is 4096+, it throws an exception because stack is not enough
       val floatX = pyArray1.`with`(Array.fill[Float](n * n)(1.0f)).reshape(n, n)
       val floatY = pyArray2.`with`(Array.fill[Float](n * n)(1.0f)).reshape(n, n)
-      val result1 = TestUtils.doTest2[Long](
+      val result1 = TestUtils.doTest[Long](
         bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float32.bc",
         source = s"$basePath/numpy_dot_test.py",
         argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -364,7 +364,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
       // float64(float64[:], float64[:])
       val doubleX = pyArray1.`with`(Array.fill[Double](n * n)(1.0)).reshape(n, n)
       val doubleY = pyArray2.`with`(Array.fill[Double](n * n)(1.0)).reshape(n, n)
-      val result2 = TestUtils.doTest2[Long](
+      val result2 = TestUtils.doTest[Long](
         bitcode = s"$basePath/numpy_dot_test-cfunc-mm-float64.bc",
         source = s"$basePath/numpy_dot_test.py",
         argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -389,7 +389,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   test("NumPy random") {
     val rvalues1 = (0 until 100).map { _ =>
       // float64()
-      TestUtils.doTest2[Double](
+      TestUtils.doTest[Double](
         bitcode = s"$basePath/numpy_random1_test-cfunc-float64.bc",
         source = s"$basePath/numpy_random1_test.py"
       )
@@ -403,7 +403,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     }
 
     // float64[:](int64)
-    val result = TestUtils.doTest2[Long](
+    val result = TestUtils.doTest[Long](
       bitcode = s"$basePath/numpy_random2_test-cfunc-float64.bc",
       source = s"$basePath/numpy_random2_test.py",
       argTypes = Seq(jLong.TYPE),
@@ -423,7 +423,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
-    val result = TestUtils.doTest2[Long](
+    val result = TestUtils.doTest[Long](
       bitcode = s"$basePath/linear_regression-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/linear_regression.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE, jDouble.TYPE),
@@ -442,7 +442,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleZ = pyArray3.`with`(Array(1.0, 1.0)).reshape(2, 1)
-    val result = TestUtils.doTest2[Long](
+    val result = TestUtils.doTest[Long](
       bitcode = s"$basePath/logistic_regression-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/logistic_regression.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE),
@@ -459,7 +459,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     // float64[:,:](float64[:,:], float64[:,:])
     val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
-    val result = TestUtils.doTest2[Long](
+    val result = TestUtils.doTest[Long](
       bitcode = s"$basePath/filter2d-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/blur_image.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -473,7 +473,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   test("NumPy - bubble sort") {
     // void(float32[:])
     val floatX = new PyArrayHolder().`with`(Array(4.0f, 2.0f, 1.0f, 3.0f))
-    TestUtils.doTest1[Unit](
+    TestUtils.doTestWithFuncName[Unit](
       bitcode = s"$basePath/bubblesort-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
       funcName =
@@ -485,7 +485,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
     // void(float64[:])
     val doubleX = new PyArrayHolder().`with`(Array(4.0, 3.0, 1.0, 2.0))
-    TestUtils.doTest1[Unit](
+    TestUtils.doTestWithFuncName[Unit](
       bitcode = s"$basePath/bubblesort-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
       funcName =
@@ -499,7 +499,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   ignore("numba - kernel density estimation (NEEDS TO BE FIXED)") {
     // float32(float32[:])
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
-    TestUtils.doTest2[Float](
+    TestUtils.doTest[Float](
       bitcode = s"$basePath/kde-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/kernel_density_estimation.py",
       argTypes = Seq(jLong.TYPE),
@@ -509,7 +509,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
     // float64(float64[:])
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
-    TestUtils.doTest2[Double](
+    TestUtils.doTest[Double](
       bitcode = s"$basePath/kde-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/kernel_density_estimation.py",
       argTypes = Seq(jLong.TYPE),
@@ -522,7 +522,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     // float32(float32[:,:], float32[:,:])
     val floatX = pyArray1.`with`(Array(1.0f, 1.0f, 1.0f, 1.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(3.0f, 1.0f, 2.0f, 4.0f)).reshape(2, 2)
-    val result1 = TestUtils.doTest2[Float](
+    val result1 = TestUtils.doTest[Float](
       bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/laplace2d.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -533,7 +533,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     // float64(float64[:,:], float64[:,:])
     val doubleX = pyArray1.`with`(Array(0.0, 0.0, 0.0, 0.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(3.0, 1.0, 2.0, 4.0)).reshape(2, 2)
-    TestUtils.doTest2[Double](
+    TestUtils.doTest[Double](
       bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/laplace2d.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -545,7 +545,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   ignore("numba - mandel (NEEDS TO BE FIXED)") {
     // float64[:,:](float64, float64, float64, float64, float64[:,:], int64)
     val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
-    val result = TestUtils.doTest2[Long](
+    val result = TestUtils.doTest[Long](
       bitcode = s"$basePath/create_fractal-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/mandel.py",
       argTypes =
@@ -564,7 +564,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   ignore("numba - pi (NEEDS TO BE FIXED)") {
     // float32(int32)
-    val result1 = TestUtils.doTest2[Float](
+    val result1 = TestUtils.doTest[Float](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/pi.py",
       argTypes = Seq(jInt.TYPE),
@@ -573,7 +573,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(result1 === 0.0f)
 
     // float64(int64)
-    val result2 = TestUtils.doTest1[Double](
+    val result2 = TestUtils.doTestWithFuncName[Double](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/pi.py",
       funcName = "_cfunc__ZN14numba_examples2pi12calc_pi_2476Ex",
@@ -586,7 +586,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   test("NumPy - sum") {
     // float32(float32[:,:])
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f)).reshape(2, 3)
-    TestUtils.doTest2[Float](
+    TestUtils.doTest[Float](
       bitcode = s"$basePath/sum2d-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/sum.py",
       argTypes = Seq(jLong.TYPE),
@@ -596,7 +596,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
     // float64(float64[:,:])
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0)).reshape(4, 1)
-    TestUtils.doTest2[Double](
+    TestUtils.doTest[Double](
       bitcode = s"$basePath/sum2d-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/sum.py",
       argTypes = Seq(jLong.TYPE),
@@ -609,7 +609,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   ignore("numba - ra24 (NEEDS TO BE FIXED)") {
     // float32[:](int32, float32[:])
     val floatX = pyArray1.`with`(Array(20.0f, 24.0f, 16.0f, 28.0f))
-    val result1 = TestUtils.doTest2[Long](
+    val result1 = TestUtils.doTest[Long](
       bitcode = s"$basePath/ra_numba-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/ra24.py",
       argTypes = Seq(jInt.TYPE, jLong.TYPE),
@@ -622,7 +622,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
     // float64[:](int64, float64[:])
     val doubleX = pyArray1.`with`(Array(20.0, 24.0, 16.0, 28.0))
-    val result2 = TestUtils.doTest2[Long](
+    val result2 = TestUtils.doTest[Long](
       bitcode = s"$basePath/ra_numba-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/ra24.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
@@ -639,7 +639,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     val floatX = pyArray1.`with`(Array(4.0f, 2.0f, 6.0f, 4.0f, 8.0f, 2.0f, 4.0f, 0.0f))
     val floatY = pyArray2.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f))
     val intX = pyArray3.`with`(Array(2))
-    TestUtils.doTest2[Long](
+    TestUtils.doTest[Long](
       bitcode = s"$basePath/move_mean-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/movemean.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE),
@@ -655,7 +655,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     val doubleX = pyArray1.`with`(Array(4.0, 2.0, 6.0, 4.0, 8.0, 2.0, 4.0, 0.0))
     val doubleY = pyArray2.`with`(Array(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
     val longX = pyArray3.`with`(Array(2))
-    TestUtils.doTest2[Long](
+    TestUtils.doTest[Long](
       bitcode = s"$basePath/move_mean-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/movemean.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE),

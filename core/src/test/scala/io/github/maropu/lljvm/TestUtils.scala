@@ -59,7 +59,7 @@ object TestUtils extends LLJVMFuncSuite {
     jvmAsm
   }
 
-  def doTest1[T](
+  def doTestWithFuncName[T](
       bitcode: String,
       source: String,
       funcName: String,
@@ -89,13 +89,13 @@ object TestUtils extends LLJVMFuncSuite {
       throw e
   }
 
-  def doTest2[T](
+  def doTest[T](
       bitcode: String,
       source: String,
       argTypes: Seq[Class[_]] = Seq.empty,
       arguments: Seq[AnyRef] = Seq.empty,
       expected: Option[T] = None): T = {
-    doTest1(bitcode, source, "", argTypes, arguments, expected)
+    doTestWithFuncName(bitcode, source, "", argTypes, arguments, expected)
   }
 
   def invokeMethod[T](
