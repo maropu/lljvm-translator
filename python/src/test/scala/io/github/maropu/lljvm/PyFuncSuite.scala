@@ -178,6 +178,28 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
+  test("range") {
+    val floatX = pyArray1.`with`(Array(3.0f, 5.0f, 3.0f, 4.0f))
+    val result1 = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/range_test-cfunc-float32.bc",
+      source = s"$basePath/range_test.py",
+      argTypes = Seq(jLong.TYPE, jInt.TYPE),
+      arguments = Seq(new jLong(floatX.addr()), new jInt(3))
+    )
+    val resultArray1 = new PyArrayHolder(result1).floatArray()
+    assert(resultArray1 === Seq(0.0f, 2.0f, 0.0f, 1.0f))
+
+    val doubleX = pyArray1.`with`(Array(0.0, 3.0, 8.0, 9.0))
+    val result2 = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/range_test-cfunc-float64.bc",
+      source = s"$basePath/range_test.py",
+      argTypes = Seq(jLong.TYPE, jInt.TYPE),
+      arguments = Seq(new jLong(doubleX.addr()), new jInt(6))
+    )
+    val resultArray2 = new PyArrayHolder(result2).doubleArray()
+    assert(resultArray2 === Seq(-6.0, -3.0, 2.0, 3.0))
+  }
+
   test("NumPy power") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
