@@ -101,12 +101,12 @@ from numpy_random2_test import *
 write_bitcode_with_cfunc(numpy_random2_test, "float64[:](int64)", "-cfunc-float64")
 
 from numba_examples.linear_regression import *
-# write_bitcode_with_cfunc(linear_regression, "float32[:](float32[:], float32[:,:], float32[:], int32, float32)", "-numba-cfunc-float32")
-write_bitcode_with_cfunc(linear_regression, "float64[:](float64[:], float64[:,:], float64[:], int64, float64)", "-numba-cfunc-float64")
+# write_bitcode_with_cfunc(linear_regression, "float32[:,:](float32[:,:], float32[:,:], float32[:,:], int32, float32)", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(linear_regression, "float64[:,:](float64[:,:], float64[:,:], float64[:,:], int64, float64)", "-numba-cfunc-float64")
 
 from numba_examples.logistic_regression import *
-# write_bitcode_with_cfunc(logistic_regression, "float32[:](float32[:], float32[:,:], float32[:], int32)", "-numba-cfunc-float32")
-write_bitcode_with_cfunc(logistic_regression, "float64[:](float64[:], float64[:,:], float64[:], int64)", "-numba-cfunc-float64")
+# write_bitcode_with_cfunc(logistic_regression, "float32[:,:](float32[:,:], float32[:,:], float32[:,:], int32)", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(logistic_regression, "float64[:,:](float64[:,:], float64[:,:], float64[:,:], int64)", "-numba-cfunc-float64")
 
 from numba_examples.blur_image import *
 # write_bitcode_with_cfunc(filter2d, "float32[:,:](float32[:,:], float32[:,:])", "-numba-cfunc-float32")
