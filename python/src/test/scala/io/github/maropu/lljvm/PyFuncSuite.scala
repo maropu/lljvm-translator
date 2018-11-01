@@ -326,7 +326,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
       )
     }
     // Checks if generated values are different from each other
-    (0 until rvalues1.size).foreach { x =>
+    rvalues1.indices.foreach { x =>
       val value = rvalues1(x)
       (x + 1 until rvalues1.size).foreach { y =>
         assert(Math.abs(value - rvalues1(y)) > Double.MinValue)
