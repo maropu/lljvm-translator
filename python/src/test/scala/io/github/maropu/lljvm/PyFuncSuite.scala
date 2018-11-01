@@ -533,10 +533,10 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(resultArray2 === Seq(0.0, 0.0, 0.0, 0.0))
   }
 
-  ignore("numba - movemean (NEEDS TO BE FIXED)") {
-    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
-    val floatY = pyArray1.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f))
-    val intX = pyArray1.`with`(Array(1, 2, 3, 4))
+  test("numba - movemean") {
+    val floatX = pyArray1.`with`(Array(4.0f, 2.0f, 6.0f, 4.0f, 8.0f, 2.0f, 4.0f, 0.0f))
+    val floatY = pyArray2.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f))
+    val intX = pyArray3.`with`(Array(2))
     TestUtils.doTest2[Long](
       bitcode = s"$basePath/move_mean-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/movemean.py",
@@ -548,11 +548,11 @@ class PyFuncSuite extends LLJVMFuncSuite {
       )
     )
     val resultArray1 = floatY.floatArray()
-    assert(resultArray1 === Seq())
+    assert(resultArray1 === Seq(4.0f, 3.0f, 4.0f, 5.0f, 6.0f, 5.0f, 3.0f, 2.0f))
 
-    val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
-    val doubleY = pyArray1.`with`(Array(0.0, 0.0, 0.0, 0.0))
-    val longX = pyArray1.`with`(Array(1L, 2L, 3L, 4L))
+    val doubleX = pyArray1.`with`(Array(4.0, 2.0, 6.0, 4.0, 8.0, 2.0, 4.0, 0.0))
+    val doubleY = pyArray2.`with`(Array(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+    val longX = pyArray3.`with`(Array(2))
     TestUtils.doTest2[Long](
       bitcode = s"$basePath/move_mean-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/movemean.py",
@@ -564,6 +564,6 @@ class PyFuncSuite extends LLJVMFuncSuite {
       )
     )
     val resultArray2 = doubleY.doubleArray()
-    assert(resultArray2 === Seq(0.0, 0.0, 0.0, 0.0))
+    assert(resultArray2 === Seq(4.0, 3.0, 4.0, 5.0, 6.0, 5.0, 3.0, 2.0))
   }
 }
