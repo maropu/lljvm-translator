@@ -162,6 +162,14 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
+  def intArray(addr: Long): Array[Int] = {
+    new PyArrayHolder(addr).intArray()
+  }
+
+  def longArray(addr: Long): Array[Long] = {
+    new PyArrayHolder(addr).longArray()
+  }
+
   def floatArray(addr: Long): Array[Float] = {
     new PyArrayHolder(addr).floatArray()
   }
@@ -250,6 +258,15 @@ class PyFuncSuite extends LLJVMFuncSuite {
       arguments = Seq(new jLong(doubleX.reshape(4, 1).addr()), new jInt(1))
     )
     assert(doubleArray(result4) === Seq(-7.0, -4.0, 1.0, 2.0))
+  }
+
+  ignore("NumPy arange") {
+    // int64[:,:]()
+    val result = TestUtils.doTest2[Long](
+      bitcode = s"$basePath/numpy_arange_test-cfunc-int64.bc",
+      source = s"$basePath/numpy_arange_test.py"
+    )
+    assert(longArray(result) === Seq(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L))
   }
 
   test("NumPy power") {
