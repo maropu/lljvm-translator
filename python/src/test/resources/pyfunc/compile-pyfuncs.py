@@ -70,8 +70,10 @@ write_bitcode_with_cfunc(for2_test, "float32(float32[:])", "-cfunc-float32")
 write_bitcode_with_cfunc(for2_test, "float64(float64[:])", "-cfunc-float64")
 
 from range_test import *
-write_bitcode_with_cfunc(range_test, "float32[:](float32[:], int32)", "-cfunc-float32")
-write_bitcode_with_cfunc(range_test, "float64[:](float64[:], int32)", "-cfunc-float64")
+write_bitcode_with_cfunc(range_test, "float32[:](float32[:], int32)", "-cfunc-float32-1d")
+write_bitcode_with_cfunc(range_test, "float32[:,:](float32[:,:], int32)", "-cfunc-float32-2d")
+write_bitcode_with_cfunc(range_test, "float64[:](float64[:], int32)", "-cfunc-float64-1d")
+write_bitcode_with_cfunc(range_test, "float64[:,:](float64[:,:], int32)", "-cfunc-float64-2d")
 
 from func_call_test import *
 write_bitcode_with_cfunc(func_call_test, "float32(float32, float32)", "-cfunc-float32")
