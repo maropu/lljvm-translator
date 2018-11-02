@@ -33,16 +33,21 @@ public class PyArrayHolder implements AutoCloseable {
   // This value depends on a shape of arrays
   private long strideAddrOffset;
 
-  public PyArrayHolder(long addr) {
+  public PyArrayHolder(long addr, int dim) {
+    assert(dim == 1 || dim == 2);
     this.holderAddr = addr;
     this.meminfoAddr = Platform.getLong(null, holderAddr);
     this.parentAddr = Platform.getLong(null, holderAddr + 8);
-    this.strideAddrOffset = 0; // Not used
+    this.strideAddrOffset = 8 * dim; // Not used
     this.isArrayOwner = false;
   }
 
+  public PyArrayHolder(long addr) {
+    this(addr, 1);
+  }
+
   public PyArrayHolder() {
-    // We assume that the aggregate(array/struct) type of python input arrays is
+    // We assume that the aggregate(array/struct) type of python input n-d arrays is
     // `{ i8*, i8*, i64, i64, ty*, [n x i64], [n x i64] }`.
     long holderSize = 72;
     this.holderAddr = Platform.allocateMemory(holderSize);
@@ -110,8 +115,12 @@ public class PyArrayHolder implements AutoCloseable {
     return shapeAddr() + strideAddrOffset;
   }
 
-  private boolean is1d(long x, long y) {
-    return y == 1;
+  private boolean is1d() {
+    return strideAddrOffset == 8;
+  }
+
+  private boolean is2d() {
+    return strideAddrOffset == 16;
   }
 
   public PyArrayHolder reshape(long x, long y) {
@@ -254,6 +263,35 @@ public class PyArrayHolder implements AutoCloseable {
       data[i] = Platform.getDouble(null, baseAddr + i * 8);
     }
     return data;
+  }
+
+  public String toDebugString() {
+    assert(is1d() || is2d());
+    long nitem = Platform.getLong(null, nitemsAddr());
+    long itemsize = Platform.getLong(null, itemsizeAddr());
+    StringBuilder builder = new StringBuilder();
+    if (is1d()) {
+      long shape = Platform.getLong(null, shapeAddr());
+      long stride = Platform.getLong(null, strideAddr());
+      builder.append("1d python array(");
+      builder.append("nitem=" + nitem + ", ");
+      builder.append("itemsize=" + itemsize + ", ");
+      builder.append("shape=[" + shape + "], ");
+      builder.append("stride=[" + stride + "]");
+      builder.append(")");
+    } else if (is2d()) {
+      long shape1 = Platform.getLong(null, shapeAddr());
+      long shape2 = Platform.getLong(null, shapeAddr() + 8);
+      long stride1 = Platform.getLong(null, strideAddr());
+      long stride2 = Platform.getLong(null, strideAddr() + 8);
+      builder.append("2d python array(");
+      builder.append("nitem=" + nitem + ", ");
+      builder.append("itemsize=" + itemsize + ", ");
+      builder.append("shape=[" + shape1 + "," + shape2 + "], ");
+      builder.append("stride=[" + stride1 + "," + stride2 + "]");
+      builder.append(")");
+    }
+    return builder.toString();
   }
 
   // TODO: Better to release the allocated via the weak reference logic?

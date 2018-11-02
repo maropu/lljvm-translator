@@ -178,6 +178,17 @@ class PyFuncSuite extends LLJVMFuncSuite {
     new PyArrayHolder(addr).doubleArray()
   }
 
+  ignore("transpose") {
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
+    val result1 = TestUtils.doTest[Long](
+      bitcode = s"$basePath/transpose1_test-cfunc-float32.bc",
+      source = s"$basePath/transpose1_test.py",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(floatX.addr()))
+    )
+    assert(floatArray(result1) === Seq(1.0f, 2.0f, 3.0f, 4.0f))
+  }
+
   test("loop") {
     // float32(float32[:]
     val floatArray1 = Array(1.0, 8.0, 2.0, 3.0, 4.0, 1.0, 1.0, 2.0).map(_.toFloat)
