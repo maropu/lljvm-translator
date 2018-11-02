@@ -519,7 +519,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
       size = targetData->getTypeAllocSize(seqTy->getElementType());
       printPtrLoad(fieldIndex * size);
       printSimpleInstruction("ladd");
-      printIndirectLoad(aggType);
+      printIndirectLoad(seqTy->getElementType());
     } else {
       std::stringstream err_msg;
       err_msg << "Unknown type: Type=" << getTypeIDName(aggType);
