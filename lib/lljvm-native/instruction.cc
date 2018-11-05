@@ -429,6 +429,8 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v, const Type
  * @param e an iterator specifying the upper bound on the types indexed by the instruction
  */
 void JVMWriter::printGepInstruction(const Value *v, gep_type_iterator i, gep_type_iterator e) {
+  // TODO: Needs to reimplement this
+
   // Loads address
   printCastInstruction(Instruction::IntToPtr, v, NULL, v->getType());
 
@@ -550,42 +552,54 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
 }
 
 void JVMWriter::printInsertElement(const InsertElementInst *inst) {
-  const Value *vec = inst->getOperand(0);
-  const SequentialType *vecTy = cast<SequentialType>(vec->getType());
-  uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
-  if (const UndefValue *undef = dyn_cast<UndefValue>(vec)) {
-    printSimpleInstruction("bipush", utostr(vecSize * undef->getNumElements()));
-    printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+  const Value *v = inst->getOperand(0);
+
+  if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
+    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
+    if (const UndefValue *undef = dyn_cast<UndefValue>(v)) {
+      printSimpleInstruction("bipush", utostr(vecSize * undef->getNumElements()));
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+    } else {
+      printValueLoad(v);
+    }
+    printSimpleInstruction("dup2");
+    printSimpleInstruction("ldc2_w", utostr(vecSize));
+    printValueLoad(inst->getOperand(2));
+    printCastInstruction("l", getTypePrefix(inst->getOperand(2)->getType(), true));
+    printSimpleInstruction("lmul");
+    printSimpleInstruction("ladd");
+    printValueLoad(inst->getOperand(1));
+    printIndirectStore(inst->getOperand(1)->getType());
   } else {
-    printValueLoad(vec);
+    std::stringstream err_msg;
+    err_msg << "Unknown operand type in insertelement: Type=" << getTypeIDName(v->getType());
+    lljvm_unreachable(err_msg.str());
   }
-  printSimpleInstruction("dup2");
-  printSimpleInstruction("ldc2_w", utostr(vecSize));
-  printValueLoad(inst->getOperand(2));
-  printCastInstruction("l", getTypePrefix(inst->getOperand(2)->getType(), true));
-  printSimpleInstruction("lmul");
-  printSimpleInstruction("ladd");
-  printValueLoad(inst->getOperand(1));
-  printIndirectStore(inst->getOperand(1)->getType());
 }
 
 void JVMWriter::printExtractElement(const ExtractElementInst *inst) {
-  const Value *vec = inst->getOperand(0);
-  const SequentialType *vecTy = cast<SequentialType>(vec->getType());
-  uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
-  if (const UndefValue *undef = dyn_cast<UndefValue>(vec)) {
-    printSimpleInstruction("bipush", utostr(vecSize * undef->getNumElements()));
-    printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+  const Value *v = inst->getOperand(0);
+
+  if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
+    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
+    if (const UndefValue *undef = dyn_cast<UndefValue>(v)) {
+      printSimpleInstruction("bipush", utostr(vecSize * undef->getNumElements()));
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+    } else {
+      printValueLoad(v);
+    }
+    // printSimpleInstruction("dup2");
+    printSimpleInstruction("ldc2_w", utostr(vecSize));
+    printValueLoad(inst->getOperand(1));
+    printCastInstruction("l", getTypePrefix(inst->getOperand(1)->getType(), true));
+    printSimpleInstruction("lmul");
+    printSimpleInstruction("ladd");
+    printIndirectLoad(vecTy->getElementType());
   } else {
-    printValueLoad(vec);
+    std::stringstream err_msg;
+    err_msg << "Unknown operand type in extractelement: Type=" << getTypeIDName(v->getType());
+    lljvm_unreachable(err_msg.str());
   }
-  // printSimpleInstruction("dup2");
-  printSimpleInstruction("ldc2_w", utostr(vecSize));
-  printValueLoad(inst->getOperand(1));
-  printCastInstruction("l", getTypePrefix(inst->getOperand(1)->getType(), true));
-  printSimpleInstruction("lmul");
-  printSimpleInstruction("ladd");
-  printIndirectLoad(vecTy->getElementType());
 }
 
 void JVMWriter::printInsertValue(const InsertValueInst *inst) {
@@ -753,123 +767,136 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
 
 void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
   if (const ConstantAggregateZero *zeroinit = dyn_cast<ConstantAggregateZero>(inst->getOperand(2))) {
-    const Value *vec1 = inst->getOperand(0);
-    const SequentialType *vecTy = cast<SequentialType>(vec1->getType());
-    uint64_t vecElemSize = targetData->getTypeAllocSize(vecTy->getElementType());
-    int vecElemNum = zeroinit->getNumElements();
-    printSimpleInstruction("bipush", utostr(vecElemSize * vecElemNum));
-    printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-    for (int i = 0; i < vecElemNum; i++) {
-      // Locate a store position
-      printSimpleInstruction("dup2");
-      printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
-      printSimpleInstruction("ladd");
-      // Then, initialize it with 0
-      printSimpleInstruction("iconst_0");
-      printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
-      printIndirectStore(vecTy->getElementType());
+    const Value *v = inst->getOperand(0);
+    if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
+      uint64_t vecElemSize = targetData->getTypeAllocSize(vecTy->getElementType());
+      int vecElemNum = zeroinit->getNumElements();
+      printSimpleInstruction("bipush", utostr(vecElemSize * vecElemNum));
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+      for (int i = 0; i < vecElemNum; i++) {
+        // Locate a store position
+        printSimpleInstruction("dup2");
+        printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
+        printSimpleInstruction("ladd");
+        // Then, initialize it with 0
+        printSimpleInstruction("iconst_0");
+        printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
+        printIndirectStore(vecTy->getElementType());
+      }
+    } else {
+      std::stringstream err_msg;
+      err_msg << "Unknown operand type in shufflevector: Type=" << getTypeIDName(v->getType());
+      lljvm_unreachable(err_msg.str());
     }
   } else {
-    // TODO: If an one-side argument is undef, we don't copy input data
-    unsigned numInputElems = 0;
-    const Value *vec1 = inst->getOperand(0);
-    const SequentialType *vec1Ty = cast<SequentialType>(vec1->getType());
-    numInputElems += vec1Ty->getNumElements();
+    const Value *v1 = inst->getOperand(0);
+    const Value *v2 = inst->getOperand(1);
 
-    const Value *vec2 = inst->getOperand(1);
-    const SequentialType *vec2Ty = dyn_cast<SequentialType>(vec2->getType());
-    const bool vec2IsUndef = isa<UndefValue>(vec2);
-    if (!vec2IsUndef) {
-      numInputElems += vec2Ty->getNumElements();
-    }
+    if (const VectorType *v1Ty = dyn_cast<VectorType>(v1->getType())) {
+      assert(v1Ty == v2->getType());
 
-    uint64_t vecElemSize = targetData->getTypeAllocSize(vec1Ty->getElementType());
-    printSimpleInstruction("bipush", utostr(vecElemSize * numInputElems));
-    printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+      // TODO: If an one-side argument is undef, we don't copy input data
+      unsigned numInputElems = 0;
+      numInputElems += v1Ty->getNumElements();
 
-    unsigned storePos = 0;
-    for (int i = 0; i < vec1Ty->getNumElements(); i++) {
-      // Locate a store position
-      printSimpleInstruction("dup2");
-      printSimpleInstruction("ldc2_w", utostr(storePos));
-      printSimpleInstruction("ladd");
-      // Load a value from a given input address
-      printValueLoad(vec1);
-      printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
-      printSimpleInstruction("ladd");
-      printIndirectLoad(vec1Ty->getElementType());
-      // Then, store it
-      printIndirectStore(vec1Ty->getElementType());
-      storePos += vecElemSize;
-    }
-    for (int i = 0; !vec2IsUndef && i < vec2Ty->getNumElements(); i++) {
-      // Locate a store position
-      printSimpleInstruction("dup2");
-      printSimpleInstruction("ldc2_w", utostr(storePos));
-      printSimpleInstruction("ladd");
-      // Load a value from a given input address
-      printValueLoad(vec2);
-      printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
-      printSimpleInstruction("ladd");
-      printIndirectLoad(vec2Ty->getElementType());
-      // Then, store it
-      printIndirectStore(vec2Ty->getElementType());
-      storePos += vecElemSize;
-    }
+      const VectorType *v2Ty = cast<VectorType>(v2->getType());
+      const bool v2IsUndef = isa<UndefValue>(v2);
+      if (!v2IsUndef) {
+        numInputElems += v2Ty->getNumElements();
+      }
 
-    // TODO: Reuse the local variable of `vec1` here (revisit this)
-    printValueStore(vec1);
-
-    if (const ConstantDataVector *mask = dyn_cast<ConstantDataVector>(inst->getOperand(2))) {
-      printSimpleInstruction("bipush", utostr(vecElemSize * mask->getNumElements()));
+      uint64_t vecElemSize = targetData->getTypeAllocSize(v1Ty->getElementType());
+      printSimpleInstruction("bipush", utostr(vecElemSize * numInputElems));
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-      for (int i = 0; i < mask->getNumElements(); i++) {
+
+      unsigned storePos = 0;
+      for (int i = 0; i < v1Ty->getNumElements(); i++) {
         // Locate a store position
         printSimpleInstruction("dup2");
+        printSimpleInstruction("ldc2_w", utostr(storePos));
+        printSimpleInstruction("ladd");
+        // Load a value from a given input address
+        printValueLoad(v1);
         printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
         printSimpleInstruction("ladd");
-        // Load a value from a given index
-        printValueLoad(vec1);
-        printSimpleInstruction("ldc2_w", utostr(vecElemSize));
-        printValueLoad(mask->getElementAsConstant(i));
-        printCastInstruction("l", getTypePrefix(mask->getElementType(), true));
-        printSimpleInstruction("lmul");
-        printSimpleInstruction("ladd");
-        printIndirectLoad(vec1Ty->getElementType());
+        printIndirectLoad(v1Ty->getElementType());
         // Then, store it
-        printIndirectStore(vec1Ty->getElementType());
+        printIndirectStore(v1Ty->getElementType());
+        storePos += vecElemSize;
       }
-    } else if (const ConstantVector *mask = dyn_cast<ConstantVector>(inst->getOperand(2))) {
-      // Computes the number of elements for `ConstantVector`
-      unsigned numElements = 0;
-      for (unsigned i = 0; NULL != mask->getAggregateElement(i); i++) {
-        numElements++;
-      }
-      printSimpleInstruction("bipush", utostr(vecElemSize * numElements));
-      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-      for (int i = 0; i < numElements; i++) {
+      for (int i = 0; !v2IsUndef && i < v2Ty->getNumElements(); i++) {
         // Locate a store position
         printSimpleInstruction("dup2");
+        printSimpleInstruction("ldc2_w", utostr(storePos));
+        printSimpleInstruction("ladd");
+        // Load a value from a given input address
+        printValueLoad(v2);
         printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
         printSimpleInstruction("ladd");
+        printIndirectLoad(v2Ty->getElementType());
+        // Then, store it
+        printIndirectStore(v2Ty->getElementType());
+        storePos += vecElemSize;
+      }
 
-        // Load a value....
-        if (const UndefValue *undef = dyn_cast<UndefValue>(mask->getAggregateElement(i))) {
-          printSimpleInstruction("iconst_0");
-          printCastInstruction(getTypePrefix(vec1Ty->getElementType(), true), "i");
-        } else {
-          // Load from a given index
-          const Constant *elem = mask->getAggregateElement(i);
-          printValueLoad(vec1);
+      // TODO: Reuse the local variable of `v1` here (revisit this)
+      printValueStore(v1);
+
+      if (const ConstantDataVector *mask = dyn_cast<ConstantDataVector>(inst->getOperand(2))) {
+        printSimpleInstruction("bipush", utostr(vecElemSize * mask->getNumElements()));
+        printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+        for (int i = 0; i < mask->getNumElements(); i++) {
+          // Locate a store position
+          printSimpleInstruction("dup2");
+          printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
+          printSimpleInstruction("ladd");
+          // Load a value from a given index
+          printValueLoad(v1);
           printSimpleInstruction("ldc2_w", utostr(vecElemSize));
-          printValueLoad(mask->getAggregateElement(i));
-          printCastInstruction("l", getTypePrefix(elem->getType(), true));
+          printValueLoad(mask->getElementAsConstant(i));
+          printCastInstruction("l", getTypePrefix(mask->getElementType(), true));
           printSimpleInstruction("lmul");
           printSimpleInstruction("ladd");
-          printIndirectLoad(vec1Ty->getElementType());
+          printIndirectLoad(v1Ty->getElementType());
+          // Then, store it
+          printIndirectStore(v1Ty->getElementType());
         }
-        // Then, store it
-        printIndirectStore(vec1Ty->getElementType());
+      } else if (const ConstantVector *mask = dyn_cast<ConstantVector>(inst->getOperand(2))) {
+        // Computes the number of elements for `ConstantVector`
+        unsigned numElements = 0;
+        for (unsigned i = 0; NULL != mask->getAggregateElement(i); i++) {
+          numElements++;
+        }
+        printSimpleInstruction("bipush", utostr(vecElemSize * numElements));
+        printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+        for (int i = 0; i < numElements; i++) {
+          // Locate a store position
+          printSimpleInstruction("dup2");
+          printSimpleInstruction("ldc2_w", utostr(i * vecElemSize));
+          printSimpleInstruction("ladd");
+
+          // Load a value....
+          if (const UndefValue *undef = dyn_cast<UndefValue>(mask->getAggregateElement(i))) {
+            printSimpleInstruction("iconst_0");
+            printCastInstruction(getTypePrefix(v1Ty->getElementType(), true), "i");
+          } else {
+            // Load from a given index
+            const Constant *elem = mask->getAggregateElement(i);
+            printValueLoad(v1);
+            printSimpleInstruction("ldc2_w", utostr(vecElemSize));
+            printValueLoad(mask->getAggregateElement(i));
+            printCastInstruction("l", getTypePrefix(elem->getType(), true));
+            printSimpleInstruction("lmul");
+            printSimpleInstruction("ladd");
+            printIndirectLoad(v1Ty->getElementType());
+          }
+          // Then, store it
+          printIndirectStore(v1Ty->getElementType());
+        }
+      } else {
+        std::stringstream err_msg;
+        err_msg << "Unknown operand type in shufflevector: Type=" << getTypeIDName(v1->getType());
+        lljvm_unreachable(err_msg.str());
       }
     } else {
       std::stringstream err_msg;
@@ -1024,28 +1051,31 @@ void JVMWriter::printMathIntrinsic(unsigned int op) {
 // and Intrinsic::copysign here.
 void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
   assert(inst->getNumOperands() >= 2 && inst->getNumOperands() <= 3);
+
+  const Value *v1 = inst->getOperand(0);
+
   // First, we need to check if the input is a vector type or not
-  if (const SequentialType *seqTy = dyn_cast<SequentialType>(inst->getOperand(0)->getType())) {
+  if (const VectorType *vecTy = dyn_cast<VectorType>(v1->getType())) {
     bool f32 = false;
     bool f32_2nd = false;
     if (inst->getNumOperands() == 2) {
-      f32 = (getBitWidth(seqTy->getElementType()) == 32);
+      f32 = (getBitWidth(vecTy->getElementType()) == 32);
     } else {
       // For pow()
-      f32 = (getBitWidth(seqTy->getElementType()) == 32);
+      f32 = (getBitWidth(vecTy->getElementType()) == 32);
 
       // TODO: The return type depends on the 1st type
       // f32_2nd = (getBitWidth(inst->getOperand(1)->getType()) == 32);
       f32_2nd = f32;
     }
 
-    int size = targetData->getTypeAllocSize(seqTy->getElementType());
+    int size = targetData->getTypeAllocSize(vecTy->getElementType());
 
-    printSimpleInstruction("sipush", utostr(seqTy->getNumElements() * size));
+    printSimpleInstruction("sipush", utostr(vecTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
     // TODO: Needs to support vector computation?
-    for (int i = 0; i < seqTy->getNumElements(); i++) {
+    for (int i = 0; i < vecTy->getNumElements(); i++) {
       printSimpleInstruction("dup2");
       printSimpleInstruction("ldc2_w", utostr(i * size));
       printSimpleInstruction("ladd");
@@ -1054,14 +1084,14 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
          printValueLoad(inst->getOperand(0));
          printSimpleInstruction("ldc2_w", utostr(i * size));
          printSimpleInstruction("ladd");
-         printIndirectLoad(seqTy->getElementType());
+         printIndirectLoad(vecTy->getElementType());
          if (f32) printSimpleInstruction("f2d");
       } else {
         // For pow()
         printValueLoad(inst->getOperand(0));
         printSimpleInstruction("ldc2_w", utostr(i * size));
         printSimpleInstruction("ladd");
-        printIndirectLoad(seqTy->getElementType());
+        printIndirectLoad(vecTy->getElementType());
         if (f32) printSimpleInstruction("f2d");
 
         if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(inst->getOperand(1))) {
@@ -1077,9 +1107,10 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
 
       printMathIntrinsic(inst->getIntrinsicID());
       if (f32) printSimpleInstruction("d2f");
-      printIndirectStore(seqTy->getElementType());
+      printIndirectStore(vecTy->getElementType());
     }
-  } else {
+  } else if (v1->getType()->getTypeID() == Type::FloatTyID ||
+      v1->getType()->getTypeID() == Type::DoubleTyID) {
     bool f32 = false;
     if (inst->getNumOperands() == 2) {
       f32 = (getBitWidth(inst->getOperand(0)->getType()) == 32);
@@ -1099,6 +1130,10 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
 
     printMathIntrinsic(inst->getIntrinsicID());
     if (f32) printSimpleInstruction("d2f");
+  } else {
+    std::stringstream err_msg;
+    err_msg << "Unknown operand type: Type=" << getTypeIDName(inst->getOperand(0)->getType());
+    lljvm_unreachable(err_msg.str());
   }
 }
 
