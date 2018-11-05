@@ -243,6 +243,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     ("fence", (clazz, obj) => {}),
 
     ("getelementptr", (clazz, obj) => {
+      // TODO: Needs more test patterns
       val getelementptr = LLJVMUtils.getMethod(clazz, "_getelementptr", Seq(jLong.TYPE): _*)
       val addr = ArrayUtils.addressOf(Array(0, 2, 4, -6, 8, 10))
       assert(getelementptr.invoke(obj, Seq(new jLong(addr)): _*) === -6)
@@ -368,11 +369,18 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("insertelement", (clazz, obj) => {
+      // insertelement - <4 x i32>
       val insertelement = LLJVMUtils.getMethod(clazz, "_insertelement", Seq(jLong.TYPE): _*)
       val ar = Array(-5, 6, -7, 8)
       val addr = ArrayUtils.addressOf(ar)
-      assert(insertelement.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar))): _*) === addr)
-      assert(ar(3) === 4)
+      val resultAddr = insertelement.invoke(
+        obj, Seq(new jLong(ArrayUtils.addressOf(ar))): _*).asInstanceOf[Long]
+      assert(resultAddr !== addr)
+      assert(ar === Array(-5, 6, -7, 8))
+      assert(Platform.getInt(null, resultAddr) === -5)
+      assert(Platform.getInt(null, resultAddr + 4) === 6)
+      assert(Platform.getInt(null, resultAddr + 8) === -7)
+      assert(Platform.getInt(null, resultAddr + 12) === 4)
     }),
 
     ("shufflevector", (clazz, obj) => {

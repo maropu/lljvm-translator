@@ -71,6 +71,8 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
   // First, we need to check if the input is a vector type or not.
   // TODO: We need to support vector types in other types?
   if (const VectorType *leftVecTy = dyn_cast<VectorType>(left->getType())) {
+    assert(leftVecTy == right->getType());
+
     const VectorType *rightVecTy = cast<VectorType>(right->getType());
 
     // TODO: A return type is always i1?
@@ -555,15 +557,30 @@ void JVMWriter::printInsertElement(const InsertElementInst *inst) {
   const Value *v = inst->getOperand(0);
 
   if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
-    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
-    if (const UndefValue *undef = dyn_cast<UndefValue>(v)) {
-      printSimpleInstruction("bipush", utostr(vecSize * undef->getNumElements()));
-      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-    } else {
-      printValueLoad(v);
+    uint64_t elementSize = targetData->getTypeAllocSize(vecTy->getElementType());
+    printSimpleInstruction("bipush", utostr(elementSize * vecTy->getNumElements()));
+    printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+    if (!isa<UndefValue>(v)) {
+      // Copy ArrayTy values element-by-element into the allocated
+      for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
+        // Locate output position
+        printSimpleInstruction("dup2");
+        printPtrLoad(elementSize * i);
+        printSimpleInstruction("ladd");
+
+        // Load a value from the current position
+        printValueLoad(v);
+        printPtrLoad(elementSize * i);
+        printSimpleInstruction("ladd");
+        printIndirectLoad(vecTy->getElementType());
+
+        // Copy the value
+        printIndirectStore(vecTy->getElementType());
+      }
     }
+
     printSimpleInstruction("dup2");
-    printSimpleInstruction("ldc2_w", utostr(vecSize));
+    printSimpleInstruction("ldc2_w", utostr(elementSize));
     printValueLoad(inst->getOperand(2));
     printCastInstruction("l", getTypePrefix(inst->getOperand(2)->getType(), true));
     printSimpleInstruction("lmul");
@@ -581,15 +598,15 @@ void JVMWriter::printExtractElement(const ExtractElementInst *inst) {
   const Value *v = inst->getOperand(0);
 
   if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
-    uint64_t vecSize = targetData->getTypeAllocSize(vecTy->getElementType());
+    uint64_t elementSize = targetData->getTypeAllocSize(vecTy->getElementType());
     if (const UndefValue *undef = dyn_cast<UndefValue>(v)) {
-      printSimpleInstruction("bipush", utostr(vecSize * undef->getNumElements()));
+      printSimpleInstruction("bipush", utostr(elementSize * undef->getNumElements()));
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
     } else {
       printValueLoad(v);
     }
     // printSimpleInstruction("dup2");
-    printSimpleInstruction("ldc2_w", utostr(vecSize));
+    printSimpleInstruction("ldc2_w", utostr(elementSize));
     printValueLoad(inst->getOperand(1));
     printCastInstruction("l", getTypePrefix(inst->getOperand(1)->getType(), true));
     printSimpleInstruction("lmul");
