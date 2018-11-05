@@ -24,6 +24,35 @@
 
 #include <sstream>
 
+unsigned int JVMWriter::getByteWidth(const Type *ty) {
+  switch (ty->getTypeID()) {
+    case Type::ArrayTyID:
+    case Type::VectorTyID:
+    case Type::StructTyID:
+    case Type::PointerTyID:
+      return 8;
+    default:
+      break;
+  }
+
+  unsigned int n = ty->getPrimitiveSizeInBits();
+  switch (n) {
+    case 1:
+    case 8:
+      return 1;
+    case 16:
+      return 2;
+    case 32:
+      return 4;
+    case 64:
+      return 8;
+    default:
+      std::stringstream err_msg;
+      err_msg << "Unsupported type: Type=" << getTypeIDName(ty) << " Bits=" << n;
+      lljvm_unreachable(err_msg.str());
+  }
+}
+
 unsigned int JVMWriter::getBitWidth(const Type *ty, bool expand) {
   switch (ty->getTypeID()) {
     case Type::ArrayTyID:
@@ -48,7 +77,7 @@ unsigned int JVMWriter::getBitWidth(const Type *ty, bool expand) {
       return n;
     default:
       std::stringstream err_msg;
-      err_msg << "Unsupported integer width: Bits=" << n;
+      err_msg << "Unsupported type: Type=" << getTypeIDName(ty) << " Bits=" << n;
       lljvm_unreachable(err_msg.str());
   }
 }

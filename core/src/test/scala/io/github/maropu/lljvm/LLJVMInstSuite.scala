@@ -414,11 +414,94 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("insertvalue", (clazz, obj) => {
-      val insertvalue = LLJVMUtils.getMethod(clazz, "_insertvalue", Seq(jLong.TYPE): _*)
-      val ar = Array(0.0, 0.0)
-      val addr = ArrayUtils.addressOf(ar)
-      assert(insertvalue.invoke(obj, Seq(new jLong(addr)): _*) === addr)
-      assert(ar(1) === 7.0)
+      // { double, double }
+      val insertvalue1 = LLJVMUtils.getMethod(clazz, "_insertvalue1", Seq(jLong.TYPE): _*)
+      val ar1 = Array(1.0, 2.0)
+      val addr1 = ArrayUtils.addressOf(ar1)
+      val resultAddr1 = insertvalue1.invoke(obj, Seq(new jLong(addr1)): _*).asInstanceOf[Long]
+      assert(resultAddr1 !== addr1)
+      assert(ar1(0) === 1.0)
+      assert(ar1(1) === 2.0)
+      assert(Platform.getDouble(null, resultAddr1) === 1.0)
+      assert(Platform.getDouble(null, resultAddr1 + 8) === 7.0)
+
+      // { i32, double, i32 }
+      val insertvalue2 = LLJVMUtils.getMethod(clazz, "_insertvalue2", Seq(jLong.TYPE): _*)
+      val ar2 = Array[Byte](16)
+      val addr2 = ArrayUtils.addressOf(ar2)
+      Platform.putInt(null, addr2, 1)
+      Platform.putDouble(null, addr2 + 4, 4.0)
+      Platform.putInt(null, addr2 + 12, 2)
+      val resultAddr2 = insertvalue2.invoke(obj, Seq(new jLong(addr2)): _*).asInstanceOf[Long]
+      assert(resultAddr2 !== addr2)
+      assert(Platform.getInt(null, addr2) === 1)
+      assert(Platform.getDouble(null, addr2 + 4) === 4.0)
+      assert(Platform.getInt(null, addr2 + 12) === 2)
+      assert(Platform.getInt(null, resultAddr2) === 5)
+      assert(Platform.getDouble(null, resultAddr2 + 4) === 4.0)
+      assert(Platform.getInt(null, resultAddr2 + 12) === 2)
+
+      // { i32, { i32 }, i32 }
+      val insertvalue3 = LLJVMUtils.getMethod(
+        clazz, "_insertvalue3", Seq(jLong.TYPE, jLong.TYPE): _*)
+      val ar3_x = Array[Byte](16)
+      val ar3_y = Array(7)
+      val addr3_x = ArrayUtils.addressOf(ar3_x)
+      val addr3_y = ArrayUtils.addressOf(ar3_y)
+      Platform.putInt(null, addr3_x, 4)
+      Platform.putLong(null, addr3_x + 4, 0)
+      Platform.putInt(null, addr3_x + 12, 9)
+      val resultAddr3 = insertvalue3.invoke(
+        obj, Seq(new jLong(addr3_x), new jLong(addr3_y)): _*).asInstanceOf[Long]
+      assert(resultAddr3 !== addr3_x)
+      assert(Platform.getInt(null, addr3_x) === 4)
+      assert(Platform.getLong(null, addr3_x + 4) === 0)
+      assert(Platform.getInt(null, addr3_x + 12) === 9)
+      assert(Platform.getInt(null, resultAddr3) === 4)
+      assert(Platform.getLong(null, resultAddr3 + 4) === addr3_y)
+      assert(Platform.getInt(null, resultAddr3 + 12) === 9)
+
+      // { i64, [2 x i32] }
+      val ar4_x = Array(0, 0, 3, -2)
+      val addr4_x = ArrayUtils.addressOf(ar4_x)
+      // { i32, [2 x i32] }
+      val ar4_y = Array(0, 0, 0)
+      val addr4_y = ArrayUtils.addressOf(ar4_y)
+      val insertvalue4 = LLJVMUtils.getMethod(
+        clazz, "_insertvalue4", Seq(jLong.TYPE, jLong.TYPE): _*)
+      val resultAddr4 = insertvalue4.invoke(
+        obj, Seq(new jLong(addr4_x), new jLong(addr4_y)): _*).asInstanceOf[Long]
+      assert(resultAddr4 !== addr4_x)
+      assert(resultAddr4 !== addr4_y)
+      assert(ar4_x(0) === 0)
+      assert(ar4_x(1) === 0)
+      assert(ar4_x(2) === 3)
+      assert(ar4_x(3) === -2)
+      assert(ar4_y(0) === 0)
+      assert(ar4_y(1) === 0)
+      assert(ar4_y(2) === 0)
+      assert(Platform.getInt(null, resultAddr4 + 4) === 3)
+      assert(Platform.getInt(null, resultAddr4 + 8) === -2)
+
+      // { i32, [3 x i64] }
+      val ar5 = Array[Byte](28)
+      val addr5 = ArrayUtils.addressOf(ar5)
+      Platform.putInt(null, addr5, 1)
+      Platform.putLong(null, addr5 + 4, 2)
+      Platform.putLong(null, addr5 + 12, 3)
+      Platform.putLong(null, addr5 + 20, 4)
+      val insertvalue5 = LLJVMUtils.getMethod(clazz, "_insertvalue5", Seq(jLong.TYPE): _*)
+      val resultAddr5 = insertvalue5.invoke(obj, Seq(new jLong(addr5)): _*).asInstanceOf[Long]
+      assert(resultAddr5 !== addr5)
+      assert(Platform.getInt(null, resultAddr5) === 4)
+      assert(Platform.getLong(null, resultAddr5 + 4) === 2)
+      assert(Platform.getLong(null, resultAddr5 + 12) === 3)
+      assert(Platform.getLong(null, resultAddr5 + 20) === 4)
+
+      // { i32, i32, i32 }
+      val insertvalue6 = LLJVMUtils.getMethod(clazz, "_insertvalue6")
+      val resultAddr6 = insertvalue6.invoke(obj).asInstanceOf[Long]
+      assert(Platform.getInt(null, resultAddr6 + 4) === 3)
     }),
 
     // ("atomicrmw", (clazz, obj) => {

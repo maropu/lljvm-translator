@@ -489,7 +489,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
       bitcode = s"$basePath/bubblesort-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
       funcName =
-        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2456E5ArrayIfLi1E1A7mutable7alignedE",
+        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2462E5ArrayIfLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
@@ -501,7 +501,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
       bitcode = s"$basePath/bubblesort-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
       funcName =
-        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2457E5ArrayIdLi1E1A7mutable7alignedE",
+        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2463E5ArrayIdLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )

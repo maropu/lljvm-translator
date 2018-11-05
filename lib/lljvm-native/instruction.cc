@@ -27,7 +27,9 @@
 #include <sstream>
 
 static unsigned int alignOffset(unsigned int offset, unsigned int align) {
-  return offset + ((align - (offset % align)) % align);
+  // TODO: Needs to consider memory alignments
+  // return offset + ((align - (offset % align)) % align);
+  return offset;
 }
 
 static std::string getPredicate(unsigned int predicate) {
@@ -485,14 +487,21 @@ void JVMWriter::printVAArgInstruction(const VAArgInst *inst) {
 }
 
 void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
-  const Value *v = inst->getAggregateOperand();
-  const Type *aggType = v->getType();
+  const Value *aggValue = inst->getAggregateOperand();
+  const Type *aggType = aggValue->getType();
+
+  if (inst->getNumIndices() > 1) {
+    std::stringstream err_msg;
+    err_msg << "Unsupported multi indices in extractvalue: Num=" << inst->getNumIndices();
+    throw err_msg.str();
+  }
 
   // Loads address
-  printCastInstruction(Instruction::IntToPtr, v, NULL, aggType);
+  printCastInstruction(Instruction::IntToPtr, aggValue, NULL, aggType);
 
-  // Calculates offset
+  // The value to insert must have the same type as the value identified by the indices
   for (unsigned i = 0; i < inst->getNumIndices(); i++) {
+    // Calculates offset
     unsigned fieldIndex = inst->getIndices()[i];
     int size = 0;
     if (const StructType *structTy = dyn_cast<StructType>(aggType)) {
@@ -522,7 +531,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
       printIndirectLoad(seqTy->getElementType());
     } else {
       std::stringstream err_msg;
-      err_msg << "Unknown type: Type=" << getTypeIDName(aggType);
+      err_msg << "Unknown aggregate type in insertvalue: Type=" << getTypeIDName(aggType);
       lljvm_unreachable(err_msg.str());
     }
   }
@@ -570,57 +579,162 @@ void JVMWriter::printExtractElement(const ExtractElementInst *inst) {
 void JVMWriter::printInsertValue(const InsertValueInst *inst) {
   const Value *aggValue = inst->getOperand(0);
   const Type *aggType = aggValue->getType();
+
+  if (inst->getNumIndices() > 1) {
+    std::stringstream err_msg;
+    err_msg << "Unsupported multiple indices in insertvalue: Num=" << inst->getNumIndices();
+    throw err_msg.str();
+  }
+
+  // Because of SSA, we copy input value `aggValue` first
   if (const StructType *structTy = dyn_cast<StructType>(aggType)) {
+    // Computes the size with alignments
     int aggSize = 0;
     for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
-      aggSize = alignOffset(
-        aggSize + targetData->getTypeAllocSize(structTy->getContainedType(f)),
-        targetData->getABITypeAlignment(structTy->getContainedType(f)));
-    }
-    if (const UndefValue *undef = dyn_cast<UndefValue>(aggValue)) {
-      printSimpleInstruction("bipush", utostr(aggSize));
-      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-    } else {
-      printValueLoad(aggValue);
-    }
-    printSimpleInstruction("dup2");
-
-    // Calculates offset
-    for (unsigned i = 0; i < inst->getNumIndices(); i++) {
-      unsigned fieldIndex = inst->getIndices()[i];
-      int size = 0;
-      for (unsigned int f = 0; f < fieldIndex; f++) {
-        size = alignOffset(
-          size + targetData->getTypeAllocSize(structTy->getContainedType(f)),
+      if (const SequentialType *seqTy = dyn_cast<SequentialType>(structTy->getContainedType(f))) {
+        int elementSize = getByteWidth(seqTy->getElementType());
+        aggSize = alignOffset(
+          aggSize + elementSize * seqTy->getNumElements(),
+          targetData->getABITypeAlignment(structTy->getContainedType(f)));
+      } else {
+        aggSize = alignOffset(
+          aggSize + getByteWidth(structTy->getContainedType(f)),
           targetData->getABITypeAlignment(structTy->getContainedType(f)));
       }
-      printPtrLoad(size);
-      printSimpleInstruction("ladd");
-      printValueLoad(inst->getOperand(1));
-      printIndirectStore(inst->getOperand(1)->getType());
     }
-  } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(aggType)) {
-    int aggSize = targetData->getTypeAllocSize(seqTy->getElementType()) * seqTy->getNumElements();
-    if (const UndefValue *undef = dyn_cast<UndefValue>(aggValue)) {
-      printSimpleInstruction("bipush", utostr(aggSize));
-      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-    } else {
-      printValueLoad(aggValue);
-    }
-    printSimpleInstruction("dup2");
+    printSimpleInstruction("bipush", utostr(aggSize));
+    printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
-    // Calculates offset
+    if (!isa<UndefValue>(aggValue)) {
+      aggSize = 0;
+      for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
+        if (const SequentialType *seqTy = dyn_cast<SequentialType>(structTy->getContainedType(f))) {
+          // Copy ArrayTy values element-by-element into the allocated
+          int elementSize = getByteWidth(seqTy->getElementType());
+          for (unsigned i = 0; i < seqTy->getNumElements(); i++) {
+            // Locate output position
+            printSimpleInstruction("dup2");
+            printPtrLoad(aggSize + elementSize * i);
+            printSimpleInstruction("ladd");
+
+            // Load a value from the current position
+            printValueLoad(aggValue);
+            printPtrLoad(aggSize + elementSize * i);
+            printSimpleInstruction("ladd");
+            printIndirectLoad(seqTy->getElementType());
+
+            // Copy the value
+            printIndirectStore(seqTy->getElementType());
+          }
+
+          // Locate a next position
+          aggSize = alignOffset(
+            aggSize + elementSize * seqTy->getNumElements(),
+            targetData->getABITypeAlignment(structTy->getContainedType(f)));
+        } else {
+          // Locate output position
+          printSimpleInstruction("dup2");
+          printSimpleInstruction("ldc2_w", utostr(aggSize));
+          printSimpleInstruction("ladd");
+
+          // Load a value from the current position
+          printValueLoad(aggValue);
+          printSimpleInstruction("ldc2_w", utostr(aggSize));
+          printSimpleInstruction("ladd");
+          printIndirectLoad(structTy->getContainedType(f));
+
+          // Copy the value
+          printIndirectStore(structTy->getContainedType(f));
+
+          // Locate a next position
+          aggSize = alignOffset(
+            aggSize + getByteWidth(structTy->getContainedType(f)),
+            targetData->getABITypeAlignment(structTy->getContainedType(f)));
+        }
+      }
+    }
+
+    // The value to insert must have the same type as the value identified by the indices
     for (unsigned i = 0; i < inst->getNumIndices(); i++) {
       unsigned fieldIndex = inst->getIndices()[i];
-      int size = targetData->getTypeAllocSize(seqTy->getElementType());
-      printPtrLoad(fieldIndex * size);
+      aggSize = 0;
+      assert(structTy->getNumElements() > fieldIndex);
+      for (unsigned int f = 0; f < fieldIndex; f++) {
+        aggSize = alignOffset(
+          aggSize + getByteWidth(structTy->getContainedType(f)),
+          targetData->getABITypeAlignment(structTy->getContainedType(f)));
+      }
+
+      if (const SequentialType *seqTy = dyn_cast<SequentialType>(structTy->getContainedType(fieldIndex))) {
+        // Insert ArrayTy values element-by-element into the position
+        int elementSize = getByteWidth(seqTy->getElementType());
+        for (unsigned j = 0; j < seqTy->getNumElements(); j++) {
+          // Locate output position
+          printSimpleInstruction("dup2");
+          printPtrLoad(aggSize + elementSize * j);
+          printSimpleInstruction("ladd");
+
+          // Load a value from the current position
+          printValueLoad(inst->getOperand(1));
+          printPtrLoad(elementSize * j);
+          printSimpleInstruction("ladd");
+          printIndirectLoad(seqTy->getElementType());
+
+          // Copy the value
+          printIndirectStore(seqTy->getElementType());
+        }
+      } else {
+        // Insert a value itself into the output position
+        printSimpleInstruction("dup2");
+        printSimpleInstruction("ldc2_w", utostr(aggSize));
+        printSimpleInstruction("ladd");
+        printValueLoad(inst->getOperand(1));
+        printIndirectStore(structTy->getContainedType(fieldIndex));
+      }
+    }
+  } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(aggType)) {
+    assert(seqTy->getElementType() == inst->getOperand(1)->getType());
+
+    int elementSize = getByteWidth(seqTy->getElementType());
+    int aggSize = elementSize * seqTy->getNumElements();
+    printSimpleInstruction("bipush", utostr(aggSize));
+    printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+
+    if (!isa<UndefValue>(aggValue)) {
+      for (int i = 0; i < seqTy->getNumElements(); i++) {
+        // Locate output position
+        printSimpleInstruction("dup2");
+        printPtrLoad(elementSize * i);
+        printSimpleInstruction("ladd");
+
+        // Load a value from the current position
+        printValueLoad(aggValue);
+        printPtrLoad(elementSize * i);
+        printSimpleInstruction("ladd");
+        printIndirectLoad(seqTy->getElementType());
+
+        // Copy the value
+        printIndirectStore(seqTy->getElementType());
+      }
+    }
+
+    // Override the values with given indices
+    for (unsigned i = 0; i < inst->getNumIndices(); i++) {
+      assert(seqTy->getElementType() == structTy->getContainedType(i));
+
+      // Locate output position
+      unsigned fieldIndex = inst->getIndices()[i];
+      printSimpleInstruction("dup2");
+      printPtrLoad(elementSize * fieldIndex);
       printSimpleInstruction("ladd");
+
+      // Insert a value into the position
       printValueLoad(inst->getOperand(1));
       printIndirectStore(inst->getOperand(1)->getType());
     }
   } else {
     std::stringstream err_msg;
-    err_msg << "Unknown type: Type=" << getTypeIDName(aggType);
+    err_msg << "Unknown aggregate type in insertvalue: Type=" << getTypeIDName(aggType);
     lljvm_unreachable(err_msg.str());
   }
 }

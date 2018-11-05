@@ -57,6 +57,7 @@ void JVMWriter::printBasicBlock(const BasicBlock *block) {
   }
 }
 
+// All the tests for the LLVM instructions are located in `core/src/test/resources/llvm-insts`
 void JVMWriter::printInstruction(const Instruction *inst) {
   const Value *left, *right;
   if (inst->getNumOperands() >= 1) {
