@@ -29,3 +29,9 @@ define i32 @extractvalue3({ i32, <2 x i32>, <3 x i32> } %x) {
   %ret = add nsw i32 %8, %12
   ret i32 %ret
 }
+
+define i32 @extractvalue4({ i32, [2 x i32], <3 x i32> } %x) {
+  %1 = extractvalue { i32, [2 x i32], <3 x i32> } %x, 1
+  %ret = extractvalue [2 x i32] %1, 1
+  ret i32 %ret
+}

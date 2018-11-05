@@ -415,6 +415,15 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       val extractvalue3 = LLJVMUtils.getMethod(clazz, "_extractvalue3", Seq(jLong.TYPE): _*)
       val addr3 = ArrayUtils.addressOf(Array(1, 2, 3, 4, 5, 6))
       assert(extractvalue3.invoke(obj, Seq(new jLong(addr3)): _*) === 21)
+
+      // extractvalue4 -- { i32, [2 x i32], <3 x i32> }
+      val extractvalue4 = LLJVMUtils.getMethod(clazz, "_extractvalue4", Seq(jLong.TYPE): _*)
+      val ar4 = Array[Byte](24)
+      val ar4_ar = Array(4, -7)
+      val addr4 = ArrayUtils.addressOf(ar4)
+      val addr4_ar = ArrayUtils.addressOf(ar4_ar)
+      Platform.putLong(null, addr4 + 4, addr4_ar)
+      assert(extractvalue4.invoke(obj, Seq(new jLong(addr4)): _*) === -7)
     }),
 
     ("insertvalue", (clazz, obj) => {
