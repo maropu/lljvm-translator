@@ -25,20 +25,22 @@ import io.github.maropu.lljvm.util.ArrayUtils;
  * A placeholder for one or two dimensional arrays in Python.
  */
 public class PyArrayHolder implements AutoCloseable {
+  private static final int MAX_DIMENSION = 2;
+
   private final long holderAddr;
   private final long meminfoAddr;
   private final long parentAddr; // Not used now
   private final boolean isArrayOwner;
 
-  // This value depends on a shape of arrays
-  private long strideAddrOffset;
+  // Number of dimensions
+  private int numDim;
 
   public PyArrayHolder(long addr, int dim) {
     assert(dim == 1 || dim == 2);
     this.holderAddr = addr;
     this.meminfoAddr = Platform.getLong(null, holderAddr);
     this.parentAddr = Platform.getLong(null, holderAddr + 8);
-    this.strideAddrOffset = 8 * dim; // Not used
+    this.numDim = dim; // Not used
     this.isArrayOwner = false;
   }
 
@@ -49,8 +51,14 @@ public class PyArrayHolder implements AutoCloseable {
   public PyArrayHolder() {
     // We assume that the aggregate(array/struct) type of python input n-d arrays is
     // `{ i8*, i8*, i64, i64, ty*, [n x i64], [n x i64] }`.
-    long holderSize = 72;
+    long pyArrayHeaderSize = 8 * 7;
+    long meminfoSize = 40;
+    long parentAddrSize = 8;
+    long diminfoSize = 8 * (2 * MAX_DIMENSION);
+    long holderSize = pyArrayHeaderSize + meminfoSize + parentAddrSize + diminfoSize;
     this.holderAddr = Platform.allocateMemory(holderSize);
+
+    Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
 
     // A pointer to allocated memory info; we assume the total size is 40B and the structure
     // in `numba/runtime/nrt.c` is as follows;
@@ -62,19 +70,16 @@ public class PyArrayHolder implements AutoCloseable {
     //   void              *data;
     //   size_t             size;
     // };
-    long meminfoSize = 40;
-    this.meminfoAddr = Platform.allocateMemory(meminfoSize);
-    // TODO: Needs to merge code to initialize `MemInfo` in `NumbaRuntime`
-    Platform.setMemory(null, meminfoAddr, meminfoSize, (byte) 0);
-    Platform.putLong(null, meminfoAddr, 1L); // starts with 1 refct
+    this.meminfoAddr = holderAddr + pyArrayHeaderSize;
+    this.parentAddr = meminfoAddr + meminfoSize;
+    // 1-d array by default, that is, `{ i8*, i8*, i64, i64, ty*, [1 x i64], [1 x i64] }`
+    this.numDim = 1;
 
-    this.parentAddr = Platform.allocateMemory(8);
-
-    // 1-d array by default, e.g., `{ i8*, i8*, i64, i64, ty*, [1 x i64], [1 x i64] }`
-    this.strideAddrOffset = 8;
-    Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
-    Platform.setMemory(null, meminfoAddr, meminfoSize, (byte) 0);
     Platform.putLong(null, holderAddr, meminfoAddr);
+    long diminfoOffset = pyArrayHeaderSize + meminfoSize + parentAddrSize;
+    Platform.putLong(null, holderAddr + 40, holderAddr + diminfoOffset);
+    Platform.putLong(null, holderAddr + 48, holderAddr + diminfoOffset + 8 * MAX_DIMENSION);
+    Platform.putLong(null, meminfoAddr, 1L); // starts with 1 refct
 
     this.isArrayOwner = true;
   }
@@ -108,19 +113,19 @@ public class PyArrayHolder implements AutoCloseable {
   }
 
   private long shapeAddr() {
-    return holderAddr + 40;
+    return Platform.getLong(null, holderAddr + 40);
   }
 
   private long strideAddr() {
-    return shapeAddr() + strideAddrOffset;
+    return Platform.getLong(null, holderAddr + 48);
   }
 
   private boolean is1d() {
-    return strideAddrOffset == 8;
+    return numDim == 1;
   }
 
   private boolean is2d() {
-    return strideAddrOffset == 16;
+    return numDim == 2;
   }
 
   public PyArrayHolder reshape(long x, long y) {
@@ -131,7 +136,7 @@ public class PyArrayHolder implements AutoCloseable {
     }
 
     // Updates shape and stride for 2-d arrays
-    strideAddrOffset = 16;
+    numDim = 2;
     Platform.putLong(null, shapeAddr(), x);
     Platform.putLong(null, shapeAddr() + 8, y);
     Platform.putLong(null, strideAddr(), y * itemsize);
@@ -162,7 +167,7 @@ public class PyArrayHolder implements AutoCloseable {
     Platform.putLong(null, meminfoAddr + 32, length * size);
 
     // reshape(length, 1);
-    strideAddrOffset = 8;
+    numDim = 1;
     Platform.putLong(null, shapeAddr(), length);
     Platform.putLong(null, strideAddr(), size);
   }
@@ -299,8 +304,6 @@ public class PyArrayHolder implements AutoCloseable {
   public void close() {
     if (isArrayOwner) {
       Platform.freeMemory(holderAddr);
-      Platform.freeMemory(meminfoAddr);
-      Platform.freeMemory(parentAddr);
     }
   }
 }

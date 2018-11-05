@@ -148,7 +148,8 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
           getTypeDescriptor(rightVecTy->getElementType(), true) + ")Z");
       printIndirectStore(rTy);
     }
-  } else if (left->getType()->getTypeID() == Type::IntegerTyID ||
+  } else if ( left->getType()->getTypeID() == Type::PointerTyID ||
+      left->getType()->getTypeID() == Type::IntegerTyID ||
       left->getType()->getTypeID() == Type::FloatTyID ||
       left->getType()->getTypeID() == Type::DoubleTyID) {
     const std::string inst = getPredicate(predicate);
