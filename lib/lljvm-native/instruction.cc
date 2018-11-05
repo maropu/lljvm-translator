@@ -591,10 +591,10 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     // Computes the size with alignments
     int aggSize = 0;
     for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
-      if (const SequentialType *seqTy = dyn_cast<SequentialType>(structTy->getContainedType(f))) {
-        int elementSize = getByteWidth(seqTy->getElementType());
+      if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(f))) {
+        int elementSize = getByteWidth(vecTy->getElementType());
         aggSize = alignOffset(
-          aggSize + elementSize * seqTy->getNumElements(),
+          aggSize + elementSize * vecTy->getNumElements(),
           targetData->getABITypeAlignment(structTy->getContainedType(f)));
       } else {
         aggSize = alignOffset(
@@ -608,10 +608,10 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     if (!isa<UndefValue>(aggValue)) {
       aggSize = 0;
       for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
-        if (const SequentialType *seqTy = dyn_cast<SequentialType>(structTy->getContainedType(f))) {
+        if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(f))) {
           // Copy ArrayTy values element-by-element into the allocated
-          int elementSize = getByteWidth(seqTy->getElementType());
-          for (unsigned i = 0; i < seqTy->getNumElements(); i++) {
+          int elementSize = getByteWidth(vecTy->getElementType());
+          for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
             // Locate output position
             printSimpleInstruction("dup2");
             printPtrLoad(aggSize + elementSize * i);
@@ -621,15 +621,15 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
             printValueLoad(aggValue);
             printPtrLoad(aggSize + elementSize * i);
             printSimpleInstruction("ladd");
-            printIndirectLoad(seqTy->getElementType());
+            printIndirectLoad(vecTy->getElementType());
 
             // Copy the value
-            printIndirectStore(seqTy->getElementType());
+            printIndirectStore(vecTy->getElementType());
           }
 
           // Locate a next position
           aggSize = alignOffset(
-            aggSize + elementSize * seqTy->getNumElements(),
+            aggSize + elementSize * vecTy->getNumElements(),
             targetData->getABITypeAlignment(structTy->getContainedType(f)));
         } else {
           // Locate output position
@@ -665,10 +665,10 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
           targetData->getABITypeAlignment(structTy->getContainedType(f)));
       }
 
-      if (const SequentialType *seqTy = dyn_cast<SequentialType>(structTy->getContainedType(fieldIndex))) {
+      if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(fieldIndex))) {
         // Insert ArrayTy values element-by-element into the position
-        int elementSize = getByteWidth(seqTy->getElementType());
-        for (unsigned j = 0; j < seqTy->getNumElements(); j++) {
+        int elementSize = getByteWidth(vecTy->getElementType());
+        for (unsigned j = 0; j < vecTy->getNumElements(); j++) {
           // Locate output position
           printSimpleInstruction("dup2");
           printPtrLoad(aggSize + elementSize * j);
@@ -678,10 +678,10 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
           printValueLoad(inst->getOperand(1));
           printPtrLoad(elementSize * j);
           printSimpleInstruction("ladd");
-          printIndirectLoad(seqTy->getElementType());
+          printIndirectLoad(vecTy->getElementType());
 
           // Copy the value
-          printIndirectStore(seqTy->getElementType());
+          printIndirectStore(vecTy->getElementType());
         }
       } else {
         // Insert a value itself into the output position
