@@ -496,39 +496,39 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
     throw err_msg.str();
   }
 
-  // Loads address
-  printCastInstruction(Instruction::IntToPtr, aggValue, NULL, aggType);
+  // Load a pointer for the aggreateted value
+  printValueLoad(aggValue);
 
   // The value to insert must have the same type as the value identified by the indices
   for (unsigned i = 0; i < inst->getNumIndices(); i++) {
     // Calculates offset
     unsigned fieldIndex = inst->getIndices()[i];
-    int size = 0;
+    int aggSize = 0;
     if (const StructType *structTy = dyn_cast<StructType>(aggType)) {
       for (unsigned int f = 0; f < fieldIndex; f++) {
-        size = alignOffset(
-          size + targetData->getTypeAllocSize(structTy->getContainedType(f)),
+        aggSize = alignOffset(
+          aggSize + getByteWidth(structTy->getContainedType(f)),
           targetData->getABITypeAlignment(structTy->getContainedType(f)));
       }
-      printPtrLoad(size);
+      printPtrLoad(aggSize);
       printSimpleInstruction("ladd");
       // We load a value itself for regular/pointer types.
-      // Otherwise, we need to load an address for sequential types (array/vector):
+      // Otherwise, we need to load an address for vector-typed values:
       //
-      // e.g., %2 = extractvalue { i64, i8*, [4 x i64] } %.1, 3
+      // e.g., %2 = extractvalue { i64, i8*, [2 x i32], <4 x i64> } %.1, 3
       //
-      // In this example, it is a value for `i64`/`i8*` and
-      // an adress for `[4 x i64]`.
-      if (const SequentialType *seqTy = dyn_cast<SequentialType>(structTy->getContainedType(fieldIndex))) {
+      // In this example, it is a value for `i64`/`i8*`/`[2 x i32]` and
+      // an adress for `<4 x i64>`.
+      if (isa<VectorType>(structTy->getContainedType(fieldIndex))) {
         // Loads an adress itself
       } else {
         printIndirectLoad(structTy->getContainedType(fieldIndex));
       }
-    } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(aggType)) {
-      size = targetData->getTypeAllocSize(seqTy->getElementType());
-      printPtrLoad(fieldIndex * size);
+    } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
+      aggSize = targetData->getTypeAllocSize(arTy->getElementType());
+      printPtrLoad(fieldIndex * aggSize);
       printSimpleInstruction("ladd");
-      printIndirectLoad(seqTy->getElementType());
+      printIndirectLoad(arTy->getElementType());
     } else {
       std::stringstream err_msg;
       err_msg << "Unknown aggregate type in insertvalue: Type=" << getTypeIDName(aggType);
@@ -692,16 +692,16 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
         printIndirectStore(structTy->getContainedType(fieldIndex));
       }
     }
-  } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(aggType)) {
-    assert(seqTy->getElementType() == inst->getOperand(1)->getType());
+  } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
+    assert(arTy->getElementType() == inst->getOperand(1)->getType());
 
-    int elementSize = getByteWidth(seqTy->getElementType());
-    int aggSize = elementSize * seqTy->getNumElements();
+    int elementSize = getByteWidth(arTy->getElementType());
+    int aggSize = elementSize * arTy->getNumElements();
     printSimpleInstruction("bipush", utostr(aggSize));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
     if (!isa<UndefValue>(aggValue)) {
-      for (int i = 0; i < seqTy->getNumElements(); i++) {
+      for (int i = 0; i < arTy->getNumElements(); i++) {
         // Locate output position
         printSimpleInstruction("dup2");
         printPtrLoad(elementSize * i);
@@ -711,16 +711,16 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
         printValueLoad(aggValue);
         printPtrLoad(elementSize * i);
         printSimpleInstruction("ladd");
-        printIndirectLoad(seqTy->getElementType());
+        printIndirectLoad(arTy->getElementType());
 
         // Copy the value
-        printIndirectStore(seqTy->getElementType());
+        printIndirectStore(arTy->getElementType());
       }
     }
 
     // Override the values with given indices
     for (unsigned i = 0; i < inst->getNumIndices(); i++) {
-      assert(seqTy->getElementType() == structTy->getContainedType(i));
+      assert(arTy->getElementType() == structTy->getContainedType(i));
 
       // Locate output position
       unsigned fieldIndex = inst->getIndices()[i];
