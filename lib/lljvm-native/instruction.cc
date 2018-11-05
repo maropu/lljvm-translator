@@ -70,17 +70,17 @@ static std::string getPredicate(unsigned int predicate) {
 void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, const Value *right) {
   // First, we need to check if the input is a vector type or not.
   // TODO: We need to support vector types in other types?
-  if (const SequentialType *leftSeqTy = dyn_cast<SequentialType>(left->getType())) {
-    const SequentialType *rightSeqTy = cast<SequentialType>(right->getType());
+  if (const VectorType *leftVecTy = dyn_cast<VectorType>(left->getType())) {
+    const VectorType *rightVecTy = cast<VectorType>(right->getType());
 
     // TODO: A return type is always i1?
     Type *rTy = Type::getInt1Ty(module->getContext());
     int size = targetData->getTypeAllocSize(rTy);
-    printSimpleInstruction("sipush", utostr(leftSeqTy->getNumElements() * size));
+    printSimpleInstruction("sipush", utostr(leftVecTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
     // TODO: Needs to support vector computation?
-    for (int i = 0; i < leftSeqTy->getNumElements(); i++) {
+    for (int i = 0; i < leftVecTy->getNumElements(); i++) {
       printSimpleInstruction("dup2");
       printSimpleInstruction("ldc2_w", utostr(i * size));
       printSimpleInstruction("ladd");
@@ -90,7 +90,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
             // In case of undef, we set 0
             printSimpleInstruction("iconst_0");
-            printCastInstruction(getTypePrefix(leftSeqTy->getElementType(), true), "i");
+            printCastInstruction(getTypePrefix(leftVecTy->getElementType(), true), "i");
           } else {
             printValueLoad(vec->getAggregateElement(i));
           }
@@ -98,7 +98,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
           printValueLoad(vec->getElementAsConstant(i));
         } else if (isa<ConstantAggregateZero>(left)) {
           printSimpleInstruction("iconst_0");
-          printCastInstruction(getTypePrefix(leftSeqTy->getElementType(), true), "i");
+          printCastInstruction(getTypePrefix(leftVecTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
           err_msg << "Unknown left constant value type: Type=" << getTypeIDName(left->getType());
@@ -107,17 +107,17 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       } else {
         // We assume a pointer case here
         printValueLoad(left);
-        int lsize = targetData->getTypeAllocSize(leftSeqTy->getElementType());
+        int lsize = targetData->getTypeAllocSize(leftVecTy->getElementType());
         printSimpleInstruction("ldc2_w", utostr(i * lsize));
         printSimpleInstruction("ladd");
-        printIndirectLoad(leftSeqTy->getElementType());
+        printIndirectLoad(leftVecTy->getElementType());
       }
       if (const Constant *c = dyn_cast<Constant>(right)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(right)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
             // In case of undef, we set 0
             printSimpleInstruction("iconst_0");
-            printCastInstruction(getTypePrefix(rightSeqTy->getElementType(), true), "i");
+            printCastInstruction(getTypePrefix(rightVecTy->getElementType(), true), "i");
           } else {
             printValueLoad(vec->getAggregateElement(i));
           }
@@ -125,7 +125,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
           printValueLoad(vec->getElementAsConstant(i));
         } else if (isa<ConstantAggregateZero>(right)) {
           printSimpleInstruction("iconst_0");
-          printCastInstruction(getTypePrefix(rightSeqTy->getElementType(), true), "i");
+          printCastInstruction(getTypePrefix(rightVecTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
           err_msg << "Unknown right constant value type: Type=" << getTypeIDName(right->getType());
@@ -134,22 +134,28 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       } else {
         // We assume a pointer case here
         printValueLoad(right);
-        int rsize = targetData->getTypeAllocSize(rightSeqTy->getElementType());
+        int rsize = targetData->getTypeAllocSize(rightVecTy->getElementType());
         printSimpleInstruction("ldc2_w", utostr(i * rsize));
         printSimpleInstruction("ladd");
-        printIndirectLoad(rightSeqTy->getElementType());
+        printIndirectLoad(rightVecTy->getElementType());
       }
 
       const std::string inst = getPredicate(predicate);
       printVirtualInstruction(
-        inst + "(" + getTypeDescriptor(leftSeqTy->getElementType(), true) +
-          getTypeDescriptor(rightSeqTy->getElementType(), true) + ")Z");
+        inst + "(" + getTypeDescriptor(leftVecTy->getElementType(), true) +
+          getTypeDescriptor(rightVecTy->getElementType(), true) + ")Z");
       printIndirectStore(rTy);
     }
+  } else if (left->getType()->getTypeID() == Type::IntegerTyID ||
+      left->getType()->getTypeID() == Type::FloatTyID ||
+      left->getType()->getTypeID() == Type::DoubleTyID) {
+    const std::string inst = getPredicate(predicate);
+    printVirtualInstruction(inst + "(" + getTypeDescriptor(left->getType(), true) +
+      getTypeDescriptor(right->getType(), true) + ")Z", left, right);
   } else {
-      const std::string inst = getPredicate(predicate);
-      printVirtualInstruction(inst + "(" + getTypeDescriptor(left->getType(), true) +
-        getTypeDescriptor(right->getType(), true) + ")Z", left, right);
+    std::stringstream err_msg;
+    err_msg << "Unknown operand type in cmp: Type=" << getTypeIDName(left->getType());
+    lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -220,16 +226,16 @@ void JVMWriter::printArithmeticInstruction(
 void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, const Value *right) {
   // First, we need to check if the input is a vector type or not.
   // TODO: We need to support vector types in other types?
-  if (const SequentialType *seqTy = dyn_cast<SequentialType>(left->getType())) {
-    std::string typePrefix = getTypePrefix(seqTy->getElementType(), true);
-    std::string typeDescriptor = getTypeDescriptor(seqTy->getElementType());
-    int size = targetData->getTypeAllocSize(seqTy->getElementType());
+  if (const VectorType *vecTy = dyn_cast<VectorType>(left->getType())) {
+    std::string typePrefix = getTypePrefix(vecTy->getElementType(), true);
+    std::string typeDescriptor = getTypeDescriptor(vecTy->getElementType());
+    int size = targetData->getTypeAllocSize(vecTy->getElementType());
 
-    printSimpleInstruction("sipush", utostr(seqTy->getNumElements() * size));
+    printSimpleInstruction("sipush", utostr(vecTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
     // TODO: Needs to support vector computation?
-    for (unsigned i = 0; i < seqTy->getNumElements(); i++) {
+    for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
       printSimpleInstruction("dup2");
       printSimpleInstruction("ldc2_w", utostr(i * size));
       printSimpleInstruction("ladd");
@@ -239,7 +245,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
             // In case of undef, we set 0
             printSimpleInstruction("iconst_0");
-            printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
+            printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
           } else {
             printValueLoad(vec->getAggregateElement(i));
           }
@@ -247,7 +253,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
           printValueLoad(vec->getElementAsConstant(i));
         } else if (isa<ConstantAggregateZero>(left)) {
           printSimpleInstruction("iconst_0");
-          printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
+          printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
           err_msg << "Unknown left constant value type: Type=" << getTypeIDName(left->getType());
@@ -258,14 +264,14 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
         printValueLoad(left);
         printSimpleInstruction("ldc2_w", utostr(i * size));
         printSimpleInstruction("ladd");
-        printIndirectLoad(seqTy->getElementType());
+        printIndirectLoad(vecTy->getElementType());
       }
       if (const Constant *c = dyn_cast<Constant>(right)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(right)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
             // In case of undef, we set 0
             printSimpleInstruction("iconst_0");
-            printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
+            printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
           } else {
             printValueLoad(vec->getAggregateElement(i));
           }
@@ -273,7 +279,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
           printValueLoad(vec->getElementAsConstant(i));
         } else if (isa<ConstantAggregateZero>(right)) {
           printSimpleInstruction("iconst_0");
-          printCastInstruction(getTypePrefix(seqTy->getElementType(), true), "i");
+          printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
         } else {
           std::stringstream err_msg;
           err_msg << "Unknown right constant value type: Type=" << getTypeIDName(right->getType());
@@ -284,18 +290,24 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
         printValueLoad(right);
         printSimpleInstruction("ldc2_w", utostr(i * size));
         printSimpleInstruction("ladd");
-        printIndirectLoad(seqTy->getElementType());
+        printIndirectLoad(vecTy->getElementType());
       }
 
       printArithmeticInstruction(op, typeDescriptor, typePrefix, getBitWidth(right->getType()));
-      printIndirectStore(seqTy->getElementType());
+      printIndirectStore(vecTy->getElementType());
     }
-  } else {
+  } else if (left->getType()->getTypeID() == Type::IntegerTyID ||
+      left->getType()->getTypeID() == Type::FloatTyID ||
+      left->getType()->getTypeID() == Type::DoubleTyID) {
     printValueLoad(left);
     printValueLoad(right);
     std::string typePrefix = getTypePrefix(left->getType(), true);
     std::string typeDescriptor = getTypeDescriptor(left->getType());
     printArithmeticInstruction(op, typeDescriptor, typePrefix, getBitWidth(right->getType()));
+  } else {
+    std::stringstream err_msg;
+    err_msg << "Unknown operand type: Type=" << getTypeIDName(left->getType());
+    lljvm_unreachable(err_msg.str());
   }
 }
 
