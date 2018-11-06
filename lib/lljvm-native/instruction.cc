@@ -836,6 +836,7 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
       printSimpleInstruction("bipush", utostr(vecElemSize * numInputElems));
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
+      // TODO: Needs bulk copy (memcpy) for efficiency
       unsigned storePos = 0;
       for (int i = 0; i < v1Ty->getNumElements(); i++) {
         // Locate a store position

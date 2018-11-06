@@ -40,6 +40,9 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
 
     val method = LLJVMUtils.getMethod(clazz, name, argTypes: _*)
     val result = method.invoke(obj, args: _*).asInstanceOf[Long]
+    // Checks if the input/output addresses are different
+    // between each other based on SSA.
+    assert(!args.contains(result))
 
     def getValue(i: Int): Any = implicitly[ClassTag[T]].runtimeClass match {
       case t if t == jBoolean.TYPE =>
