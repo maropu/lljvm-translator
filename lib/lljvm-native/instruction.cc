@@ -26,12 +26,6 @@
 
 #include <sstream>
 
-static unsigned int alignOffset(unsigned int offset, unsigned int align) {
-  // TODO: Needs to consider memory alignments
-  // return offset + ((align - (offset % align)) % align);
-  return offset;
-}
-
 static std::string getPredicate(unsigned int predicate) {
   std::string inst;
   switch (predicate) {
@@ -77,7 +71,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
 
     // TODO: A return type is always i1?
     Type *rTy = Type::getInt1Ty(module->getContext());
-    int size = targetData->getTypeAllocSize(rTy);
+    int size = getTypeSize(rTy);
     printSimpleInstruction("sipush", utostr(leftVecTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
@@ -109,7 +103,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       } else {
         // We assume a pointer case here
         printValueLoad(left);
-        int lsize = targetData->getTypeAllocSize(leftVecTy->getElementType());
+        int lsize = getTypeSize(leftVecTy->getElementType());
         printSimpleInstruction("ldc2_w", utostr(i * lsize));
         printSimpleInstruction("ladd");
         printIndirectLoad(leftVecTy->getElementType());
@@ -136,7 +130,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       } else {
         // We assume a pointer case here
         printValueLoad(right);
-        int rsize = targetData->getTypeAllocSize(rightVecTy->getElementType());
+        int rsize = getTypeSize(rightVecTy->getElementType());
         printSimpleInstruction("ldc2_w", utostr(i * rsize));
         printSimpleInstruction("ladd");
         printIndirectLoad(rightVecTy->getElementType());
@@ -232,7 +226,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
   if (const VectorType *vecTy = dyn_cast<VectorType>(left->getType())) {
     std::string typePrefix = getTypePrefix(vecTy->getElementType(), true);
     std::string typeDescriptor = getTypeDescriptor(vecTy->getElementType());
-    int size = targetData->getTypeAllocSize(vecTy->getElementType());
+    int size = getTypeSize(vecTy->getElementType());
 
     printSimpleInstruction("sipush", utostr(vecTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
@@ -395,7 +389,7 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v, const Type
     const SequentialType *seqTy = dyn_cast<SequentialType>(v->getType());
     Type *srcElemTy = seqTy->getElementType();
     Type *destElemTy = cast<SequentialType>(ty)->getElementType();
-    int size = targetData->getTypeAllocSize(destElemTy);
+    int size = getTypeSize(destElemTy);
     printSimpleInstruction("sipush", utostr(seqTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
@@ -409,7 +403,7 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v, const Type
         printValueLoad(vec->getElementAsConstant(i));
       } else {
         printValueLoad(v);
-        int ssize = targetData->getTypeAllocSize(destElemTy);
+        int ssize = getTypeSize(destElemTy);
         printSimpleInstruction("ldc2_w", utostr(i * ssize));
         printSimpleInstruction("ladd");
         printIndirectLoad(seqTy->getElementType());
@@ -444,17 +438,15 @@ void JVMWriter::printGepInstruction(const Value *v, gep_type_iterator i, gep_typ
 
     if (const StructType *structTy = i.getStructTypeOrNull()) {
       for (unsigned int f = 0, fieldIndex = cast<ConstantInt>(indexValue)->getZExtValue(); f < fieldIndex; f++) {
-        size = alignOffset(
-          size + targetData->getTypeAllocSize(structTy->getContainedType(f)),
-          targetData->getABITypeAlignment(structTy->getContainedType(f + 1)));
+        size = advanceNextOffset(size, structTy->getContainedType(f));
       }
       printPtrLoad(size);
       printSimpleInstruction("ladd");
     } else {
       if (const SequentialType *seqTy = dyn_cast<SequentialType>(i.getIndexedType())) {
-        size = targetData->getTypeAllocSize(seqTy->getElementType());
+        size = getTypeSize(seqTy->getElementType());
       } else {
-        size = targetData->getTypeAllocSize(i.getIndexedType());
+        size = getTypeSize(i.getIndexedType());
       }
 
       if (const ConstantInt *c = dyn_cast<ConstantInt>(indexValue)) {
@@ -479,7 +471,7 @@ void JVMWriter::printGepInstruction(const Value *v, gep_type_iterator i, gep_typ
 }
 
 void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
-  uint64_t size = targetData->getTypeAllocSize(inst->getAllocatedType());
+  uint64_t size = getTypeSize(inst->getAllocatedType());
   if (const ConstantInt *c = dyn_cast<ConstantInt>(inst->getOperand(0))) {
     // constant optimization
     // printPtrLoad(c->getZExtValue() * size);
@@ -495,7 +487,7 @@ void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
 void JVMWriter::printVAArgInstruction(const VAArgInst *inst) {
   printIndirectLoad(inst->getOperand(0));
   printSimpleInstruction("dup");
-  printConstLoad(APInt(32, targetData->getTypeAllocSize(inst->getType()), false));
+  printConstLoad(APInt(32, getTypeSize(inst->getType()), false));
   printSimpleInstruction("iadd");
   printValueLoad(inst->getOperand(0));
   printSimpleInstruction("swap");
@@ -521,9 +513,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
   int aggSize = 0;
   if (const StructType *structTy = dyn_cast<StructType>(aggType)) {
     for (unsigned int f = 0; f < fieldIndex; f++) {
-      aggSize = alignOffset(
-        aggSize + getTypeSizeInBytes(structTy->getContainedType(f)),
-        targetData->getABITypeAlignment(structTy->getContainedType(f)));
+      aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
     }
     printPtrLoad(aggSize);
     printSimpleInstruction("ladd");
@@ -540,7 +530,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
       printIndirectLoad(structTy->getContainedType(fieldIndex));
     }
   } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
-    aggSize = targetData->getTypeAllocSize(arTy->getElementType());
+    aggSize = getTypeSize(arTy->getElementType());
     printPtrLoad(fieldIndex * aggSize);
     printSimpleInstruction("ladd");
     printIndirectLoad(arTy->getElementType());
@@ -555,7 +545,7 @@ void JVMWriter::printInsertElement(const InsertElementInst *inst) {
   const Value *v = inst->getOperand(0);
 
   if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
-    uint64_t elementSize = targetData->getTypeAllocSize(vecTy->getElementType());
+    uint64_t elementSize = getTypeSize(vecTy->getElementType());
     printSimpleInstruction("bipush", utostr(elementSize * vecTy->getNumElements()));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
     if (!isa<UndefValue>(v)) {
@@ -596,7 +586,7 @@ void JVMWriter::printExtractElement(const ExtractElementInst *inst) {
   const Value *v = inst->getOperand(0);
 
   if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
-    uint64_t elementSize = targetData->getTypeAllocSize(vecTy->getElementType());
+    uint64_t elementSize = getTypeSize(vecTy->getElementType());
     if (const UndefValue *undef = dyn_cast<UndefValue>(v)) {
       printSimpleInstruction("bipush", utostr(elementSize * undef->getNumElements()));
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
@@ -648,14 +638,11 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     int aggSize = 0;
     for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
       if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(f))) {
-        int elementSize = getTypeSizeInBytes(vecTy->getElementType());
-        aggSize = alignOffset(
-          aggSize + elementSize * vecTy->getNumElements(),
-          targetData->getABITypeAlignment(structTy->getContainedType(f)));
+        for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
+          aggSize = advanceNextOffset(aggSize, vecTy->getElementType());
+        }
       } else {
-        aggSize = alignOffset(
-          aggSize + getTypeSizeInBytes(structTy->getContainedType(f)),
-          targetData->getABITypeAlignment(structTy->getContainedType(f)));
+        aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
       }
     }
     printSimpleInstruction("bipush", utostr(aggSize));
@@ -667,7 +654,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
       for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
         if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(f))) {
           // Copy ArrayTy values element-by-element into the allocated
-          int elementSize = getTypeSizeInBytes(vecTy->getElementType());
+          int elementSize = getTypeSize(vecTy->getElementType());
           for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
             // Locate output position
             printSimpleInstruction("dup2");
@@ -685,9 +672,9 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
           }
 
           // Locate a next position
-          aggSize = alignOffset(
-            aggSize + elementSize * vecTy->getNumElements(),
-            targetData->getABITypeAlignment(structTy->getContainedType(f)));
+          for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
+            aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
+          }
         } else {
           // Locate output position
           printSimpleInstruction("dup2");
@@ -704,9 +691,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
           printIndirectStore(structTy->getContainedType(f));
 
           // Locate a next position
-          aggSize = alignOffset(
-            aggSize + getTypeSizeInBytes(structTy->getContainedType(f)),
-            targetData->getABITypeAlignment(structTy->getContainedType(f)));
+          aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
         }
       }
     }
@@ -716,14 +701,12 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     aggSize = 0;
     assert(structTy->getNumElements() > fieldIndex);
     for (unsigned int f = 0; f < fieldIndex; f++) {
-      aggSize = alignOffset(
-        aggSize + getTypeSizeInBytes(structTy->getContainedType(f)),
-        targetData->getABITypeAlignment(structTy->getContainedType(f)));
+      aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
     }
 
     if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(fieldIndex))) {
       // Insert ArrayTy values element-by-element into the position
-      int elementSize = getTypeSizeInBytes(vecTy->getElementType());
+      int elementSize = getTypeSize(vecTy->getElementType());
       for (unsigned j = 0; j < vecTy->getNumElements(); j++) {
         // Locate output position
         printSimpleInstruction("dup2");
@@ -750,7 +733,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
   } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
     assert(arTy->getElementType() == inst->getOperand(1)->getType());
 
-    int elementSize = getTypeSizeInBytes(arTy->getElementType());
+    int elementSize = getTypeSize(arTy->getElementType());
     int aggSize = elementSize * arTy->getNumElements();
     printSimpleInstruction("bipush", utostr(aggSize));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
@@ -796,7 +779,7 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
   if (const ConstantAggregateZero *zeroinit = dyn_cast<ConstantAggregateZero>(inst->getOperand(2))) {
     const Value *v = inst->getOperand(0);
     if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
-      uint64_t vecElemSize = targetData->getTypeAllocSize(vecTy->getElementType());
+      uint64_t vecElemSize = getTypeSize(vecTy->getElementType());
       int vecElemNum = zeroinit->getNumElements();
       printSimpleInstruction("bipush", utostr(vecElemSize * vecElemNum));
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
@@ -832,7 +815,7 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
         numInputElems += v2Ty->getNumElements();
       }
 
-      uint64_t vecElemSize = targetData->getTypeAllocSize(v1Ty->getElementType());
+      uint64_t vecElemSize = getTypeSize(v1Ty->getElementType());
       printSimpleInstruction("bipush", utostr(vecElemSize * numInputElems));
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
@@ -1097,7 +1080,7 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
       f32_2nd = f32;
     }
 
-    int size = targetData->getTypeAllocSize(vecTy->getElementType());
+    int size = getTypeSize(vecTy->getElementType());
 
     printSimpleInstruction("sipush", utostr(vecTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");

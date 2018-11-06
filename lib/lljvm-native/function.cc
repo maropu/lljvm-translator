@@ -63,7 +63,7 @@ void JVMWriter::printOperandPack(
     const Instruction *inst, unsigned int minOperand, unsigned int maxOperand) {
   unsigned int size = 0;
   for (unsigned int i = minOperand; i < maxOperand; i++) {
-    size += targetData->getTypeAllocSize(inst->getOperand(i)->getType());
+    size += getTypeSize(inst->getOperand(i)->getType());
   }
   if (size <= 0 || size > 32767) {
     std::stringstream err_msg;

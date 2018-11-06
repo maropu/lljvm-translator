@@ -99,7 +99,7 @@ void JVMWriter::printClInit() {
     if (!i->isDeclaration()) {
         const GlobalVariable *g = &*i;
         const Constant *c = g->getInitializer();
-        printConstLoad(APInt(32, targetData->getTypeAllocSize(c->getType()), false));
+        printConstLoad(APInt(32, getTypeAllocSize(c->getType()), false));
         printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateData(I)J");
         printSimpleInstruction("putstatic", classname + "/" + getValueName(g) + " J");
     }

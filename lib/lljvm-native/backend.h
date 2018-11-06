@@ -189,7 +189,8 @@ private:
 
   // types.cc
   unsigned int advanceNextOffset(unsigned int offset, const Type *ty);
-  unsigned int getTypeSizeInBytes(const Type *ty);
+  unsigned int getTypeAllocSize(const Type *ty);
+  unsigned int getTypeSize(const Type *ty);
   unsigned int getTypeSizeInBits(const Type *ty, bool expand = false);
   char getTypeID(const Type *ty, bool expand = false);
   std::string getTypeIDName(const Type *ty);

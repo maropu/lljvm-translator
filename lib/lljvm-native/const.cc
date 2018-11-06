@@ -175,7 +175,7 @@ void JVMWriter::printConstLoad(const std::string &str, bool cstring) {
 void JVMWriter::printStaticConstant(const Constant *c) {
   if (isa<ConstantAggregateZero>(c) || c->isNullValue()) {
     // zero initialised constant
-    printPtrLoad(targetData->getTypeAllocSize(c->getType()));
+    printPtrLoad(getTypeAllocSize(c->getType()));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/zero(JJ)J");
     return;
   }

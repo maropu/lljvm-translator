@@ -25,14 +25,18 @@
 #include <sstream>
 
 unsigned int JVMWriter::advanceNextOffset(unsigned int offset, const Type *ty) {
-  unsigned int nextOffset = offset + getTypeSizeInBytes(ty);
+  unsigned int nextOffset = offset + getTypeSize(ty);
   // TODO: Needs to consider memory alignments
-  // unsigned int align = targetData->getABITypeAlignment(ty);
+  // unsigned int align = XXX;
   // return nextOffset + ((align - (nextOffset % align)) % align);
   return nextOffset;
 }
 
-unsigned int JVMWriter::getTypeSizeInBytes(const Type *ty) {
+unsigned int JVMWriter::getTypeAllocSize(const Type *ty) {
+  return targetData->getTypeAllocSize((Type *) ty);
+}
+
+unsigned int JVMWriter::getTypeSize(const Type *ty) {
   switch (ty->getTypeID()) {
     case Type::ArrayTyID:
     case Type::VectorTyID:
