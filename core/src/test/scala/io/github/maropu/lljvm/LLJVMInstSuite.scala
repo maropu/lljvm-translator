@@ -246,10 +246,16 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     ("fence", (clazz, obj) => {}),
 
     ("getelementptr", (clazz, obj) => {
-      // TODO: Needs more test patterns
-      val getelementptr = LLJVMUtils.getMethod(clazz, "_getelementptr", Seq(jLong.TYPE): _*)
-      val addr = ArrayUtils.addressOf(Array(0, 2, 4, -6, 8, 10))
-      assert(getelementptr.invoke(obj, Seq(new jLong(addr)): _*) === -6)
+      // getelementptr1 - i32*
+      val getelementptr1 = LLJVMUtils.getMethod(clazz, "_getelementptr1", Seq(jLong.TYPE): _*)
+      val addr1 = ArrayUtils.addressOf(Array(0, 2, 4, -6, 8, 10))
+      assert(getelementptr1.invoke(obj, Seq(new jLong(addr1)): _*) === -6)
+
+      // getelementptr2 - { i64, i64, i64 }
+      // val getelementptr2 = LLJVMUtils.getMethod(clazz, "_getelementptr2", Seq(jLong.TYPE): _*)
+      // val ar2 = Array(1L, 3L, 5L)
+      // val addr2 = ArrayUtils.addressOf(ar2)
+      // assert(getelementptr2.invoke(obj, Seq(new jLong(addr2)): _*) === 5L)
     }),
 
     ("sext", (clazz, obj) => {
