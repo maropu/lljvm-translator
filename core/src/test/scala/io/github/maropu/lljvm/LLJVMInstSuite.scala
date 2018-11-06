@@ -372,18 +372,23 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("insertelement", (clazz, obj) => {
-      // insertelement - <4 x i32>
-      val insertelement = LLJVMUtils.getMethod(clazz, "_insertelement", Seq(jLong.TYPE): _*)
-      val ar = Array(-5, 6, -7, 8)
-      val addr = ArrayUtils.addressOf(ar)
-      val resultAddr = insertelement.invoke(
-        obj, Seq(new jLong(ArrayUtils.addressOf(ar))): _*).asInstanceOf[Long]
-      assert(resultAddr !== addr)
-      assert(ar === Array(-5, 6, -7, 8))
-      assert(Platform.getInt(null, resultAddr) === -5)
-      assert(Platform.getInt(null, resultAddr + 4) === 6)
-      assert(Platform.getInt(null, resultAddr + 8) === -7)
-      assert(Platform.getInt(null, resultAddr + 12) === 4)
+      // insertelement1 - <4 x i32>
+      val insertelement1 = LLJVMUtils.getMethod(clazz, "_insertelement1", Seq(jLong.TYPE): _*)
+      val ar1 = Array(-5, 6, -7, 8)
+      val addr1 = ArrayUtils.addressOf(ar1)
+      val resultAddr1 = insertelement1.invoke(obj, Seq(new jLong(addr1)): _*).asInstanceOf[Long]
+      assert(resultAddr1 !== addr1)
+      assert(ar1 === Array(-5, 6, -7, 8))
+      assert(Platform.getInt(null, resultAddr1) === -5)
+      assert(Platform.getInt(null, resultAddr1 + 4) === 6)
+      assert(Platform.getInt(null, resultAddr1 + 8) === -7)
+      assert(Platform.getInt(null, resultAddr1 + 12) === 4)
+
+      // insertelement2 - <3 x i64>
+      val insertelement2 = LLJVMUtils.getMethod(clazz, "_insertelement2", Seq(jLong.TYPE): _*)
+      val ar2 = Array(1L, -3L, 0L)
+      val addr2 = ArrayUtils.addressOf(ar2)
+      assert(insertelement2.invoke(obj, Seq(new jLong(addr2)): _*) === 1L)
     }),
 
     ("shufflevector", (clazz, obj) => {
