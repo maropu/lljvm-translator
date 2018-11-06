@@ -116,7 +116,7 @@ public final class NumbaRuntime implements RuntimeInterface {
     //   size_t             size;
     // };
     long meminfoSize = 40;
-    long base = VMemory.allocateStack((int) (meminfoSize + size + align * 2));
+    long base = VMemory.allocateData((int) (meminfoSize + size + align * 2));
     long data = base + meminfoSize;
     long rem = data % align;
     if (rem != 0) {
