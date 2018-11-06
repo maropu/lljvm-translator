@@ -45,3 +45,22 @@ define [3 x i32] @insertvalue9([3 x i32] %x) {
   %ret = insertvalue [3 x i32] %x, i32 9, 2
   ret [3 x i32] %ret
 }
+
+; Test for the reference of old snapshot variables
+define i32 @insertvalue10({ i32, i32 } %x) {
+  %1 = insertvalue { i32, i32 } %x, i32 2, 1
+  %2 = insertvalue { i32, i32 } %1, i32 2, 0
+  %3 = extractvalue { i32, i32 } %x, 0
+  %4 = extractvalue { i32, i32 } %x, 1
+  %5 = extractvalue { i32, i32 } %1, 0
+  %6 = extractvalue { i32, i32 } %1, 1
+  %7 = extractvalue { i32, i32 } %2, 0
+  %8 = extractvalue { i32, i32 } %2, 1
+  %9 = add nsw i32 %3, %4
+  %10 = add nsw i32 %9, %5
+  %11 = add nsw i32 %10, %6
+  %12 = add nsw i32 %11, %7
+  %ret = add nsw i32 %12, %8
+  ret i32 %ret
+}
+

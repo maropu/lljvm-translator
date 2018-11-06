@@ -566,7 +566,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       assert(Platform.getInt(null, resultAddr8 + 8) === 1)
       assert(Platform.getInt(null, resultAddr8 + 12) === 3)
 
-      // insertvalue9-- [3 x i32]
+      // insertvalue9 -- [3 x i32]
       val ar9 = Array(2, 1, 0)
       val addr9 = ArrayUtils.addressOf(ar9)
       val insertvalue9 = LLJVMUtils.getMethod(clazz, "_insertvalue9", Seq(jLong.TYPE): _*)
@@ -578,6 +578,12 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       assert(Platform.getInt(null, resultAddr9) === 2)
       assert(Platform.getInt(null, resultAddr9 + 4) === 1)
       assert(Platform.getInt(null, resultAddr9 + 8) === 9)
+
+      // insertvalue10 -- { i32, i32 }
+      val ar10 = Array(1, 1)
+      val addr10 = ArrayUtils.addressOf(ar10)
+      val insertvalue10 = LLJVMUtils.getMethod(clazz, "_insertvalue10", Seq(jLong.TYPE): _*)
+      assert(insertvalue10.invoke(obj, Seq(new jLong(addr10)): _*) === 9)
     }),
 
     // ("atomicrmw", (clazz, obj) => {
