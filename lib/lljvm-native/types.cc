@@ -53,7 +53,7 @@ unsigned int JVMWriter::getTypeSizeInBytes(const Type *ty) {
   }
 }
 
-unsigned int JVMWriter::getBitWidth(const Type *ty, bool expand) {
+unsigned int JVMWriter::getTypeSizeInBits(const Type *ty, bool expand) {
   switch (ty->getTypeID()) {
     case Type::ArrayTyID:
     case Type::VectorTyID:
@@ -94,7 +94,7 @@ char JVMWriter::getTypeID(const Type *ty, bool expand) {
     case Type::VoidTyID:
       return 'V';
     case Type::IntegerTyID:
-      switch (getBitWidth(ty, expand)) {
+      switch (getTypeSizeInBits(ty, expand)) {
       case 1: return 'Z';
       case 8: return 'B';
       case 16: return 'S';
@@ -209,7 +209,7 @@ std::string JVMWriter::getTypePostfix(const Type *ty, bool expand) {
   case Type::VoidTyID:
     return "void";
   case Type::IntegerTyID:
-    return "i" + utostr(getBitWidth(ty, expand));
+    return "i" + utostr(getTypeSizeInBits(ty, expand));
   case Type::FloatTyID:
     return "f32";
   case Type::DoubleTyID:

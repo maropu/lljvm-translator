@@ -296,7 +296,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
         printIndirectLoad(vecTy->getElementType());
       }
 
-      printArithmeticInstruction(op, typeDescriptor, typePrefix, getBitWidth(right->getType()));
+      printArithmeticInstruction(op, typeDescriptor, typePrefix, getTypeSizeInBits(right->getType()));
       printIndirectStore(vecTy->getElementType());
     }
   } else if (left->getType()->getTypeID() == Type::IntegerTyID ||
@@ -306,7 +306,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
     printValueLoad(right);
     std::string typePrefix = getTypePrefix(left->getType(), true);
     std::string typeDescriptor = getTypeDescriptor(left->getType());
-    printArithmeticInstruction(op, typeDescriptor, typePrefix, getBitWidth(right->getType()));
+    printArithmeticInstruction(op, typeDescriptor, typePrefix, getTypeSizeInBits(right->getType()));
   } else {
     std::stringstream err_msg;
     err_msg << "Unknown operand type: Type=" << getTypeIDName(left->getType());
@@ -342,13 +342,13 @@ void JVMWriter::printCastInstruction(unsigned int op, const Type *srcTy, const T
     case Instruction::FPTrunc:
     case Instruction::FPExt:
     case Instruction::SExt:
-      // if (getBitWidth(srcTy) < 32) {
+      // if (getTypeSizeInBits(srcTy) < 32) {
       //   printCastInstruction(getTypePrefix(srcTy), "i");
       // }
       printCastInstruction(getTypePrefix(destTy, true), getTypePrefix(srcTy, true));
       break;
     case Instruction::Trunc:
-      if (getBitWidth(srcTy) == 64 && getBitWidth(destTy) < 32) {
+      if (getTypeSizeInBits(srcTy) == 64 && getTypeSizeInBits(destTy) < 32) {
         printSimpleInstruction("l2i");
         printCastInstruction(getTypePrefix(destTy), "i");
       } else {
@@ -1087,13 +1087,13 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
     bool f32 = false;
     bool f32_2nd = false;
     if (inst->getNumOperands() == 2) {
-      f32 = (getBitWidth(vecTy->getElementType()) == 32);
+      f32 = (getTypeSizeInBits(vecTy->getElementType()) == 32);
     } else {
       // For pow()
-      f32 = (getBitWidth(vecTy->getElementType()) == 32);
+      f32 = (getTypeSizeInBits(vecTy->getElementType()) == 32);
 
       // TODO: The return type depends on the 1st type
-      // f32_2nd = (getBitWidth(inst->getOperand(1)->getType()) == 32);
+      // f32_2nd = (getTypeSizeInBits(inst->getOperand(1)->getType()) == 32);
       f32_2nd = f32;
     }
 
@@ -1141,17 +1141,17 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
       v1->getType()->getTypeID() == Type::DoubleTyID) {
     bool f32 = false;
     if (inst->getNumOperands() == 2) {
-      f32 = (getBitWidth(inst->getOperand(0)->getType()) == 32);
+      f32 = (getTypeSizeInBits(inst->getOperand(0)->getType()) == 32);
       printValueLoad(inst->getOperand(0));
       if (f32) printSimpleInstruction("f2d");
     } else {
       // For pow()
-      f32 = (getBitWidth(inst->getOperand(0)->getType()) == 32);
+      f32 = (getTypeSizeInBits(inst->getOperand(0)->getType()) == 32);
       printValueLoad(inst->getOperand(0));
       if (f32) printSimpleInstruction("f2d");
 
       // TODO: The return type depends on the 1st type
-      bool f32_2nd = (getBitWidth(inst->getOperand(1)->getType()) == 32);
+      bool f32_2nd = (getTypeSizeInBits(inst->getOperand(1)->getType()) == 32);
       printValueLoad(inst->getOperand(1));
       if (f32_2nd) printSimpleInstruction("f2d");
     }
