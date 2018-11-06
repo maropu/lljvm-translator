@@ -24,7 +24,7 @@
 
 #include <sstream>
 
-unsigned int JVMWriter::getByteWidth(const Type *ty) {
+unsigned int JVMWriter::getTypeSizeInBytes(const Type *ty) {
   switch (ty->getTypeID()) {
     case Type::ArrayTyID:
     case Type::VectorTyID:

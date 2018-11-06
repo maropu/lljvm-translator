@@ -522,7 +522,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
   if (const StructType *structTy = dyn_cast<StructType>(aggType)) {
     for (unsigned int f = 0; f < fieldIndex; f++) {
       aggSize = alignOffset(
-        aggSize + getByteWidth(structTy->getContainedType(f)),
+        aggSize + getTypeSizeInBytes(structTy->getContainedType(f)),
         targetData->getABITypeAlignment(structTy->getContainedType(f)));
     }
     printPtrLoad(aggSize);
@@ -648,13 +648,13 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     int aggSize = 0;
     for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
       if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(f))) {
-        int elementSize = getByteWidth(vecTy->getElementType());
+        int elementSize = getTypeSizeInBytes(vecTy->getElementType());
         aggSize = alignOffset(
           aggSize + elementSize * vecTy->getNumElements(),
           targetData->getABITypeAlignment(structTy->getContainedType(f)));
       } else {
         aggSize = alignOffset(
-          aggSize + getByteWidth(structTy->getContainedType(f)),
+          aggSize + getTypeSizeInBytes(structTy->getContainedType(f)),
           targetData->getABITypeAlignment(structTy->getContainedType(f)));
       }
     }
@@ -667,7 +667,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
       for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
         if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(f))) {
           // Copy ArrayTy values element-by-element into the allocated
-          int elementSize = getByteWidth(vecTy->getElementType());
+          int elementSize = getTypeSizeInBytes(vecTy->getElementType());
           for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
             // Locate output position
             printSimpleInstruction("dup2");
@@ -705,7 +705,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
 
           // Locate a next position
           aggSize = alignOffset(
-            aggSize + getByteWidth(structTy->getContainedType(f)),
+            aggSize + getTypeSizeInBytes(structTy->getContainedType(f)),
             targetData->getABITypeAlignment(structTy->getContainedType(f)));
         }
       }
@@ -717,13 +717,13 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     assert(structTy->getNumElements() > fieldIndex);
     for (unsigned int f = 0; f < fieldIndex; f++) {
       aggSize = alignOffset(
-        aggSize + getByteWidth(structTy->getContainedType(f)),
+        aggSize + getTypeSizeInBytes(structTy->getContainedType(f)),
         targetData->getABITypeAlignment(structTy->getContainedType(f)));
     }
 
     if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(fieldIndex))) {
       // Insert ArrayTy values element-by-element into the position
-      int elementSize = getByteWidth(vecTy->getElementType());
+      int elementSize = getTypeSizeInBytes(vecTy->getElementType());
       for (unsigned j = 0; j < vecTy->getNumElements(); j++) {
         // Locate output position
         printSimpleInstruction("dup2");
@@ -750,7 +750,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
   } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
     assert(arTy->getElementType() == inst->getOperand(1)->getType());
 
-    int elementSize = getByteWidth(arTy->getElementType());
+    int elementSize = getTypeSizeInBytes(arTy->getElementType());
     int aggSize = elementSize * arTy->getNumElements();
     printSimpleInstruction("bipush", utostr(aggSize));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");

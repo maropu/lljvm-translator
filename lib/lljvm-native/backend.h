@@ -188,7 +188,7 @@ private:
   void printMainMethod();
 
   // types.cc
-  unsigned int getByteWidth(const Type *ty);
+  unsigned int getTypeSizeInBytes(const Type *ty);
   unsigned int getBitWidth(const Type *ty, bool expand = false);
   char getTypeID(const Type *ty, bool expand = false);
   std::string getTypeIDName(const Type *ty);
