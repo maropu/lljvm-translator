@@ -509,7 +509,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
 
   if (inst->getNumIndices() > 1) {
     std::stringstream err_msg;
-    err_msg << "Unsupported multi indices in extractvalue: Num=" << inst->getNumIndices();
+    err_msg << "Unsupported multiple indices for nested aggregate types in insertvalue: Num=" << inst->getNumIndices();
     throw err_msg.str();
   }
 
@@ -517,40 +517,37 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
   printValueLoad(aggValue);
 
   // The value to insert must have the same type as the value identified by the indices
-  for (unsigned i = 0; i < inst->getNumIndices(); i++) {
-    // Calculates offset
-    unsigned fieldIndex = inst->getIndices()[i];
-    int aggSize = 0;
-    if (const StructType *structTy = dyn_cast<StructType>(aggType)) {
-      for (unsigned int f = 0; f < fieldIndex; f++) {
-        aggSize = alignOffset(
-          aggSize + getByteWidth(structTy->getContainedType(f)),
-          targetData->getABITypeAlignment(structTy->getContainedType(f)));
-      }
-      printPtrLoad(aggSize);
-      printSimpleInstruction("ladd");
-      // We load a value itself for regular/pointer types.
-      // Otherwise, we need to load an address for vector-typed values:
-      //
-      // e.g., %2 = extractvalue { i64, i8*, [2 x i32], <4 x i64> } %.1, 3
-      //
-      // In this example, it is a value for `i64`/`i8*`/`[2 x i32]` and
-      // an adress for `<4 x i64>`.
-      if (isa<VectorType>(structTy->getContainedType(fieldIndex))) {
-        // Loads an adress itself
-      } else {
-        printIndirectLoad(structTy->getContainedType(fieldIndex));
-      }
-    } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
-      aggSize = targetData->getTypeAllocSize(arTy->getElementType());
-      printPtrLoad(fieldIndex * aggSize);
-      printSimpleInstruction("ladd");
-      printIndirectLoad(arTy->getElementType());
-    } else {
-      std::stringstream err_msg;
-      err_msg << "Unknown aggregate type in insertvalue: Type=" << getTypeIDName(aggType);
-      lljvm_unreachable(err_msg.str());
+  unsigned fieldIndex = inst->getIndices()[0];
+  int aggSize = 0;
+  if (const StructType *structTy = dyn_cast<StructType>(aggType)) {
+    for (unsigned int f = 0; f < fieldIndex; f++) {
+      aggSize = alignOffset(
+        aggSize + getByteWidth(structTy->getContainedType(f)),
+        targetData->getABITypeAlignment(structTy->getContainedType(f)));
     }
+    printPtrLoad(aggSize);
+    printSimpleInstruction("ladd");
+    // We load a value itself for regular/pointer types.
+    // Otherwise, we need to load an address for vector-typed values:
+    //
+    // e.g., %2 = extractvalue { i64, i8*, [2 x i32], <4 x i64> } %.1, 3
+    //
+    // In this example, it is a value for `i64`/`i8*`/`[2 x i32]` and
+    // an adress for `<4 x i64>`.
+    if (isa<VectorType>(structTy->getContainedType(fieldIndex))) {
+      // Loads an adress itself
+    } else {
+      printIndirectLoad(structTy->getContainedType(fieldIndex));
+    }
+  } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
+    aggSize = targetData->getTypeAllocSize(arTy->getElementType());
+    printPtrLoad(fieldIndex * aggSize);
+    printSimpleInstruction("ladd");
+    printIndirectLoad(arTy->getElementType());
+  } else {
+    std::stringstream err_msg;
+    err_msg << "Unknown aggregate type in insertvalue: Type=" << getTypeIDName(aggType);
+    lljvm_unreachable(err_msg.str());
   }
 }
 
@@ -625,8 +622,23 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
   const Type *aggType = aggValue->getType();
 
   if (inst->getNumIndices() > 1) {
+    /**
+     * // struct AggType {
+     * //   long a;
+     * //   int b[3];
+     * //   double c;
+     * // };
+     * // struct AggType *foo(struct AggType *x, int v) {
+     * //   x->b[2] = v;
+     * //   return x;
+     * // }
+     * define { i64, [3 x i32], double } @foo({ i64, [3 x i32], double } %x, i32 %v) {
+     *   %ret = insertvalue { i64, [3 x i32], double } %x, i32 %v, 1, 2
+     *   ret { i64, [3 x i32], double } %ret
+     * }
+     */
     std::stringstream err_msg;
-    err_msg << "Unsupported multiple indices in insertvalue: Num=" << inst->getNumIndices();
+    err_msg << "Unsupported multiple indices for nested aggregate types in insertvalue: Num=" << inst->getNumIndices();
     throw err_msg.str();
   }
 
@@ -700,42 +712,40 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     }
 
     // The value to insert must have the same type as the value identified by the indices
-    for (unsigned i = 0; i < inst->getNumIndices(); i++) {
-      unsigned fieldIndex = inst->getIndices()[i];
-      aggSize = 0;
-      assert(structTy->getNumElements() > fieldIndex);
-      for (unsigned int f = 0; f < fieldIndex; f++) {
-        aggSize = alignOffset(
-          aggSize + getByteWidth(structTy->getContainedType(f)),
-          targetData->getABITypeAlignment(structTy->getContainedType(f)));
-      }
+    unsigned fieldIndex = inst->getIndices()[0];
+    aggSize = 0;
+    assert(structTy->getNumElements() > fieldIndex);
+    for (unsigned int f = 0; f < fieldIndex; f++) {
+      aggSize = alignOffset(
+        aggSize + getByteWidth(structTy->getContainedType(f)),
+        targetData->getABITypeAlignment(structTy->getContainedType(f)));
+    }
 
-      if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(fieldIndex))) {
-        // Insert ArrayTy values element-by-element into the position
-        int elementSize = getByteWidth(vecTy->getElementType());
-        for (unsigned j = 0; j < vecTy->getNumElements(); j++) {
-          // Locate output position
-          printSimpleInstruction("dup2");
-          printPtrLoad(aggSize + elementSize * j);
-          printSimpleInstruction("ladd");
-
-          // Load a value from the current position
-          printValueLoad(inst->getOperand(1));
-          printPtrLoad(elementSize * j);
-          printSimpleInstruction("ladd");
-          printIndirectLoad(vecTy->getElementType());
-
-          // Copy the value
-          printIndirectStore(vecTy->getElementType());
-        }
-      } else {
-        // Insert a value itself into the output position
+    if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(fieldIndex))) {
+      // Insert ArrayTy values element-by-element into the position
+      int elementSize = getByteWidth(vecTy->getElementType());
+      for (unsigned j = 0; j < vecTy->getNumElements(); j++) {
+        // Locate output position
         printSimpleInstruction("dup2");
-        printSimpleInstruction("ldc2_w", utostr(aggSize));
+        printPtrLoad(aggSize + elementSize * j);
         printSimpleInstruction("ladd");
+
+        // Load a value from the current position
         printValueLoad(inst->getOperand(1));
-        printIndirectStore(structTy->getContainedType(fieldIndex));
+        printPtrLoad(elementSize * j);
+        printSimpleInstruction("ladd");
+        printIndirectLoad(vecTy->getElementType());
+
+        // Copy the value
+        printIndirectStore(vecTy->getElementType());
       }
+    } else {
+      // Insert a value itself into the output position
+      printSimpleInstruction("dup2");
+      printSimpleInstruction("ldc2_w", utostr(aggSize));
+      printSimpleInstruction("ladd");
+      printValueLoad(inst->getOperand(1));
+      printIndirectStore(structTy->getContainedType(fieldIndex));
     }
   } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
     assert(arTy->getElementType() == inst->getOperand(1)->getType());
@@ -764,19 +774,17 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     }
 
     // Override the values with given indices
-    for (unsigned i = 0; i < inst->getNumIndices(); i++) {
-      assert(arTy->getElementType() == structTy->getContainedType(i));
+    assert(arTy->getElementType() == structTy->getContainedType(i));
 
-      // Locate output position
-      unsigned fieldIndex = inst->getIndices()[i];
-      printSimpleInstruction("dup2");
-      printPtrLoad(elementSize * fieldIndex);
-      printSimpleInstruction("ladd");
+    // Locate output position
+    unsigned fieldIndex = inst->getIndices()[0];
+    printSimpleInstruction("dup2");
+    printPtrLoad(elementSize * fieldIndex);
+    printSimpleInstruction("ladd");
 
-      // Insert a value into the position
-      printValueLoad(inst->getOperand(1));
-      printIndirectStore(inst->getOperand(1)->getType());
-    }
+    // Insert a value into the position
+    printValueLoad(inst->getOperand(1));
+    printIndirectStore(inst->getOperand(1)->getType());
   } else {
     std::stringstream err_msg;
     err_msg << "Unknown aggregate type in insertvalue: Type=" << getTypeIDName(aggType);
