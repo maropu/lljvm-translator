@@ -333,7 +333,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   }
 
   test("NumPy dot - mv") { // Matrix * Vector case
-    Seq(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096).foreach { n =>
+    Seq(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 /*, 4096 */).foreach { n =>
       // float32[:](float32[:,:], float32[:])
       // TODO: if the length is 8192+, it throws an exception because stack is not enough
       val floatX = pyArray1.`with`(Array.fill[Float](n * n)(1.0f)).reshape(n, n)
