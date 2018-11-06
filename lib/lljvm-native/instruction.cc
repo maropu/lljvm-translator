@@ -650,6 +650,7 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
     if (!isa<UndefValue>(aggValue)) {
+      // TODO: Needs bulk copy (memcpy) for efficiency
       aggSize = 0;
       for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
         if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(f))) {
