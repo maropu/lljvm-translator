@@ -223,8 +223,8 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("alloca", (clazz, obj) => { // "load" and "store"
-      val alloca = LLJVMUtils.getMethod(clazz, "_alloca", Seq(jInt.TYPE): _*)
-      assert(alloca.invoke(obj, Seq(new jInt(6)): _*) === 10)
+      val alloca1 = LLJVMUtils.getMethod(clazz, "_alloca1", Seq(jInt.TYPE): _*)
+      assert(alloca1.invoke(obj, Seq(new jInt(6)): _*) === 10)
 
       // Inf/NaN for float values
       val plus_finf = LLJVMUtils.getMethod(clazz, "_plus_finf")

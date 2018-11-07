@@ -136,6 +136,7 @@ private:
   void printCastInstruction(unsigned int op, const Type *srcTy, const Type *destTy);
   void printCastInstruction(unsigned int op, const Value *v, const Type *ty, const Type *srcTy);
   void printGepInstruction(const Value *v, gep_type_iterator i, gep_type_iterator e);
+  void printGepInstruction1(const GetElementPtrInst *inst);
   void printAllocaInstruction(const AllocaInst *inst);
   void printVAArgInstruction(const VAArgInst *inst);
   void printExtractValue(const ExtractValueInst *inst);
@@ -188,6 +189,8 @@ private:
   void printMainMethod();
 
   // types.cc
+  bool isPrimitiveType(const Type *ty);
+  bool isNumericType(const Type *ty);
   unsigned int advanceNextOffset(unsigned int offset, const Type *ty);
   unsigned int getTypeAllocSize(const Type *ty);
   unsigned int getTypeSize(const Type *ty);

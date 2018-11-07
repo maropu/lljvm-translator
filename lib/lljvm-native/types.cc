@@ -24,6 +24,28 @@
 
 #include <sstream>
 
+bool JVMWriter::isPrimitiveType(const Type *ty) {
+  switch (ty->getTypeID()) {
+    case Type::FloatTyID:
+    case Type::DoubleTyID:
+    case Type::IntegerTyID:
+      return true;
+    default:
+      return false;
+  }
+}
+
+bool JVMWriter::isNumericType(const Type *ty) {
+  switch (ty->getTypeID()) {
+    case Type::FloatTyID:
+    case Type::DoubleTyID:
+    case Type::IntegerTyID:
+      return true;
+    default:
+      return false;
+  }
+}
+
 unsigned int JVMWriter::advanceNextOffset(unsigned int offset, const Type *ty) {
   unsigned int nextOffset = offset + getTypeSize(ty);
   // TODO: Needs to consider memory alignments
@@ -33,7 +55,15 @@ unsigned int JVMWriter::advanceNextOffset(unsigned int offset, const Type *ty) {
 }
 
 unsigned int JVMWriter::getTypeAllocSize(const Type *ty) {
-  return targetData->getTypeAllocSize((Type *) ty);
+  if (const StructType *structTy = dyn_cast<StructType>(ty)) {
+    unsigned int aggSize = 0;
+    for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
+      aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
+    }
+    return aggSize;
+  } else {
+    return targetData->getTypeAllocSize((Type *) ty);
+  }
 }
 
 unsigned int JVMWriter::getTypeSize(const Type *ty) {

@@ -1,12 +1,33 @@
 ; ModuleID = 'alloca.bc'
 source_filename = "./alloca.ll"
 
-define i32 @alloca(i32 %x) {
+define i32 @alloca1(i32 %x) {
   %1 = alloca i32, align 4
   store i32 %x, i32* %1, align 4
   %2 = load i32, i32* %1, align 4
   %ret = add nsw i32 %2, 4
   ret i32 %ret
+}
+
+define { i32*, i64*, <2 x i32> } @alloca2(<2 x i32> %x) {
+  %1 = alloca { i32*, i64*, <2 x i32> }, align 4
+  %2 = load { i32*, i64*, <2 x i32> }, { i32*, i64*, <2 x i32> }* %1, align 4
+  %ret = insertvalue { i32*, i64*, <2 x i32> } %2, <2 x i32> %x, 2
+  ret { i32*, i64*, <2 x i32> } %ret
+}
+
+define { i64*, [2 x double], [4 x i32] } @alloca3([2 x double] %x) {
+  %1 = alloca { i64*, [2 x double], [4 x i32] }, align 4
+  %2 = load { i64*, [2 x double], [4 x i32] }, { i64*, [2 x double], [4 x i32] }* %1, align 4
+  %ret = insertvalue { i64*, [2 x double], [4 x i32] } %2, [2 x double] %x, 1
+  ret { i64*, [2 x double], [4 x i32] } %ret
+}
+
+define { i32, { i32, double } } @alloca4({ i32, double } %x) {
+  %1 = alloca { i32, { i32, double } }, align 4
+  %2 = load { i32, { i32, double } }, { i32, { i32, double } }* %1, align 4
+  %ret = insertvalue { i32, { i32, double } } %2, { i32, double } %x, 1
+  ret { i32, { i32, double } } %ret
 }
 
 define float @plus_finf() {

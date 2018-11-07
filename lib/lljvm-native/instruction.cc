@@ -470,18 +470,176 @@ void JVMWriter::printGepInstruction(const Value *v, gep_type_iterator i, gep_typ
   }
 }
 
-void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
-  uint64_t size = getTypeSize(inst->getAllocatedType());
-  if (const ConstantInt *c = dyn_cast<ConstantInt>(inst->getOperand(0))) {
-    // constant optimization
-    // printPtrLoad(c->getZExtValue() * size);
-    printSimpleInstruction("bipush", utostr(c->getZExtValue() * size));
+void JVMWriter::printGepInstruction1(const GetElementPtrInst *inst) {
+  const Value *base = inst->getOperand(0);
+  const Type *ptrElementType = cast<PointerType>(base->getType())->getElementType();
+
+  if (inst->getNumIndices() > 3) {
+    std::stringstream err_msg;
+    err_msg << "Unsupported complicated pointer calculation (#index > 3) in getelementptr: Num=" << inst->getNumIndices();
+    throw err_msg.str();
+  }
+
+  // Load a base address for pointer calculation
+  printValueLoad(base);
+
+  const Value *arIndexValue = inst->getOperand(1);
+  if (const ConstantInt *c = dyn_cast<ConstantInt>(arIndexValue)) {
+    printPtrLoad(c->getZExtValue());
   } else {
-    printPtrLoad(size);
-    printValueLoad(inst->getOperand(0));
+    printCastInstruction(Instruction::IntToPtr, arIndexValue, NULL, arIndexValue->getType());
+  }
+
+  // Top-level aggregate typed values are inlined in memory
+  if (const StructType *structTy = dyn_cast<StructType>(ptrElementType)) {
+    printPtrLoad(getTypeAllocSize(structTy));
+    printSimpleInstruction("lmul");
+    printSimpleInstruction("ladd");
+
+    if (inst->getNumIndices() > 1) {
+      const Type *ty = structTy;
+      for (unsigned int i = 2; i <= inst->getNumIndices(); i++) {
+        unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(i))->getZExtValue();
+        if (isa<StructType>(ty)) {
+          unsigned int offset = 0;
+          for (unsigned int f = 0; f < fieldIndex; f++) {
+            offset = advanceNextOffset(offset, cast<StructType>(ty)->getContainedType(f));
+          }
+          printPtrLoad(offset);
+          printSimpleInstruction("ladd");
+
+          ty = structTy->getContainedType(fieldIndex);
+          if (isa<CompositeType>(ty)) {
+            // Load a pointer address
+            printIndirectLoad(ty);
+          }
+        } else if (const ArrayType *arTy = dyn_cast<ArrayType>(ty)) {
+          const Type *elementTy = arTy->getElementType();
+          if (isPrimitiveType(elementTy)) {
+            printPtrLoad(fieldIndex * getTypeSize(elementTy));
+            printSimpleInstruction("ladd");
+          } else {
+            std::stringstream err_msg;
+            err_msg << "Unsupported non-primitive types of arrays in getelementptr: Type=" << getTypeIDName(elementTy);
+            throw err_msg.str();
+          }
+        } else if (const VectorType *vecTy = dyn_cast<VectorType>(ty)) {
+          const Type *elementTy = vecTy->getElementType();
+          assert(isPrimitiveType(elementTy));
+          printPtrLoad(fieldIndex * getTypeSize(elementTy));
+          printSimpleInstruction("ladd");
+        } else {
+          std::stringstream err_msg;
+          err_msg << "Unknown aggregate/vector type in getelementptr: Type=" << getTypeIDName(ty);
+          lljvm_unreachable(err_msg.str());
+        }
+      }
+    }
+  } else if (const ArrayType *arTy = dyn_cast<ArrayType>(ptrElementType)) {
+    if (isPrimitiveType(arTy->getElementType())) {
+      const Type *elementTy = arTy->getElementType();
+      unsigned int arSize = getTypeAllocSize(arTy);
+      assert(arSize == arTy->getNumElements() * getTypeSize(elementTy));
+      printPtrLoad(arSize);
+      printSimpleInstruction("lmul");
+      printSimpleInstruction("ladd");
+
+      if (inst->getNumIndices() > 1) {
+        unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(2))->getZExtValue();
+        printPtrLoad(fieldIndex * getTypeSize(elementTy));
+        printSimpleInstruction("ladd");
+      }
+    } else {
+      std::stringstream err_msg;
+      err_msg << "Unsupported non-primitive types of arrays in getelementptr: Type=" <<
+        getTypeIDName(arTy->getElementType());
+      throw err_msg.str();
+    }
+  } else if (const VectorType *vecTy = dyn_cast<VectorType>(ptrElementType)) {
+    const Type *elementTy = vecTy->getElementType();
+    assert(isPrimitiveType(elementTy));
+    unsigned int vecSize = getTypeAllocSize(vecTy);
+    assert(vecSize == vecTy->getNumElements() * getTypeSize(elementTy));
+    printPtrLoad(vecSize);
+    printSimpleInstruction("lmul");
+    printSimpleInstruction("ladd");
+
+    if (inst->getNumIndices() > 1) {
+      unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(2))->getZExtValue();
+      printPtrLoad(fieldIndex * getTypeSize(elementTy));
+      printSimpleInstruction("ladd");
+    }
+  } else {
+    assert(inst->getNumIndices() == 1);
+    assert(isPrimitiveType(ptrElementType));
+    printPtrLoad(getTypeSize(ptrElementType));
+    printSimpleInstruction("lmul");
+    printSimpleInstruction("ladd");
+  }
+}
+
+void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
+  const Type *allocatedTy = inst->getAllocatedType();
+  const Value *v = inst->getOperand(0);
+  uint64_t topLevelSize = getTypeAllocSize(allocatedTy);
+  if (const ConstantInt *c = dyn_cast<ConstantInt>(v)) {
+    // constant optimization
+    // printPtrLoad(c->getZExtValue() * topLevelSize);
+    printSimpleInstruction("bipush", utostr(c->getZExtValue() * topLevelSize));
+  } else {
+    printPtrLoad(topLevelSize);
+    printValueLoad(v);
     printSimpleInstruction("imul");
   }
   printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+
+  // Allocate space for inner aggregate types, e.g., { i32, [4 x i32] }
+  if (const StructType *structTy = dyn_cast<StructType>(allocatedTy)) {
+    unsigned int offset = 0;
+    for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
+      const Type *fieldTy = structTy->getContainedType(f);
+      if (const StructType *sTy = dyn_cast<StructType>(fieldTy)) {
+        for (unsigned int g = 0; g < sTy->getNumElements(); g++) {
+          if (!isPrimitiveType(sTy->getContainedType(g))) {
+            std::stringstream err_msg;
+            err_msg << "Primitive types can be allocated in inner struct types: Type=" <<
+              getTypeIDName(sTy->getContainedType(g));
+            throw err_msg;
+          }
+        }
+
+        unsigned int structSize = getTypeAllocSize(sTy);
+        printSimpleInstruction("dup2");
+        printSimpleInstruction("ldc2_w", utostr(offset));
+        printSimpleInstruction("ladd");
+        printSimpleInstruction("bipush", utostr(structSize));
+        printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+        printIndirectStore(sTy);
+      } else if (const ArrayType *arTy = dyn_cast<ArrayType>(fieldTy)) {
+        const Type *elementTy = arTy->getElementType();
+        if (!isPrimitiveType(elementTy)) {
+          std::stringstream err_msg;
+          err_msg << "Primitive types can be allocated in inner struct types: Type=" <<
+            getTypeIDName(elementTy);
+          throw err_msg;
+        }
+
+        unsigned int arSize = getTypeAllocSize(arTy);;
+        assert(arSize == arTy->getNumElements() * getTypeSize(elementTy));
+        printSimpleInstruction("dup2");
+        printSimpleInstruction("ldc2_w", utostr(offset));
+        printSimpleInstruction("ladd");
+        printSimpleInstruction("bipush", utostr(arSize));
+        printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+        printIndirectStore(arTy);
+      }
+
+      // Move to the next...
+      offset = advanceNextOffset(offset, fieldTy);
+    }
+  } else {
+  
+  }
 }
 
 void JVMWriter::printVAArgInstruction(const VAArgInst *inst) {
