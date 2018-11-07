@@ -71,6 +71,7 @@ void JVMWriter::printInstruction(const Instruction *inst) {
   // - https://releases.llvm.org/7.0.0/docs/LangRef.html#instruction-reference
   switch (inst->getOpcode()) {
     case Instruction::Ret:
+      // TODO: Needs to copy a return variable fraom the stack
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/destroyStackFrame()V");
       if (inst->getNumOperands() >= 1) {
         printValueLoad(left);
