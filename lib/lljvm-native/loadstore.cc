@@ -75,7 +75,7 @@ void JVMWriter::printValueStore(const Value *v) {
     lljvm_unreachable(err_msg.str());
   }
 
-  unsigned int bitWidth = getTypeSizeInBits(v->getType());
+  unsigned int bitWidth = getTypeBitWidth(v->getType());
   // Truncates int
   if (bitWidth == 16) {
     printSimpleInstruction("i2s");

@@ -63,7 +63,7 @@ void JVMWriter::printOperandPack(
     const Instruction *inst, unsigned int minOperand, unsigned int maxOperand) {
   unsigned int size = 0;
   for (unsigned int i = minOperand; i < maxOperand; i++) {
-    size += getTypeSize(inst->getOperand(i)->getType());
+    size += getTypeAllocSize(inst->getOperand(i)->getType());
   }
   if (size <= 0 || size > 32767) {
     std::stringstream err_msg;
@@ -291,7 +291,7 @@ void JVMWriter::printFunctionBody(const Function &f) {
 unsigned int JVMWriter::getLocalVarNumber(const Value *v) {
   if (!localVars.count(v)) {
     localVars[v] = usedRegisters++;
-    if (getTypeSizeInBits(v->getType()) == 64) {
+    if (getTypeBitWidth(v->getType()) == 64) {
       // 64 bit types occupy 2 registers
       usedRegisters++;
     }

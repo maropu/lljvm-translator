@@ -193,8 +193,8 @@ private:
   bool isNumericType(const Type *ty);
   unsigned int advanceNextOffset(unsigned int offset, const Type *ty);
   unsigned int getTypeAllocSize(const Type *ty);
-  unsigned int getTypeSize(const Type *ty);
-  unsigned int getTypeSizeInBits(const Type *ty, bool expand = false);
+  unsigned int getTypeByteWidth(const Type *ty, bool expand = false);
+  unsigned int getTypeBitWidth(const Type *ty, bool expand = false);
   char getTypeID(const Type *ty, bool expand = false);
   std::string getTypeIDName(const Type *ty);
   std::string getTypeName(const Type *ty, bool expand = false);

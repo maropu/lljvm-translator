@@ -139,8 +139,8 @@ void JVMWriter::printInstruction(const Instruction *inst) {
       printIndirectStore(inst->getOperand(1), inst->getOperand(0));
       break;
     case Instruction::GetElementPtr:
-      printGepInstruction(inst->getOperand(0), gep_type_begin(inst), gep_type_end(inst));
-      // printGepInstruction1(cast<GetElementPtrInst>(inst));
+      //  printGepInstruction(inst->getOperand(0), gep_type_begin(inst), gep_type_end(inst));
+      printGepInstruction1(cast<GetElementPtrInst>(inst));
       break;
     case Instruction::Call:
       printCallInstruction(cast<CallInst>(inst));

@@ -168,6 +168,11 @@ public final class VMemory {
     return addr;
   }
 
+  public static boolean isValidStackAddress(long address) {
+    VMemFragment stack = currentStack().getKey();
+    return stack.getBaseAddr() <= address && address < stack.getBaseAddr() + stack.getCapacity();
+  }
+
   /**
    * Thrown if an application tries to access an invalid memory address, or
    * tries to write to a read-only location.
@@ -485,6 +490,15 @@ public final class VMemory {
    */
   public static void memset(long dest, byte val, long len, int align) {
     memset(dest, val, (int) len, align);
+  }
+
+  /**
+   * Copy data from src to dest byte-to-byte.
+   */
+  public static void memcpy(long dest, long src, long len) {
+    for (long i = 0; i < len; i++) {
+      store(dest + i, load_i8(src + i));
+    }
   }
 
   /**

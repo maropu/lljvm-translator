@@ -71,7 +71,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
 
     // TODO: A return type is always i1?
     Type *rTy = Type::getInt1Ty(module->getContext());
-    int size = getTypeSize(rTy);
+    int size = getTypeAllocSize(rTy);
     printSimpleInstruction("sipush", utostr(leftVecTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
@@ -103,7 +103,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       } else {
         // We assume a pointer case here
         printValueLoad(left);
-        int lsize = getTypeSize(leftVecTy->getElementType());
+        int lsize = getTypeAllocSize(leftVecTy->getElementType());
         printSimpleInstruction("ldc2_w", utostr(i * lsize));
         printSimpleInstruction("ladd");
         printIndirectLoad(leftVecTy->getElementType());
@@ -130,7 +130,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       } else {
         // We assume a pointer case here
         printValueLoad(right);
-        int rsize = getTypeSize(rightVecTy->getElementType());
+        int rsize = getTypeAllocSize(rightVecTy->getElementType());
         printSimpleInstruction("ldc2_w", utostr(i * rsize));
         printSimpleInstruction("ladd");
         printIndirectLoad(rightVecTy->getElementType());
@@ -226,7 +226,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
   if (const VectorType *vecTy = dyn_cast<VectorType>(left->getType())) {
     std::string typePrefix = getTypePrefix(vecTy->getElementType(), true);
     std::string typeDescriptor = getTypeDescriptor(vecTy->getElementType());
-    int size = getTypeSize(vecTy->getElementType());
+    int size = getTypeAllocSize(vecTy->getElementType());
 
     printSimpleInstruction("sipush", utostr(vecTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
@@ -290,7 +290,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
         printIndirectLoad(vecTy->getElementType());
       }
 
-      printArithmeticInstruction(op, typeDescriptor, typePrefix, getTypeSizeInBits(right->getType()));
+      printArithmeticInstruction(op, typeDescriptor, typePrefix, getTypeBitWidth(vecTy->getElementType()));
       printIndirectStore(vecTy->getElementType());
     }
   } else if (left->getType()->getTypeID() == Type::IntegerTyID ||
@@ -300,7 +300,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
     printValueLoad(right);
     std::string typePrefix = getTypePrefix(left->getType(), true);
     std::string typeDescriptor = getTypeDescriptor(left->getType());
-    printArithmeticInstruction(op, typeDescriptor, typePrefix, getTypeSizeInBits(right->getType()));
+    printArithmeticInstruction(op, typeDescriptor, typePrefix, getTypeBitWidth(right->getType()));
   } else {
     std::stringstream err_msg;
     err_msg << "Unknown operand type: Type=" << getTypeIDName(left->getType());
@@ -336,13 +336,13 @@ void JVMWriter::printCastInstruction(unsigned int op, const Type *srcTy, const T
     case Instruction::FPTrunc:
     case Instruction::FPExt:
     case Instruction::SExt:
-      // if (getTypeSizeInBits(srcTy) < 32) {
+      // if (getTypeBitWidth(srcTy) < 32) {
       //   printCastInstruction(getTypePrefix(srcTy), "i");
       // }
       printCastInstruction(getTypePrefix(destTy, true), getTypePrefix(srcTy, true));
       break;
     case Instruction::Trunc:
-      if (getTypeSizeInBits(srcTy) == 64 && getTypeSizeInBits(destTy) < 32) {
+      if (getTypeBitWidth(srcTy) == 64 && getTypeBitWidth(destTy) < 32) {
         printSimpleInstruction("l2i");
         printCastInstruction(getTypePrefix(destTy), "i");
       } else {
@@ -389,7 +389,7 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v, const Type
     const SequentialType *seqTy = dyn_cast<SequentialType>(v->getType());
     Type *srcElemTy = seqTy->getElementType();
     Type *destElemTy = cast<SequentialType>(ty)->getElementType();
-    int size = getTypeSize(destElemTy);
+    int size = getTypeAllocSize(destElemTy);
     printSimpleInstruction("sipush", utostr(seqTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
@@ -403,7 +403,7 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v, const Type
         printValueLoad(vec->getElementAsConstant(i));
       } else {
         printValueLoad(v);
-        int ssize = getTypeSize(destElemTy);
+        int ssize = getTypeAllocSize(destElemTy);
         printSimpleInstruction("ldc2_w", utostr(i * ssize));
         printSimpleInstruction("ladd");
         printIndirectLoad(seqTy->getElementType());
@@ -444,9 +444,9 @@ void JVMWriter::printGepInstruction(const Value *v, gep_type_iterator i, gep_typ
       printSimpleInstruction("ladd");
     } else {
       if (const SequentialType *seqTy = dyn_cast<SequentialType>(i.getIndexedType())) {
-        size = getTypeSize(seqTy->getElementType());
+        size = getTypeAllocSize(seqTy->getElementType());
       } else {
-        size = getTypeSize(i.getIndexedType());
+        size = getTypeAllocSize(i.getIndexedType());
       }
 
       if (const ConstantInt *c = dyn_cast<ConstantInt>(indexValue)) {
@@ -513,21 +513,16 @@ void JVMWriter::printGepInstruction1(const GetElementPtrInst *inst) {
             // Load a pointer address
             printIndirectLoad(ty);
           }
-        } else if (const ArrayType *arTy = dyn_cast<ArrayType>(ty)) {
-          const Type *elementTy = arTy->getElementType();
+        } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(ty)) {
+          const Type *elementTy = seqTy->getElementType();
           if (isPrimitiveType(elementTy)) {
-            printPtrLoad(fieldIndex * getTypeSize(elementTy));
+            printPtrLoad(fieldIndex * getTypeByteWidth(elementTy));
             printSimpleInstruction("ladd");
           } else {
             std::stringstream err_msg;
             err_msg << "Unsupported non-primitive types of arrays in getelementptr: Type=" << getTypeIDName(elementTy);
             throw err_msg.str();
           }
-        } else if (const VectorType *vecTy = dyn_cast<VectorType>(ty)) {
-          const Type *elementTy = vecTy->getElementType();
-          assert(isPrimitiveType(elementTy));
-          printPtrLoad(fieldIndex * getTypeSize(elementTy));
-          printSimpleInstruction("ladd");
         } else {
           std::stringstream err_msg;
           err_msg << "Unknown aggregate/vector type in getelementptr: Type=" << getTypeIDName(ty);
@@ -535,44 +530,28 @@ void JVMWriter::printGepInstruction1(const GetElementPtrInst *inst) {
         }
       }
     }
-  } else if (const ArrayType *arTy = dyn_cast<ArrayType>(ptrElementType)) {
-    if (isPrimitiveType(arTy->getElementType())) {
-      const Type *elementTy = arTy->getElementType();
-      unsigned int arSize = getTypeAllocSize(arTy);
-      assert(arSize == arTy->getNumElements() * getTypeSize(elementTy));
+  } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(ptrElementType)) {
+    if (isPrimitiveType(seqTy->getElementType())) {
+      unsigned int arSize = getTypeAllocSize(seqTy);
       printPtrLoad(arSize);
       printSimpleInstruction("lmul");
       printSimpleInstruction("ladd");
 
       if (inst->getNumIndices() > 1) {
         unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(2))->getZExtValue();
-        printPtrLoad(fieldIndex * getTypeSize(elementTy));
+        printPtrLoad(fieldIndex * getTypeByteWidth(seqTy->getElementType()));
         printSimpleInstruction("ladd");
       }
     } else {
       std::stringstream err_msg;
       err_msg << "Unsupported non-primitive types of arrays in getelementptr: Type=" <<
-        getTypeIDName(arTy->getElementType());
+        getTypeIDName(seqTy->getElementType());
       throw err_msg.str();
-    }
-  } else if (const VectorType *vecTy = dyn_cast<VectorType>(ptrElementType)) {
-    const Type *elementTy = vecTy->getElementType();
-    assert(isPrimitiveType(elementTy));
-    unsigned int vecSize = getTypeAllocSize(vecTy);
-    assert(vecSize == vecTy->getNumElements() * getTypeSize(elementTy));
-    printPtrLoad(vecSize);
-    printSimpleInstruction("lmul");
-    printSimpleInstruction("ladd");
-
-    if (inst->getNumIndices() > 1) {
-      unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(2))->getZExtValue();
-      printPtrLoad(fieldIndex * getTypeSize(elementTy));
-      printSimpleInstruction("ladd");
     }
   } else {
     assert(inst->getNumIndices() == 1);
     assert(isPrimitiveType(ptrElementType));
-    printPtrLoad(getTypeSize(ptrElementType));
+    printPtrLoad(getTypeByteWidth(ptrElementType));
     printSimpleInstruction("lmul");
     printSimpleInstruction("ladd");
   }
@@ -593,7 +572,8 @@ void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
   }
   printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
-  // Allocate space for inner aggregate types, e.g., { i32, [4 x i32] }
+  // Allocate space for inner aggregate/vector types,
+  // e.g., { i32, { float, double } }, { i32, [4 x i32] }, and { i32, <2 x i32> }
   if (const StructType *structTy = dyn_cast<StructType>(allocatedTy)) {
     unsigned int offset = 0;
     for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
@@ -615,37 +595,42 @@ void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
         printSimpleInstruction("bipush", utostr(structSize));
         printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
         printIndirectStore(sTy);
-      } else if (const ArrayType *arTy = dyn_cast<ArrayType>(fieldTy)) {
-        const Type *elementTy = arTy->getElementType();
+      } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(fieldTy)) {
+        const Type *elementTy = seqTy->getElementType();
         if (!isPrimitiveType(elementTy)) {
           std::stringstream err_msg;
-          err_msg << "Primitive types can be allocated in inner struct types: Type=" <<
+          err_msg << "Primitive types can be allocated in inner sequential types: Type=" <<
             getTypeIDName(elementTy);
           throw err_msg;
         }
 
-        unsigned int arSize = getTypeAllocSize(arTy);;
-        assert(arSize == arTy->getNumElements() * getTypeSize(elementTy));
+        unsigned int seqSize = getTypeAllocSize(seqTy);;
         printSimpleInstruction("dup2");
         printSimpleInstruction("ldc2_w", utostr(offset));
         printSimpleInstruction("ladd");
-        printSimpleInstruction("bipush", utostr(arSize));
+        printSimpleInstruction("bipush", utostr(seqSize));
         printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-        printIndirectStore(arTy);
+        printIndirectStore(seqTy);
       }
 
       // Move to the next...
       offset = advanceNextOffset(offset, fieldTy);
     }
-  } else {
-  
+  } else if (const ArrayType *arTy = dyn_cast<ArrayType>(allocatedTy)) {
+    const Type *elementTy = arTy->getElementType();
+    if (!isPrimitiveType(elementTy)) {
+      std::stringstream err_msg;
+      err_msg << "Primitive types can be allocated in array types: Type=" <<
+        getTypeIDName(elementTy);
+      throw err_msg;
+    }
   }
 }
 
 void JVMWriter::printVAArgInstruction(const VAArgInst *inst) {
   printIndirectLoad(inst->getOperand(0));
   printSimpleInstruction("dup");
-  printConstLoad(APInt(32, getTypeSize(inst->getType()), false));
+  printConstLoad(APInt(32, getTypeAllocSize(inst->getType()), false));
   printSimpleInstruction("iadd");
   printValueLoad(inst->getOperand(0));
   printSimpleInstruction("swap");
@@ -659,7 +644,7 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
 
   if (inst->getNumIndices() > 1) {
     std::stringstream err_msg;
-    err_msg << "Unsupported multiple indices for nested aggregate types in insertvalue: Num=" << inst->getNumIndices();
+    err_msg << "Unsupported multiple indices for nested aggregate types in extractvalue: Num=" << inst->getNumIndices();
     throw err_msg.str();
   }
 
@@ -676,19 +661,9 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
     printPtrLoad(aggSize);
     printSimpleInstruction("ladd");
     // We load a value itself for regular/pointer types.
-    // Otherwise, we need to load an address for vector-typed values:
-    //
-    // e.g., %2 = extractvalue { i64, i8*, [2 x i32], <4 x i64> } %.1, 3
-    //
-    // In this example, it is a value for `i64`/`i8*`/`[2 x i32]` and
-    // an adress for `<4 x i64>`.
-    if (isa<VectorType>(structTy->getContainedType(fieldIndex))) {
-      // Loads an adress itself
-    } else {
-      printIndirectLoad(structTy->getContainedType(fieldIndex));
-    }
+    printIndirectLoad(structTy->getContainedType(fieldIndex));
   } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
-    aggSize = getTypeSize(arTy->getElementType());
+    aggSize = getTypeAllocSize(arTy->getElementType());
     printPtrLoad(fieldIndex * aggSize);
     printSimpleInstruction("ladd");
     printIndirectLoad(arTy->getElementType());
@@ -703,7 +678,7 @@ void JVMWriter::printInsertElement(const InsertElementInst *inst) {
   const Value *v = inst->getOperand(0);
 
   if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
-    uint64_t elementSize = getTypeSize(vecTy->getElementType());
+    uint64_t elementSize = getTypeAllocSize(vecTy->getElementType());
     printSimpleInstruction("bipush", utostr(elementSize * vecTy->getNumElements()));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
     if (!isa<UndefValue>(v)) {
@@ -744,7 +719,7 @@ void JVMWriter::printExtractElement(const ExtractElementInst *inst) {
   const Value *v = inst->getOperand(0);
 
   if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
-    uint64_t elementSize = getTypeSize(vecTy->getElementType());
+    uint64_t elementSize = getTypeAllocSize(vecTy->getElementType());
     if (const UndefValue *undef = dyn_cast<UndefValue>(v)) {
       printSimpleInstruction("bipush", utostr(elementSize * undef->getNumElements()));
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
@@ -792,106 +767,65 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
 
   // Because of SSA, we copy input value `aggValue` first
   if (const StructType *structTy = dyn_cast<StructType>(aggType)) {
-    // Computes the size with alignments
-    int aggSize = 0;
-    for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
-      if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(f))) {
-        for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
-          aggSize = advanceNextOffset(aggSize, vecTy->getElementType());
-        }
-      } else {
-        aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
-      }
-    }
-    printSimpleInstruction("bipush", utostr(aggSize));
+    printSimpleInstruction("bipush", utostr(getTypeAllocSize(structTy)));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
     if (!isa<UndefValue>(aggValue)) {
       // TODO: Needs bulk copy (memcpy) for efficiency
-      aggSize = 0;
+      unsigned int aggSize = 0;
       for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
-        if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(f))) {
-          // Copy ArrayTy values element-by-element into the allocated
-          int elementSize = getTypeSize(vecTy->getElementType());
-          for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
-            // Locate output position
-            printSimpleInstruction("dup2");
-            printPtrLoad(aggSize + elementSize * i);
-            printSimpleInstruction("ladd");
+        const Type *fTy = structTy->getContainedType(f);
 
-            // Load a value from the current position
-            printValueLoad(aggValue);
-            printPtrLoad(aggSize + elementSize * i);
-            printSimpleInstruction("ladd");
-            printIndirectLoad(vecTy->getElementType());
+        // Locate output position
+        printSimpleInstruction("dup2");
+        printSimpleInstruction("ldc2_w", utostr(aggSize));
+        printSimpleInstruction("ladd");
 
-            // Copy the value
-            printIndirectStore(vecTy->getElementType());
-          }
-
-          // Locate a next position
-          for (unsigned i = 0; i < vecTy->getNumElements(); i++) {
-            aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
-          }
-        } else {
-          // Locate output position
+        if (isa<StructType>(fTy) || isa<SequentialType>(fTy)) { // if (isa<CompositeType>(fTy)) {
+          unsigned int copySize = getTypeAllocSize(fTy);
+          printSimpleInstruction("bipush", utostr(copySize));
+          printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
           printSimpleInstruction("dup2");
+          printValueLoad(aggValue);
           printSimpleInstruction("ldc2_w", utostr(aggSize));
           printSimpleInstruction("ladd");
-
+          printIndirectLoad(fTy);
+          printSimpleInstruction("ldc2_w", utostr(copySize));
+          printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/memcpy(JJJ)V");
+        } else {
           // Load a value from the current position
           printValueLoad(aggValue);
           printSimpleInstruction("ldc2_w", utostr(aggSize));
           printSimpleInstruction("ladd");
-          printIndirectLoad(structTy->getContainedType(f));
-
-          // Copy the value
-          printIndirectStore(structTy->getContainedType(f));
-
-          // Locate a next position
-          aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
+          printIndirectLoad(fTy);
         }
+
+        // Copy the value
+        printIndirectStore(structTy->getContainedType(f));
+
+        // Locate a next position
+        aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
       }
     }
 
     // The value to insert must have the same type as the value identified by the indices
     unsigned fieldIndex = inst->getIndices()[0];
-    aggSize = 0;
+    unsigned int aggSize = 0;
     assert(structTy->getNumElements() > fieldIndex);
     for (unsigned int f = 0; f < fieldIndex; f++) {
       aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
     }
 
-    if (const VectorType *vecTy = dyn_cast<VectorType>(structTy->getContainedType(fieldIndex))) {
-      // Insert ArrayTy values element-by-element into the position
-      int elementSize = getTypeSize(vecTy->getElementType());
-      for (unsigned j = 0; j < vecTy->getNumElements(); j++) {
-        // Locate output position
-        printSimpleInstruction("dup2");
-        printPtrLoad(aggSize + elementSize * j);
-        printSimpleInstruction("ladd");
-
-        // Load a value from the current position
-        printValueLoad(inst->getOperand(1));
-        printPtrLoad(elementSize * j);
-        printSimpleInstruction("ladd");
-        printIndirectLoad(vecTy->getElementType());
-
-        // Copy the value
-        printIndirectStore(vecTy->getElementType());
-      }
-    } else {
-      // Insert a value itself into the output position
-      printSimpleInstruction("dup2");
-      printSimpleInstruction("ldc2_w", utostr(aggSize));
-      printSimpleInstruction("ladd");
-      printValueLoad(inst->getOperand(1));
-      printIndirectStore(structTy->getContainedType(fieldIndex));
-    }
+    // Insert a value itself into the output position
+    printSimpleInstruction("dup2");
+    printSimpleInstruction("ldc2_w", utostr(aggSize));
+    printSimpleInstruction("ladd");
+    printValueLoad(inst->getOperand(1));
+    printIndirectStore(structTy->getContainedType(fieldIndex));
   } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
     assert(arTy->getElementType() == inst->getOperand(1)->getType());
 
-    int elementSize = getTypeSize(arTy->getElementType());
+    int elementSize = getTypeAllocSize(arTy->getElementType());
     int aggSize = elementSize * arTy->getNumElements();
     printSimpleInstruction("bipush", utostr(aggSize));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
@@ -937,7 +871,7 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
   if (const ConstantAggregateZero *zeroinit = dyn_cast<ConstantAggregateZero>(inst->getOperand(2))) {
     const Value *v = inst->getOperand(0);
     if (const VectorType *vecTy = dyn_cast<VectorType>(v->getType())) {
-      uint64_t vecElemSize = getTypeSize(vecTy->getElementType());
+      uint64_t vecElemSize = getTypeAllocSize(vecTy->getElementType());
       int vecElemNum = zeroinit->getNumElements();
       printSimpleInstruction("bipush", utostr(vecElemSize * vecElemNum));
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
@@ -973,7 +907,7 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
         numInputElems += v2Ty->getNumElements();
       }
 
-      uint64_t vecElemSize = getTypeSize(v1Ty->getElementType());
+      uint64_t vecElemSize = getTypeAllocSize(v1Ty->getElementType());
       printSimpleInstruction("bipush", utostr(vecElemSize * numInputElems));
       printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
@@ -1228,17 +1162,17 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
     bool f32 = false;
     bool f32_2nd = false;
     if (inst->getNumOperands() == 2) {
-      f32 = (getTypeSizeInBits(vecTy->getElementType()) == 32);
+      f32 = (getTypeBitWidth(vecTy->getElementType()) == 32);
     } else {
       // For pow()
-      f32 = (getTypeSizeInBits(vecTy->getElementType()) == 32);
+      f32 = (getTypeBitWidth(vecTy->getElementType()) == 32);
 
       // TODO: The return type depends on the 1st type
-      // f32_2nd = (getTypeSizeInBits(inst->getOperand(1)->getType()) == 32);
+      // f32_2nd = (getTypeBitWidth(vecTy->getElementType()) == 32);
       f32_2nd = f32;
     }
 
-    int size = getTypeSize(vecTy->getElementType());
+    int size = getTypeAllocSize(vecTy->getElementType());
 
     printSimpleInstruction("sipush", utostr(vecTy->getNumElements() * size));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
@@ -1282,17 +1216,17 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
       v1->getType()->getTypeID() == Type::DoubleTyID) {
     bool f32 = false;
     if (inst->getNumOperands() == 2) {
-      f32 = (getTypeSizeInBits(inst->getOperand(0)->getType()) == 32);
+      f32 = (getTypeBitWidth(inst->getOperand(0)->getType()) == 32);
       printValueLoad(inst->getOperand(0));
       if (f32) printSimpleInstruction("f2d");
     } else {
       // For pow()
-      f32 = (getTypeSizeInBits(inst->getOperand(0)->getType()) == 32);
+      f32 = (getTypeBitWidth(inst->getOperand(0)->getType()) == 32);
       printValueLoad(inst->getOperand(0));
       if (f32) printSimpleInstruction("f2d");
 
       // TODO: The return type depends on the 1st type
-      bool f32_2nd = (getTypeSizeInBits(inst->getOperand(1)->getType()) == 32);
+      bool f32_2nd = (getTypeBitWidth(inst->getOperand(1)->getType()) == 32);
       printValueLoad(inst->getOperand(1));
       if (f32_2nd) printSimpleInstruction("f2d");
     }

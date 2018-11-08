@@ -63,4 +63,3 @@ define i32 @insertvalue10({ i32, i32 } %x) {
   %ret = add nsw i32 %12, %8
   ret i32 %ret
 }
-

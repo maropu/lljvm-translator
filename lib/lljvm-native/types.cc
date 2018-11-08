@@ -47,7 +47,7 @@ bool JVMWriter::isNumericType(const Type *ty) {
 }
 
 unsigned int JVMWriter::advanceNextOffset(unsigned int offset, const Type *ty) {
-  unsigned int nextOffset = offset + getTypeSize(ty);
+  unsigned int nextOffset = offset + getTypeByteWidth(ty);
   // TODO: Needs to consider memory alignments
   // unsigned int align = XXX;
   // return nextOffset + ((align - (nextOffset % align)) % align);
@@ -56,52 +56,45 @@ unsigned int JVMWriter::advanceNextOffset(unsigned int offset, const Type *ty) {
 
 unsigned int JVMWriter::getTypeAllocSize(const Type *ty) {
   if (const StructType *structTy = dyn_cast<StructType>(ty)) {
-    unsigned int aggSize = 0;
+    int aggSize = 0;
     for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
-      aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
+      aggSize += getTypeByteWidth(structTy->getContainedType(f));
     }
     return aggSize;
+  } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(ty)) {
+    return targetData->getTypeAllocSize((Type *) seqTy->getElementType()) * seqTy->getNumElements();
   } else {
     return targetData->getTypeAllocSize((Type *) ty);
   }
 }
 
-unsigned int JVMWriter::getTypeSize(const Type *ty) {
-  switch (ty->getTypeID()) {
-    case Type::ArrayTyID:
-    case Type::VectorTyID:
-    case Type::StructTyID:
-    case Type::PointerTyID:
-      return 8;
-    default:
-      break;
-  }
-
-  unsigned int n = ty->getPrimitiveSizeInBits();
-  switch (n) {
-    case 1:
-    case 8:
-      return 1;
-    case 16:
-      return 2;
-    case 32:
-      return 4;
-    case 64:
-      return 8;
-    default:
-      std::stringstream err_msg;
-      err_msg << "Unsupported type: Type=" << getTypeIDName(ty) << " Bits=" << n;
-      lljvm_unreachable(err_msg.str());
-  }
+unsigned int JVMWriter::getTypeByteWidth(const Type *ty, bool expand) {
+  return getTypeBitWidth(ty, expand) >> 3;
 }
 
-unsigned int JVMWriter::getTypeSizeInBits(const Type *ty, bool expand) {
+unsigned int JVMWriter::getTypeBitWidth(const Type *ty, bool expand) {
   switch (ty->getTypeID()) {
+    case Type::PointerTyID:
+      return 64;
+
+    // We need to use 64bit-length addresses for passing these values, so
+    // we use JVM long-typed value in both examples below;
+    //
+    // define <4 x float> @fsub3(<4 x float> %x) {
+    //   %ret = fsub <4 x float> zeroinitializer, %x
+    //   ret <4 x float> %ret
+    // }
+    //
+    // define <4 x float> @fsub3(<4 x float>* %x) {
+    //   %1 = load <4 x float>, <4 x float>* %x, 0
+    //   %ret = fsub <4 x float> zeroinitializer, %x
+    //   ret <4 x float> %ret
+    // }
     case Type::ArrayTyID:
     case Type::VectorTyID:
     case Type::StructTyID:
-    case Type::PointerTyID:
       return 64;
+
     default:
       break;
   }
@@ -136,7 +129,7 @@ char JVMWriter::getTypeID(const Type *ty, bool expand) {
     case Type::VoidTyID:
       return 'V';
     case Type::IntegerTyID:
-      switch (getTypeSizeInBits(ty, expand)) {
+      switch (getTypeBitWidth(ty, expand)) {
       case 1: return 'Z';
       case 8: return 'B';
       case 16: return 'S';
@@ -251,7 +244,7 @@ std::string JVMWriter::getTypePostfix(const Type *ty, bool expand) {
   case Type::VoidTyID:
     return "void";
   case Type::IntegerTyID:
-    return "i" + utostr(getTypeSizeInBits(ty, expand));
+    return "i" + utostr(getTypeBitWidth(ty, expand));
   case Type::FloatTyID:
     return "f32";
   case Type::DoubleTyID:
