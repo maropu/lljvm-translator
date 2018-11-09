@@ -51,11 +51,11 @@ public class PyArrayHolder implements AutoCloseable {
   public PyArrayHolder() {
     // We assume that the aggregate(array/struct) type of python input n-d arrays is
     // `{ i8*, i8*, i64, i64, ty*, [n x i64], [n x i64] }`.
-    long pyArrayHeaderSize = 8 * 7;
+    long diminfoSize = 8 * (2 * MAX_DIMENSION);
+    long pyArrayHeaderSize = 40 + diminfoSize;
     long meminfoSize = 40;
     long parentAddrSize = 8;
-    long diminfoSize = 8 * (2 * MAX_DIMENSION);
-    long holderSize = pyArrayHeaderSize + meminfoSize + parentAddrSize + diminfoSize;
+    long holderSize = pyArrayHeaderSize + meminfoSize + parentAddrSize;
     this.holderAddr = Platform.allocateMemory(holderSize);
 
     Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
@@ -76,9 +76,6 @@ public class PyArrayHolder implements AutoCloseable {
     this.numDim = 1;
 
     Platform.putLong(null, holderAddr, meminfoAddr);
-    long diminfoOffset = pyArrayHeaderSize + meminfoSize + parentAddrSize;
-    Platform.putLong(null, holderAddr + 40, holderAddr + diminfoOffset);
-    Platform.putLong(null, holderAddr + 48, holderAddr + diminfoOffset + 8 * MAX_DIMENSION);
     Platform.putLong(null, meminfoAddr, 1L); // starts with 1 refct
 
     this.isArrayOwner = true;
@@ -113,11 +110,11 @@ public class PyArrayHolder implements AutoCloseable {
   }
 
   private long shapeAddr() {
-    return Platform.getLong(null, holderAddr + 40);
+    return holderAddr + 40;
   }
 
   private long strideAddr() {
-    return Platform.getLong(null, holderAddr + 48);
+    return holderAddr + 40 + numDim * 8;
   }
 
   private boolean is1d() {

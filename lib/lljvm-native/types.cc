@@ -24,7 +24,7 @@
 
 #include <sstream>
 
-bool JVMWriter::isPrimitiveType(const Type *ty) {
+bool isPrimitiveType(const Type *ty) {
   switch (ty->getTypeID()) {
     case Type::FloatTyID:
     case Type::DoubleTyID:
@@ -35,7 +35,7 @@ bool JVMWriter::isPrimitiveType(const Type *ty) {
   }
 }
 
-bool JVMWriter::isNumericType(const Type *ty) {
+bool isNumericType(const Type *ty) {
   switch (ty->getTypeID()) {
     case Type::FloatTyID:
     case Type::DoubleTyID:
@@ -44,10 +44,32 @@ bool JVMWriter::isNumericType(const Type *ty) {
     default:
       return false;
   }
+}
+
+bool checkIfTypeSupported(const Type *ty) {
+  if (const StructType *structTy = dyn_cast<StructType>(ty)) {
+    for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
+      const Type *fieldTy = structTy->getContainedType(f);
+      if (const PointerType *pTy = dyn_cast<PointerType>(fieldTy)) {
+        if (isa<CompositeType>(pTy->getElementType())) {
+          // The pointer of composite types not supported
+          return false;
+        }
+      } else if (isa<StructType>(fieldTy) || isa<ArrayType>(fieldTy)) {
+        return checkIfTypeSupported(fieldTy);
+      }
+    }
+  } else if (const ArrayType *arTy = dyn_cast<ArrayType>(ty)) {
+    if (!isPrimitiveType(arTy->getElementType())) {
+      // Only primitive typed arrays supported
+      return false;
+    }
+  }
+  return true;
 }
 
 unsigned int JVMWriter::advanceNextOffset(unsigned int offset, const Type *ty) {
-  unsigned int nextOffset = offset + getTypeByteWidth(ty);
+  unsigned int nextOffset = offset + getTypeAllocSize(ty);
   // TODO: Needs to consider memory alignments
   // unsigned int align = XXX;
   // return nextOffset + ((align - (nextOffset % align)) % align);
@@ -58,7 +80,7 @@ unsigned int JVMWriter::getTypeAllocSize(const Type *ty) {
   if (const StructType *structTy = dyn_cast<StructType>(ty)) {
     int aggSize = 0;
     for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
-      aggSize += getTypeByteWidth(structTy->getContainedType(f));
+      aggSize += getTypeAllocSize(structTy->getContainedType(f));
     }
     return aggSize;
   } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(ty)) {
@@ -187,6 +209,7 @@ std::string JVMWriter::getTypeIDName(const Type *ty) {
     case Type::FunctionTyID:
       return "FunctionTyID";
     case Type::StructTyID:
+      // TODO: Can we show inner types in the struct?
       return "StructTyID";
     case Type::ArrayTyID:
       return "ArrayTyID";

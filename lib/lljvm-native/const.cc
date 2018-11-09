@@ -285,7 +285,7 @@ void JVMWriter::printConstantExpr(const ConstantExpr *ce) {
       printCmpInstruction(ce->getPredicate(), left, right);
       break;
     case Instruction::GetElementPtr:
-      printGepInstruction(ce->getOperand(0), gep_type_begin(ce), gep_type_end(ce));
+      printGepInstruction(cast<GetElementPtrInst>(ce));
       break;
     case Instruction::Select:
       printSelectInstruction(ce->getOperand(0), ce->getOperand(1), ce->getOperand(2));

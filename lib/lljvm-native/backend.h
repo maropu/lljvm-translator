@@ -127,6 +127,7 @@ private:
   void printFunction(const Function &f);
 
   // instruction.cc
+  void printLoadInstruction(const Value *v);
   void printCmpInstruction(unsigned int predicate, const Value *left, const Value *right);
   void printArithmeticInstruction(unsigned int op, const Value *left, const Value *right);
   void printArithmeticInstruction(
@@ -135,8 +136,7 @@ private:
   void printCastInstruction(const std::string &typePrefix, const std::string &srcTypePrefix);
   void printCastInstruction(unsigned int op, const Type *srcTy, const Type *destTy);
   void printCastInstruction(unsigned int op, const Value *v, const Type *ty, const Type *srcTy);
-  void printGepInstruction(const Value *v, gep_type_iterator i, gep_type_iterator e);
-  void printGepInstruction1(const GetElementPtrInst *inst);
+  void printGepInstruction(const GetElementPtrInst *inst);
   void printAllocaInstruction(const AllocaInst *inst);
   void printVAArgInstruction(const VAArgInst *inst);
   void printExtractValue(const ExtractValueInst *inst);
@@ -189,8 +189,6 @@ private:
   void printMainMethod();
 
   // types.cc
-  bool isPrimitiveType(const Type *ty);
-  bool isNumericType(const Type *ty);
   unsigned int advanceNextOffset(unsigned int offset, const Type *ty);
   unsigned int getTypeAllocSize(const Type *ty);
   unsigned int getTypeByteWidth(const Type *ty, bool expand = false);
@@ -202,6 +200,11 @@ private:
   std::string getTypePostfix(const Type *ty, bool expand = false);
   std::string getTypePrefix(const Type *ty, bool expand = false);
 };
+
+// Helper functions for types
+extern bool isPrimitiveType(const Type *ty);
+extern bool isNumericType(const Type *ty);
+extern bool checkIfTypeSupported(const Type *ty);
 
 // `llvm_unreachable` leads to abortion, and then JVMs crash.
 // So, we throw an C++ exception instead of `llvm_unreachable` to translate it

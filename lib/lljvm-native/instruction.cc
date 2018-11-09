@@ -26,6 +26,17 @@
 
 #include <sstream>
 
+void JVMWriter::printLoadInstruction(const Value *v) {
+  // Hacky warning: We need to regard composite types (structs, arrays, and vectors) as pointers
+  if (const PointerType *pTy = dyn_cast<PointerType>(v->getType())) {
+    if (isa<CompositeType>(pTy->getElementType())) {
+      printValueLoad(v);
+      return;
+    }
+  }
+  printIndirectLoad(v);
+}
+
 static std::string getPredicate(unsigned int predicate) {
   std::string inst;
   switch (predicate) {
@@ -420,57 +431,8 @@ void JVMWriter::printCastInstruction(unsigned int op, const Value *v, const Type
 
 /**
  * Prints a getelementptr instruction.
- *
- * @param v the aggregate data structure to index
- * @param i an iterator to the first type indexed by the instruction
- * @param e an iterator specifying the upper bound on the types indexed by the instruction
  */
-void JVMWriter::printGepInstruction(const Value *v, gep_type_iterator i, gep_type_iterator e) {
-  // TODO: Needs to reimplement this
-
-  // Loads address
-  printCastInstruction(Instruction::IntToPtr, v, NULL, v->getType());
-
-  // Calculates offset
-  for (; i != e; i++) {
-    unsigned int size = 0;
-    const Value *indexValue = i.getOperand();
-
-    if (const StructType *structTy = i.getStructTypeOrNull()) {
-      for (unsigned int f = 0, fieldIndex = cast<ConstantInt>(indexValue)->getZExtValue(); f < fieldIndex; f++) {
-        size = advanceNextOffset(size, structTy->getContainedType(f));
-      }
-      printPtrLoad(size);
-      printSimpleInstruction("ladd");
-    } else {
-      if (const SequentialType *seqTy = dyn_cast<SequentialType>(i.getIndexedType())) {
-        size = getTypeAllocSize(seqTy->getElementType());
-      } else {
-        size = getTypeAllocSize(i.getIndexedType());
-      }
-
-      if (const ConstantInt *c = dyn_cast<ConstantInt>(indexValue)) {
-        // Constant optimisation
-        if (c->isNullValue()) {
-          // Does nothing
-        } else if (c->getValue().isNegative()) {
-          printPtrLoad(c->getValue().abs().getZExtValue() * size);
-          printSimpleInstruction("lsub");
-        } else {
-          printPtrLoad(c->getZExtValue() * size);
-          printSimpleInstruction("ladd");
-        }
-      } else {
-        printPtrLoad(size);
-        printCastInstruction(Instruction::IntToPtr, indexValue, NULL, indexValue->getType());
-        printSimpleInstruction("lmul");
-        printSimpleInstruction("ladd");
-      }
-    }
-  }
-}
-
-void JVMWriter::printGepInstruction1(const GetElementPtrInst *inst) {
+void JVMWriter::printGepInstruction(const GetElementPtrInst *inst) {
   const Value *base = inst->getOperand(0);
   const Type *ptrElementType = cast<PointerType>(base->getType())->getElementType();
 
@@ -480,11 +442,23 @@ void JVMWriter::printGepInstruction1(const GetElementPtrInst *inst) {
     throw err_msg.str();
   }
 
+  // Checks if the given types supported, e.g., the pointer of composite types not supported
+  if (!checkIfTypeSupported(ptrElementType)) {
+    std::stringstream err_msg;
+    err_msg << "Unsupported types in getelementptr: Type=" << getTypeIDName(ptrElementType);
+    throw err_msg.str();
+  }
+
   // Load a base address for pointer calculation
   printValueLoad(base);
 
   const Value *arIndexValue = inst->getOperand(1);
   if (const ConstantInt *c = dyn_cast<ConstantInt>(arIndexValue)) {
+    // if (c->getValue().isNegative() || c->isNullValue()) {
+    //   std::stringstream err_msg;
+    //   err_msg << "Unsupported negative/null index value in getelementptr";
+    //   throw err_msg.str();
+    // }
     printPtrLoad(c->getZExtValue());
   } else {
     printCastInstruction(Instruction::IntToPtr, arIndexValue, NULL, arIndexValue->getType());
@@ -507,22 +481,11 @@ void JVMWriter::printGepInstruction1(const GetElementPtrInst *inst) {
           }
           printPtrLoad(offset);
           printSimpleInstruction("ladd");
-
           ty = structTy->getContainedType(fieldIndex);
-          if (isa<CompositeType>(ty)) {
-            // Load a pointer address
-            printIndirectLoad(ty);
-          }
         } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(ty)) {
           const Type *elementTy = seqTy->getElementType();
-          if (isPrimitiveType(elementTy)) {
-            printPtrLoad(fieldIndex * getTypeByteWidth(elementTy));
-            printSimpleInstruction("ladd");
-          } else {
-            std::stringstream err_msg;
-            err_msg << "Unsupported non-primitive types of arrays in getelementptr: Type=" << getTypeIDName(elementTy);
-            throw err_msg.str();
-          }
+          printPtrLoad(fieldIndex * getTypeByteWidth(elementTy));
+          printSimpleInstruction("ladd");
         } else {
           std::stringstream err_msg;
           err_msg << "Unknown aggregate/vector type in getelementptr: Type=" << getTypeIDName(ty);
@@ -531,22 +494,15 @@ void JVMWriter::printGepInstruction1(const GetElementPtrInst *inst) {
       }
     }
   } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(ptrElementType)) {
-    if (isPrimitiveType(seqTy->getElementType())) {
-      unsigned int arSize = getTypeAllocSize(seqTy);
-      printPtrLoad(arSize);
-      printSimpleInstruction("lmul");
-      printSimpleInstruction("ladd");
+    unsigned int arSize = getTypeAllocSize(seqTy);
+    printPtrLoad(arSize);
+    printSimpleInstruction("lmul");
+    printSimpleInstruction("ladd");
 
-      if (inst->getNumIndices() > 1) {
-        unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(2))->getZExtValue();
-        printPtrLoad(fieldIndex * getTypeByteWidth(seqTy->getElementType()));
-        printSimpleInstruction("ladd");
-      }
-    } else {
-      std::stringstream err_msg;
-      err_msg << "Unsupported non-primitive types of arrays in getelementptr: Type=" <<
-        getTypeIDName(seqTy->getElementType());
-      throw err_msg.str();
+    if (inst->getNumIndices() > 1) {
+      unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(2))->getZExtValue();
+      printPtrLoad(fieldIndex * getTypeByteWidth(seqTy->getElementType()));
+      printSimpleInstruction("ladd");
     }
   } else {
     assert(inst->getNumIndices() == 1);
@@ -558,73 +514,28 @@ void JVMWriter::printGepInstruction1(const GetElementPtrInst *inst) {
 }
 
 void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
+  // TODO: Needs to check if given types supported or not
   const Type *allocatedTy = inst->getAllocatedType();
+
+  // Checks if the given types supported, e.g., the pointer of composite types not supported
+  if (!checkIfTypeSupported(allocatedTy)) {
+    std::stringstream err_msg;
+    err_msg << "Unsupported types in getelementptr: Type=" << getTypeIDName(allocatedTy);
+    throw err_msg.str();
+  }
+
   const Value *v = inst->getOperand(0);
-  uint64_t topLevelSize = getTypeAllocSize(allocatedTy);
+  uint64_t size = getTypeAllocSize(allocatedTy);
   if (const ConstantInt *c = dyn_cast<ConstantInt>(v)) {
     // constant optimization
-    // printPtrLoad(c->getZExtValue() * topLevelSize);
-    printSimpleInstruction("bipush", utostr(c->getZExtValue() * topLevelSize));
+    // printPtrLoad(c->getZExtValue() * size);
+    printSimpleInstruction("bipush", utostr(c->getZExtValue() * size));
   } else {
-    printPtrLoad(topLevelSize);
+    printPtrLoad(size);
     printValueLoad(v);
     printSimpleInstruction("imul");
   }
   printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-
-  // Allocate space for inner aggregate/vector types,
-  // e.g., { i32, { float, double } }, { i32, [4 x i32] }, and { i32, <2 x i32> }
-  if (const StructType *structTy = dyn_cast<StructType>(allocatedTy)) {
-    unsigned int offset = 0;
-    for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
-      const Type *fieldTy = structTy->getContainedType(f);
-      if (const StructType *sTy = dyn_cast<StructType>(fieldTy)) {
-        for (unsigned int g = 0; g < sTy->getNumElements(); g++) {
-          if (!isPrimitiveType(sTy->getContainedType(g))) {
-            std::stringstream err_msg;
-            err_msg << "Primitive types can be allocated in inner struct types: Type=" <<
-              getTypeIDName(sTy->getContainedType(g));
-            throw err_msg;
-          }
-        }
-
-        unsigned int structSize = getTypeAllocSize(sTy);
-        printSimpleInstruction("dup2");
-        printSimpleInstruction("ldc2_w", utostr(offset));
-        printSimpleInstruction("ladd");
-        printSimpleInstruction("bipush", utostr(structSize));
-        printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-        printIndirectStore(sTy);
-      } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(fieldTy)) {
-        const Type *elementTy = seqTy->getElementType();
-        if (!isPrimitiveType(elementTy)) {
-          std::stringstream err_msg;
-          err_msg << "Primitive types can be allocated in inner sequential types: Type=" <<
-            getTypeIDName(elementTy);
-          throw err_msg;
-        }
-
-        unsigned int seqSize = getTypeAllocSize(seqTy);;
-        printSimpleInstruction("dup2");
-        printSimpleInstruction("ldc2_w", utostr(offset));
-        printSimpleInstruction("ladd");
-        printSimpleInstruction("bipush", utostr(seqSize));
-        printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-        printIndirectStore(seqTy);
-      }
-
-      // Move to the next...
-      offset = advanceNextOffset(offset, fieldTy);
-    }
-  } else if (const ArrayType *arTy = dyn_cast<ArrayType>(allocatedTy)) {
-    const Type *elementTy = arTy->getElementType();
-    if (!isPrimitiveType(elementTy)) {
-      std::stringstream err_msg;
-      err_msg << "Primitive types can be allocated in array types: Type=" <<
-        getTypeIDName(elementTy);
-      throw err_msg;
-    }
-  }
 }
 
 void JVMWriter::printVAArgInstruction(const VAArgInst *inst) {
@@ -660,8 +571,11 @@ void JVMWriter::printExtractValue(const ExtractValueInst *inst) {
     }
     printPtrLoad(aggSize);
     printSimpleInstruction("ladd");
-    // We load a value itself for regular/pointer types.
-    printIndirectLoad(structTy->getContainedType(fieldIndex));
+    const Type *fieldTy = structTy->getContainedType(fieldIndex);
+    if (!isa<CompositeType>(fieldTy)) {
+      // We load a value itself for regular/pointer types.
+      printIndirectLoad(fieldTy);
+    }
   } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
     aggSize = getTypeAllocSize(arTy->getElementType());
     printPtrLoad(fieldIndex * aggSize);
@@ -767,45 +681,15 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
 
   // Because of SSA, we copy input value `aggValue` first
   if (const StructType *structTy = dyn_cast<StructType>(aggType)) {
-    printSimpleInstruction("bipush", utostr(getTypeAllocSize(structTy)));
+    unsigned int copySize = getTypeAllocSize(structTy);
+    printSimpleInstruction("bipush", utostr(copySize));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
     if (!isa<UndefValue>(aggValue)) {
-      // TODO: Needs bulk copy (memcpy) for efficiency
-      unsigned int aggSize = 0;
-      for (unsigned int f = 0; f < structTy->getNumElements(); f++) {
-        const Type *fTy = structTy->getContainedType(f);
-
-        // Locate output position
-        printSimpleInstruction("dup2");
-        printSimpleInstruction("ldc2_w", utostr(aggSize));
-        printSimpleInstruction("ladd");
-
-        if (isa<StructType>(fTy) || isa<SequentialType>(fTy)) { // if (isa<CompositeType>(fTy)) {
-          unsigned int copySize = getTypeAllocSize(fTy);
-          printSimpleInstruction("bipush", utostr(copySize));
-          printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
-          printSimpleInstruction("dup2");
-          printValueLoad(aggValue);
-          printSimpleInstruction("ldc2_w", utostr(aggSize));
-          printSimpleInstruction("ladd");
-          printIndirectLoad(fTy);
-          printSimpleInstruction("ldc2_w", utostr(copySize));
-          printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/memcpy(JJJ)V");
-        } else {
-          // Load a value from the current position
-          printValueLoad(aggValue);
-          printSimpleInstruction("ldc2_w", utostr(aggSize));
-          printSimpleInstruction("ladd");
-          printIndirectLoad(fTy);
-        }
-
-        // Copy the value
-        printIndirectStore(structTy->getContainedType(f));
-
-        // Locate a next position
-        aggSize = advanceNextOffset(aggSize, structTy->getContainedType(f));
-      }
+      printSimpleInstruction("dup2");
+      printValueLoad(aggValue);
+      printSimpleInstruction("ldc2_w", utostr(copySize));
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/memcpy(JJJ)V");
     }
 
     // The value to insert must have the same type as the value identified by the indices
@@ -820,32 +704,28 @@ void JVMWriter::printInsertValue(const InsertValueInst *inst) {
     printSimpleInstruction("dup2");
     printSimpleInstruction("ldc2_w", utostr(aggSize));
     printSimpleInstruction("ladd");
-    printValueLoad(inst->getOperand(1));
-    printIndirectStore(structTy->getContainedType(fieldIndex));
+    const Type *fieldTy = structTy->getContainedType(fieldIndex);
+    if (isa<CompositeType>(fieldTy)) {
+      printValueLoad(inst->getOperand(1));
+      printSimpleInstruction("ldc2_w", utostr(getTypeAllocSize(fieldTy)));
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/memcpy(JJJ)V");
+    } else {
+      printValueLoad(inst->getOperand(1));
+      printIndirectStore(fieldTy);
+    }
   } else if (const ArrayType *arTy = dyn_cast<ArrayType>(aggType)) {
     assert(arTy->getElementType() == inst->getOperand(1)->getType());
 
     int elementSize = getTypeAllocSize(arTy->getElementType());
-    int aggSize = elementSize * arTy->getNumElements();
-    printSimpleInstruction("bipush", utostr(aggSize));
+    int copySize = elementSize * arTy->getNumElements();
+    printSimpleInstruction("bipush", utostr(copySize));
     printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
 
     if (!isa<UndefValue>(aggValue)) {
-      for (int i = 0; i < arTy->getNumElements(); i++) {
-        // Locate output position
-        printSimpleInstruction("dup2");
-        printPtrLoad(elementSize * i);
-        printSimpleInstruction("ladd");
-
-        // Load a value from the current position
-        printValueLoad(aggValue);
-        printPtrLoad(elementSize * i);
-        printSimpleInstruction("ladd");
-        printIndirectLoad(arTy->getElementType());
-
-        // Copy the value
-        printIndirectStore(arTy->getElementType());
-      }
+      printSimpleInstruction("dup2");
+      printValueLoad(aggValue);
+      printSimpleInstruction("ldc2_w", utostr(copySize));
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/memcpy(JJJ)V");
     }
 
     // Override the values with given indices

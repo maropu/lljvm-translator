@@ -26,5 +26,5 @@ for file in `\find . -name '*.ll'`; do
 done
 
 # For more tests
-clang++ -O0 -c -emit-llvm exception.cc
+clang++ -O0 -c -emit-llvm unsupported/exception.cc -o unsupported/exception.bc
 

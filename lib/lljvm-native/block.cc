@@ -133,14 +133,13 @@ void JVMWriter::printInstruction(const Instruction *inst) {
       printSelectInstruction(inst->getOperand(0), inst->getOperand(1), inst->getOperand(2));
       break;
     case Instruction::Load:
-      printIndirectLoad(inst->getOperand(0));
+      printLoadInstruction(inst->getOperand(0));
       break;
     case Instruction::Store:
       printIndirectStore(inst->getOperand(1), inst->getOperand(0));
       break;
     case Instruction::GetElementPtr:
-      //  printGepInstruction(inst->getOperand(0), gep_type_begin(inst), gep_type_end(inst));
-      printGepInstruction1(cast<GetElementPtrInst>(inst));
+      printGepInstruction(cast<GetElementPtrInst>(inst));
       break;
     case Instruction::Call:
       printCallInstruction(cast<CallInst>(inst));
