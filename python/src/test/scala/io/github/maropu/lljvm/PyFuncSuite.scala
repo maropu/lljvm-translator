@@ -282,7 +282,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(longArray(result) === Seq(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L))
   }
 
-  ignore("NumPy power") {
+  test("NumPy power") {
     // float32[:](float32[:], float32[:])
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
@@ -306,7 +306,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(doubleArray(result2) === Seq(1.0, 8.0, 27.0, 64.0))
   }
 
-  ignore("NumPy dot - vv") { // Vector * Vector case
+  test("NumPy dot - vv") { // Vector * Vector case
     Seq(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384).foreach { n =>
       // float32[:,:](float32[:,:], float32[:,:])
       // TODO: reconsiders the current API design: `.reshape(4, 1)` != `.reshape(4)`
@@ -387,7 +387,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     }
   }
 
- ignore("NumPy dot - throws an exception when hitting incompatible shapes") {
+ test("NumPy dot - throws an exception when hitting incompatible shapes") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val errMsg = intercept[InvocationTargetException] {
@@ -647,7 +647,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(doubleArray(result2) === Seq(0.0, 0.0, 0.0, 0.0))
   }
 
-  ignore("numba - movemean") {
+  test("numba - movemean") {
     // void(float32[:], int32[:], float32[:])
     val floatX = pyArray1.`with`(Array(4.0f, 2.0f, 6.0f, 4.0f, 8.0f, 2.0f, 4.0f, 0.0f))
     val floatY = pyArray2.`with`(Array(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f))

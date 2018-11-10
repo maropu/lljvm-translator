@@ -91,7 +91,7 @@ void JVMWriter::printConstructor() {
  */
 void JVMWriter::printClInit() {
   out << ".method public <clinit>()V\n";
-  printSimpleInstruction(".limit stack 4");
+  printSimpleInstruction(".limit stack 8");
   printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/resetHeap()V");
 
   out << "\n\t; allocate global variables\n";
