@@ -453,13 +453,16 @@ void JVMWriter::printGepInstruction(const GetElementPtrInst *inst) {
   printValueLoad(base);
 
   const Value *arIndexValue = inst->getOperand(1);
-  if (const ConstantInt *c = dyn_cast<ConstantInt>(arIndexValue)) {
-    // if (c->getValue().isNegative() || c->isNullValue()) {
+  if (isa<UndefValue>(arIndexValue)) {
+    printPtrLoad(0);
+  } else if (const ConstantInt *c = dyn_cast<ConstantInt>(arIndexValue)) {
+    // if (c->isNullValue()) {
     //   std::stringstream err_msg;
-    //   err_msg << "Unsupported negative/null index value in getelementptr";
+    //   err_msg << "Unsupported null index value in getelementptr";
     //   throw err_msg.str();
     // }
-    printPtrLoad(c->getZExtValue());
+    printValueLoad(c);
+    printCastInstruction("l", getTypePrefix(c->getType(), true));
   } else {
     printCastInstruction(Instruction::IntToPtr, arIndexValue, NULL, arIndexValue->getType());
   }

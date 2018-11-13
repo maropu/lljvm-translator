@@ -271,13 +271,16 @@ public class PyArrayHolder implements AutoCloseable {
     assert(is1d() || is2d());
     long nitem = Platform.getLong(null, nitemsAddr());
     long itemsize = Platform.getLong(null, itemsizeAddr());
+    long dataAddr = Platform.getLong(null, dataAddr());
     StringBuilder builder = new StringBuilder();
     if (is1d()) {
       long shape = Platform.getLong(null, shapeAddr());
       long stride = Platform.getLong(null, strideAddr());
       builder.append("1d python array(");
+      builder.append("addr=" + holderAddr + ", ");
       builder.append("nitem=" + nitem + ", ");
       builder.append("itemsize=" + itemsize + ", ");
+      builder.append("dataAddr=" + dataAddr + ", ");
       builder.append("shape=[" + shape + "], ");
       builder.append("stride=[" + stride + "]");
       builder.append(")");
@@ -287,8 +290,10 @@ public class PyArrayHolder implements AutoCloseable {
       long stride1 = Platform.getLong(null, strideAddr());
       long stride2 = Platform.getLong(null, strideAddr() + 8);
       builder.append("2d python array(");
+      builder.append("addr=" + holderAddr + ", ");
       builder.append("nitem=" + nitem + ", ");
       builder.append("itemsize=" + itemsize + ", ");
+      builder.append("dataAddr=" + dataAddr + ", ");
       builder.append("shape=[" + shape1 + "," + shape2 + "], ");
       builder.append("stride=[" + stride1 + "," + stride2 + "]");
       builder.append(")");

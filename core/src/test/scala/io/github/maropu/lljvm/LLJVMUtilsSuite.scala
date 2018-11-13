@@ -51,7 +51,7 @@ class LLJVMUtilsSuite extends LLJVMFuncSuite {
          |.end method
          |
          |.method public <clinit>()V
-         |	.limit stack 4
+         |	.limit stack 8
          |	invokestatic io/github/maropu/lljvm/runtime/VMemory/resetHeap()V
          |
          |	; allocate global variables

@@ -308,6 +308,40 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       // getelementptr5 - { i32, <2 x i32> } }*
       val getelementptr5 = LLJVMUtils.getMethod(clazz, "_getelementptr5", Seq(jLong.TYPE): _*)
       assert(getelementptr5.invoke(obj, Seq(new jLong(addr3)): _*) === 8)
+
+      // getelementptr6 - i32*
+      val x6 = Array(4, -1, 9, 3)
+      val addr6 = ArrayUtils.addressOf(x6)
+      val getelementptr6 = LLJVMUtils.getMethod(clazz, "_getelementptr6", Seq(jLong.TYPE): _*)
+      assert(getelementptr6.invoke(obj, Seq(new jLong(addr6)): _*) === -1)
+
+      // getelementptr7 - i32*
+      val getelementptr7 = LLJVMUtils.getMethod(clazz, "_getelementptr7", Seq(jLong.TYPE): _*)
+      assert(getelementptr7.invoke(obj, Seq(new jLong(addr6)): _*) === -1)
+
+      // getelementptr8 - i32*
+      val getelementptr8 = LLJVMUtils.getMethod(clazz, "_getelementptr8", Seq(jLong.TYPE): _*)
+      assert(getelementptr8.invoke(obj, Seq(new jLong(addr6)): _*) === 4)
+
+      // getelementptr9 - i32*
+      val getelementptr9 = LLJVMUtils.getMethod(clazz, "_getelementptr9", Seq(jLong.TYPE): _*)
+      assert(getelementptr9.invoke(obj, Seq(new jLong(addr6)): _*) === -1)
+
+      // getelementptr10 - i32*
+      val getelementptr10 = LLJVMUtils.getMethod(clazz, "_getelementptr10", Seq(jLong.TYPE): _*)
+      assert(getelementptr10.invoke(obj, Seq(new jLong(addr6)): _*) === 3)
+
+      // getelementptr11 - i1*
+      val x11 = Array(false, false, true, false)
+      val addr11 = ArrayUtils.addressOf(x11)
+      val getelementptr11 = LLJVMUtils.getMethod(clazz, "_getelementptr11", Seq(jLong.TYPE): _*)
+      assert(getelementptr11.invoke(obj, Seq(new jLong(addr11)): _*) === true)
+
+      // getelementptr12 - i32*
+      val x12 = Array(3, 2)
+      val addr12 = ArrayUtils.addressOf(x12)
+      val getelementptr12 = LLJVMUtils.getMethod(clazz, "_getelementptr12", Seq(jLong.TYPE): _*)
+      assert(getelementptr12.invoke(obj, Seq(new jLong(addr12)): _*) === 3)
     }),
 
     ("sext", (clazz, obj) => {

@@ -87,6 +87,18 @@ public class LLJVMUtils {
     return methods;
   }
 
+  public static String joinString(List<String> list, String delim) {
+    int len = list.size();
+    if (len == 0)
+      return "";
+    StringBuilder sb = new StringBuilder(list.get(0));
+    for (int i = 1; i < len; i++) {
+      sb.append(delim);
+      sb.append(list.get(i));
+    }
+    return sb.toString();
+  }
+
   public static String joinString(Object[] list, String delim) {
     int len = list.length;
     if (len == 0)

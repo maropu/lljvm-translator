@@ -30,3 +30,52 @@ define i32 @getelementptr5({ i32, <2 x i32> }* %x) {
   %ret = load i32, i32* %1, align 4
   ret i32 %ret
 }
+
+define i32 @getelementptr6(i32* %x) {
+  %1 = getelementptr i32, i32* %x, i64 3
+  %2 = getelementptr i32, i32* %1, i64 -2
+  %ret = load i32, i32* %2, align 4
+  ret i32 %ret
+}
+
+define i32 @getelementptr7(i32* %x) {
+  %1 = getelementptr i32, i32* %x, i32 2
+  %2 = getelementptr i32, i32* %1, i32 -1
+  %ret = load i32, i32* %2, align 4
+  ret i32 %ret
+}
+
+define i32 @getelementptr8(i32* %x) {
+  %1 = getelementptr i32, i32* %x, i32 3
+  %2 = getelementptr i32, i32* %1, i32 -3
+  %ret = load i32, i32* %2, align 4
+  ret i32 %ret
+}
+
+define i32 @getelementptr9(i32* %x) {
+  %1 = getelementptr i32, i32* %x, i16 2
+  %2 = getelementptr i32, i32* %1, i16 -1
+  %ret = load i32, i32* %2, align 4
+  ret i32 %ret
+}
+
+define i32 @getelementptr10(i32* %x) {
+  %1 = getelementptr i32, i32* %x, i8 5
+  %2 = getelementptr i32, i32* %1, i8 -2
+  %ret = load i32, i32* %2, align 4
+  ret i32 %ret
+}
+
+define i1 @getelementptr11(i1* %x) {
+  %1 = getelementptr i1, i1* %x, i32 3
+  %2 = getelementptr i1, i1* %1, i32 -1
+  %ret = load i1, i1* %2, align 4
+  ret i1 %ret
+}
+
+define i32 @getelementptr12(i32* %x) {
+  %1 = getelementptr i32, i32* %x, i32 undef
+  %ret = load i32, i32* %1, align 4
+  ret i32 %ret
+}
+

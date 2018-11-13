@@ -178,7 +178,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     new PyArrayHolder(addr).doubleArray()
   }
 
-  ignore("transpose") {
+  test("transpose") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val result1 = TestUtils.doTest[Long](
       bitcode = s"$basePath/transpose1_test-cfunc-float32.bc",
@@ -186,8 +186,48 @@ class PyFuncSuite extends LLJVMFuncSuite {
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
-    val transposed = new PyArrayHolder(result1, 2)
-    assert(transposed.floatArray() === Seq(1.0f, 2.0f, 3.0f, 4.0f))
+    val transposed1 = new PyArrayHolder(result1, 2)
+    assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[8,4]")
+      .forall(floatX.toDebugString.contains))
+    assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[4,8]")
+      .forall(transposed1.toDebugString.contains))
+    assert(transposed1.floatArray() === Seq(1.0f, 2.0f, 3.0f, 4.0f))
+
+    // val result2 = TestUtils.doTest[Long](
+    //   bitcode = s"$basePath/transpose2_test-cfunc-float32.bc",
+    //   source = s"$basePath/transpose2_test.py",
+    //   argTypes = Seq(jLong.TYPE),
+    //   arguments = Seq(new jLong(floatX.addr()))
+    // )
+    // val transposed2 = new PyArrayHolder(result2, 2)
+    // assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[4,8]")
+    //   .forall(transposed2.toDebugString.contains))
+    // assert(transposed2.floatArray() === Seq(1.0f, 2.0f, 3.0f, 4.0f))
+
+    // val doubleX = pyArray1.`with`(Array(6.0, 5.0, 4.0, 3.0, 2.0, 1.0)).reshape(3, 2)
+    // val result3 = TestUtils.doTest[Long](
+    //   bitcode = s"$basePath/transpose1_test-cfunc-float64.bc",
+    //   source = s"$basePath/transpose1_test.py",
+    //   argTypes = Seq(jLong.TYPE),
+    //   arguments = Seq(new jLong(doubleX.addr()))
+    // )
+    // val transposed3 = new PyArrayHolder(result3, 2)
+    // assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[3,2]", "stride=[16,8]")
+    //   .forall(doubleX.toDebugString.contains))
+    // assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[3,2]", "stride=[8,16]")
+    //   .forall(transposed3.toDebugString.contains))
+    // assert(transposed3.doubleArray() === Seq(6.0, 5.0, 4.0, 3.0, 2.0, 1.0))
+
+    // val result4 = TestUtils.doTest[Long](
+    //   bitcode = s"$basePath/transpose2_test-cfunc-float64.bc",
+    //   source = s"$basePath/transpose2_test.py",
+    //   argTypes = Seq(jLong.TYPE),
+    //   arguments = Seq(new jLong(doubleX.addr()))
+    // )
+    // val transposed4 = new PyArrayHolder(result4, 2)
+    // assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[3,2]", "stride=[4,12]")
+    //   .forall(transposed4.toDebugString.contains))
+    // assert(transposed4.doubleArray() === Seq(6.0, 5.0, 4.0, 3.0, 2.0, 1.0))
   }
 
   test("loop") {
@@ -333,7 +373,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     }
   }
 
-  ignore("NumPy dot - mv") { // Matrix * Vector case
+  test("NumPy dot - mv") { // Matrix * Vector case
     Seq(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 /*, 4096 */).foreach { n =>
       // float32[:](float32[:,:], float32[:])
       // TODO: if the length is 8192+, it throws an exception because stack is not enough
@@ -360,7 +400,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     }
   }
 
-  ignore("NumPy dot - mm") { // Matrix * Matrix case
+  test("NumPy dot - mm") { // Matrix * Matrix case
     Seq(2, 4, 8, 16, 32, 64, 128, 256, 1024, 2048).foreach { n =>
       // float32(float32[:], float32[:])
       // TODO: if the length is 4096+, it throws an exception because stack is not enough
@@ -387,7 +427,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     }
   }
 
- test("NumPy dot - throws an exception when hitting incompatible shapes") {
+  test("NumPy dot - throws an exception when hitting incompatible shapes") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(4, 1)
     val floatY = pyArray2.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
     val errMsg = intercept[InvocationTargetException] {

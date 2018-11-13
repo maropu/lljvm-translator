@@ -91,13 +91,9 @@ unsigned int JVMWriter::getTypeAllocSize(const Type *ty) {
 }
 
 unsigned int JVMWriter::getTypeByteWidth(const Type *ty, bool expand) {
-  return getTypeBitWidth(ty, expand) >> 3;
-}
-
-unsigned int JVMWriter::getTypeBitWidth(const Type *ty, bool expand) {
   switch (ty->getTypeID()) {
     case Type::PointerTyID:
-      return 64;
+      return 8;
 
     // We need to use 64bit-length addresses for passing these values, so
     // we use JVM long-typed value in both examples below;
@@ -112,6 +108,39 @@ unsigned int JVMWriter::getTypeBitWidth(const Type *ty, bool expand) {
     //   %ret = fsub <4 x float> zeroinitializer, %x
     //   ret <4 x float> %ret
     // }
+    case Type::ArrayTyID:
+    case Type::VectorTyID:
+    case Type::StructTyID:
+      return 8;
+
+    default:
+      break;
+  }
+
+  unsigned int n = ty->getPrimitiveSizeInBits();
+    switch (n) {
+      case 1:
+        if (!expand) {
+          return 1;
+        }
+      case 8:
+      case 16:
+      case 32:
+        if (expand) {
+          return 4;
+        }
+      case 64:
+        return n >> 3;
+      default:
+        std::stringstream err_msg;
+        err_msg << "Unsupported type: Type=" << getTypeIDName(ty) << " Bits=" << n;
+        lljvm_unreachable(err_msg.str());
+    }
+}
+
+unsigned int JVMWriter::getTypeBitWidth(const Type *ty, bool expand) {
+  switch (ty->getTypeID()) {
+    case Type::PointerTyID:
     case Type::ArrayTyID:
     case Type::VectorTyID:
     case Type::StructTyID:

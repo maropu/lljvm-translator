@@ -47,6 +47,12 @@ void JVMWriter::printBasicBlock(const BasicBlock *block) {
       // Don't handle phi instruction in current block
       continue;
     }
+
+    // TODO: XXX
+    // if (i->getOpcode() == Instruction::AtomicRMW) {
+    //   continue;
+    // }
+
     const Instruction& inst = *i;
     printInstruction(&inst);
     if (i->getType() != Type::getVoidTy(block->getContext()) && i->getOpcode() != Instruction::Invoke) {

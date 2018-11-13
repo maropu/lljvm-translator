@@ -19,6 +19,8 @@ package io.github.maropu.lljvm.runtime;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -76,14 +78,38 @@ public final class Function {
     externalFuncPointers.clear();
   }
 
+  private static String toDebugMethodInfo(Method m, Object[] params, Object ret) {
+    StringBuilder buf = new StringBuilder();
+    buf.append(m.getName());
+    buf.append("(");
+    if (params != null) {
+      Class<?>[] paramTypes = m.getParameterTypes();
+      List<String> list = new ArrayList<>();
+      for (int i = 0; i < paramTypes.length; i++) {
+        list.add(paramTypes[i].getSimpleName() + " " + params[i]);
+      }
+      buf.append(LLJVMUtils.joinString(list, ", "));
+    }
+    buf.append(") => ");
+    buf.append(m.getReturnType().getSimpleName());
+    buf.append(" ");
+    buf.append(ret);
+    return buf.toString();
+  }
+
   // TODO: Needs to verify a return type of the given `method`
   private static Object _invoke(Method method, long args) {
     Class<?>[] paramTypes = method.getParameterTypes();
     try {
       if (args != 0) {
-        return method.invoke(null, VMemory.unpack(args, paramTypes));
+        final Object[] params = VMemory.unpack(args, paramTypes);
+        final Object ret = method.invoke(null, params);
+        logger.debug("Method invoked: " + toDebugMethodInfo(method, params, ret));
+        return ret;
       } else {
-        return method.invoke(null, null);
+        final Object ret = method.invoke(null);
+        logger.debug("Method invoked: " + toDebugMethodInfo(method, null, ret));
+        return ret;
       }
     } catch (IllegalAccessException e) {
       throw new LLJVMRuntimeException("Cannot invoke a method via reflection");
@@ -104,8 +130,6 @@ public final class Function {
         "but the return type is " + method.getReturnType() +
         " (expected: " + LLJVMUtils.joinString(returnType, "/") + ")");
     }
-    logger.debug("Method invoked: signature=" + signature + " returnType=" +
-      method.getReturnType().getSimpleName());
   }
 
   private static Object _invoke(String className, String methodSignature, long args, Class<?>... returnType) {

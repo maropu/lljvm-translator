@@ -23,25 +23,27 @@ class PyArrayHolderSuite extends LLJVMFuncSuite {
 
   test("1d python array") {
     val pyArray = new PyArrayHolder().`with`(Array(1, 2, 3, 4, 5))
-    assert(pyArray.toDebugString === "1d python array(nitem=5, itemsize=4, shape=[5], stride=[4])")
+    assert(Seq("1d python array", "nitem=5", "itemsize=4", "shape=[5]", "stride=[4]")
+      .forall(pyArray.toDebugString.contains))
   }
 
   test("2d python array") {
     val pyArray = new PyArrayHolder().`with`(Array(1, 2, 3, 4, 5)).reshape(5, 1)
-    assert(pyArray.toDebugString ===
-      "2d python array(nitem=5, itemsize=4, shape=[5,1], stride=[4,4])")
+    assert(Seq("2d python array", "nitem=5", "itemsize=4", "shape=[5,1]", "stride=[4,4]")
+      .forall(pyArray.toDebugString.contains))
   }
 
   test("reshape between 1d and 2d") {
     val pyArray = new PyArrayHolder().`with`(Array(1, 2, 3, 4))
-    assert(pyArray.toDebugString === "1d python array(nitem=4, itemsize=4, shape=[4], stride=[4])")
-    assert(pyArray.reshape(2, 2).toDebugString ===
-      "2d python array(nitem=4, itemsize=4, shape=[2,2], stride=[8,4])")
-    assert(pyArray.reshape(4, 1).toDebugString ===
-      "2d python array(nitem=4, itemsize=4, shape=[4,1], stride=[4,4])")
-    assert(pyArray.reshape(1, 4).toDebugString ===
-      "2d python array(nitem=4, itemsize=4, shape=[1,4], stride=[16,4])")
-    assert(pyArray.reshape(4).toDebugString ===
-      "1d python array(nitem=4, itemsize=4, shape=[4], stride=[4])")
+    assert(Seq("1d python array", "nitem=4", "itemsize=4", "shape=[4]", "stride=[4]")
+      .forall(pyArray.toDebugString.contains))
+    assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[8,4]")
+      .forall(pyArray.reshape(2, 2).toDebugString.contains))
+    assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[4,1]", "stride=[4,4]")
+      .forall(pyArray.reshape(4, 1).toDebugString.contains))
+    assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[1,4]", "stride=[16,4]")
+      .forall(pyArray.reshape(1, 4).toDebugString.contains))
+    assert(Seq("1d python array", "nitem=4", "itemsize=4", "shape=[4]", "stride=[4]")
+      .forall(pyArray.reshape(4).toDebugString.contains))
   }
 }
