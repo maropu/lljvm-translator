@@ -725,22 +725,22 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       assert(Platform.getLong(null, resultAddr12 + 20) === 4L)
     }),
 
-    // ("atomicrmw", (clazz, obj) => {
-    //   // add
-    //   val add = LLJVMUtils.getMethod(clazz, "_add", Seq(jLong.TYPE): _*)
-    //   val ar1 = Array(3)
-    //   assert(add.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar1))): _*) === 3)
-    //   assert(ar1(0) === 4)
-    //
-    //   // sub
-    //   val sub = LLJVMUtils.getMethod(clazz, "_sub", Seq(jLong.TYPE): _*)
-    //   val ar2 = Array(3)
-    //   assert(sub.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar2))): _*) === 3)
-    //   assert(ar2(0) === 2)
-    //
-    //   // TODO: Adds tests for instructions below:
-    //   // atomicrmw (xchg, and, nand, or, xor, max, min, umax, umin)
-    // }),
+    ("atomicrmw", (clazz, obj) => {
+      // add
+      val add = LLJVMUtils.getMethod(clazz, "_add", Seq(jLong.TYPE): _*)
+      val ar1 = Array(3)
+      assert(add.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar1))): _*) === 3)
+      assert(ar1(0) === 4)
+
+      // sub
+      val sub = LLJVMUtils.getMethod(clazz, "_sub", Seq(jLong.TYPE): _*)
+      val ar2 = Array(3)
+      assert(sub.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar2))): _*) === 3)
+      assert(ar2(0) === 2)
+
+      // TODO: Adds tests for instructions below:
+      // atomicrmw (xchg, and, nand, or, xor, max, min, umax, umin)
+    }),
 
     ("intrinsics", (clazz, obj) => {
       // math intrinsic functions
@@ -774,7 +774,9 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }
   }
 
-  Seq("alloca1", "alloca2", "getelementptr1", "cmpxchg"
+  Seq("alloca1", "alloca2", "getelementptr1", "atomicrmw1", "atomicrmw2", "atomicrmw3",
+    "atomicrmw4", "atomicrmw5", "atomicrmw6", "atomicrmw7", "atomicrmw8", "atomicrmw9",
+    "cmpxchg"
     // TODO: Adds tests for instructions below:
     // "addrspacecast", "indirectbr", "va_arg"
   ).foreach { inst =>

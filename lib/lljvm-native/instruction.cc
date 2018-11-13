@@ -894,11 +894,23 @@ void JVMWriter::printShuffleVector(const ShuffleVectorInst *inst) {
 
 void JVMWriter::printAtomicRMW(const AtomicRMWInst *inst) {
   const Value *ptr = inst->getPointerOperand();
+  const Value *val = inst->getValOperand();
+  printIndirectLoad(ptr);
   printValueLoad(ptr);
-  printSimpleInstruction("dup2");
-  printSimpleInstruction("dup2");
-  printIndirectLoad(cast<PointerType>(ptr->getType())->getElementType());
-  printValueLoad(inst->getValOperand());
+  printIndirectLoad(ptr);
+  if (const ConstantInt *c = dyn_cast<ConstantInt>(val)) {
+    // if (c->isNullValue()) {
+    //   std::stringstream err_msg;
+    //   err_msg << "Unsupported null index value in atomicrmw";
+    //   throw err_msg.str();
+    // }
+    printValueLoad(c);
+  } else {
+    std::stringstream err_msg;
+    err_msg << "Unknown value: Name=" << getValueName(val);
+    throw err_msg.str();
+  }
+
   std::string typePrefix = getTypePrefix(inst->getValOperand()->getType(), true);
   switch (inst->getOperation()) {
     case AtomicRMWInst::Add:
@@ -908,12 +920,45 @@ void JVMWriter::printAtomicRMW(const AtomicRMWInst *inst) {
       printSimpleInstruction(typePrefix + "sub");
       break;
     default:
+      std::string atomicOp;
+      switch (inst->getOperation()) {
+        case AtomicRMWInst::Xchg:
+          atomicOp = "xchg";
+          break;
+        case AtomicRMWInst::And:
+          atomicOp = "and";
+          break;
+        case AtomicRMWInst::Nand:
+          atomicOp = "nand";
+          break;
+        case AtomicRMWInst::Or:
+          atomicOp = "or";
+          break;
+        case AtomicRMWInst::Xor:
+          atomicOp = "xor";
+          break;
+        case AtomicRMWInst::Max:
+          atomicOp = "max";
+          break;
+        case AtomicRMWInst::Min:
+          atomicOp = "min";
+          break;
+        case AtomicRMWInst::UMax:
+          atomicOp = "umax";
+          break;
+        case AtomicRMWInst::UMin:
+          atomicOp = "umin";
+          break;
+        default:
+          std::stringstream err_msg;
+          err_msg << "Unknown atomic operation: BinOp=" << inst->getOperation();
+          lljvm_unreachable(err_msg.str());
+      }
       std::stringstream err_msg;
-      err_msg << "Unknown Atomic operation: " << inst->getOperation();
-      lljvm_unreachable(err_msg.str());
+      err_msg << "Unsupported atomic operation: Name=" << atomicOp;
+      throw err_msg.str();
   }
-  printIndirectStore(inst->getValOperand()->getType());
-  printIndirectLoad(cast<PointerType>(ptr->getType())->getElementType());
+  printIndirectStore(val->getType());
 }
 
 /**
