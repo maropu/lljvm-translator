@@ -898,17 +898,11 @@ void JVMWriter::printAtomicRMW(const AtomicRMWInst *inst) {
   printIndirectLoad(ptr);
   printValueLoad(ptr);
   printIndirectLoad(ptr);
-  if (const ConstantInt *c = dyn_cast<ConstantInt>(val)) {
-    // if (c->isNullValue()) {
-    //   std::stringstream err_msg;
-    //   err_msg << "Unsupported null index value in atomicrmw";
-    //   throw err_msg.str();
-    // }
-    printValueLoad(c);
+  if (isa<UndefValue>(val)) {
+    printSimpleInstruction("iconst_0");
+    printCastInstruction(getTypePrefix(val->getType(), true), "i");
   } else {
-    std::stringstream err_msg;
-    err_msg << "Unknown value: Name=" << getValueName(val);
-    throw err_msg.str();
+    printValueLoad(val);
   }
 
   std::string typePrefix = getTypePrefix(inst->getValOperand()->getType(), true);

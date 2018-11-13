@@ -727,10 +727,18 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
 
     ("atomicrmw", (clazz, obj) => {
       // add
-      val add = LLJVMUtils.getMethod(clazz, "_add", Seq(jLong.TYPE): _*)
+      val add1 = LLJVMUtils.getMethod(clazz, "_add1", Seq(jLong.TYPE): _*)
       val ar1 = Array(3)
-      assert(add.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar1))): _*) === 3)
+      assert(add1.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar1))): _*) === 3)
       assert(ar1(0) === 4)
+
+      val add2 = LLJVMUtils.getMethod(clazz, "_add2", Seq(jLong.TYPE, jInt.TYPE): _*)
+      assert(add2.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar1)), new jInt(2)): _*) === 4)
+      assert(ar1(0) === 6)
+
+      val add3 = LLJVMUtils.getMethod(clazz, "_add3", Seq(jLong.TYPE): _*)
+      assert(add3.invoke(obj, Seq(new jLong(ArrayUtils.addressOf(ar1))): _*) === 6)
+      assert(ar1(0) === 6)
 
       // sub
       val sub = LLJVMUtils.getMethod(clazz, "_sub", Seq(jLong.TYPE): _*)
