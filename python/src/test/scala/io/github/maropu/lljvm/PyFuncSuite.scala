@@ -180,9 +180,10 @@ class PyFuncSuite extends LLJVMFuncSuite {
 
   test("transpose") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f)).reshape(2, 2)
-    val result1 = TestUtils.doTest[Long](
+    val result1 = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/transpose1_test-cfunc-float32.bc",
       source = s"$basePath/transpose1_test.py",
+      funcName = "_cfunc__ZN15transpose1_test20transpose1_test_2423E5ArrayIfLi2E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
@@ -193,41 +194,44 @@ class PyFuncSuite extends LLJVMFuncSuite {
       .forall(transposed1.toDebugString.contains))
     assert(transposed1.floatArray() === Seq(1.0f, 2.0f, 3.0f, 4.0f))
 
-    // val result2 = TestUtils.doTest[Long](
-    //   bitcode = s"$basePath/transpose2_test-cfunc-float32.bc",
-    //   source = s"$basePath/transpose2_test.py",
-    //   argTypes = Seq(jLong.TYPE),
-    //   arguments = Seq(new jLong(floatX.addr()))
-    // )
-    // val transposed2 = new PyArrayHolder(result2, 2)
-    // assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[4,8]")
-    //   .forall(transposed2.toDebugString.contains))
-    // assert(transposed2.floatArray() === Seq(1.0f, 2.0f, 3.0f, 4.0f))
+    val result2 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/transpose2_test-cfunc-float32.bc",
+      source = s"$basePath/transpose2_test.py",
+      funcName = "_cfunc__ZN15transpose2_test20transpose2_test_2425E5ArrayIfLi2E1A7mutable7alignedE",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(floatX.addr()))
+    )
+    val transposed2 = new PyArrayHolder(result2, 2)
+    assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[4,8]")
+      .forall(transposed2.toDebugString.contains))
+    assert(transposed2.floatArray() === Seq(1.0f, 2.0f, 3.0f, 4.0f))
 
-    // val doubleX = pyArray1.`with`(Array(6.0, 5.0, 4.0, 3.0, 2.0, 1.0)).reshape(3, 2)
-    // val result3 = TestUtils.doTest[Long](
-    //   bitcode = s"$basePath/transpose1_test-cfunc-float64.bc",
-    //   source = s"$basePath/transpose1_test.py",
-    //   argTypes = Seq(jLong.TYPE),
-    //   arguments = Seq(new jLong(doubleX.addr()))
-    // )
-    // val transposed3 = new PyArrayHolder(result3, 2)
-    // assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[3,2]", "stride=[16,8]")
-    //   .forall(doubleX.toDebugString.contains))
-    // assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[3,2]", "stride=[8,16]")
-    //   .forall(transposed3.toDebugString.contains))
-    // assert(transposed3.doubleArray() === Seq(6.0, 5.0, 4.0, 3.0, 2.0, 1.0))
+    val doubleX = pyArray1.`with`(Array(6.0, 5.0, 4.0, 3.0, 2.0, 1.0)).reshape(3, 2)
+    val result3 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/transpose1_test-cfunc-float64.bc",
+      source = s"$basePath/transpose1_test.py",
+      funcName = "_cfunc__ZN15transpose1_test20transpose1_test_2424E5ArrayIdLi2E1A7mutable7alignedE",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(doubleX.addr()))
+    )
+    val transposed3 = new PyArrayHolder(result3, 2)
+    assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[3,2]", "stride=[16,8]")
+      .forall(doubleX.toDebugString.contains))
+    assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[2,3]", "stride=[8,16]")
+      .forall(transposed3.toDebugString.contains))
+    assert(transposed3.doubleArray() === Seq(6.0, 5.0, 4.0, 3.0, 2.0, 1.0))
 
-    // val result4 = TestUtils.doTest[Long](
-    //   bitcode = s"$basePath/transpose2_test-cfunc-float64.bc",
-    //   source = s"$basePath/transpose2_test.py",
-    //   argTypes = Seq(jLong.TYPE),
-    //   arguments = Seq(new jLong(doubleX.addr()))
-    // )
-    // val transposed4 = new PyArrayHolder(result4, 2)
-    // assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[3,2]", "stride=[4,12]")
-    //   .forall(transposed4.toDebugString.contains))
-    // assert(transposed4.doubleArray() === Seq(6.0, 5.0, 4.0, 3.0, 2.0, 1.0))
+    val result4 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/transpose2_test-cfunc-float64.bc",
+      source = s"$basePath/transpose2_test.py",
+      funcName = "_cfunc__ZN15transpose2_test20transpose2_test_2426E5ArrayIdLi2E1A7mutable7alignedE",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(doubleX.addr()))
+    )
+    val transposed4 = new PyArrayHolder(result4, 2)
+    assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[2,3]", "stride=[8,16]")
+      .forall(transposed4.toDebugString.contains))
+    assert(transposed4.doubleArray() === Seq(6.0, 5.0, 4.0, 3.0, 2.0, 1.0))
   }
 
   test("loop") {
