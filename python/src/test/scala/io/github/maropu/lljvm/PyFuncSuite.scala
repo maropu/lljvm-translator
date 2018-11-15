@@ -446,9 +446,10 @@ class PyFuncSuite extends LLJVMFuncSuite {
   ignore("NumPy random") {
     val rvalues1 = (0 until 100).map { _ =>
       // float64()
-      TestUtils.doTest[Double](
+      TestUtils.doTestWithFuncName[Double](
         bitcode = s"$basePath/numpy_random1_test-cfunc-float64.bc",
-        source = s"$basePath/numpy_random1_test.py"
+        source = s"$basePath/numpy_random1_test.py",
+        funcName = "_cfunc__ZN18numpy_random1_test23numpy_random1_test_2453E"
       )
     }
     // Checks if generated values are different from each other
@@ -460,9 +461,10 @@ class PyFuncSuite extends LLJVMFuncSuite {
     }
 
     // float64[:](int64)
-    val result = TestUtils.doTest[Long](
+    val result = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_random2_test-cfunc-float64.bc",
       source = s"$basePath/numpy_random2_test.py",
+      funcName = "_cfunc__ZN18numpy_random2_test23numpy_random2_test_2454Ex",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(100))
     )
@@ -475,7 +477,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     }
   }
 
-  ignore("numba - linear regression (NEEDS TO BE FIXED)") {
+  test("numba - linear regression") {
     // float64[:](float64[:], float64[:,:], float64[:], int64, float64)
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
@@ -488,10 +490,15 @@ class PyFuncSuite extends LLJVMFuncSuite {
         new jLong(doubleX.addr()), // Y
         new jLong(doubleY.addr()), // X
         new jLong(doubleZ.addr()), // w
-        new jLong(50),             // iterations
+        new jLong(10),             // iterations
         new jDouble(0.1))          // alphaN
     )
-    assert(doubleArray(result) === Seq(0.0, 0.0))
+    // TODO: Needs to check the correct answer
+    assert(result !== 0)
+    val resultArray = floatArray(result)
+    (0 until 2).foreach { i =>
+      assert(Math.abs(resultArray(i)) > 0.0)
+    }
   }
 
   ignore("numba - logistic regression (NEEDS TO BE FIXED)") {
@@ -553,26 +560,30 @@ class PyFuncSuite extends LLJVMFuncSuite {
     assert(doubleX.doubleArray() === Seq(1.0, 2.0, 3.0, 4.0))
   }
 
-  ignore("numba - kernel density estimation (NEEDS TO BE FIXED)") {
+  test("numba - kernel density estimation (NEEDS TO BE FIXED)") {
     // float32(float32[:])
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
-    TestUtils.doTest[Float](
+    val result1 = TestUtils.doTestWithFuncName[Float](
       bitcode = s"$basePath/kde-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/kernel_density_estimation.py",
+      funcName = "_cfunc__ZN14numba_examples25kernel_density_estimation8kde_2468E5ArrayIfLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(floatX.addr())),
-      expected = Some(0.0f)
+      arguments = Seq(new jLong(floatX.addr()))
     )
+    // TODO: Needs to check the correct answer
+    assert(Math.abs(result1) > 0.0f)
 
     // float64(float64[:])
     val doubleX = pyArray1.`with`(Array(1.0, 2.0, 3.0, 4.0))
-    TestUtils.doTest[Double](
+    val result2 = TestUtils.doTestWithFuncName[Double](
       bitcode = s"$basePath/kde-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/kernel_density_estimation.py",
+      funcName = "_cfunc__ZN14numba_examples25kernel_density_estimation8kde_2474E5ArrayIdLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(doubleX.addr())),
-      expected = Some(0.0)
+      arguments = Seq(new jLong(doubleX.addr()))
     )
+    // TODO: Needs to check the correct answer
+    assert(Math.abs(result2) > 0.0)
   }
 
   ignore("numba - laplace2d (NEEDS TO BE FIXED)") {
@@ -599,7 +610,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
     )
   }
 
-  ignore("numba - mandel (NEEDS TO BE FIXED)") {
+  test("numba - mandel") {
     // float64[:,:](float64, float64, float64, float64, float64[:,:], int64)
     val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
     val result = TestUtils.doTest[Long](
@@ -663,7 +674,7 @@ class PyFuncSuite extends LLJVMFuncSuite {
   }
 
   // TODO: Needs to implement unsupported LLVM instructions
-  ignore("numba - ra24 (NEEDS TO BE FIXED)") {
+  test("numba - ra24") {
     // float32[:](int32, float32[:])
     val floatX = pyArray1.`with`(Array(20.0f, 24.0f, 16.0f, 28.0f))
     val result1 = TestUtils.doTest[Long](
@@ -675,7 +686,12 @@ class PyFuncSuite extends LLJVMFuncSuite {
         new jLong(floatX.addr()) // lat
       )
     )
-    assert(floatArray(result1) === Seq(0.0f, 0.0f, 0.0f, 0.0f))
+    // TODO: Needs to check the correct answer
+    assert(result1 !== 0)
+    val resultArray1 = floatArray(result1)
+    (0 until 4).foreach { i =>
+      assert(Math.abs(resultArray1(i)) > 0.0f)
+    }
 
     // float64[:](int64, float64[:])
     val doubleX = pyArray1.`with`(Array(20.0, 24.0, 16.0, 28.0))
@@ -688,7 +704,12 @@ class PyFuncSuite extends LLJVMFuncSuite {
         new jLong(doubleX.addr()) // lat
       )
     )
-    assert(doubleArray(result2) === Seq(0.0, 0.0, 0.0, 0.0))
+    // TODO: Needs to check the correct answer
+    assert(result2 !== 0)
+    val resultArray2 = floatArray(result2)
+    (0 until 4).foreach { i =>
+      assert(Math.abs(resultArray2(i)) > 0.0f)
+    }
   }
 
   test("numba - movemean") {
