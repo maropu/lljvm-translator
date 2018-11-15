@@ -49,6 +49,9 @@ public final class NumbaRuntime implements RuntimeInterface {
     add("_numba_get_np_random_state");
     add("_numba_rnd_shuffle");
 
+    // For NumPy arange
+    // add("_numba_attempt_nocopy_reshape");
+
     // Math functions
     add("_tanf");
     add("_tan");
@@ -456,6 +459,12 @@ public final class NumbaRuntime implements RuntimeInterface {
     int mt3 = Platform.getInt(null, stateAddr + mtOffset + 4 * (MT_M - 1)) & MT_LOWER_MASK;
     int newMtValue = mt3 ^ (y >>> 1) ^ (-(y & 1) & MT_MATRIX_A);
     Platform.putInt(null, stateAddr + mtOffset + 4 * (MT_N - 1), newMtValue);
+  }
+
+  // TODO: Needs to implement
+  // _numba_attempt_nocopy_reshape(JJJJJJJI)I
+  public static int _numba_attempt_nocopy_reshape() {
+    return 0;
   }
 
   public static void _numba_gil_ensure(long x) {

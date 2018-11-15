@@ -282,6 +282,13 @@ public final class Instruction {
     return ((long) value) & 0xffffffffL;
   }
 
+  // TODO: In NumPy arange, Numba generates LLVM bitcode with i63, so we
+  // add workaround to handle this type:
+  // ;  %trunc = trunc i64 %num_neg_value.1.lcssa to i63
+  public static long zext_i64(long value) {
+    return value;
+  }
+
   public static byte udiv(byte op1, byte op2) {
     return ((op1 | op2) >= 0)? (byte)(op1 / op2) : (byte) (zext_i32(op1) / zext_i32(op2));
   }

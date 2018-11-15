@@ -161,6 +161,11 @@ unsigned int JVMWriter::getTypeBitWidth(const Type *ty, bool expand) {
       }
     case 64:
       return n;
+    case 63:
+      // TODO: In NumPy arange, Numba generates LLVM bitcode with i63, so we
+      // add workaround to handle this type:
+      // ;  %trunc = trunc i64 %num_neg_value.1.lcssa to i63
+      return 64;
     default:
       std::stringstream err_msg;
       err_msg << "Unsupported type: Type=" << getTypeIDName(ty) << " Bits=" << n;
