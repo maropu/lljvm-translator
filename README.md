@@ -10,6 +10,8 @@ Since existing tools can generate LLVM bitcode from functions written in some la
 it is useful to inject the bitcode into JVMs. An objective of this library is to provide not a full-fledge translator
 but a restricted one for easily injecting these functions into JVMs.
 
+[<img src="resources/abst.png" width="640px">](https://www.slideshare.net/maropu0804/lljvm-llvm-bitcode-to-jvm-bytecode#2)
+
 Note that the core component is refactored from [lljvm](https://github.com/davidar/lljvm) (credit should go to the original author).
 
 ## Python functions to JVM class methods
