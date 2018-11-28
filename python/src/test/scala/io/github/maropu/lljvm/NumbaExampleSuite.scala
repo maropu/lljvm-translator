@@ -93,7 +93,7 @@ class NumbaExampleSuite extends PyFuncTest {
       bitcode = s"$basePath/bubblesort-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
       funcName =
-        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2462E5ArrayIfLi1E1A7mutable7alignedE",
+        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2463E5ArrayIfLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
@@ -105,20 +105,20 @@ class NumbaExampleSuite extends PyFuncTest {
       bitcode = s"$basePath/bubblesort-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
       funcName =
-        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2463E5ArrayIdLi1E1A7mutable7alignedE",
+        "_cfunc__ZN14numba_examples10bubblesort15bubblesort_2464E5ArrayIdLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )
     assert(doubleX.doubleArray() === Seq(1.0, 2.0, 3.0, 4.0))
   }
 
-  test("numba - kernel density estimation (NEEDS TO BE FIXED)") {
+  test("numba - kernel density estimation") {
     // float32(float32[:])
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))
     val result1 = TestUtils.doTestWithFuncName[Float](
       bitcode = s"$basePath/kde-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/kernel_density_estimation.py",
-      funcName = "_cfunc__ZN14numba_examples25kernel_density_estimation8kde_2468E5ArrayIfLi1E1A7mutable7alignedE",
+      funcName = "_cfunc__ZN14numba_examples25kernel_density_estimation8kde_2469E5ArrayIfLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
@@ -130,7 +130,7 @@ class NumbaExampleSuite extends PyFuncTest {
     val result2 = TestUtils.doTestWithFuncName[Double](
       bitcode = s"$basePath/kde-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/kernel_density_estimation.py",
-      funcName = "_cfunc__ZN14numba_examples25kernel_density_estimation8kde_2474E5ArrayIdLi1E1A7mutable7alignedE",
+      funcName = "_cfunc__ZN14numba_examples25kernel_density_estimation8kde_2475E5ArrayIdLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )

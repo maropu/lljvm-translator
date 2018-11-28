@@ -121,6 +121,15 @@ class NumPySuite extends PyFuncTest {
     assert(doubleArray(result4) === Seq(-7.0, -4.0, 1.0, 2.0))
   }
 
+  ignore("array") {
+    // int32[:,:]()
+    val result = TestUtils.doTest[Long](
+      bitcode = s"$basePath/numpy_array_test-cfunc-int32.bc",
+      source = s"$basePath/numpy_array_test.py"
+    )
+    assert(intArray(result) === Seq(1, 2, 3, 4, 5, 6, 7, 8, 9))
+  }
+
   // TODO: Needs to implement `_numba_attempt_nocopy_reshape(JJJJJJJI)I` in `NumbaRuntime`
   ignore("arange") {
     // int64[:,:]()

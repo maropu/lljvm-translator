@@ -19,6 +19,9 @@
 # Python script for compling Python functions with numba
 
 import math
+import numpy as np
+import platform
+import scipy
 
 from numba import cfunc, jit
 
@@ -40,6 +43,11 @@ def write_bitcode_with_jit(pyfunc, sig, filename_suffix=""):
     f = jit(sig)(pyfunc)
     # print f.inspect_llvm()
     fout.write(f.overloads[f.signatures[0]].library._final_module.as_bitcode())
+
+# Prints versions
+print("Python version: " + platform.python_version())
+print("NumPy version: " + np.__version__)
+print("SciPy version: " + scipy.__version__)
 
 from add_test import *
 write_bitcode_with_cfunc(add_test, "int32(int32, int32)", "-cfunc-int32")
@@ -87,6 +95,16 @@ from transpose2_test import *
 write_bitcode_with_cfunc(transpose2_test, "float32[:,:](float32[:,:])", "-cfunc-float32")
 write_bitcode_with_cfunc(transpose2_test, "float64[:,:](float64[:,:])", "-cfunc-float64")
 
+# from numpy_item_test  import *
+# write_bitcode_with_cfunc(numpy_item1_test, "int32(int32[:,:], int32)", "-cfunc-int32")
+# write_bitcode_with_cfunc(numpy_item2_test, "int32(int32[:,:], int32, int32)", "-cfunc-int32")
+
+# from numpy_tolist_test  import *
+# write_bitcode_with_cfunc(numpy_tolist_test, "int64[:]()", "-cfunc-int64")
+
+from numpy_array_test  import *
+write_bitcode_with_cfunc(numpy_array_test, "int32[:,:]()", "-cfunc-int32")
+
 from numpy_arange_test  import *
 write_bitcode_with_cfunc(numpy_arange_test, "int64[:,:]()", "-cfunc-int64")
 
@@ -105,11 +123,10 @@ write_bitcode_with_cfunc(numpy_dot_test, "float64[:](float64[:,:], float64[:])",
 write_bitcode_with_cfunc(numpy_dot_test, "float32(float32[:], float32[:])", "-cfunc-vv-float32")
 write_bitcode_with_cfunc(numpy_dot_test, "float64(float64[:], float64[:])", "-cfunc-vv-float64")
 
-from numpy_random1_test import *
+from numpy_random_test import *
 write_bitcode_with_cfunc(numpy_random1_test, "float64()", "-cfunc-float64")
-
-from numpy_random2_test import *
 write_bitcode_with_cfunc(numpy_random2_test, "float64[:](int64)", "-cfunc-float64")
+# write_bitcode_with_cfunc(numpy_random3_test, "int64[:,:]()", "-cfunc-int64")
 
 from numba_examples.linear_regression import *
 # write_bitcode_with_cfunc(linear_regression, "float32[:,:](float32[:,:], float32[:,:], float32[:,:], int32, float32)", "-numba-cfunc-float32")
