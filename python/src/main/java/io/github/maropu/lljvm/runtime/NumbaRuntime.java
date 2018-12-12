@@ -23,12 +23,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.maropu.lljvm.util.ReflectionUtils;
 import org.netlib.blas.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.maropu.lljvm.LLJVMRuntimeException;
+import io.github.maropu.lljvm.util.ReflectionUtils;
 import io.github.maropu.lljvm.unsafe.Platform;
 
 public final class NumbaRuntime implements RuntimeInterface {
@@ -69,6 +69,8 @@ public final class NumbaRuntime implements RuntimeInterface {
     add("_numba_unpickle");
     add("_numba_gil_ensure");
   }};
+
+  private static final NumbaRuntimeNative runtimeApi = NumbaRuntimeLoader.loadNumbaRuntimeApi();
 
   // Injects the Numba environment into the LLJVM runtime
   @Override
@@ -335,17 +337,10 @@ public final class NumbaRuntime implements RuntimeInterface {
     return 0;
   }
 
-  private static final int MT_N = 624;
-  private static final int MT_M = 397;
-
-  private static final long indexOffset = 0;
-  private static final long mtOffset = indexOffset + 4;
-  private static final long hasGaussOffset = mtOffset + MT_N * 4;
-  private static final long gaussOffset = hasGaussOffset + 4;
-  private static final long isInitializedOffset = gaussOffset + 8;
-
-  // For _numba_get_np_random_state()
-  private static ThreadLocal<Long> _rnd_state_t = new ThreadLocal<Long>() {
+  /**
+   * Returns a state for NumPy random functions.
+   */
+  public static long _numba_get_np_random_state() {
     // typedef struct {
     //     int index;
     //     /* unsigned int is sufficient on modern machines as we only need 32 bits */
@@ -371,33 +366,11 @@ public final class NumbaRuntime implements RuntimeInterface {
     //     state->gauss = 0.0;
     //     state->is_initialized = 1;
     // }
-    @Override
-    public Long initialValue() {
-      // A return type of this function is `{ i32, [624 x i32], i32, double, i32 }*`
-      long holderSize = 4 + MT_N * 4 + 4 + 8 + 4;
-      long holderAddr = Platform.allocateMemory(holderSize);
-      Platform.setMemory(null, holderAddr, holderSize, (byte) 0);
-      Platform.putInt(null, holderAddr + indexOffset, MT_N);
-      int seed = 19650218;
-      for (int i = 0; i < MT_N; i++) {
-        Platform.putInt(null, holderAddr + mtOffset + 4 * i, seed);
-        seed = (1812433253 * (seed ^ (seed >> 30)) + i + 1) & 0xffffffff;
-      }
-      Platform.putInt(null, holderAddr + hasGaussOffset, 0);
-      Platform.putDouble(null, holderAddr + gaussOffset, 0.0);
-      Platform.putInt(null, holderAddr + isInitializedOffset, 1);
-      return holderAddr;
-    }
+    return runtimeApi.numba_get_np_random_state();
+  }
 
-    @Override
-    public void remove() {
-      Platform.freeMemory(this.get());
-      super.remove();
-    }
-  };
-
-  public static long _numba_get_np_random_state() {
-    return _rnd_state_t.get();
+  public static void _numba_rnd_shuffle(long state) {
+    runtimeApi.numba_rnd_shuffle(state);
   }
 
   public static float _tanf(float d) {
@@ -410,55 +383,6 @@ public final class NumbaRuntime implements RuntimeInterface {
 
   public static double _acos(double d) {
     return Math.acos(d);
-  }
-
-  public static void _numba_rnd_shuffle(long stateAddr) {
-    // NUMBA_EXPORT_FUNC(void)
-    // numba_rnd_shuffle(rnd_state_t *state)
-    // {
-    //   int i;
-    //   unsigned int y;
-    //
-    //   for (i = 0; i < MT_N - MT_M; i++) {
-    //     y = (state->mt[i] & MT_UPPER_MASK) | (state->mt[i+1] & MT_LOWER_MASK);
-    //     state->mt[i] = state->mt[i+MT_M] ^ (y >> 1) ^
-    //             (-(int) (y & 1) & MT_MATRIX_A);
-    //   }
-    //   for (; i < MT_N - 1; i++) {
-    //     y = (state->mt[i] & MT_UPPER_MASK) | (state->mt[i+1] & MT_LOWER_MASK);
-    //     state->mt[i] = state->mt[i+(MT_M-MT_N)] ^ (y >> 1) ^
-    //             (-(int) (y & 1) & MT_MATRIX_A);
-    //   }
-    //   y = (state->mt[MT_N - 1] & MT_UPPER_MASK) | (state->mt[0] & MT_LOWER_MASK);
-    //   state->mt[MT_N - 1] = state->mt[MT_M - 1] ^ (y >> 1) ^
-    //           (-(int) (y & 1) & MT_MATRIX_A);
-    // }
-    final int MT_UPPER_MASK = 0x80000000;
-    final int MT_LOWER_MASK = 0x7fffffff;
-    final int MT_MATRIX_A = 0x9908b0df;
-
-    for (int i = 0; i < MT_N - MT_M; i++) {
-      int mt1 = Platform.getInt(null, stateAddr + mtOffset + 4 * i) & MT_UPPER_MASK;
-      int mt2 = Platform.getInt(null, stateAddr + mtOffset + 4 * (i + 1)) & MT_LOWER_MASK;
-      int y = mt1 | mt2;
-      int mt3 = Platform.getInt(null, stateAddr + mtOffset + 4 * (i + MT_M)) & MT_LOWER_MASK;
-      int newMtValue = mt3 ^ (y >>> 1) ^ (-(y & 1) & MT_MATRIX_A);
-      Platform.putInt(null, stateAddr + mtOffset + 4 * i, newMtValue);
-    }
-    for (int i = 0; i < MT_N - 1; i++) {
-      int mt1 = Platform.getInt(null, stateAddr + mtOffset + 4 * i) & MT_UPPER_MASK;
-      int mt2 = Platform.getInt(null, stateAddr + mtOffset + 4 * (i + 1)) & MT_LOWER_MASK;
-      int y = mt1 | mt2;
-      int mt3 = Platform.getInt(null, stateAddr + mtOffset + 4 * (i + MT_M - MT_N)) & MT_LOWER_MASK;
-      int newMtValue = mt3 ^ (y >>> 1) ^ (-(y & 1) & MT_MATRIX_A);
-      Platform.putInt(null, stateAddr + mtOffset + 4 * i, newMtValue);
-    }
-    int mt1 = Platform.getInt(null, stateAddr + mtOffset + 4 * (MT_N - 1)) & MT_UPPER_MASK;
-    int mt2 = Platform.getInt(null, stateAddr + mtOffset) & MT_LOWER_MASK;
-    int y = mt1 | mt2;
-    int mt3 = Platform.getInt(null, stateAddr + mtOffset + 4 * (MT_M - 1)) & MT_LOWER_MASK;
-    int newMtValue = mt3 ^ (y >>> 1) ^ (-(y & 1) & MT_MATRIX_A);
-    Platform.putInt(null, stateAddr + mtOffset + 4 * (MT_N - 1), newMtValue);
   }
 
   // TODO: Needs to implement

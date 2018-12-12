@@ -1,0 +1,64 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+from env import *
+from sys import platform
+
+def options(opt):
+  opt.load('compiler_cxx');
+
+def configure(ctx):
+  ctx.load('compiler_cxx');
+
+  # Checks if this platform supported
+  if platform == 'linux' or platform == 'linux2':
+    ctx.env['NUMBA_RT_COMPILE_OS'] = 'Linux'
+    ctx.env['NUMBA_RT_COMPILE_SHLIB_SUFFIX'] = 'so'
+  elif platform == 'darwin':
+    ctx.env['NUMBA_RT_COMPILE_OS'] = 'Mac'
+    ctx.env['NUMBA_RT_COMPILE_SHLIB_SUFFIX'] = 'dylib'
+  else:
+    ctx.fatal('OS must be linux or darwin, but %s found' % platform)
+
+  # Currently, it only support x86_64 platforms
+  ctx.env['NUMBA_RT_COMPILE_ARCH'] = 'x86_64'
+
+def build(bld):
+
+  # Builds a shared library of NUMBA_RT
+  bld.shlib(source = 'runtime.cc',
+            target = 'numba-rt',
+            # -Wno-incompatible-pointer-types (for gcc) and -Wno-incompatible-pointer-types-discards-qualifiers (for clang)
+            cxxflags = ['-fno-strict-aliasing', '-fwrapv', '-Wall', '-Wstrict-prototypes'],
+            # includes = ['%s/%s' % (JAVAH_DIR, bld.env.NUMBA_RT_COMPILE_OS), '/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7'],
+            includes = ['%s/%s' % (JAVAH_DIR, bld.env.NUMBA_RT_COMPILE_OS), \
+              '/Users/maropu/.pyenv/versions/2.7.15/include/python2.7',     \
+              '/Users/maropu/.pyenv/versions/2.7.15/lib/python2.7/site-packages/numpy/core/include'],
+            linkflags = ['-L/Users/maropu/.pyenv/versions/2.7.15/lib', '-lpython2.7'],
+            # linkflags = '-static',
+            # use = 'llvm',
+            # uselib_store = 'lljvm'
+            )
+
+  # Strips the built library and copys it into src/main/java/lib/
+  #
+  # To avoid mulformed image errors, we need to strip with options '-S -x':
+  #  - https://stackoverflow.com/questions/39381754/malformed-mach-o-image-symbol-table-underruns-linkedit
+  bld(rule = 'strip -S -x ${SRC}; cp ${SRC} ${TGT}',
+      source = 'libnumba-rt.%s' % bld.env.NUMBA_RT_COMPILE_SHLIB_SUFFIX,
+      target = '../../../python/src/main/resources/lib/%s/%s/' % (bld.env.NUMBA_RT_COMPILE_OS, bld.env.NUMBA_RT_COMPILE_ARCH))
+

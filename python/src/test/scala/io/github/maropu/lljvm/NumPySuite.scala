@@ -140,14 +140,13 @@ class NumPySuite extends PyFuncTest {
     assert(longArray(result) === Seq(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L))
   }
 
-  // TODO: Needs to fix issues about illegal memory accesses
-  ignore("random") {
+  test("random") {
     val rvalues1 = (0 until 100).map { _ =>
       // float64()
       TestUtils.doTestWithFuncName[Double](
         bitcode = s"$basePath/numpy_random1_test-cfunc-float64.bc",
         source = s"$basePath/numpy_random1_test.py",
-        funcName = "_cfunc__ZN18numpy_random1_test23numpy_random1_test_2453E"
+        funcName = "_cfunc__ZN17numpy_random_test23numpy_random1_test_2454E"
       )
     }
     // Checks if generated values are different from each other
@@ -162,7 +161,7 @@ class NumPySuite extends PyFuncTest {
     val result = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_random2_test-cfunc-float64.bc",
       source = s"$basePath/numpy_random2_test.py",
-      funcName = "_cfunc__ZN18numpy_random2_test23numpy_random2_test_2454Ex",
+      funcName = "_cfunc__ZN17numpy_random_test23numpy_random2_test_2455Ex",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(100))
     )

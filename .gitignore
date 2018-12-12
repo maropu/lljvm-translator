@@ -19,5 +19,7 @@ target/
 .lock-waf*
 .waf-*
 lib/lljvm-native/build
+lib/numba-rt-native/build
+lib/numba-rt-native/numba
 clang+llvm-*
 llvm-*.src

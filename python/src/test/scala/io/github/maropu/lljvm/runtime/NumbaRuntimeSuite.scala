@@ -18,6 +18,7 @@
 package io.github.maropu.lljvm.runtime
 
 import io.github.maropu.lljvm.LLJVMFuncSuite
+import io.github.maropu.lljvm.unsafe.Platform
 
 class NumbaRuntimeSuite extends LLJVMFuncSuite {
 
@@ -39,5 +40,25 @@ class NumbaRuntimeSuite extends LLJVMFuncSuite {
     Function.invoke_void("", "_NRT_MemInfo_call_dtor(J)V", args2)
 
     // TODO: Adds tests for `_numba_xxgemm`, `_numba_xxgemv`, and `_numba_xxdot`
+  }
+
+  test("native calls - numba_rnd_shuffle") {
+    // typedef struct {
+    //     int index;
+    //     /* unsigned int is sufficient on modern machines as we only need 32 bits */
+    //     unsigned int mt[MT_N];
+    //     int has_gauss;
+    //     double gauss;
+    //     int is_initialized;
+    // } rnd_state_t;
+    val addr = NumbaRuntime._numba_get_np_random_state()
+    val index = Platform.getInt(null, addr)
+    assert(index === 624)
+    // TODO: Revisits this because this test depends on platforms
+    val is_initialized = Platform.getInt(null, addr + 4 + 4 * index + 4 + 8)
+    assert(is_initialized === 1)
+
+    // Just checks if no exception thrown here
+    NumbaRuntime._numba_rnd_shuffle(addr)
   }
 }

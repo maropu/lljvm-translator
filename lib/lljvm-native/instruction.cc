@@ -476,18 +476,33 @@ void JVMWriter::printGepInstruction(const GetElementPtrInst *inst) {
     if (inst->getNumIndices() > 1) {
       const Type *ty = structTy;
       for (unsigned int i = 2; i <= inst->getNumIndices(); i++) {
-        unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(i))->getZExtValue();
         if (isa<StructType>(ty)) {
-          unsigned int offset = 0;
-          for (unsigned int f = 0; f < fieldIndex; f++) {
-            offset = advanceNextOffset(offset, cast<StructType>(ty)->getContainedType(f));
+          if (const ConstantInt *constInt = dyn_cast<ConstantInt>(inst->getOperand(i))) {
+            unsigned int fieldIndex = constInt->getZExtValue();
+            unsigned int offset = 0;
+            for (unsigned int f = 0; f < fieldIndex; f++) {
+              offset = advanceNextOffset(offset, cast<StructType>(ty)->getContainedType(f));
+            }
+            printPtrLoad(offset);
+            printSimpleInstruction("ladd");
+            ty = structTy->getContainedType(fieldIndex);
+          } else {
+            std::stringstream err_msg;
+            err_msg << "Can't use a variable value index for struct types in getelementptr";
+            lljvm_unreachable(err_msg.str());
           }
-          printPtrLoad(offset);
-          printSimpleInstruction("ladd");
-          ty = structTy->getContainedType(fieldIndex);
         } else if (const SequentialType *seqTy = dyn_cast<SequentialType>(ty)) {
           const Type *elementTy = seqTy->getElementType();
-          printPtrLoad(fieldIndex * getTypeByteWidth(elementTy));
+          // if (const ConstantInt *constInt = dyn_cast<ConstantInt>(inst->getOperand(i))) {
+          //   unsigned int fieldIndex = constInt->getZExtValue();
+          //   printPtrLoad(fieldIndex * getTypeByteWidth(elementTy));
+          // } else {
+            const Value *index = inst->getOperand(i);
+            printValueLoad(index);
+            printCastInstruction("l", getTypePrefix(index->getType(), true));
+            printSimpleInstruction("ldc2_w", utostr(getTypeByteWidth(elementTy)));
+            printSimpleInstruction("lmul");
+          // }
           printSimpleInstruction("ladd");
         } else {
           std::stringstream err_msg;
@@ -523,7 +538,7 @@ void JVMWriter::printAllocaInstruction(const AllocaInst *inst) {
   // Checks if the given types supported, e.g., the pointer of composite types not supported
   if (!checkIfTypeSupported(allocatedTy)) {
     std::stringstream err_msg;
-    err_msg << "Unsupported types in getelementptr: Type=" << getTypeIDName(allocatedTy);
+    err_msg << "Unsupported types in alloca: Type=" << getTypeIDName(allocatedTy);
     throw err_msg.str();
   }
 
