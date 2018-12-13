@@ -31,6 +31,30 @@ JNIEXPORT jlong JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_n
 JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_numba_1rnd_1shuffle
   (JNIEnv *, jobject, jlong);
 
+/*
+ * Class:     io_github_maropu_lljvm_runtime_NumbaRuntimeNative
+ * Method:    numba_xxdot
+ * Signature: (BBJJJJ)I
+ */
+JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_numba_1xxdot
+  (JNIEnv *, jobject, jbyte, jbyte, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     io_github_maropu_lljvm_runtime_NumbaRuntimeNative
+ * Method:    numba_xxgemv
+ * Signature: (BBJJJJJJJJ)I
+ */
+JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_numba_1xxgemv
+  (JNIEnv *, jobject, jbyte, jbyte, jlong, jlong, jlong, jlong, jlong, jlong, jlong, jlong);
+
+/*
+ * Class:     io_github_maropu_lljvm_runtime_NumbaRuntimeNative
+ * Method:    numba_xxgemm
+ * Signature: (BBBJJJJJJJJJJJ)I
+ */
+JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_numba_1xxgemm
+  (JNIEnv *, jobject, jbyte, jbyte, jbyte, jlong, jlong, jlong, jlong, jlong, jlong, jlong, jlong, jlong, jlong, jlong);
+
 #ifdef __cplusplus
 }
 #endif

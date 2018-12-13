@@ -27,4 +27,9 @@ public class NumbaRuntimeNative {
   // For NumPy random
   public native long numba_get_np_random_state() throws LLJVMRuntimeException;
   public native void numba_rnd_shuffle(long state) throws LLJVMRuntimeException;
+
+  // For NumPy dot
+  public native int numba_xxdot(byte kind, byte conjugate, long n, long x, long y, long result) throws LLJVMRuntimeException;
+  public native int numba_xxgemv(byte kind, byte trans, long m, long n, long alpha, long a, long lda, long x, long beta, long y) throws LLJVMRuntimeException;
+  public native int numba_xxgemm(byte kind, byte transa, byte transb, long m, long n, long k, long alpha, long a, long lda, long b, long ldb, long beta, long c, long ldc) throws LLJVMRuntimeException;
 }

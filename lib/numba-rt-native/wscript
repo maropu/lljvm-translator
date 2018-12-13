@@ -19,10 +19,10 @@ from env import *
 from sys import platform
 
 def options(opt):
-  opt.load('compiler_cxx');
+  opt.load('compiler_c');
 
 def configure(ctx):
-  ctx.load('compiler_cxx');
+  ctx.load('compiler_c');
 
   # Checks if this platform supported
   if platform == 'linux' or platform == 'linux2':
@@ -40,10 +40,11 @@ def configure(ctx):
 def build(bld):
 
   # Builds a shared library of NUMBA_RT
-  bld.shlib(source = 'runtime.cc',
+  bld.shlib(source = 'runtime.c',
             target = 'numba-rt',
             # -Wno-incompatible-pointer-types (for gcc) and -Wno-incompatible-pointer-types-discards-qualifiers (for clang)
-            cxxflags = ['-fno-strict-aliasing', '-fwrapv', '-Wall', '-Wstrict-prototypes'],
+            # clang -fno-strict-aliasing -g -O2 -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes
+            cxxflags = ['-fno-strict-aliasing', '-g', '-O2', '-fwrapv', '-Wall', '-Wstrict-prototypes'],
             # includes = ['%s/%s' % (JAVAH_DIR, bld.env.NUMBA_RT_COMPILE_OS), '/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7'],
             includes = ['%s/%s' % (JAVAH_DIR, bld.env.NUMBA_RT_COMPILE_OS), \
               '/Users/maropu/.pyenv/versions/2.7.15/include/python2.7',     \
