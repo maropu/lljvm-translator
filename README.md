@@ -305,7 +305,7 @@ Then, you run lines below;
 
 You can check [a document](./resources/WIP.md) for WIP features.
 
-## Use cases: injects python UDFs into Apache Spark gen'd code
+## Use cases: just-in-time compiles Python UDFs in PySpark
 
 Python UDFs in [Apache Spark](https://spark.apache.org/) have well-known overheads and the recent work of
 [Vectorized UDFs](https://issues.apache.org/jira/browse/SPARK-21190) in the community
