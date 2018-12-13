@@ -24,8 +24,7 @@ import io.github.maropu.lljvm.util.python.PyArrayHolder
 // TODO: Adds more tests for Numba examples, see: https://github.com/numba/numba/tree/master/examples
 class NumbaExampleSuite extends PyFuncTest {
 
-  // TODO: Needs to fix issues about illegal memory accesses
-  ignore("numba - linear regression ()NEEDS TO BE FIXED)") {
+  test("numba - linear regression") {
     // float64[:](float64[:], float64[:,:], float64[:], int64, float64)
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
@@ -71,7 +70,7 @@ class NumbaExampleSuite extends PyFuncTest {
     }
   }
 
-  ignore("numba - blur image (NEEDS TO BE FIXED)") {
+  test("numba - blur image") {
     // float64[:,:](float64[:,:], float64[:,:])
     val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
@@ -83,6 +82,7 @@ class NumbaExampleSuite extends PyFuncTest {
         new jLong(doubleX.addr()), // image
         new jLong(doubleY.addr())) // filt
     )
+    // TODO: Needs to check the correct answer
     assert(doubleArray(result) === Seq(0.0, 0.0, 0.0, 0.0))
   }
 
@@ -138,15 +138,16 @@ class NumbaExampleSuite extends PyFuncTest {
     assert(Math.abs(result2) > 0.0)
   }
 
-  ignore("numba - laplace2d (NEEDS TO BE FIXED)") {
+  test("numba - laplace2d") {
     // float32(float32[:,:], float32[:,:])
     val floatX = pyArray1.`with`(Array(1.0f, 1.0f, 1.0f, 1.0f)).reshape(2, 2)
     val floatY = pyArray2.`with`(Array(3.0f, 1.0f, 2.0f, 4.0f)).reshape(2, 2)
-    val result1 = TestUtils.doTest[Float](
+    TestUtils.doTest[Float](
       bitcode = s"$basePath/jacobi_relax_core-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/laplace2d.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()), new jLong(floatY.addr())),
+      // TODO: Needs to check the correct answer
       expected = Some(0.0f)
     )
 
@@ -158,11 +159,12 @@ class NumbaExampleSuite extends PyFuncTest {
       source = s"$basePath/numba_examples/laplace2d.py",
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()), new jLong(doubleY.addr())),
+      // TODO: Needs to check the correct answer
       expected = Some(0.0f)
     )
   }
 
-  ignore("numba - mandel") {
+  test("numba - mandel") {
     // float64[:,:](float64, float64, float64, float64, float64[:,:], int64)
     val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
     val result = TestUtils.doTest[Long](
