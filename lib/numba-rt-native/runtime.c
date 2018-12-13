@@ -30,6 +30,11 @@ JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_in
   Py_Initialize();
 }
 
+JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative__1numba_1attempt_1nocopy_1reshape
+    (JNIEnv *env, jobject self, jlong nd, jlong dims, jlong strides, jlong newnd, jlong newdims, jlong newstrides, jlong itemsize, jint is_f_order) {
+  return (jint) numba_attempt_nocopy_reshape((npy_intp) nd, (const npy_intp *) dims, (const npy_intp *) strides, (npy_intp) newnd, (const npy_intp *) newdims, (npy_intp *) newstrides, (npy_intp) itemsize, (int) is_f_order);
+}
+
 JNIEXPORT jlong JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_numba_1get_1np_1random_1state
     (JNIEnv *env, jobject self) {
   return (jlong) numba_get_np_random_state();

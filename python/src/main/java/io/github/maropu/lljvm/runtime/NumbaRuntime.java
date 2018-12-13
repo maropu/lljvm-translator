@@ -49,7 +49,7 @@ public final class NumbaRuntime implements RuntimeInterface {
     add("_numba_rnd_shuffle");
 
     // For NumPy arange
-    // add("_numba_attempt_nocopy_reshape");
+    add("_numba_attempt_nocopy_reshape");
 
     // Math functions
     add("_tanf");
@@ -233,10 +233,17 @@ public final class NumbaRuntime implements RuntimeInterface {
     return Math.acos(d);
   }
 
-  // TODO: Needs to implement
-  // _numba_attempt_nocopy_reshape(JJJJJJJI)I
-  public static int _numba_attempt_nocopy_reshape() {
-    return 0;
+  public static int _numba_attempt_nocopy_reshape(
+      long nd,
+      long dims,
+      long strides,
+      long newnd,
+      long newdims,
+      long newstrides,
+      long itemsize,
+      int is_f_order) {
+    return runtimeApi._numba_attempt_nocopy_reshape(
+      nd, dims, strides, newnd, newdims, newstrides, itemsize, is_f_order);
   }
 
   public static void _numba_gil_ensure(long x) {

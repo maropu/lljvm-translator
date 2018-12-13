@@ -130,14 +130,16 @@ class NumPySuite extends PyFuncTest {
     assert(intArray(result) === Seq(1, 2, 3, 4, 5, 6, 7, 8, 9))
   }
 
-  // TODO: Needs to implement `_numba_attempt_nocopy_reshape(JJJJJJJI)I` in `NumbaRuntime`
-  ignore("arange") {
+  test("arange") {
     // int64[:,:]()
     val result = TestUtils.doTest[Long](
       bitcode = s"$basePath/numpy_arange_test-cfunc-int64.bc",
       source = s"$basePath/numpy_arange_test.py"
     )
-    assert(longArray(result) === Seq(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L))
+    val longArray = new PyArrayHolder(result, 2)
+    assert(Seq("2d python array", "nitem=9", "itemsize=8", "shape=[3,3]", "stride=[24,8]")
+      .forall(longArray.toDebugString.contains))
+    assert(longArray.longArray() === Seq(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L))
   }
 
   test("random") {

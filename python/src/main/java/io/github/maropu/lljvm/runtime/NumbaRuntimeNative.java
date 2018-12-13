@@ -24,6 +24,9 @@ public class NumbaRuntimeNative {
   // Initialize a Python interpreter and the others for Numba operations
   public native void initialize() throws LLJVMRuntimeException;
 
+  // For NumPy arange
+  public native int _numba_attempt_nocopy_reshape(long nd, long dims, long strides, long newnd, long newdims, long newstrides, long itemsize, int is_f_order);
+
   // For NumPy random
   public native long numba_get_np_random_state() throws LLJVMRuntimeException;
   public native void numba_rnd_shuffle(long state) throws LLJVMRuntimeException;

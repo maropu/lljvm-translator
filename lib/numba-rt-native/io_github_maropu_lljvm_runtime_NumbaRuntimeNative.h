@@ -17,6 +17,14 @@ JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_in
 
 /*
  * Class:     io_github_maropu_lljvm_runtime_NumbaRuntimeNative
+ * Method:    _numba_attempt_nocopy_reshape
+ * Signature: (JJJJJJJJ)I
+ */
+JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative__1numba_1attempt_1nocopy_1reshape
+  (JNIEnv *, jobject, jlong, jlong, jlong, jlong, jlong, jlong, jlong, jint);
+
+/*
+ * Class:     io_github_maropu_lljvm_runtime_NumbaRuntimeNative
  * Method:    numba_get_np_random_state
  * Signature: ()J
  */
