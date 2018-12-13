@@ -843,7 +843,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     val errMsg = intercept[LLJVMRuntimeException] {
       TestUtils.asJVMAssemblyCode(bitcode)
     }.getMessage
-    assert(errMsg.contains("Unsupported"))
+    assert(errMsg.contains("Unsupported") && !errMsg.contains("!!UNREACHABLE!!") )
     logDebug(
       s"""
          |========== Source Code ==========
