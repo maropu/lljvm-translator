@@ -15,45 +15,54 @@
 # limitations under the License.
 #
 
+import platform, numpy, sys, sysconfig
+
+from waflib.Tools import waf_unit_test
 from env import *
-from sys import platform
 
 def options(opt):
-  opt.load('compiler_c');
+  opt.load('compiler_c waf_unit_test');
 
 def configure(ctx):
-  ctx.load('compiler_c');
+  ctx.load('compiler_c waf_unit_test');
 
   # Checks if this platform supported
-  if platform == 'linux' or platform == 'linux2':
+  if sys.platform == 'linux' or sys.platform == 'linux2':
     ctx.env['NUMBA_RT_COMPILE_OS'] = 'Linux'
     ctx.env['NUMBA_RT_COMPILE_SHLIB_SUFFIX'] = 'so'
-  elif platform == 'darwin':
+  elif sys.platform == 'darwin':
     ctx.env['NUMBA_RT_COMPILE_OS'] = 'Mac'
     ctx.env['NUMBA_RT_COMPILE_SHLIB_SUFFIX'] = 'dylib'
   else:
-    ctx.fatal('OS must be linux or darwin, but %s found' % platform)
+    ctx.fatal('OS must be linux or darwin, but %s found' % sys.platform)
 
-  # Currently, it only support x86_64 platforms
+  # Currently, it only supports x86_64 platforms
   ctx.env['NUMBA_RT_COMPILE_ARCH'] = 'x86_64'
+
+  # Checks the Python version
+  if (sys.version_info[0:2] != (2, 7)):
+    ctx.fatal('Python version must be 2.7.x, but Python %s found' % platform.python_version())
+
+  # Collects platform-dependent configurations for Python
+  PYTHON_INCLUDES = ['%s' % sysconfig.get_paths()['include']]
+  PYTHON_INCLUDES += ['%s' % numpy.get_include()]
+  # TODO: Is there a smarter way to search a static library for Python?
+  PYTHON_LINKFLAGS = [ctx.find_file('libpython2.7.a', ['%s/..' % sysconfig.get_paths()['stdlib']])]
+
+  ctx.check_cc(msg = 'Checking for Python configurations',
+               includes = PYTHON_INCLUDES,
+               linkflags = PYTHON_LINKFLAGS,
+               uselib_store = 'python')
 
 def build(bld):
 
   # Builds a shared library of NUMBA_RT
   bld.shlib(source = 'runtime.c',
             target = 'numba-rt',
-            # -Wno-incompatible-pointer-types (for gcc) and -Wno-incompatible-pointer-types-discards-qualifiers (for clang)
-            # clang -fno-strict-aliasing -g -O2 -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes
-            cxxflags = ['-fno-strict-aliasing', '-g', '-O2', '-fwrapv', '-Wall', '-Wstrict-prototypes'],
-            # includes = ['%s/%s' % (JAVAH_DIR, bld.env.NUMBA_RT_COMPILE_OS), '/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7'],
-            includes = ['%s/%s' % (JAVAH_DIR, bld.env.NUMBA_RT_COMPILE_OS), \
-              '/Users/maropu/.pyenv/versions/2.7.15/include/python2.7',     \
-              '/Users/maropu/.pyenv/versions/2.7.15/lib/python2.7/site-packages/numpy/core/include'],
-            linkflags = ['-L/Users/maropu/.pyenv/versions/2.7.15/lib', '-lpython2.7'],
+            cflags = ['-fno-strict-aliasing', '-O2', '-fwrapv', '-Wall', '-Wstrict-prototypes'],
+            includes = ['%s/%s' % (JAVAH_DIR, bld.env.NUMBA_RT_COMPILE_OS)],
             # linkflags = '-static',
-            # use = 'llvm',
-            # uselib_store = 'lljvm'
-            )
+            use = 'python')
 
   # Strips the built library and copys it into src/main/java/lib/
   #

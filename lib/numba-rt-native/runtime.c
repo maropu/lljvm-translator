@@ -19,7 +19,7 @@
 
 #include <Python.h>
 
-// XXX
+// TODO: Needs to check all the exported functions/data in Numba
 #define NUMBA_EXPORT_FUNC(_rettype) static _rettype
 #define NUMBA_EXPORT_DATA(_vartype) static _vartype
 
@@ -32,7 +32,15 @@ JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_in
 
 JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative__1numba_1attempt_1nocopy_1reshape
     (JNIEnv *env, jobject self, jlong nd, jlong dims, jlong strides, jlong newnd, jlong newdims, jlong newstrides, jlong itemsize, jint is_f_order) {
-  return (jint) numba_attempt_nocopy_reshape((npy_intp) nd, (const npy_intp *) dims, (const npy_intp *) strides, (npy_intp) newnd, (const npy_intp *) newdims, (npy_intp *) newstrides, (npy_intp) itemsize, (int) is_f_order);
+  return (jint) numba_attempt_nocopy_reshape(
+    (npy_intp) nd,
+    (const npy_intp *) dims,
+    (const npy_intp *) strides,
+    (npy_intp) newnd,
+    (const npy_intp *) newdims,
+    (npy_intp *) newstrides,
+    (npy_intp) itemsize,
+    (int) is_f_order);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_numba_1get_1np_1random_1state
@@ -47,16 +55,46 @@ JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_nu
 
 JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_numba_1xxdot
     (JNIEnv *env, jobject self, jbyte kind, jbyte conjugate, jlong n, jlong x, jlong y, jlong result) {
-  return (jint) numba_xxdot((char) kind, (char) conjugate, (Py_ssize_t) n, (void *) x, (void *) y, (void *) result);
+  return (jint) numba_xxdot(
+    (char) kind,
+    (char) conjugate,
+    (Py_ssize_t) n,
+    (void *) x,
+    (void *) y,
+    (void *) result);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_numba_1xxgemv
     (JNIEnv *env, jobject self, jbyte kind, jbyte trans, jlong m, jlong n, jlong alpha, jlong a, jlong lda, jlong x, jlong beta, jlong y) {
-  return (jint) numba_xxgemv((char) kind, (char) trans, (Py_ssize_t) m, (Py_ssize_t) n, (void *) alpha, (void *) a, (Py_ssize_t) lda, (void *) x, (void *) beta, (void*) y);
+  return (jint) numba_xxgemv(
+    (char) kind,
+    (char) trans,
+    (Py_ssize_t) m,
+    (Py_ssize_t) n,
+    (void *) alpha,
+    (void *) a,
+    (Py_ssize_t) lda,
+    (void *) x,
+    (void *) beta,
+    (void*) y);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_numba_1xxgemm
     (JNIEnv *env, jobject self, jbyte kind, jbyte transa, jbyte transb, jlong m, jlong n, jlong k, jlong alpha, jlong a, jlong lda, jlong b, jlong ldb, jlong beta, jlong c, jlong ldc) {
-  return (jint) numba_xxgemm((char) kind, (char) transa, (char) transb, (Py_ssize_t) m, (Py_ssize_t) n, (Py_ssize_t) k, (void *) alpha, (void *) a, (Py_ssize_t) lda, (void *) b, (Py_ssize_t) ldb, (void *) beta, (void*) c, (Py_ssize_t) ldc);
+  return (jint) numba_xxgemm(
+    (char) kind,
+    (char) transa,
+    (char) transb,
+    (Py_ssize_t) m,
+    (Py_ssize_t) n,
+    (Py_ssize_t) k,
+    (void *) alpha,
+    (void *) a,
+    (Py_ssize_t) lda,
+    (void *) b,
+    (Py_ssize_t) ldb,
+    (void *) beta,
+    (void*) c,
+    (Py_ssize_t) ldc);
 }
 

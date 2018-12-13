@@ -41,7 +41,23 @@ This product depends on 'ncurses', which is a library providing an application p
 that allows the programmer to write text-based user interfaces in a terminal-independent manner:
 
   * LICENSE:
-    * http://invisible-island.net/ncurses/ncurses-license.html
+    * http://invisible-island.net/ncurses/ncurses-license.html (MIT License)
   * HOMEPAGE:
     * http://invisible-island.net/ncurses/
+
+This product depends on 'python', which is an interpreted, high-level, general-purpose
+programming language:
+
+  * LICENSE:
+    * https://docs.python.org/2.7/license.html (Python Software Foundation License)
+  * HOMEPAGE:
+    * https://www.python.org/
+
+This product depends on 'numba', which is a JIT compiler to translate a subset of Python and
+NumPy code into fast machine code:
+
+  * LICENSE:
+    * https://github.com/numba/numba/blob/master/LICENSE (BSD 2-Clause "Simplified" License)
+  * HOMEPAGE:
+    * http://numba.pydata.org/
 
