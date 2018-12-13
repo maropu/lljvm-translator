@@ -497,9 +497,9 @@ void JVMWriter::printGepInstruction(const GetElementPtrInst *inst) {
           //   unsigned int fieldIndex = constInt->getZExtValue();
           //   printPtrLoad(fieldIndex * getTypeByteWidth(elementTy));
           // } else {
-            const Value *index = inst->getOperand(i);
-            printValueLoad(index);
-            printCastInstruction("l", getTypePrefix(index->getType(), true));
+            const Value *fieldIndex = inst->getOperand(i);
+            printValueLoad(fieldIndex);
+            printCastInstruction("l", getTypePrefix(fieldIndex->getType(), true));
             printSimpleInstruction("ldc2_w", utostr(getTypeByteWidth(elementTy)));
             printSimpleInstruction("lmul");
           // }
@@ -518,8 +518,13 @@ void JVMWriter::printGepInstruction(const GetElementPtrInst *inst) {
     printSimpleInstruction("ladd");
 
     if (inst->getNumIndices() > 1) {
-      unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(2))->getZExtValue();
-      printPtrLoad(fieldIndex * getTypeByteWidth(seqTy->getElementType()));
+      // unsigned int fieldIndex = cast<ConstantInt>(inst->getOperand(2))->getZExtValue();
+      // printPtrLoad(fieldIndex * getTypeByteWidth(seqTy->getElementType()));
+      const Value *fieldIndex = inst->getOperand(2);
+      printValueLoad(fieldIndex);
+      printCastInstruction("l", getTypePrefix(fieldIndex->getType(), true));
+      printSimpleInstruction("ldc2_w", utostr(getTypeByteWidth(seqTy->getElementType())));
+      printSimpleInstruction("lmul");
       printSimpleInstruction("ladd");
     }
   } else {

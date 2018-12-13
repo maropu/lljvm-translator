@@ -90,3 +90,21 @@ define i32 @getelementptr14({ i32, [5 x i32] }* %x, i32 %i) {
   %ret = load i32, i32* %1, align 4
   ret i32 %ret
 }
+
+define i32 @getelementptr15([4 x i32]* %x) {
+  %1 = getelementptr inbounds [4 x i32], [4 x i32]* %x, i64 0, i64 1
+  %ret = load i32, i32* %1, align 4
+  ret i32 %ret
+}
+
+define i32 @getelementptr16([4 x i32]* %x, i64 %i) {
+  %1 = getelementptr inbounds [4 x i32], [4 x i32]* %x, i64 0, i64 %i
+  %ret = load i32, i32* %1, align 4
+  ret i32 %ret
+}
+
+define i32 @getelementptr17([4 x i32]* %x, i32 %i) {
+  %1 = getelementptr inbounds [4 x i32], [4 x i32]* %x, i64 0, i32 %i
+  %ret = load i32, i32* %1, align 4
+  ret i32 %ret
+}

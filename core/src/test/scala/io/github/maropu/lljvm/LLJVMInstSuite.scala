@@ -354,6 +354,22 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       val argTypes14 = Seq(jLong.TYPE, jInt.TYPE)
       val getelementptr14 = LLJVMUtils.getMethod(clazz, "_getelementptr14", argTypes14: _*)
       assert(getelementptr14.invoke(obj, Seq(new jLong(addr13), new jInt(1)): _*) === 4)
+
+      // getelementptr15 - [4 x i32]*
+      val getelementptr15 = LLJVMUtils.getMethod(clazz, "_getelementptr15", Seq(jLong.TYPE): _*)
+      val x15 = Array(1, 3, 5, 7)
+      val addr15 = ArrayUtils.addressOf(x15)
+      assert(getelementptr15.invoke(obj, Seq(new jLong(addr15)): _*) === 3)
+
+      // getelementptr16 - [4 x i32]*
+      val argTypes16 = Seq(jLong.TYPE, jLong.TYPE)
+      val getelementptr16 = LLJVMUtils.getMethod(clazz, "_getelementptr16", argTypes16: _*)
+      assert(getelementptr16.invoke(obj, Seq(new jLong(addr15), new jLong(2)): _*) === 5)
+
+      // getelementptr17 - [4 x i32]*
+      val argTypes17 = Seq(jLong.TYPE, jInt.TYPE)
+      val getelementptr17 = LLJVMUtils.getMethod(clazz, "_getelementptr17", argTypes17: _*)
+      assert(getelementptr17.invoke(obj, Seq(new jLong(addr15), new jInt(3)): _*) === 7)
     }),
 
     ("sext", (clazz, obj) => {
