@@ -121,13 +121,15 @@ class NumPySuite extends PyFuncTest {
     assert(doubleArray(result4) === Seq(-7.0, -4.0, 1.0, 2.0))
   }
 
-  ignore("array") {
-    // int32[:,:]()
-    val result = TestUtils.doTest[Long](
-      bitcode = s"$basePath/numpy_array_test-cfunc-int32.bc",
-      source = s"$basePath/numpy_array_test.py"
-    )
-    assert(intArray(result) === Seq(1, 2, 3, 4, 5, 6, 7, 8, 9))
+  test("array (NOT SUPPORTED)") {
+    val errMsg = intercept[LLJVMRuntimeException] {
+      // int32[:,:]()
+      TestUtils.doTest[Long](
+        bitcode = s"$basePath/numpy_array_test-cfunc-int32.bc",
+        source = s"$basePath/numpy_array_test.py"
+      )
+    }.getMessage
+    assert(errMsg.contains("bitcast not supported in function operands: Name=__dtor_list_int64"))
   }
 
   test("arange") {

@@ -77,7 +77,32 @@ void JVMWriter::printOperandPack(
 
   for (unsigned int i = minOperand; i < maxOperand; i++) {
     const Value *v = inst->getOperand(i);
-    printValueLoad(v);
+    if (const ConstantExpr *ce = dyn_cast<ConstantExpr>(v)) {
+      switch (ce->getOpcode()) {
+        case Instruction::GetElementPtr:
+          printGepInstruction(cast<GetElementPtrInst>(ce));
+          break;
+        case Instruction::BitCast: {
+          // TODO: Needs to support bitcast in function operands, e.g.,
+          //  %.42 = tail call i8* @NRT_MemInfo_new_varsize_dtor(i64 48, i8* bitcast (void (i8*)* @.dtor.list.int64 to i8*))
+          std::stringstream err_msg;
+          err_msg << "bitcast not supported in function operands: Name=" << getValueName(ce->getOperand(0));
+          throw err_msg.str();
+        }
+        default: {
+          std::stringstream err_msg;
+          err_msg << "Unsupported LLVM instruction in function operands: " << ce->getOpcodeName();
+          throw err_msg.str();
+        }
+      }
+    } else if (isa<Function>(v)) {
+      std::stringstream err_msg;
+      err_msg << "Function value not allowed in function operands";
+      lljvm_unreachable(err_msg.str());
+    } else {
+      // TODO: Needs more strict type checks here?
+      printValueLoad(v);
+    }
     printSimpleInstruction(
       "invokestatic", "io/github/maropu/lljvm/runtime/VMemory/pack(J" + getTypeDescriptor(v->getType()) + ")J");
   }
