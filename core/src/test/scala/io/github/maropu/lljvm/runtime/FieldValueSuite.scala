@@ -83,7 +83,7 @@ class FieldValueSuite extends LLJVMFuncSuite with BeforeAndAfterEach with TimeLi
     assert(errMsg === "Cannot resolve an external field for `value1`")
   }
 
-  ignore("multi-threading tests") {
+  test("multi-threading tests") {
     failAfter(10.seconds) {
       val service = Executors.newFixedThreadPool(2)
       (0 until 5).foreach(_ => service.submit(new Runnable() {

@@ -78,7 +78,7 @@ class VMemorySuite extends LLJVMFuncSuite with TimeLimits {
     assert(errMsg === "Not enough memory in the stack")
   }
 
-  ignore("multi-threading tests") {
+  test("multi-threading tests") {
     val testThread1 = new Runnable() {
       override def run(): Unit = {
         for (i <- 0 until 1024) {
