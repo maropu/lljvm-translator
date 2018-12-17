@@ -36,15 +36,31 @@ public class LLJVMUtils {
     }
   }
 
+  // TODO: Rechecks the LLVM bitcode format
+  // For Numba-generated bitcode
+  static final byte[] expectedBitcodeHeader1 = { -34, -64, 23, 11 };
+  // For Clang-generated bitcode
+  static final byte[] expectedBitcodeHeader2 = { 66, 67, -64, -34 };
+
   @VisibleForTesting
   public static void checkLLVMBitcodeFormat(byte[] bitcode) {
     // A format of LLVM bitcode is as follows:
     //  - https://llvm.org/docs/BitCodeFormat.html
-    // if (bitcode.length < 4 ||
-    //     // This magic number in only valid for `target triple = "x86_64-apple-macosx10.12.0"`?
-    //     !(bitcode[0] == -34 && bitcode[1] == -64 && bitcode[2] == 23 && bitcode[3] == 11)) {
-    //   throw new LLJVMRuntimeException("Corrupt LLVM bitcode found");
-    // }
+    if (bitcode.length < 4 || !(
+        // This magic number in only valid for `target triple = "x86_64-apple-macosx10.12.0"`?
+        (bitcode[0] == expectedBitcodeHeader1[0] || bitcode[0] == expectedBitcodeHeader2[0]) &&
+        (bitcode[1] == expectedBitcodeHeader1[1] || bitcode[1] == expectedBitcodeHeader2[1]) &&
+        (bitcode[2] == expectedBitcodeHeader1[2] || bitcode[2] == expectedBitcodeHeader2[2]) &&
+        (bitcode[3] == expectedBitcodeHeader1[3] || bitcode[3] == expectedBitcodeHeader2[3]))) {
+      final byte b1 = (bitcode.length > 0)? bitcode[0] : (byte) 0;
+      final byte b2 = (bitcode.length > 1)? bitcode[1] : (byte) 0;
+      final byte b3 = (bitcode.length > 2)? bitcode[2] : (byte) 0;
+      final byte b4 = (bitcode.length > 3)? bitcode[3] : (byte) 0;
+      final String expectedHeader = "-34,-64,23,11 or 66,67,-64,-34";
+      final String invalidHeader = String.format("%d,%d,%d,%d", b1, b2, b3, b4);
+      throw new LLJVMRuntimeException(String.format(
+        "Expected bitcode header is %s, but %s found", expectedHeader, invalidHeader));
+    }
     try {
       LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
       lljvmApi.veryfyBitcode(bitcode);

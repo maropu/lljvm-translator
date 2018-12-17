@@ -21,11 +21,12 @@ class LLJVMNativeSuite extends LLJVMFuncSuite {
 
   val lljvmApi = LLJVMLoader.loadLLJVMApi()
 
-  ignore("broken bitcode tests") {
+  test("broken bitcode tests") {
     val errMsg = intercept[LLJVMRuntimeException] {
       TestUtils.loadClassFromBitcodeInResource("corrupt.bc")
     }.getMessage
-    assert(errMsg.contains("Corrupt LLVM bitcode found"))
+    assert(errMsg.contains("Expected bitcode header is -34,-64,23,11 or 66,67,-64,-34, " +
+      "but 22,99,76,-117 found"))
   }
 
   ignore("veryfyBitcode") {
