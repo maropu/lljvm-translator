@@ -25,7 +25,7 @@
 #include <llvm/MC/MCAsmInfo.h>
 #include <llvm/IR/Mangler.h>
 
-std::string JVMWriter::sanitizeName(std::string name) {
+const std::string sanitizeName(std::string name) {
   for (std::string::iterator i = name.begin(), e = name.end(); i != e; i++) {
     if (!isalnum(*i)) {
       *i = '_';

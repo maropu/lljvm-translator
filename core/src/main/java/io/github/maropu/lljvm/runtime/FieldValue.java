@@ -34,6 +34,7 @@ public final class FieldValue {
   private FieldValue() {}
 
   public static void put(String fieldName, Object value) {
+    logger.debug("Numba Runtime field added: name=" + fieldName + " value=" + value);
     externalFieldValues.put(fieldName, value);
   }
 

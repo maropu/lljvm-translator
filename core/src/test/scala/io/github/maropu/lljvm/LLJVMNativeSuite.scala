@@ -210,4 +210,17 @@ class LLJVMNativeSuite extends LLJVMFuncSuite {
          |.end method
        """.stripMargin)
   }
+
+  test("No function exists in LLJVM runtime") {
+    val errMsg = intercept[LLJVMRuntimeException] {
+      // define i32 @no_function_exists_in_runtime() {
+      //   call void @no_existent_function()
+      //   ret i32 0
+      // }
+      //
+      // declare void @no_existent_function() local_unnamed_addr
+      TestUtils.loadClassFromBitcodeInResource("no_function_exists_in_runtime.bc")
+    }.getMessage
+    assert(errMsg.contains("Can't find a function in LLJVM runtime: _no_existent_function()V"))
+  }
 }

@@ -82,6 +82,16 @@ public:
     return "JVMWriter";
   }
 
+  // Returns external references for validation
+  const DenseSet<const Value*>& getExternRefs() const {
+    return externRefs;
+  }
+
+  // Returns a signature for a given function
+  std::string getFunctionSignature(const Function *f) {
+    return getValueName(f) + getCallSignature(f->getFunctionType());
+  }
+
   // backend.cc
   void getAnalysisUsage(AnalysisUsage &au) const override;
   bool runOnFunction(Function &f) override;
@@ -160,7 +170,6 @@ private:
   void printIndirectStore(const Type *ty);
 
   // name.cc
-  std::string sanitizeName(std::string name);
   std::string getValueName(const Value *v);
   std::string getLabelName(const BasicBlock *block);
 
@@ -205,6 +214,9 @@ private:
 extern bool isPrimitiveType(const Type *ty);
 extern bool isNumericType(const Type *ty);
 extern bool checkIfTypeSupported(const Type *ty);
+
+// Helper functions for name handling
+extern const std::string sanitizeName(std::string name);
 
 // `llvm_unreachable` leads to abortion, and then JVMs crash.
 // So, we throw an C++ exception instead of `llvm_unreachable` to translate it

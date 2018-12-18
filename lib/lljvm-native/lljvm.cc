@@ -19,6 +19,7 @@
 #include "lljvm-internals.h"
 #include "io_github_maropu_lljvm_LLJVMNative.h"
 
+#include <llvm/ADT/DenseSet.h>
 #include <llvm/Bitcode/BitcodeReader.h>
 #include <llvm/CodeGen/Passes.h>
 #include <llvm/IR/LegacyPassManager.h>
@@ -36,12 +37,21 @@ using namespace llvm;
 const std::string LLJVM_GENERATED_CLASSNAME_PREFIX = "GeneratedClass";
 const std::string LLJVM_MAGIC_NUMBER = "20180731HMKjwzxmew";
 
-static void throwException(JNIEnv *env, jobject self, const std::string& err_msg) {
+static void throwException(JNIEnv *env, jobject& self, const std::string& err_msg) {
   jclass c = env->FindClass("io/github/maropu/lljvm/LLJVMNative");
   assert(c != 0);
   jmethodID mth_throwex = env->GetMethodID(c, "throwException", "(Ljava/lang/String;)V");
   assert(mth_throwex != 0);
   env->CallVoidMethod(self, mth_throwex, env->NewStringUTF(err_msg.c_str()));
+}
+
+static bool existsInRuntime(JNIEnv *env, jobject& self, const std::string& methodSignature) {
+  jclass c = env->FindClass("io/github/maropu/lljvm/LLJVMNative");
+  assert(c != 0);
+  jmethodID mth_exists = env->GetMethodID(c, "existsInRuntime", "(Ljava/lang/String;)Z");
+  assert(mth_exists != 0);
+  bool exists = (bool) env->CallIntMethod(self, mth_exists, env->NewStringUTF(methodSignature.c_str()));
+  return exists;
 }
 
 // Adds optimization passes based on the selected optimization level.
@@ -71,23 +81,14 @@ static void addOptimizationPasses(legacy::PassManager& pm, int optLevel, int siz
   pmBuilder.populateModulePassManager(pm);
 }
 
-static void runOptimizationPasses(
+static void initializePasses(
+    LLVMContext& context,
+    legacy::PassManager& pm,
     const char *bitcode,
     size_t size,
     int optLevel,
     int sizeLevel,
-    unsigned debugLevel,
-    Pass *outputPass) {
-
-  LLVMContext context;
-  auto buf = MemoryBuffer::getMemBuffer(StringRef((const char *)bitcode, size));
-  auto mod = parseBitcodeFile(buf.get()->getMemBufferRef(), context);
-  // if(check if error happens) {
-  //     std::cerr << "Unable to parse bitcode file" << std::endl;
-  //     return 1;
-  // }
-
-  legacy::PassManager pm;
+    unsigned debugLevel) {
 
   if (debugLevel > 0) {
     pm.add(createVerifierPass());
@@ -106,14 +107,11 @@ static void runOptimizationPasses(
     pm.add(createGCLoweringPass());
     // pm.add(createGCInfoDeleter());
   }
-
-  // Finally, add a pass for output
-  pm.add(outputPass);
-
-  pm.run(*mod.get());
 }
 
 const std::string toJVMAssemblyCode(
+    JNIEnv *env,
+    jobject *self,
     const char *bitcode,
     size_t size,
     int optLevel,
@@ -131,10 +129,49 @@ const std::string toJVMAssemblyCode(
     "-f32:32:32-f64:64:64"
   );
 
-  Pass *outputPass = new JVMWriter(&td, strbuf, clazz, debugLevel);
-  runOptimizationPasses(bitcode, size, optLevel, sizeLevel, debugLevel, outputPass);
+  LLVMContext context;
+  legacy::PassManager pm;
+
+  // Registers optimization passes in the given pass manager
+  initializePasses(context, pm, bitcode, size, optLevel, sizeLevel, debugLevel);
+
+  // Finally, add a pass for output
+  JVMWriter *jvmWriter = new JVMWriter(&td, strbuf, clazz, debugLevel);
+  pm.add(jvmWriter);
+
+  auto buf = MemoryBuffer::getMemBuffer(StringRef((const char *)bitcode, size));
+  auto mod = parseBitcodeFile(buf.get()->getMemBufferRef(), context);
+  // if(check if error happens) {
+  //     std::cerr << "Unable to parse bitcode file" << std::endl;
+  //     return 1;
+  // }
+  pm.run(*mod.get());
+
   strbuf.flush();
+
+  // Checks if all the external functions exists in LLJVM runtime
+  if (env != NULL && self != NULL) {
+    const DenseSet<const Value*>& externRefs = jvmWriter->getExternRefs();
+    for (DenseSet<const Value*>::const_iterator i = externRefs.begin(), e = externRefs.end(); i != e; i++) {
+      if (const Function *f = dyn_cast<Function>(*i)) {
+        const std::string methodSignature = jvmWriter->getFunctionSignature(f);
+        if (!existsInRuntime(env, *self, methodSignature)) {
+          throwException(env, *self, "Can't find a function in LLJVM runtime: " + methodSignature);
+        }
+      }
+    }
+  }
+
   return out;
+}
+
+const std::string toJVMAssemblyCode(
+    const char *bitcode,
+    size_t size,
+    int optLevel,
+    int sizeLevel,
+    unsigned debugLevel) {
+  return toJVMAssemblyCode(NULL, NULL, bitcode, size, optLevel, sizeLevel, debugLevel);
 }
 
 const std::string toLLVMAssemblyCode(
@@ -148,9 +185,26 @@ const std::string toLLVMAssemblyCode(
   std::string out;
   raw_string_ostream strbuf(out);
 
+  LLVMContext context;
+  legacy::PassManager pm;
+
+  // Registers optimization passes in the given pass manager
+  initializePasses(context, pm, bitcode, size, optLevel, sizeLevel, debugLevel);
+
+  // Finally, add a pass for output
   Pass *outputPass = createPrintModulePass(strbuf, "", false);
-  runOptimizationPasses(bitcode, size, optLevel, sizeLevel, debugLevel, outputPass);
+  pm.add(outputPass);
+
+  auto buf = MemoryBuffer::getMemBuffer(StringRef((const char *)bitcode, size));
+  auto mod = parseBitcodeFile(buf.get()->getMemBufferRef(), context);
+  // if(check if error happens) {
+  //     std::cerr << "Unable to parse bitcode file" << std::endl;
+  //     return 1;
+  // }
+  pm.run(*mod.get());
+
   strbuf.flush();
+
   return out;
 }
 
@@ -192,7 +246,7 @@ JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asJVMAssemblyC
   jbyte *src = env->GetByteArrayElements(bitcode, NULL);
   size_t size = (size_t) env->GetArrayLength(bitcode);
   try {
-    const std::string out = toJVMAssemblyCode((const char *)src, size, optLevel, sizeLevel, debugLevel);
+    const std::string out = toJVMAssemblyCode(env, &self, (const char *)src, size, optLevel, sizeLevel, debugLevel);
     env->ReleaseByteArrayElements(bitcode, src, 0);
     return env->NewStringUTF(out.c_str());
   } catch (const std::string& e) {

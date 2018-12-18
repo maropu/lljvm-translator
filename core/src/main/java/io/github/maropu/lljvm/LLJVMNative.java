@@ -19,6 +19,8 @@ package io.github.maropu.lljvm;
 
 import java.io.IOException;
 
+import io.github.maropu.lljvm.runtime.Function;
+
 /**
  * JNI interfaces of the LLJVM implementation.
  */
@@ -40,6 +42,11 @@ public class LLJVMNative {
   // Returns LLVM assembly for given LLVM bitcode
   public native String asLLVMAssemblyCode(
     byte[] bitcode, int optLevel, int sizeLevel) throws IOException;
+
+  // Checks if the given method exists in LLJVM runtime
+  public boolean existsInRuntime(String methodSignature) {
+    return Function.exist(methodSignature);
+  }
 
   // This exception is mainly used in native code
   public void throwException(String message) throws LLJVMRuntimeException {

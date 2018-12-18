@@ -157,7 +157,7 @@ public final class ReflectionUtils {
   }
 
   /**
-   * Returns the qualified signature  of the given method.
+   * Returns the qualified signature of the given method.
    *
    * @param method  the given method
    * @return        the qualified signature of the given method

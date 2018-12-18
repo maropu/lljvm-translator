@@ -61,12 +61,19 @@ public final class NumbaRuntime implements RuntimeInterface {
     add("_numba_xxgemv");
     add("_numba_xxgemm");
 
+    add("_Py_DecRef");
+
     // For error handling (e.g., NumPy dot between incompatible shapes)
     add("_PyString_FromString");
+    add("_Py_FatalError");
+    add("_PyErr_SetString");
+    add("_PyErr_SetNone");
     add("_PyErr_WriteUnraisable");
     add("_PyErr_Clear");
     add("_numba_unpickle");
+    add("_numba_do_raise");
     add("_numba_gil_ensure");
+    add("_numba_gil_release");
   }};
 
   private static final NumbaRuntimeNative runtimeApi = NumbaRuntimeLoader.loadNumbaRuntimeApi();
@@ -77,7 +84,6 @@ public final class NumbaRuntime implements RuntimeInterface {
     for (Field f : ReflectionUtils.getPublicStaticFields(NumbaRuntime.class)) {
       if (fieldWhileList.contains(f.getName())) {
         try {
-          logger.debug("Numba Runtime field added: name=" + f.getName() + " value=" + f.get(null));
           FieldValue.put(f.getName(), f.get(null));
         } catch (IllegalAccessException e) {
           // Just ignores it
@@ -86,9 +92,7 @@ public final class NumbaRuntime implements RuntimeInterface {
     }
     for (Method m : ReflectionUtils.getPublicStaticMethods(NumbaRuntime.class)) {
       if (methodWhileList.contains(m.getName())) {
-        final String signature = ReflectionUtils.getSignature(m);
-        logger.debug("Numba Runtime method added: signature=" + signature);
-        Function.put(signature, m);
+        Function.put(m);
       }
     }
   }

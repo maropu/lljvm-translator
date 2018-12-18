@@ -66,12 +66,19 @@ public final class Function {
 
   private Function() {}
 
-  public static void put(String methodSignature, Method m) {
+  public static void put(Method m) {
+    final String methodSignature = ReflectionUtils.getSignature(m);
+    logger.debug("LLJVM Runtime method added: signature=" + methodSignature);
     externalFuncPointers.put(methodSignature, m);
   }
 
   public static void remove(String methodSignature) {
+    logger.debug("LLJVM Runtime method added: signature=" + methodSignature);
     externalFuncPointers.remove(methodSignature);
+  }
+
+  public static boolean exist(String methodSignature) {
+    return externalFuncPointers.containsKey(methodSignature);
   }
 
   public static void clear() {
