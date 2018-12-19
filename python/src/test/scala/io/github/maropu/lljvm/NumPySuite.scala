@@ -178,6 +178,62 @@ class NumPySuite extends PyFuncTest {
     }
   }
 
+  // TODO: Fix the error: (file=../const.cc line=134) Invalid ConstantDataVector value: Value=_
+  ignore("ones") {
+    val result1 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_ones1_test-cfunc-float64.bc",
+      source = s"$basePath/numpy_ones1_test.py",
+      funcName = "",
+      argTypes = Seq(jInt.TYPE),
+      arguments = Seq(new jInt(3))
+    )
+    val ones1 = new PyArrayHolder(result1)
+    assert(ones1.doubleArray() === Seq(1.0, 1.0, 1.0))
+    assert(Seq("1d python array", "nitem=3", "itemsize=8", "shape=[3]", "stride=[8]")
+      .forall(ones1.toDebugString.contains))
+
+    val result2 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_ones2_test-cfunc-float64.bc",
+      source = s"$basePath/numpy_ones2_test.py",
+      funcName = "",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE),
+      arguments = Seq(new jLong(2), new jLong(2))
+    )
+    val ones2 = new PyArrayHolder(result2)
+    assert(ones2.doubleArray() === Seq(1.0, 1.0, 1.0, 1.0))
+    assert(Seq("2d python array", "nitem=4", "itemsize=8", "shape=[2,2]", "stride=[16,8]")
+      .forall(ones2.toDebugString.contains))
+  }
+
+  // TODO: Fix the error: (file=../const.cc line=134) Invalid ConstantDataVector value: Value=_
+  ignore("ones_like") {
+    val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f))
+    val result1 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_ones_like_test-cfunc-float32.bc",
+      source = s"$basePath/numpy_ones_like_test.py",
+      funcName = "",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(floatX.addr()))
+    )
+    val ones_like1 = new PyArrayHolder(result1)
+    assert(ones_like1.floatArray() === Seq(1.0f, 2.0f, 3.0f))
+    assert(Seq("1d python array", "nitem=3", "itemsize=4", "shape=[3]", "stride=[4]")
+      .forall(ones_like1.toDebugString.contains))
+
+    val doubleX = pyArray1.`with`(Array(4.0, 5.0, 6.0, 7.0)).reshape(2, 2)
+    val result2 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_ones_like_test-cfunc-float64.bc",
+      source = s"$basePath/numpy_ones_like_test.py",
+      funcName = "",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(doubleX.addr()))
+    )
+    val ones_like2 = new PyArrayHolder(result2)
+    assert(ones_like2.doubleArray() === Seq(4.0, 5.0, 6.0, 7.0))
+    assert(Seq("2d python array", "nitem=4", "itemsize=8", "shape=[2,2]", "stride=[16,8]")
+      .forall(ones_like2.toDebugString.contains))
+  }
+
   test("power") {
     // float32[:](float32[:], float32[:])
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f, 4.0f))

@@ -132,6 +132,16 @@ write_bitcode_with_cfunc(numpy_random2_test, "float64[:](int64)", "-cfunc-float6
 from numpy_random3_test import *
 # write_bitcode_with_cfunc(numpy_random3_test, "int64[:,:]()", "-cfunc-int64")
 
+from numpy_ones1_test import *
+write_bitcode_with_cfunc(numpy_ones1_test, "float64[:](int32)", "-cfunc-float64")
+
+from numpy_ones2_test import *
+write_bitcode_with_cfunc(numpy_ones2_test, "float64[:,:](int64, int64)", "-cfunc-float64")
+
+from numpy_ones_like_test import *
+write_bitcode_with_cfunc(numpy_ones_like_test, "float32[:](float32[:])", "-cfunc-float32")
+write_bitcode_with_cfunc(numpy_ones_like_test, "float64[:,:](float64[:,:])", "-cfunc-float64")
+
 from numba_examples.linear_regression import *
 # write_bitcode_with_cfunc(linear_regression, "float32[:,:](float32[:,:], float32[:,:], float32[:,:], int32, float32)", "-numba-cfunc-float32")
 write_bitcode_with_cfunc(linear_regression, "float64[:,:](float64[:,:], float64[:,:], float64[:,:], int64, float64)", "-numba-cfunc-float64")
