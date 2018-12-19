@@ -47,8 +47,7 @@ class NumbaExampleSuite extends PyFuncTest {
     }
   }
 
-  // TODO: Needs to fix issues about illegal memory accesses
-  ignore("numba - logistic regression (NEEDS TO BE FIXED)") {
+  test("numba - logistic regression") {
     // float64[:](float64[:], float64[:,:], float64[:], int64)
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
@@ -165,23 +164,39 @@ class NumbaExampleSuite extends PyFuncTest {
   }
 
   test("numba - mandel") {
-    // float64[:,:](float64, float64, float64, float64, float64[:,:], int64)
-    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0))
-    val result = TestUtils.doTest[Long](
-      bitcode = s"$basePath/create_fractal-numba-cfunc-float64.bc",
+    // float32[:,:](int32, int32, int32, int32, float32[:,:], int32)
+    val floatX = pyArray1.`with`(Array(1.0f, 1.0f, 1.0f, 1.0f)).reshape(2, 2)
+    val result1 = TestUtils.doTest[Long](
+      bitcode = s"$basePath/create_fractal-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/mandel.py",
-      argTypes =
-        Seq(jDouble.TYPE, jDouble.TYPE, jDouble.TYPE, jDouble.TYPE, jLong.TYPE, jLong.TYPE),
+      argTypes = Seq(jInt.TYPE, jInt.TYPE, jInt.TYPE, jInt.TYPE, jLong.TYPE, jInt.TYPE),
       arguments = Seq(
-        new jDouble(-1.0),         // min_x
-        new jDouble(1.0),          // max_x
-        new jDouble(-1.0),         // min_y
-        new jDouble(1.0),          // max_y
-        new jLong(doubleX.addr()), // image
-        new jLong(10)              // iters
+        new jInt(0),              // min_x
+        new jInt(2),              // max_x
+        new jInt(0),              // min_y
+        new jInt(2),              // max_y
+        new jLong(floatX.addr()), // image
+        new jInt(5)               // iters
       )
     )
-    assert(doubleArray(result) === Seq(2.0, 2.0, 3.0, 5.0))
+    assert(floatArray(result1) === Seq(255.0f, 1.0f, 255.0f, 1.0f))
+
+    // float64[:,:](int64, int64, int64, int64, float64[:,:], int64)
+    val doubleX = pyArray1.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
+    val result2 = TestUtils.doTest[Long](
+      bitcode = s"$basePath/create_fractal-numba-cfunc-float64.bc",
+      source = s"$basePath/numba_examples/mandel.py",
+      argTypes = Seq(jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE, jLong.TYPE),
+      arguments = Seq(
+        new jLong(0),              // min_x
+        new jLong(2),              // max_x
+        new jLong(0),              // min_y
+        new jLong(2),              // max_y
+        new jLong(doubleX.addr()), // image
+        new jLong(5)               // iters
+      )
+    )
+    assert(doubleArray(result2) === Seq(255.0, 1.0, 255.0, 1.0))
   }
 
   ignore("numba - pi (NEEDS TO BE FIXED)") {
@@ -227,7 +242,6 @@ class NumbaExampleSuite extends PyFuncTest {
     )
   }
 
-  // TODO: Needs to implement unsupported LLVM instructions
   test("numba - ra24") {
     // float32[:](int32, float32[:])
     val floatX = pyArray1.`with`(Array(20.0f, 24.0f, 16.0f, 28.0f))
@@ -286,7 +300,7 @@ class NumbaExampleSuite extends PyFuncTest {
     // void(float64[:], int64[:], float64[:])
     val doubleX = pyArray1.`with`(Array(4.0, 2.0, 6.0, 4.0, 8.0, 2.0, 4.0, 0.0))
     val doubleY = pyArray2.`with`(Array(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
-    val longX = pyArray3.`with`(Array(2))
+    val longX = pyArray3.`with`(Array(2L))
     TestUtils.doTest[Long](
       bitcode = s"$basePath/move_mean-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/movemean.py",

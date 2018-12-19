@@ -17,6 +17,7 @@
 
 package io.github.maropu.lljvm
 
+import io.github.maropu.lljvm.util.ArrayUtils
 import io.github.maropu.lljvm.util.python.PyArrayHolder
 
 class PyArrayHolderSuite extends LLJVMFuncSuite {
@@ -45,5 +46,12 @@ class PyArrayHolderSuite extends LLJVMFuncSuite {
       .forall(pyArray.reshape(1, 4).toDebugString.contains))
     assert(Seq("1d python array", "nitem=4", "itemsize=4", "shape=[4]", "stride=[4]")
       .forall(pyArray.reshape(4).toDebugString.contains))
+  }
+
+  test("duplicate array data") {
+    val ar = Array(1, 2, 3, 4, 5)
+    val pyArray = new PyArrayHolder().`with`(ar)
+    // Checks if `dataAddr` is not an object address of `ar`
+    assert(!pyArray.toDebugString.contains(ArrayUtils.addressOf(ar).toString))
   }
 }

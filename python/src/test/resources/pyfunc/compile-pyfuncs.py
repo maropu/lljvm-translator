@@ -161,8 +161,8 @@ write_bitcode_with_cfunc(jacobi_relax_core, "float32(float32[:,:], float32[:,:])
 write_bitcode_with_cfunc(jacobi_relax_core, "float64(float64[:,:], float64[:,:])", "-numba-cfunc-float64")
 
 from numba_examples.mandel import *
-# write_bitcode_with_cfunc(create_fractal, "float32[:,:](float32, float32, float32, float32, float32[:,:], int32)", "-numba-cfunc-float32")
-write_bitcode_with_cfunc(create_fractal, "float64[:,:](float64, float64, float64, float64, float64[:,:], int64)", "-numba-cfunc-float64")
+write_bitcode_with_cfunc(create_fractal, "float32[:,:](int32, int32, int32, int32, float32[:,:], int32)", "-numba-cfunc-float32")
+write_bitcode_with_cfunc(create_fractal, "float64[:,:](int64, int64, int64, int64, float64[:,:], int64)", "-numba-cfunc-float64")
 
 from numba_examples.pi import *
 write_bitcode_with_cfunc(calc_pi, "float32(int32)", "-numba-cfunc-float32")

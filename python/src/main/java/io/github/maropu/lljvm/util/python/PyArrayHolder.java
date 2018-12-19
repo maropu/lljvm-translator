@@ -148,19 +148,42 @@ public class PyArrayHolder implements AutoCloseable {
     if (nitem != length) {
       throw new LLJVMRuntimeException("Total size of new array must be unchanged");
     }
-    long arrayAddr = Platform.getLong(null, dataAddr());
-    setArrayData(arrayAddr, length, itemsize);
+
+    // Updates shape and stride for 1-d arrays
+    numDim = 1;
+    Platform.putLong(null, shapeAddr(), length);
+    Platform.putLong(null, strideAddr(), itemsize);
     return this;
   }
 
-  private void setArrayData(long arrayAddr, long length, long size) {
+  private void releaseArrayDataIfNecessary() {
+    if (isArrayOwner) {
+      final long dataAddr = Platform.getLong(null, dataAddr());
+      if (dataAddr != 0L) {
+        Platform.freeMemory(dataAddr);
+      }
+    }
+  }
+
+  private long duplicateArrayData(long inputArrayAddr, long size) {
+    releaseArrayDataIfNecessary();
+    long newDataAddr = Platform.allocateMemory(size);
+    Platform.copyMemory(null, inputArrayAddr, null, newDataAddr, size);
+    return newDataAddr;
+  }
+
+  private void setArrayData(long inputArrayAddr, long length, long size) {
     assert(isArrayOwner);
+
+    // We need to copy array data because object addresses can change between calls
+    final long dataAddr = duplicateArrayData(inputArrayAddr, length * size);
+
     Platform.putLong(null, nitemsAddr(), length);
     Platform.putLong(null, itemsizeAddr(), size);
-    Platform.putLong(null, dataAddr(), arrayAddr);
+    Platform.putLong(null, dataAddr(), dataAddr);
 
     // Updates `MemInfo`
-    Platform.putLong(null, meminfoAddr + 24, arrayAddr);
+    Platform.putLong(null, meminfoAddr + 24, dataAddr);
     Platform.putLong(null, meminfoAddr + 32, length * size);
 
     // reshape(length, 1);
@@ -305,6 +328,7 @@ public class PyArrayHolder implements AutoCloseable {
   @Override
   public void close() {
     if (isArrayOwner) {
+      releaseArrayDataIfNecessary();
       Platform.freeMemory(holderAddr);
     }
   }
