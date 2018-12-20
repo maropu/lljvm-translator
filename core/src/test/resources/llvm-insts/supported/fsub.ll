@@ -46,3 +46,17 @@ define <4 x float> @fsub9(<4 x float> %x) {
   ret <4 x float> %ret
 }
 
+define <4 x float> @fsub10(<4 x float> %x) {
+  %ret = fsub <4 x float> undef, %x
+  ret <4 x float> %ret
+}
+
+define <4 x float> @fsub11(<4 x float> %x) {
+  %ret = fsub <4 x float> %x, undef
+  ret <4 x float> %ret
+}
+
+define <4 x float> @fsub12(<4 x float> %notused) {
+  %ret = fsub <4 x float> undef, undef
+  ret <4 x float> %ret
+}

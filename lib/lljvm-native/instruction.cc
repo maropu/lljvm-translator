@@ -95,7 +95,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       if (const Constant *c = dyn_cast<Constant>(left)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(left)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
-            // In case of undef, we set 0
+            // In case of undef, we set 0 for safeguards
             printSimpleInstruction("iconst_0");
             printCastInstruction(getTypePrefix(leftVecTy->getElementType(), true), "i");
           } else {
@@ -122,7 +122,7 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
       if (const Constant *c = dyn_cast<Constant>(right)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(right)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
-            // In case of undef, we set 0
+            // In case of undef, we set 0 for safeguards
             printSimpleInstruction("iconst_0");
             printCastInstruction(getTypePrefix(rightVecTy->getElementType(), true), "i");
           } else {
@@ -251,7 +251,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
       if (const Constant *c = dyn_cast<Constant>(left)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(left)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
-            // In case of undef, we set 0
+            // In case of undef, we set 0 for safeguards
             printSimpleInstruction("iconst_0");
             printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
           } else {
@@ -260,6 +260,13 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
         } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
           printValueLoad(vec->getElementAsConstant(i));
         } else if (isa<ConstantAggregateZero>(left)) {
+          // We need to handle the all zero case, e.g.,
+          // %ret = fsub <2 x float> <float -0.000000e+00, float -0.000000e+00>, %x
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
+        } else if (isa<UndefValue>(left)) {
+          // If undef, we set 0 for safeguards, e.g.,
+          // %ret = fsub <4 x float> undef, %x
           printSimpleInstruction("iconst_0");
           printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
         } else {
@@ -277,7 +284,7 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
       if (const Constant *c = dyn_cast<Constant>(right)) {
         if (const ConstantVector *vec = dyn_cast<ConstantVector>(right)) {
           if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
-            // In case of undef, we set 0
+            // In case of undef, we set 0 for safeguards
             printSimpleInstruction("iconst_0");
             printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
           } else {
@@ -286,6 +293,13 @@ void JVMWriter::printArithmeticInstruction(unsigned int op, const Value *left, c
         } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
           printValueLoad(vec->getElementAsConstant(i));
         } else if (isa<ConstantAggregateZero>(right)) {
+          // We need to handle the all zero case, e.g.,
+          // %ret = fsub <2 x float> %x, <float -0.000000e+00, float -0.000000e+00>
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
+        } else if (isa<UndefValue>(right)) {
+          // If undef, we set 0 for safeguards, e.g.,
+          // %ret = fsub <4 x float> %x, undef
           printSimpleInstruction("iconst_0");
           printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
         } else {
