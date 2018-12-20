@@ -264,6 +264,52 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       val alloca9 = LLJVMUtils.getMethod(clazz, "_alloca9")
       assert(VMemory.isValidStackAddress(alloca9.invoke(obj).asInstanceOf[Long]))
 
+      // alloca10 - <4 x double>*
+      val alloca10 = LLJVMUtils.getMethod(clazz, "_alloca10")
+      val result10 = alloca10.invoke(obj).asInstanceOf[Long]
+      assert(VMemory.isValidStackAddress(result10))
+      assert(Platform.getDouble(null, result10) === 1.0)
+      assert(Platform.getDouble(null, result10 + 8) === 2.0)
+      assert(Platform.getDouble(null, result10 + 16) === 3.0)
+      assert(Platform.getDouble(null, result10 + 24) === 4.0)
+
+      // alloca11 - <4 x double>*
+      val alloca11 = LLJVMUtils.getMethod(clazz, "_alloca11")
+      val result11 = alloca11.invoke(obj).asInstanceOf[Long]
+      assert(VMemory.isValidStackAddress(result11))
+      assert(Platform.getDouble(null, result11) === 5.0)
+      assert(Platform.getDouble(null, result11 + 8) === 0.0)  // undef
+      assert(Platform.getDouble(null, result11 + 16) === 0.0) // undef
+      assert(Platform.getDouble(null, result11 + 24) === 0.0) // undef
+
+      // alloca12 - <4 x double>*
+      val alloca12 = LLJVMUtils.getMethod(clazz, "_alloca12")
+      val result12 = alloca12.invoke(obj).asInstanceOf[Long]
+      assert(VMemory.isValidStackAddress(result12))
+      assert(Platform.getDouble(null, result12) === 0.0)      // undef
+      assert(Platform.getDouble(null, result12 + 8) === 0.0)  // undef
+      assert(Platform.getDouble(null, result12 + 16) === 0.0) // undef
+      assert(Platform.getDouble(null, result12 + 24) === 0.0) // undef
+
+      // alloca13 - <4 x double>* - aggregate zero
+      val alloca13 = LLJVMUtils.getMethod(clazz, "_alloca13")
+      val result13 = alloca13.invoke(obj).asInstanceOf[Long]
+      assert(VMemory.isValidStackAddress(result13))
+      assert(Platform.getDouble(null, result13) === 0.0)
+      assert(Platform.getDouble(null, result13 + 8) === 0.0)
+      assert(Platform.getDouble(null, result13 + 16) === 0.0)
+      assert(Platform.getDouble(null, result13 + 24) === 0.0)
+
+      // alloca14 - <4 x double>*
+      val alloca14 = LLJVMUtils.getMethod(clazz, "_alloca14", Seq(jLong.TYPE): _*)
+      val args14 = ArrayUtils.addressOf(Array(3.0, 1.0, 2.0, 0.0))
+      val result14 = alloca14.invoke(obj, Seq(new jLong(args14)): _*).asInstanceOf[Long]
+      assert(VMemory.isValidStackAddress(result14))
+      assert(Platform.getDouble(null, result14) === 3.0)
+      assert(Platform.getDouble(null, result14 + 8) === 1.0)
+      assert(Platform.getDouble(null, result14 + 16) === 2.0)
+      assert(Platform.getDouble(null, result14 + 24) === 0.0)
+
       // Inf/NaN for float values
       val plus_finf = LLJVMUtils.getMethod(clazz, "_plus_finf")
       assert(plus_finf.invoke(obj) === Float.PositiveInfinity)

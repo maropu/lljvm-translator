@@ -35,7 +35,6 @@ void JVMWriter::printValueLoad(const Value *v) {
       printSimpleInstruction("ldc", '"' + sig + '"');
     }
   } else if (isa<GlobalVariable>(v)) {
-    const Type *ty = cast<PointerType>(v->getType())->getElementType();
     if (externRefs.count(v)) {
       std::string funcName;
       raw_string_ostream strbuf(funcName);
@@ -122,9 +121,57 @@ void JVMWriter::printIndirectLoad(const Type *ty) {
  * Stores a value at the given address.
  */
 void JVMWriter::printIndirectStore(const Value *ptr, const Value *val) {
-  printValueLoad(ptr);
-  printValueLoad(val);
-  printIndirectStore(val->getType());
+  const PointerType *pTy = cast<PointerType>(ptr->getType());
+  if (const VectorType *vecTy = dyn_cast<VectorType>(pTy->getElementType())) {
+    for (int i = 0; i < vecTy->getNumElements(); i++) {
+      // Moves the pointer forward
+      printValueLoad(ptr);
+      int elemSize = getTypeAllocSize(vecTy->getElementType());
+      printSimpleInstruction("ldc2_w", utostr(i * elemSize));
+      printSimpleInstruction("ladd");
+
+      // Loads a value in a vector
+      if (const Constant *c = dyn_cast<Constant>(val)) {
+        if (const ConstantVector *vec = dyn_cast<ConstantVector>(val)) {
+          if (const UndefValue *undef = dyn_cast<UndefValue>(vec->getAggregateElement(i))) {
+            // In case of undef, we set 0
+            printSimpleInstruction("iconst_0");
+            printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
+          } else {
+            printValueLoad(vec->getAggregateElement(i));
+          }
+        } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(val)) {
+          printValueLoad(vec->getElementAsConstant(i));
+        } else if (isa<ConstantAggregateZero>(val)) {
+          // We need to handle the all zero case, e.g.,
+          // store <2 x double> <double 0.000000e+00, double 0.000000e+00>, <2 x double>* %1, align 8
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
+        } else if (isa<UndefValue>(val)) {
+          // If undef, we set 0 for safe-guards, e.g.,
+          // store <4 x double> undef, <4 x double>* %1, align 8
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(vecTy->getElementType(), true), "i");
+        } else {
+          std::stringstream err_msg;
+          err_msg << "Unknown constant value type: Type=" << getTypeIDName(val->getType());
+          lljvm_unreachable(err_msg.str());
+        }
+      } else {
+        // We assume a pointer case here
+        printValueLoad(val);
+        printSimpleInstruction("ldc2_w", utostr(i * elemSize));
+        printSimpleInstruction("ladd");
+        printIndirectLoad(vecTy->getElementType());
+      }
+
+      printIndirectStore(vecTy->getElementType());
+    }
+  } else {
+    printValueLoad(ptr);
+    printValueLoad(val);
+    printIndirectStore(val->getType());
+  }
 }
 
 /**

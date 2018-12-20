@@ -178,8 +178,7 @@ class NumPySuite extends PyFuncTest {
     }
   }
 
-  // TODO: Fix the error: (file=../const.cc line=134) Invalid ConstantDataVector value: Value=_
-  ignore("ones") {
+  test("ones") {
     val result1 = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_ones1_test-cfunc-float64.bc",
       source = s"$basePath/numpy_ones1_test.py",
@@ -199,13 +198,12 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(2), new jLong(2))
     )
-    val ones2 = new PyArrayHolder(result2)
+    val ones2 = new PyArrayHolder(result2, 2)
     assert(ones2.doubleArray() === Seq(1.0, 1.0, 1.0, 1.0))
     assert(Seq("2d python array", "nitem=4", "itemsize=8", "shape=[2,2]", "stride=[16,8]")
       .forall(ones2.toDebugString.contains))
   }
 
-  // TODO: Fix the error: (file=../const.cc line=134) Invalid ConstantDataVector value: Value=_
   ignore("ones_like") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f))
     val result1 = TestUtils.doTestWithFuncName[Long](
@@ -228,7 +226,7 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )
-    val ones_like2 = new PyArrayHolder(result2)
+    val ones_like2 = new PyArrayHolder(result2, 2)
     assert(ones_like2.doubleArray() === Seq(4.0, 5.0, 6.0, 7.0))
     assert(Seq("2d python array", "nitem=4", "itemsize=8", "shape=[2,2]", "stride=[16,8]")
       .forall(ones_like2.toDebugString.contains))

@@ -229,6 +229,12 @@ void JVMWriter::printIntrinsicCall(const IntrinsicInst *inst) {
       // Ignores debugging intrinsics
       break;
 
+    // Other intrinsics that we can ignore
+    case Intrinsic::lifetime_start:
+    case Intrinsic::lifetime_end:
+    case Intrinsic::trap:
+      break;
+
     default:
       std::stringstream err_msg;
       err_msg << "Unsupported intrinsic function: Name=" << Intrinsic::getName(inst->getIntrinsicID()).str();

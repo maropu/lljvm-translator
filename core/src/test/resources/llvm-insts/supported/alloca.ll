@@ -99,3 +99,33 @@ define double @dnan() {
   %ret = load double, double* %1, align 4
   ret double %ret
 }
+
+define <4 x double>* @alloca10() {
+  %1 = alloca <4 x double>, align 8
+  store <4 x double> <double 1.000000e+00, double 2.000000e+00, double 3.000000e+00, double 4.000000e+00>, <4 x double>* %1, align 8
+  ret <4 x double>* %1
+}
+
+define <4 x double>* @alloca11() {
+  %1 = alloca <4 x double>, align 8
+  store <4 x double> <double 5.000000e+00, double undef, double undef, double undef>, <4 x double>* %1, align 8
+  ret <4 x double>* %1
+}
+
+define <4 x double>* @alloca12() {
+  %1 = alloca <4 x double>, align 8
+  store <4 x double> undef, <4 x double>* %1, align 8
+  ret <4 x double>* %1
+}
+
+define <4 x double>* @alloca13() {
+  %1 = alloca <4 x double>, align 8
+  store <4 x double> <double 0.000000e+00, double 0.000000e+00, double 0.000000e+00, double 0.000000e+00>, <4 x double>* %1, align 8
+  ret <4 x double>* %1
+}
+
+define <4 x double>* @alloca14(<4 x double> %x) {
+  %1 = alloca <4 x double>, align 8
+  store <4 x double> %x, <4 x double>* %1, align 8
+  ret <4 x double>* %1
+}
