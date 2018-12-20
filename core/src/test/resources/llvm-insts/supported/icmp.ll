@@ -45,3 +45,18 @@ define <4 x i1> @icmp9(<4 x i32> %x) {
   %ret = icmp slt <4 x i32> <i32 4, i32 undef, i32 undef, i32 undef>, %x ; left = ConstantVector
   ret <4 x i1> %ret
 }
+
+define <4 x i1> @icmp10(<4 x i32> %x) {
+  %ret = icmp slt <4 x i32> undef, %x
+  ret <4 x i1> %ret
+}
+
+define <4 x i1> @icmp11(<4 x i32> %x) {
+  %ret = icmp slt <4 x i32> %x, undef
+  ret <4 x i1> %ret
+}
+
+define <4 x i1> @icmp12(<4 x i32> %notused) {
+  %ret = icmp slt <4 x i32> undef, undef
+  ret <4 x i1> %ret
+}

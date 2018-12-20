@@ -523,6 +523,18 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       vectorTypeTest("_icmp9", clazz, obj,
         args = new jLong(ArrayUtils.addressOf(Array(3, 5, 1, 8))) :: Nil,
         expected = false :: Nil)
+      // left undef value case
+      vectorTypeTest("_icmp10", clazz, obj,
+        args = new jLong(ArrayUtils.addressOf(Array(-1, 1, 1, -1))) :: Nil,
+      expected = false :: true :: true :: false :: Nil)
+      // right undef value case
+      vectorTypeTest("_icmp11", clazz, obj,
+        args = new jLong(ArrayUtils.addressOf(Array(-1, 1, 1, -1))) :: Nil,
+      expected = true :: false :: false :: true :: Nil)
+      // both undef value case
+      vectorTypeTest("_icmp12", clazz, obj,
+        args = new jLong(0L) :: Nil,
+        expected = false :: false :: false :: false :: Nil)
     }),
 
     ("fcmp", (clazz, obj) => {

@@ -104,6 +104,13 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
         } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(left)) {
           printValueLoad(vec->getElementAsConstant(i));
         } else if (isa<ConstantAggregateZero>(left)) {
+          // We need to handle the all zero case, e.g.,
+          // %ret = icmp slt <2 x i32> <i32 0, i32 0>, %x
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(leftVecTy->getElementType(), true), "i");
+        } else if (isa<UndefValue>(left)) {
+          // If undef, we set 0 for safeguards, e.g.,
+          // %ret = icmp slt <4 x i32> undef, %x
           printSimpleInstruction("iconst_0");
           printCastInstruction(getTypePrefix(leftVecTy->getElementType(), true), "i");
         } else {
@@ -131,6 +138,13 @@ void JVMWriter::printCmpInstruction(unsigned int predicate, const Value *left, c
         } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(right)) {
           printValueLoad(vec->getElementAsConstant(i));
         } else if (isa<ConstantAggregateZero>(right)) {
+          // We need to handle the all zero case, e.g.,
+          // %ret = icmp slt <2 x i32> %x, <i32 0, i32 0>
+          printSimpleInstruction("iconst_0");
+          printCastInstruction(getTypePrefix(rightVecTy->getElementType(), true), "i");
+        } else if (isa<UndefValue>(right)) {
+          // We need to handle the all zero case, e.g.,
+          // %ret = icmp slt <4 x i32> %x, undef
           printSimpleInstruction("iconst_0");
           printCastInstruction(getTypePrefix(rightVecTy->getElementType(), true), "i");
         } else {
