@@ -214,7 +214,7 @@ class NumPySuite extends PyFuncTest {
       arguments = Seq(new jLong(floatX.addr()))
     )
     val ones_like1 = new PyArrayHolder(result1)
-    assert(ones_like1.floatArray() === Seq(1.0f, 2.0f, 3.0f))
+    assert(ones_like1.floatArray() === Seq(1.0f, 1.0f, 1.0f))
     assert(Seq("1d python array", "nitem=3", "itemsize=4", "shape=[3]", "stride=[4]")
       .forall(ones_like1.toDebugString.contains))
 
@@ -227,7 +227,7 @@ class NumPySuite extends PyFuncTest {
       arguments = Seq(new jLong(doubleX.addr()))
     )
     val ones_like2 = new PyArrayHolder(result2, 2)
-    assert(ones_like2.doubleArray() === Seq(4.0, 5.0, 6.0, 7.0))
+    assert(ones_like2.doubleArray() === Seq(1.0, 1.0, 1.0, 1.0))
     assert(Seq("2d python array", "nitem=4", "itemsize=8", "shape=[2,2]", "stride=[16,8]")
       .forall(ones_like2.toDebugString.contains))
   }
