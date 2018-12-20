@@ -31,13 +31,15 @@ void JVMWriter::printPHICopy(const BasicBlock *src, const BasicBlock *dest) {
   for (BasicBlock::const_iterator i = dest->begin(); isa<PHINode>(i); i++) {
     const PHINode *phi = cast<PHINode>(i);
     const Value *val = phi->getIncomingValueForBlock(src);
-    // TODO: Handles vector values for `val`
+
     if (isa<UndefValue>(val)) {
       continue;
-    } else if (const ConstantDataVector *vec = dyn_cast<ConstantDataVector>(val)) {
-      printSimpleInstruction("lconst_0");
-    } else if (const ConstantAggregateZero *vec = dyn_cast<ConstantAggregateZero>(val)) {
-      printSimpleInstruction("lconst_0");
+    } else if (isa<ConstantDataVector>(val) || isa<ConstantAggregateZero>(val)) {
+    // TODO: Is it ok not to take care of other composite tyoes, e.g., StructType?
+    // } else if (isa<CompositeType>(val->getType())) {
+    //   printSimpleInstruction("lconst_0");
+      printSimpleInstruction("bipush", utostr(getTypeAllocSize(val->getType())));
+      printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
     } else {
       printValueLoad(val);
     }

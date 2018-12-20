@@ -199,25 +199,26 @@ class NumbaExampleSuite extends PyFuncTest {
     assert(doubleArray(result2) === Seq(255.0, 1.0, 255.0, 1.0))
   }
 
-  ignore("numba - pi (NEEDS TO BE FIXED)") {
+  test("numba - pi") {
     // float32(int32)
-    val result1 = TestUtils.doTest[Float](
+    val result1 = TestUtils.doTestWithFuncName[Float](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/pi.py",
+      funcName = "_cfunc__ZN14numba_examples2pi12calc_pi_2482Ei",
       argTypes = Seq(jInt.TYPE),
-      arguments = Seq(new jInt(512))
+      arguments = Seq(new jInt(60))
     )
-    assert(result1 === 0.0f)
+    assert(result1 > 0.0f)
 
     // float64(int64)
     val result2 = TestUtils.doTestWithFuncName[Double](
       bitcode = s"$basePath/calc_pi-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/pi.py",
-      funcName = "_cfunc__ZN14numba_examples2pi12calc_pi_2476Ex",
+      funcName = "_cfunc__ZN14numba_examples2pi12calc_pi_2487Ex",
       argTypes = Seq(jLong.TYPE),
-      arguments = Seq(new jLong(512))
+      arguments = Seq(new jLong(60))
     )
-    assert(result2 === 0.0)
+    assert(result2 > 0.0)
   }
 
   test("NumPy - sum") {
