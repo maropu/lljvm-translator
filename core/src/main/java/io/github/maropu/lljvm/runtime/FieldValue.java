@@ -42,6 +42,10 @@ public final class FieldValue {
     externalFieldValues.remove(fieldName);
   }
 
+  public static boolean exist(String fieldName) {
+    return externalFieldValues.containsKey(fieldName);
+  }
+
   public static void clear() {
     externalFieldValues.clear();
   }

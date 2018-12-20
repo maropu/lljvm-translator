@@ -45,10 +45,19 @@ static void throwException(JNIEnv *env, jobject& self, const std::string& err_ms
   env->CallVoidMethod(self, mth_throwex, env->NewStringUTF(err_msg.c_str()));
 }
 
-static bool existsInRuntime(JNIEnv *env, jobject& self, const std::string& methodSignature) {
+static bool checkIfFieldExistInRuntime(JNIEnv *env, jobject& self, const std::string& fieldName) {
   jclass c = env->FindClass("io/github/maropu/lljvm/LLJVMNative");
   assert(c != 0);
-  jmethodID mth_exists = env->GetMethodID(c, "existsInRuntime", "(Ljava/lang/String;)Z");
+  jmethodID mth_exists = env->GetMethodID(c, "checkIfFieldExistInRuntime", "(Ljava/lang/String;)Z");
+  assert(mth_exists != 0);
+  bool exists = (bool) env->CallIntMethod(self, mth_exists, env->NewStringUTF(fieldName.c_str()));
+  return exists;
+}
+
+static bool checkIfFunctionExistInRuntime(JNIEnv *env, jobject& self, const std::string& methodSignature) {
+  jclass c = env->FindClass("io/github/maropu/lljvm/LLJVMNative");
+  assert(c != 0);
+  jmethodID mth_exists = env->GetMethodID(c, "checkIfFunctionExistInRuntime", "(Ljava/lang/String;)Z");
   assert(mth_exists != 0);
   bool exists = (bool) env->CallIntMethod(self, mth_exists, env->NewStringUTF(methodSignature.c_str()));
   return exists;
@@ -155,8 +164,14 @@ const std::string toJVMAssemblyCode(
     for (DenseSet<const Value*>::const_iterator i = externRefs.begin(), e = externRefs.end(); i != e; i++) {
       if (const Function *f = dyn_cast<Function>(*i)) {
         const std::string methodSignature = jvmWriter->getFunctionSignature(f);
-        if (!existsInRuntime(env, *self, methodSignature)) {
+        if (!checkIfFunctionExistInRuntime(env, *self, methodSignature)) {
           throwException(env, *self, "Can't find a function in LLJVM runtime: " + methodSignature);
+        }
+      } else {
+        // Otherwise, this is an external reference to a field value
+        const std::string& fieldName = (*i)->getName().str();
+        if (!checkIfFieldExistInRuntime(env, *self, fieldName)) {
+          throwException(env, *self, "Can't find a field value in LLJVM runtime: " + fieldName);
         }
       }
     }

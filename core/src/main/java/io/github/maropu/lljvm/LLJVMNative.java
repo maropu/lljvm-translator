@@ -19,6 +19,7 @@ package io.github.maropu.lljvm;
 
 import java.io.IOException;
 
+import io.github.maropu.lljvm.runtime.FieldValue;
 import io.github.maropu.lljvm.runtime.Function;
 
 /**
@@ -43,8 +44,13 @@ public class LLJVMNative {
   public native String asLLVMAssemblyCode(
     byte[] bitcode, int optLevel, int sizeLevel) throws IOException;
 
+  // Checks if the given field exists in LLJVM runtime
+  public boolean checkIfFieldExistInRuntime(String fieldName) {
+    return FieldValue.exist("_" + fieldName);
+  }
+
   // Checks if the given method exists in LLJVM runtime
-  public boolean existsInRuntime(String methodSignature) {
+  public boolean checkIfFunctionExistInRuntime(String methodSignature) {
     return Function.exist(methodSignature);
   }
 

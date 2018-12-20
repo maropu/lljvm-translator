@@ -211,6 +211,18 @@ class LLJVMNativeSuite extends LLJVMFuncSuite {
        """.stripMargin)
   }
 
+  test("No field value exists in LLJVM runtime") {
+    val errMsg = intercept[LLJVMRuntimeException] {
+      // @no_existent_field = external global i32
+      //
+      // define i32* @no_field_exists_in_runtime() {
+      //   ret i32* @no_existent_field
+      // }
+      TestUtils.loadClassFromBitcodeInResource("no_field_exists_in_runtime.bc")
+    }.getMessage
+    assert(errMsg.contains("Can't find a field value in LLJVM runtime: no_existent_field"))
+  }
+
   test("No function exists in LLJVM runtime") {
     val errMsg = intercept[LLJVMRuntimeException] {
       // define i32 @no_function_exists_in_runtime() {
