@@ -204,12 +204,12 @@ class NumPySuite extends PyFuncTest {
       .forall(ones2.toDebugString.contains))
   }
 
-  ignore("ones_like") {
+  test("ones_like") {
     val floatX = pyArray1.`with`(Array(1.0f, 2.0f, 3.0f))
     val result1 = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_ones_like_test-cfunc-float32.bc",
       source = s"$basePath/numpy_ones_like_test.py",
-      funcName = "",
+      funcName = "_cfunc__ZN20numpy_ones_like_test25numpy_ones_like_test_2460E5ArrayIfLi1E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
@@ -222,7 +222,7 @@ class NumPySuite extends PyFuncTest {
     val result2 = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_ones_like_test-cfunc-float64.bc",
       source = s"$basePath/numpy_ones_like_test.py",
-      funcName = "",
+      funcName = "_cfunc__ZN20numpy_ones_like_test25numpy_ones_like_test_2462E5ArrayIdLi2E1A7mutable7alignedE",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )
