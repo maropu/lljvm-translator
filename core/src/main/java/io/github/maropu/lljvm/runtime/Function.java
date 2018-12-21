@@ -28,17 +28,17 @@ import java.util.concurrent.ExecutionException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import io.github.maropu.lljvm.LLJVMUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.maropu.lljvm.LLJVMRuntimeException;
+import io.github.maropu.lljvm.LLJVMUtils;
 import io.github.maropu.lljvm.util.Pair;
 import io.github.maropu.lljvm.util.ReflectionUtils;
 
 public final class Function {
 
-  private static final Logger logger = LoggerFactory.getLogger(FieldValue.class);
+  private static final Logger logger = LoggerFactory.getLogger(Function.class);
 
   private static Map<String, Method> externalFuncPointers = new ConcurrentHashMap<>();
   private static LoadingCache<Pair<String, String>, Method> methodCache =

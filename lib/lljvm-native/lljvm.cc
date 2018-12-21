@@ -285,3 +285,10 @@ JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asLLVMAssembly
     return env->NewStringUTF("");
   }
 }
+
+JNIEXPORT jboolean JNICALL Java_io_github_maropu_lljvm_LLJVMNative_verifyMemoryAddress
+    (JNIEnv *env, jobject self, jlong base, jlong size) {
+  // TODO: Needs more strict checks for memory accesses
+  return base > 0 && size > 0;
+}
+

@@ -240,46 +240,46 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       val alloca1 = LLJVMUtils.getMethod(clazz, "_alloca1", Seq(jInt.TYPE): _*)
       assert(alloca1.invoke(obj, Seq(new jInt(6)): _*) === 10)
 
-      // alloca2 - { i32*, i64*, <2 x i32> }*
+      // alloca2 - { i32*, i64*, <3 x i32> }*
       val alloca2 = LLJVMUtils.getMethod(clazz, "_alloca2")
       val result2 = alloca2.invoke(obj).asInstanceOf[Long]
-      assert(VMemory.isValidStackAddress(result2))
+      assert(VMemory.verifyStackAddress(result2, 28))
 
       // alloca3 - { i32*, <2 x i32> }*
       val alloca3 = LLJVMUtils.getMethod(clazz, "_alloca3")
       val result3 = alloca3.invoke(obj).asInstanceOf[Long]
-      assert(VMemory.isValidStackAddress(result3))
+      assert(VMemory.verifyStackAddress(result3, 16))
 
       // alloca4 - { i32*, i64*, { i32, i64} }*
       val alloca4 = LLJVMUtils.getMethod(clazz, "_alloca4")
       val result4 = alloca4.invoke(obj).asInstanceOf[Long]
-      assert(VMemory.isValidStackAddress(result4))
+      assert(VMemory.verifyStackAddress(result4, 28))
 
       // alloca5 - { i32*, i64*, [3 x i32] }*
       val alloca5 = LLJVMUtils.getMethod(clazz, "_alloca5")
       val result5 = alloca5.invoke(obj).asInstanceOf[Long]
-      assert(VMemory.isValidStackAddress(result5))
+      assert(VMemory.verifyStackAddress(result5, 28))
 
       // alloca6 - [3 x i32]*
       val alloca6 = LLJVMUtils.getMethod(clazz, "_alloca6")
-      assert(VMemory.isValidStackAddress(alloca6.invoke(obj).asInstanceOf[Long]))
+      assert(VMemory.verifyStackAddress(alloca6.invoke(obj).asInstanceOf[Long], 12))
 
       // alloca7 - [3 x i32]*
       val alloca7 = LLJVMUtils.getMethod(clazz, "_alloca7")
-      assert(VMemory.isValidStackAddress(alloca7.invoke(obj).asInstanceOf[Long]))
+      assert(VMemory.verifyStackAddress(alloca7.invoke(obj).asInstanceOf[Long], 12))
 
       // alloca8 - <3 x i32>*
       val alloca8 = LLJVMUtils.getMethod(clazz, "_alloca8")
-      assert(VMemory.isValidStackAddress(alloca8.invoke(obj).asInstanceOf[Long]))
+      assert(VMemory.verifyStackAddress(alloca8.invoke(obj).asInstanceOf[Long], 12))
 
       // alloca9 - <3 x i32>*
       val alloca9 = LLJVMUtils.getMethod(clazz, "_alloca9")
-      assert(VMemory.isValidStackAddress(alloca9.invoke(obj).asInstanceOf[Long]))
+      assert(VMemory.verifyStackAddress(alloca9.invoke(obj).asInstanceOf[Long], 12))
 
       // alloca10 - <4 x double>*
       val alloca10 = LLJVMUtils.getMethod(clazz, "_alloca10")
       val result10 = alloca10.invoke(obj).asInstanceOf[Long]
-      assert(VMemory.isValidStackAddress(result10))
+      assert(VMemory.verifyStackAddress(result10, 32))
       assert(Platform.getDouble(null, result10) === 1.0)
       assert(Platform.getDouble(null, result10 + 8) === 2.0)
       assert(Platform.getDouble(null, result10 + 16) === 3.0)
@@ -288,7 +288,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       // alloca11 - <4 x double>*
       val alloca11 = LLJVMUtils.getMethod(clazz, "_alloca11")
       val result11 = alloca11.invoke(obj).asInstanceOf[Long]
-      assert(VMemory.isValidStackAddress(result11))
+      assert(VMemory.verifyStackAddress(result11, 32))
       assert(Platform.getDouble(null, result11) === 5.0)
       assert(Platform.getDouble(null, result11 + 8) === 0.0)  // undef
       assert(Platform.getDouble(null, result11 + 16) === 0.0) // undef
@@ -297,7 +297,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       // alloca12 - <4 x double>*
       val alloca12 = LLJVMUtils.getMethod(clazz, "_alloca12")
       val result12 = alloca12.invoke(obj).asInstanceOf[Long]
-      assert(VMemory.isValidStackAddress(result12))
+      assert(VMemory.verifyStackAddress(result12, 32))
       assert(Platform.getDouble(null, result12) === 0.0)      // undef
       assert(Platform.getDouble(null, result12 + 8) === 0.0)  // undef
       assert(Platform.getDouble(null, result12 + 16) === 0.0) // undef
@@ -306,7 +306,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       // alloca13 - <4 x double>* - aggregate zero
       val alloca13 = LLJVMUtils.getMethod(clazz, "_alloca13")
       val result13 = alloca13.invoke(obj).asInstanceOf[Long]
-      assert(VMemory.isValidStackAddress(result13))
+      assert(VMemory.verifyStackAddress(result13, 32))
       assert(Platform.getDouble(null, result13) === 0.0)
       assert(Platform.getDouble(null, result13 + 8) === 0.0)
       assert(Platform.getDouble(null, result13 + 16) === 0.0)
@@ -316,7 +316,7 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
       val alloca14 = LLJVMUtils.getMethod(clazz, "_alloca14", Seq(jLong.TYPE): _*)
       val args14 = ArrayUtils.addressOf(Array(3.0, 1.0, 2.0, 0.0))
       val result14 = alloca14.invoke(obj, Seq(new jLong(args14)): _*).asInstanceOf[Long]
-      assert(VMemory.isValidStackAddress(result14))
+      assert(VMemory.verifyStackAddress(result14, 32))
       assert(Platform.getDouble(null, result14) === 3.0)
       assert(Platform.getDouble(null, result14 + 8) === 1.0)
       assert(Platform.getDouble(null, result14 + 16) === 2.0)

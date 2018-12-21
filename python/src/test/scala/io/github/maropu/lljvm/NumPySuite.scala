@@ -22,7 +22,7 @@ import java.lang.reflect.InvocationTargetException
 
 import io.github.maropu.lljvm.util.python.PyArrayHolder
 
-// TODO: Adds more tests for NumPy operations, see: https://docs.scipy.org/doc/numpy/reference/
+// TODO: Adds more tests for NumPy operations, see: https://docs.scipy.org/doc/numpy/reference/routines.html
 class NumPySuite extends PyFuncTest {
 
   test("transpose") {

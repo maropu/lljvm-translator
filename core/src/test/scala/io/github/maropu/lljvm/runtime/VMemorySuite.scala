@@ -25,6 +25,7 @@ import org.scalatest.concurrent.TimeLimits
 import org.scalatest.time.SpanSugar._
 
 import io.github.maropu.lljvm.{LLJVMFuncSuite, LLJVMRuntimeException}
+import io.github.maropu.lljvm.runtime.VMemory.InvalidMemoryAccessException
 
 class VMemorySuite extends LLJVMFuncSuite with TimeLimits {
 
@@ -35,6 +36,7 @@ class VMemorySuite extends LLJVMFuncSuite with TimeLimits {
 
   override def afterAll(): Unit = {
     VMemory.destroyStackFrame()
+    VMemory.resetHeap()
     super.afterAll()
   }
 
@@ -173,5 +175,51 @@ class VMemorySuite extends LLJVMFuncSuite with TimeLimits {
       threads.foreach(t => service.submit(t))
       service.shutdown()
     }
+  }
+
+  test("invalid memory access") {
+    def testMemoryAccess(f: => Any, msg: String) {
+      val errMsg = intercept[InvalidMemoryAccessException] { f }.getMessage
+      assert(errMsg.contains("Invalid memory access detected: " + msg))
+    }
+
+    // load functions
+    testMemoryAccess(VMemory.load_f32(0), "[0x0, 0x4)")
+    testMemoryAccess(VMemory.load_f64(0), "[0x0, 0x8)")
+    testMemoryAccess(VMemory.load_i1(0), "[0x0, 0x1)")
+    testMemoryAccess(VMemory.load_i8(0), "[0x0, 0x1)")
+    testMemoryAccess(VMemory.load_i16(0), "[0x0, 0x2)")
+    testMemoryAccess(VMemory.load_i32(0), "[0x0, 0x4)")
+    testMemoryAccess(VMemory.load_i64(0), "[0x0, 0x8)")
+    testMemoryAccess(VMemory.load_i64(0), "[0x0, 0x8)")
+
+    // store functions
+    testMemoryAccess(VMemory.store(0, 0.0f), "[0x0, 0x4)")
+    testMemoryAccess(VMemory.store(0, 0.0), "[0x0, 0x8)")
+    testMemoryAccess(VMemory.store(0, true), "[0x0, 0x1)")
+    testMemoryAccess(VMemory.store(0, 0.toByte), "[0x0, 0x1)")
+    testMemoryAccess(VMemory.store(0, 0.toShort), "[0x0, 0x2)")
+    testMemoryAccess(VMemory.store(0, 0), "[0x0, 0x4)")
+    testMemoryAccess(VMemory.store(0, 0L), "[0x0, 0x8)")
+    testMemoryAccess(VMemory.store(0, "abcde".getBytes), "[0x0, 0x5)")
+
+    // pack functions
+    testMemoryAccess(VMemory.pack(0, 0.0f), "[0x0, 0x4)")
+    testMemoryAccess(VMemory.pack(0, 0.0), "[0x0, 0x8)")
+    testMemoryAccess(VMemory.pack(0, true), "[0x0, 0x1)")
+    testMemoryAccess(VMemory.pack(0, 0.toByte), "[0x0, 0x1)")
+    testMemoryAccess(VMemory.pack(0, 0.toShort), "[0x0, 0x2)")
+    testMemoryAccess(VMemory.pack(0, 0), "[0x0, 0x4)")
+    testMemoryAccess(VMemory.pack(0, 0L), "[0x0, 0x8)")
+    testMemoryAccess(VMemory.pack(0, "abcde"), "[0x0, 0x5)")
+    testMemoryAccess(VMemory.pack(0, "abcde".toCharArray), "[0x0, 0x5)")
+
+    // other memory operations
+    testMemoryAccess(VMemory.memset(0, 0.toByte, 8, 8), "[0x0, 0x8)")
+    testMemoryAccess(VMemory.memset(0, 0.toByte, 8L, 8), "[0x0, 0x8)")
+    testMemoryAccess(VMemory.zero(0, 8), "[0x0, 0x8)")
+    val validMemoryAddr = VMemory.allocateData(8)
+    testMemoryAccess(VMemory.memcpy(0, validMemoryAddr, 8), "[0x0, 0x8)")
+    testMemoryAccess(VMemory.memcpy(validMemoryAddr, 0, 8), "[0x0, 0x8)")
   }
 }

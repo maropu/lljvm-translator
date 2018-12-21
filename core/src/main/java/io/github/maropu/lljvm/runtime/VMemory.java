@@ -19,6 +19,13 @@ package io.github.maropu.lljvm.runtime;
 
 import java.util.Stack;
 
+import com.google.common.annotations.VisibleForTesting;
+import io.github.maropu.lljvm.LLJVMUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.github.maropu.lljvm.LLJVMLoader;
+import io.github.maropu.lljvm.LLJVMNative;
 import io.github.maropu.lljvm.LLJVMRuntimeException;
 import io.github.maropu.lljvm.util.Pair;
 import io.github.maropu.lljvm.util.ReflectionUtils;
@@ -30,8 +37,12 @@ import io.github.maropu.lljvm.unsafe.Platform;
  */
 public final class VMemory {
 
+  private static final Logger logger = LoggerFactory.getLogger(VMemory.class);
+
   // 8-byte alignment for this memory model
   private static final int ALIGNMENT = 8;
+
+  private VMemory() {}
 
   private static class VMemFragment {
     private final long base;
@@ -39,32 +50,39 @@ public final class VMemory {
 
     private long currentOffset;
 
-    public VMemFragment(long baseAddr, long numBytes) {
+    VMemFragment(long baseAddr, long numBytes) {
       this.base = baseAddr;
       this.numBytes = numBytes;
       this.currentOffset = 0;
     }
 
-    public long getCapacity() {
+    long getCapacity() {
       return numBytes;
     }
 
-    public long getRemainingBytes() {
+    long getRemainingBytes() {
       return getCapacity() - currentOffset;
     }
 
-    public long getBaseAddr() {
+    long getBaseAddr() {
       return base;
     }
 
-    public long getCurrentAddr() {
+    long getCurrentAddr() {
       return base + currentOffset;
-  }
+    }
 
-    public void setCurrentAddr(long addr) {
+    void setCurrentAddr(long addr) {
       assert(base <= addr && addr <= base + numBytes);
       this.currentOffset = addr - base;
     }
+  }
+
+  /**
+   * Return the least address greater than offset which is a multiple of align.
+   */
+  private static long alignOffsetUp(long offset, int align) {
+    return ((offset - 1) & ~(align - 1)) + align;
   }
 
   // For stack
@@ -87,42 +105,9 @@ public final class VMemory {
     }
   };
 
-  // For heap
-  private static ThreadLocal<VMemFragment> _heap = new ThreadLocal<VMemFragment>() {
-
-     @Override
-     public VMemFragment initialValue() {
-       final String sizeStr = System.getProperty(
-         "maropu.lljvm.runtime.vmem.heapsize", String.valueOf(256 * 1024 * 1024));
-       int size = Integer.parseInt(sizeStr);
-       long baseAddr = Platform.allocateMemory(size + ALIGNMENT);
-       return new VMemFragment(baseAddr , size);
-    }
-
-    @Override
-    public void remove() {
-      Platform.freeMemory(this.get().getBaseAddr());
-      super.remove();
-    }
-  };
-
-  private VMemory() {}
-
   private static Pair<VMemFragment, Stack<Long>> currentStack() {
     assert(_stack.get() != null);
     return _stack.get();
-  }
-
-  private static VMemFragment currentHeap() {
-    assert(_heap.get() != null);
-    return _heap.get();
-  }
-
-  /**
-   * Return the least address greater than offset which is a multiple of align.
-   */
-  private static long alignOffsetUp(long offset, int align) {
-    return ((offset - 1) & ~(align - 1)) + align;
   }
 
   public static void createStackFrame() {
@@ -152,8 +137,35 @@ public final class VMemory {
     return addr;
   }
 
-  public static void resetHeap() {
-    currentHeap().setCurrentAddr(currentHeap().getBaseAddr());
+  @VisibleForTesting
+  public static boolean verifyStackAddress(long base, long size) {
+    VMemFragment stack = currentStack().getKey();
+    return stack.getBaseAddr() <= base && (base + size) < stack.getBaseAddr() + stack.getCapacity();
+  }
+
+
+  // For heap
+  private static ThreadLocal<VMemFragment> _heap = new ThreadLocal<VMemFragment>() {
+
+     @Override
+     public VMemFragment initialValue() {
+       final String sizeStr = System.getProperty(
+         "maropu.lljvm.runtime.vmem.heapsize", String.valueOf(256 * 1024 * 1024));
+       int size = Integer.parseInt(sizeStr);
+       long baseAddr = Platform.allocateMemory(size + ALIGNMENT);
+       return new VMemFragment(baseAddr , size);
+    }
+
+    @Override
+    public void remove() {
+      Platform.freeMemory(this.get().getBaseAddr());
+      super.remove();
+    }
+  };
+
+  private static VMemFragment currentHeap() {
+    assert(_heap.get() != null);
+    return _heap.get();
   }
 
   /**
@@ -168,19 +180,30 @@ public final class VMemory {
     return addr;
   }
 
-  public static boolean isValidStackAddress(long address) {
-    VMemFragment stack = currentStack().getKey();
-    return stack.getBaseAddr() <= address && address < stack.getBaseAddr() + stack.getCapacity();
+  public static void resetHeap() {
+    currentHeap().setCurrentAddr(currentHeap().getBaseAddr());
   }
 
-  /**
-   * Thrown if an application tries to access an invalid memory address, or
-   * tries to write to a read-only location.
-   */
-  @SuppressWarnings("serial")
-  public static class SegmentationFault extends IllegalArgumentException {
-    public SegmentationFault(long addr) {
-      super("Address = " + addr + " (0x" + Long.toHexString(addr) + ")");
+  private static final LLJVMNative lljvmApi = LLJVMLoader.loadLLJVMApi();
+
+  private static String toMemoryAccessString(long base, long size) {
+    return "[0x" + Long.toHexString(base) + ", 0x" + Long.toHexString(base + size) + ")";
+  }
+
+  private static boolean verifyMemoryAccess(long base, long size) {
+    if (LLJVMUtils.isTesting()) {
+      logger.debug("Trying to access memory in " + toMemoryAccessString(base, size));
+      // TODO: Can't we check memory accesses w/o JNI calls?
+      return lljvmApi.verifyMemoryAddress(base, size);
+    } else {
+      return true;
+    }
+  }
+
+  // LLJVM might have some bugs if this exception thrown
+  static class InvalidMemoryAccessException extends IllegalArgumentException {
+    public InvalidMemoryAccessException(long base, long size) {
+      super("Invalid memory access detected: " + toMemoryAccessString(base, size));
     }
   }
 
@@ -188,10 +211,13 @@ public final class VMemory {
    * Store a double precision floating point number at the given address.
    */
   public static void store(long addr, double value) {
+    if (!verifyMemoryAccess(addr, 8)) {
+      throw new InvalidMemoryAccessException(addr, 8);
+    }
     try {
       Platform.putDouble(null, addr, value);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 8);
     }
   }
 
@@ -199,19 +225,30 @@ public final class VMemory {
    * Store an array of bytes at the given address.
    */
   public static void store(long addr, byte[] bytes) {
-    // TODO: make more efficient by using put(byte[])
-    for (int i = 0; i < bytes.length; i++)
-      store(addr + i, bytes[i]);
+    if (!verifyMemoryAccess(addr, bytes.length)) {
+      throw new InvalidMemoryAccessException(addr, bytes.length);
+    }
+    try {
+      // TODO: make more efficient by using put(byte[])
+      for (int i = 0; i < bytes.length; i++) {
+        Platform.putByte(null, addr + i, bytes[i]);
+      }
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, bytes.length);
+    }
   }
 
   /**
    * Load a boolean value from the given address.
    */
   public static boolean load_i1(long addr) {
+    if (!verifyMemoryAccess(addr, 1)) {
+      throw new InvalidMemoryAccessException(addr, 1);
+    }
     try {
       return Platform.getBoolean(null, addr);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 1);
     }
   }
 
@@ -219,10 +256,13 @@ public final class VMemory {
    * Load a byte from the given address.
    */
   public static byte load_i8(long addr) {
+    if (!verifyMemoryAccess(addr, 1)) {
+      throw new InvalidMemoryAccessException(addr, 1);
+    }
     try {
       return Platform.getByte(null, addr);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 1);
     }
   }
 
@@ -230,10 +270,13 @@ public final class VMemory {
    * Load a 16-bit integer from the given address.
    */
   public static short load_i16(long addr) {
+    if (!verifyMemoryAccess(addr, 2)) {
+      throw new InvalidMemoryAccessException(addr, 2);
+    }
     try {
       return Platform.getShort(null, addr);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 2);
     }
   }
 
@@ -241,10 +284,13 @@ public final class VMemory {
    * Load a 32-bit integer from the given address.
    */
   public static int load_i32(long addr) {
+    if (!verifyMemoryAccess(addr, 4)) {
+      throw new InvalidMemoryAccessException(addr, 4);
+    }
     try {
       return Platform.getInt(null, addr);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 4);
     }
   }
 
@@ -252,10 +298,13 @@ public final class VMemory {
    * Load a 64-bit integer from the given address.
    */
   public static long load_i64(long addr) {
+    if (!verifyMemoryAccess(addr, 8)) {
+      throw new InvalidMemoryAccessException(addr, 8);
+    }
     try {
       return Platform.getLong(null, addr);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 8);
     }
   }
 
@@ -263,12 +312,13 @@ public final class VMemory {
    * Load a single precision floating point number from the given address.
    */
   public static float load_f32(long addr) {
+    if (!verifyMemoryAccess(addr, 4)) {
+      throw new InvalidMemoryAccessException(addr, 4);
+    }
     try {
-      float d = Platform.getFloat(null, addr);
-      return d;
-      // return Platform.getFloat(null, addr);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+      return Platform.getFloat(null, addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 4);
     }
   }
 
@@ -276,10 +326,13 @@ public final class VMemory {
    * Load a double precision floating point number from the given address.
    */
   public static double load_f64(long addr) {
+    if (!verifyMemoryAccess(addr, 8)) {
+      throw new InvalidMemoryAccessException(addr, 8);
+    }
     try {
       return Platform.getDouble(null, addr);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 8);
     }
   }
 
@@ -309,10 +362,13 @@ public final class VMemory {
    * Store a boolean value at the given address.
    */
   public static void store(long addr, boolean value) {
+    if (!verifyMemoryAccess(addr, 1)) {
+      throw new InvalidMemoryAccessException(addr, 1);
+    }
     try {
       Platform.putBoolean(null, addr, value);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 1);
     }
   }
 
@@ -320,10 +376,13 @@ public final class VMemory {
    * Store a byte at the given address.
    */
   public static void store(long addr, byte value) {
+    if (!verifyMemoryAccess(addr, 1)) {
+      throw new InvalidMemoryAccessException(addr, 1);
+    }
     try {
       Platform.putByte(null, addr, value);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 1);
     }
   }
 
@@ -331,10 +390,13 @@ public final class VMemory {
    * Store a 16-bit integer at the given address.
    */
   public static void store(long addr, short value) {
+    if (!verifyMemoryAccess(addr, 2)) {
+      throw new InvalidMemoryAccessException(addr, 2);
+    }
     try {
       Platform.putShort(null, addr, value);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 2);
     }
   }
 
@@ -342,10 +404,13 @@ public final class VMemory {
    * Store a 32-bit integer at the given address.
    */
   public static void store(long addr, int value) {
+    if (!verifyMemoryAccess(addr, 4)) {
+      throw new InvalidMemoryAccessException(addr, 4);
+    }
     try {
       Platform.putInt(null, addr, value);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 4);
     }
   }
 
@@ -353,10 +418,13 @@ public final class VMemory {
    * Store a 64-bit integer at the given address.
    */
   public static void store(long addr, long value) {
+    if (!verifyMemoryAccess(addr, 8)) {
+      throw new InvalidMemoryAccessException(addr, 8);
+    }
     try {
       Platform.putLong(null, addr, value);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 8);
     }
   }
 
@@ -364,10 +432,13 @@ public final class VMemory {
    * Store a single precision floating point number at the given address.
    */
   public static void store(long addr, float value) {
+    if (!verifyMemoryAccess(addr, 4)) {
+      throw new InvalidMemoryAccessException(addr, 4);
+    }
     try {
       Platform.putFloat(null, addr, value);
-    } catch (NullPointerException e) {
-      throw new SegmentationFault(addr);
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, 4);
     }
   }
 
@@ -446,10 +517,10 @@ public final class VMemory {
    * following the null terminator.
    */
   public static long pack(long addr, String string) {
-      final byte[] bytes = string.getBytes();
-      store(addr, bytes);
-      store(addr + bytes.length, (byte) 0);
-      return addr + bytes.length + 1;
+    final byte[] bytes = string.getBytes();
+    store(addr, bytes);
+    store(addr + bytes.length, (byte) 0);
+    return addr + bytes.length + 1;
   }
 
   /**
@@ -457,8 +528,16 @@ public final class VMemory {
    * bytes i.e. each char is cast to a byte before being stored.
    */
   public static long pack(long addr, char[] value) {
-    for(int i = 0; i < value.length; i++)
-      store(addr + i, (byte) value[i]);
+    if (!verifyMemoryAccess(addr, value.length)) {
+      throw new InvalidMemoryAccessException(addr, value.length);
+    }
+    try {
+      for (int i = 0; i < value.length; i++) {
+        Platform.putByte(null, addr + i, (byte) value[i]);
+      }
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(addr, value.length);
+    }
     return addr + value.length;
   }
 
@@ -481,8 +560,16 @@ public final class VMemory {
    * Fill the first len bytes of memory area dest with the constant byte val.
    */
   public static void memset(long dest, byte val, int len, int align) {
-    for(long i = dest; i < dest + len; i++)
-      store(i, val);
+    if (!verifyMemoryAccess(dest, len)) {
+      throw new InvalidMemoryAccessException(dest, len);
+    }
+    try {
+      for (long i = dest; i < dest + len; i++) {
+        Platform.putByte(null, i, val);
+      }
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(dest, len);
+    }
   }
 
   /**
@@ -496,8 +583,26 @@ public final class VMemory {
    * Copy data from src to dest byte-to-byte.
    */
   public static void memcpy(long dest, long src, long len) {
+    if (!verifyMemoryAccess(src, len)) {
+      throw new InvalidMemoryAccessException(src, len);
+    }
+    if (!verifyMemoryAccess(dest, len)) {
+      throw new InvalidMemoryAccessException(dest, len);
+    }
+    byte[] bytes = new byte[(int) len];
+    try {
+      for (long i = 0; i < len; i++) {
+        bytes[(int) i] = Platform.getByte(null, src + i);
+      }
+    } catch (Throwable t) {
+      throw new InvalidMemoryAccessException(src, len);
+    }
     for (long i = 0; i < len; i++) {
-      store(dest + i, load_i8(src + i));
+      try {
+        Platform.putByte(null, dest + i, bytes[(int) i]);
+      } catch (Throwable t) {
+        throw new InvalidMemoryAccessException(dest, len);
+      }
     }
   }
 

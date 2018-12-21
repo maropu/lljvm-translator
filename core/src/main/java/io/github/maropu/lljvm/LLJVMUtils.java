@@ -181,4 +181,12 @@ public class LLJVMUtils {
       throws LLJVMRuntimeException {
     return getMethod(clazz, "", argTypes);
   }
+
+  /**
+   * Indicates whether Spark is currently running unit tests.
+   */
+  public static boolean isTesting() {
+    return System.getenv().containsKey("LLJVM_TESTING") ||
+      System.getProperties().containsKey("lljvm.testing");
+  }
 }

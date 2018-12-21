@@ -298,12 +298,14 @@
           <stderr/>
           <environmentVariables>
             <JAVA_HOME>${test.java.home}</JAVA_HOME>
+            <LLJVM_TESTING>1</LLJVM_TESTING>
           </environmentVariables>
           <systemProperties>
             <log4j.configuration>file:src/test/resources/log4j.properties</log4j.configuration>
             <derby.system.durability>test</derby.system.durability>
             <java.awt.headless>true</java.awt.headless>
             <java.io.tmpdir>${project.build.directory}/tmp</java.io.tmpdir>
+            <lljvm.testing>1</lljvm.testing>
             <!-- Needed by sql/hive tests. -->
             <test.src.tables>__not_used__</test.src.tables>
           </systemProperties>

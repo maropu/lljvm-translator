@@ -47,6 +47,14 @@ JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asJVMAssemblyC
 JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asLLVMAssemblyCode
   (JNIEnv *, jobject, jbyteArray, jint, jint);
 
+/*
+ * Class:     io_github_maropu_lljvm_LLJVMNative
+ * Method:    verifyMemoryAddress
+ * Signature: (JJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_io_github_maropu_lljvm_LLJVMNative_verifyMemoryAddress
+  (JNIEnv *, jobject, jlong, jlong);
+
 #ifdef __cplusplus
 }
 #endif

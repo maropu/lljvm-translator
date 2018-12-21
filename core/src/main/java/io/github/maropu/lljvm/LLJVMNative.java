@@ -44,6 +44,9 @@ public class LLJVMNative {
   public native String asLLVMAssemblyCode(
     byte[] bitcode, int optLevel, int sizeLevel) throws IOException;
 
+  // Checks if a given memory area [base, base + size) is valid or not
+  public native boolean verifyMemoryAddress(long base, long size);
+
   // Checks if the given field exists in LLJVM runtime
   public boolean checkIfFieldExistInRuntime(String fieldName) {
     return FieldValue.exist("_" + fieldName);
