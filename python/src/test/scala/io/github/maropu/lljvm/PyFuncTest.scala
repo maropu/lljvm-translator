@@ -29,9 +29,9 @@ abstract class PyFuncTest extends LLJVMFuncSuite {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    pyArray1 = new PyArrayHolder()
-    pyArray2 = new PyArrayHolder()
-    pyArray3 = new PyArrayHolder()
+    pyArray1 = PyArrayHolder.create()
+    pyArray2 = PyArrayHolder.create()
+    pyArray3 = PyArrayHolder.create()
   }
 
   override def afterAll(): Unit = {
@@ -42,18 +42,18 @@ abstract class PyFuncTest extends LLJVMFuncSuite {
   }
 
   def intArray(addr: Long): Array[Int] = {
-    new PyArrayHolder(addr).intArray()
+    PyArrayHolder.create(addr).intArray()
   }
 
   def longArray(addr: Long): Array[Long] = {
-    new PyArrayHolder(addr).longArray()
+    PyArrayHolder.create(addr).longArray()
   }
 
   def floatArray(addr: Long): Array[Float] = {
-    new PyArrayHolder(addr).floatArray()
+    PyArrayHolder.create(addr).floatArray()
   }
 
   def doubleArray(addr: Long): Array[Double] = {
-    new PyArrayHolder(addr).doubleArray()
+    PyArrayHolder.create(addr).doubleArray()
   }
 }

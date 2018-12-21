@@ -87,7 +87,7 @@ class NumbaExampleSuite extends PyFuncTest {
 
   test("NumPy - bubble sort") {
     // void(float32[:])
-    val floatX = new PyArrayHolder().`with`(Array(4.0f, 2.0f, 1.0f, 3.0f))
+    val floatX = PyArrayHolder.create(Array(4.0f, 2.0f, 1.0f, 3.0f))
     TestUtils.doTestWithFuncName[Unit](
       bitcode = s"$basePath/bubblesort-numba-cfunc-float32.bc",
       source = s"$basePath/numba_examples/bubblesort.py",
@@ -99,7 +99,7 @@ class NumbaExampleSuite extends PyFuncTest {
     assert(floatX.floatArray() === Seq(1.0f, 2.0f, 3.0f, 4.0f))
 
     // void(float64[:])
-    val doubleX = new PyArrayHolder().`with`(Array(4.0, 3.0, 1.0, 2.0))
+    val doubleX = PyArrayHolder.create(Array(4.0, 3.0, 1.0, 2.0))
     TestUtils.doTestWithFuncName[Unit](
       bitcode = s"$basePath/bubblesort-numba-cfunc-float64.bc",
       source = s"$basePath/numba_examples/bubblesort.py",

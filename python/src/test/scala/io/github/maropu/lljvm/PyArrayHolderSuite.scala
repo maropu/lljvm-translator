@@ -23,19 +23,19 @@ import io.github.maropu.lljvm.util.python.PyArrayHolder
 class PyArrayHolderSuite extends LLJVMFuncSuite {
 
   test("1d python array") {
-    val pyArray = new PyArrayHolder().`with`(Array(1, 2, 3, 4, 5))
+    val pyArray = PyArrayHolder.create(Array(1, 2, 3, 4, 5))
     assert(Seq("1d python array", "nitem=5", "itemsize=4", "shape=[5]", "stride=[4]")
       .forall(pyArray.toDebugString.contains))
   }
 
   test("2d python array") {
-    val pyArray = new PyArrayHolder().`with`(Array(1, 2, 3, 4, 5)).reshape(5, 1)
+    val pyArray = PyArrayHolder.create(Array(1, 2, 3, 4, 5)).reshape(5, 1)
     assert(Seq("2d python array", "nitem=5", "itemsize=4", "shape=[5,1]", "stride=[4,4]")
       .forall(pyArray.toDebugString.contains))
   }
 
   test("reshape between 1d and 2d") {
-    val pyArray = new PyArrayHolder().`with`(Array(1, 2, 3, 4))
+    val pyArray = PyArrayHolder.create(Array(1, 2, 3, 4))
     assert(Seq("1d python array", "nitem=4", "itemsize=4", "shape=[4]", "stride=[4]")
       .forall(pyArray.toDebugString.contains))
     assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[8,4]")
@@ -50,7 +50,7 @@ class PyArrayHolderSuite extends LLJVMFuncSuite {
 
   test("duplicate array data") {
     val ar = Array(1, 2, 3, 4, 5)
-    val pyArray = new PyArrayHolder().`with`(ar)
+    val pyArray = PyArrayHolder.create(ar)
     // Checks if `dataAddr` is not an object address of `ar`
     assert(!pyArray.toDebugString.contains(ArrayUtils.addressOf(ar).toString))
   }

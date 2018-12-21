@@ -34,7 +34,7 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
-    val transposed1 = new PyArrayHolder(result1, 2)
+    val transposed1 = PyArrayHolder.create(result1, 2)
     assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[8,4]")
       .forall(floatX.toDebugString.contains))
     assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[4,8]")
@@ -48,7 +48,7 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
-    val transposed2 = new PyArrayHolder(result2, 2)
+    val transposed2 = PyArrayHolder.create(result2, 2)
     assert(Seq("2d python array", "nitem=4", "itemsize=4", "shape=[2,2]", "stride=[4,8]")
       .forall(transposed2.toDebugString.contains))
     assert(transposed2.floatArray() === Seq(1.0f, 2.0f, 3.0f, 4.0f))
@@ -61,7 +61,7 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )
-    val transposed3 = new PyArrayHolder(result3, 2)
+    val transposed3 = PyArrayHolder.create(result3, 2)
     assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[3,2]", "stride=[16,8]")
       .forall(doubleX.toDebugString.contains))
     assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[2,3]", "stride=[8,16]")
@@ -75,7 +75,7 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )
-    val transposed4 = new PyArrayHolder(result4, 2)
+    val transposed4 = PyArrayHolder.create(result4, 2)
     assert(Seq("2d python array", "nitem=6", "itemsize=8", "shape=[2,3]", "stride=[8,16]")
       .forall(transposed4.toDebugString.contains))
     assert(transposed4.doubleArray() === Seq(6.0, 5.0, 4.0, 3.0, 2.0, 1.0))
@@ -138,7 +138,7 @@ class NumPySuite extends PyFuncTest {
       bitcode = s"$basePath/numpy_arange_test-cfunc-int64.bc",
       source = s"$basePath/numpy_arange_test.py"
     )
-    val longArray = new PyArrayHolder(result, 2)
+    val longArray = PyArrayHolder.create(result, 2)
     assert(Seq("2d python array", "nitem=9", "itemsize=8", "shape=[3,3]", "stride=[24,8]")
       .forall(longArray.toDebugString.contains))
     assert(longArray.longArray() === Seq(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L))
@@ -169,7 +169,8 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(100))
     )
-    val rvalues2 = new PyArrayHolder(result).doubleArray()
+
+    val rvalues2 = doubleArray(result)
     (0 until rvalues2.size).foreach { x =>
       val value = rvalues2(x)
       (x + 1 until rvalues2.size).foreach { y =>
@@ -186,7 +187,7 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jInt.TYPE),
       arguments = Seq(new jInt(3))
     )
-    val ones1 = new PyArrayHolder(result1)
+    val ones1 = PyArrayHolder.create(result1)
     assert(ones1.doubleArray() === Seq(1.0, 1.0, 1.0))
     assert(Seq("1d python array", "nitem=3", "itemsize=8", "shape=[3]", "stride=[8]")
       .forall(ones1.toDebugString.contains))
@@ -198,7 +199,7 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE, jLong.TYPE),
       arguments = Seq(new jLong(2), new jLong(2))
     )
-    val ones2 = new PyArrayHolder(result2, 2)
+    val ones2 = PyArrayHolder.create(result2, 2)
     assert(ones2.doubleArray() === Seq(1.0, 1.0, 1.0, 1.0))
     assert(Seq("2d python array", "nitem=4", "itemsize=8", "shape=[2,2]", "stride=[16,8]")
       .forall(ones2.toDebugString.contains))
@@ -213,7 +214,7 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(floatX.addr()))
     )
-    val ones_like1 = new PyArrayHolder(result1)
+    val ones_like1 = PyArrayHolder.create(result1)
     assert(ones_like1.floatArray() === Seq(1.0f, 1.0f, 1.0f))
     assert(Seq("1d python array", "nitem=3", "itemsize=4", "shape=[3]", "stride=[4]")
       .forall(ones_like1.toDebugString.contains))
@@ -226,7 +227,7 @@ class NumPySuite extends PyFuncTest {
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(doubleX.addr()))
     )
-    val ones_like2 = new PyArrayHolder(result2, 2)
+    val ones_like2 = PyArrayHolder.create(result2, 2)
     assert(ones_like2.doubleArray() === Seq(1.0, 1.0, 1.0, 1.0))
     assert(Seq("2d python array", "nitem=4", "itemsize=8", "shape=[2,2]", "stride=[16,8]")
       .forall(ones_like2.toDebugString.contains))

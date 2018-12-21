@@ -74,7 +74,7 @@ import io.github.maropu.lljvm.util.python.PyArrayHolder;
 public class LoopSum {
   // Set a small value for CPU-intensive tests
   final static int SIZE = 1024;
-  final static PyArrayHolder pyArray = new PyArrayHolder();
+  final static PyArrayHolder pyArray = PyArrayHolder.create();
 
   @State(Scope.Thread)
   public static class Context {

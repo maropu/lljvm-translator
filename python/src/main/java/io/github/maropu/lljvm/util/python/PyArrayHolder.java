@@ -35,7 +35,7 @@ public class PyArrayHolder implements AutoCloseable {
   // Number of dimensions
   private int numDim;
 
-  public PyArrayHolder(long addr, int dim) {
+  private PyArrayHolder(long addr, int dim) {
     assert(dim == 1 || dim == 2);
     this.holderAddr = addr;
     this.meminfoAddr = Platform.getLong(null, holderAddr);
@@ -44,11 +44,7 @@ public class PyArrayHolder implements AutoCloseable {
     this.isArrayOwner = false;
   }
 
-  public PyArrayHolder(long addr) {
-    this(addr, 1);
-  }
-
-  public PyArrayHolder() {
+  private PyArrayHolder() {
     // We assume that the aggregate(array/struct) type of python input n-d arrays is
     // `{ i8*, i8*, i64, i64, ty*, [n x i64], [n x i64] }`.
     long diminfoSize = 8 * (2 * MAX_DIMENSION);
@@ -79,6 +75,46 @@ public class PyArrayHolder implements AutoCloseable {
     Platform.putLong(null, meminfoAddr, 1L); // starts with 1 refct
 
     this.isArrayOwner = true;
+  }
+
+  public static PyArrayHolder create(long addr, int dim) {
+    return new PyArrayHolder(addr, dim);
+  }
+
+  public static PyArrayHolder create(long addr) {
+    return new PyArrayHolder(addr, 1);
+  }
+
+  public static PyArrayHolder create() {
+    return new PyArrayHolder();
+  }
+
+  public static PyArrayHolder create(boolean[] ar) {
+    return new PyArrayHolder().with(ar);
+  }
+
+  public static PyArrayHolder create(byte[] ar) {
+    return new PyArrayHolder().with(ar);
+  }
+
+  public static PyArrayHolder create(short[] ar) {
+    return new PyArrayHolder().with(ar);
+  }
+
+  public static PyArrayHolder create(int[] ar) {
+    return new PyArrayHolder().with(ar);
+  }
+
+  public static PyArrayHolder create(long[] ar) {
+    return new PyArrayHolder().with(ar);
+  }
+
+  public static PyArrayHolder create(float[] ar) {
+    return new PyArrayHolder().with(ar);
+  }
+
+  public static PyArrayHolder create(double[] ar) {
+    return new PyArrayHolder().with(ar);
   }
 
   public long addr() {
