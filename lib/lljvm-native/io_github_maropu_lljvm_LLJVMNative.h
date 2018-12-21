@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     io_github_maropu_lljvm_LLJVMNative
+ * Method:    versionNumber
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_versionNumber
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     io_github_maropu_lljvm_LLJVMNative
  * Method:    magicNumber
  * Signature: ()Ljava/lang/String;
  */

@@ -27,6 +27,9 @@ import io.github.maropu.lljvm.runtime.Function;
  */
 public class LLJVMNative {
 
+  // Returns a version number of LLJVM
+  public native String versionNumber() throws LLJVMRuntimeException;
+
   // Returns a magic number for the LLJVM implementation
   public native String magicNumber() throws LLJVMRuntimeException;
 

@@ -33,6 +33,10 @@ class LLJVMNativeSuite extends LLJVMFuncSuite {
     // TODO: Add tests for `LLJVMNative.veryfyBitcode`
   }
 
+  test("versionNumber") {
+    assert(lljvmApi.versionNumber() === "0.1.0-EXPERIMENTAL")
+  }
+
   test("magicNumber") {
     assert(lljvmApi.magicNumber() === "20180731HMKjwzxmew")
   }

@@ -34,6 +34,7 @@
 
 using namespace llvm;
 
+const std::string LLJVM_VERSION_NUMBER = "0.1.0-EXPERIMENTAL";
 const std::string LLJVM_GENERATED_CLASSNAME_PREFIX = "GeneratedClass";
 const std::string LLJVM_MAGIC_NUMBER = "20180731HMKjwzxmew";
 
@@ -221,6 +222,26 @@ const std::string toLLVMAssemblyCode(
   strbuf.flush();
 
   return out;
+}
+
+// Visible for CPython
+const char *versionNumber() {
+  return LLJVM_VERSION_NUMBER.c_str();
+}
+
+void printAsJVMAssemblyCode(
+    const char *bitcode,
+    size_t size,
+    int optLevel,
+    int sizeLevel,
+    unsigned debugLevel) {
+  const std::string jvmAsm = toJVMAssemblyCode(bitcode, size, optLevel, sizeLevel, debugLevel);
+  fprintf(stdout, "%s", jvmAsm.c_str());
+}
+
+JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_versionNumber
+    (JNIEnv *env, jobject self) {
+  return env->NewStringUTF(LLJVM_VERSION_NUMBER.c_str());
 }
 
 JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_magicNumber

@@ -17,10 +17,11 @@
 
 import os, re, subprocess
 
+import sys
+
 from waflib.Tools import waf_unit_test
 from distutils.version import StrictVersion
 from env import *
-from sys import platform
 
 def command(cmd):
   return subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
@@ -44,14 +45,14 @@ def configure(ctx):
   ctx.find_program(LLVM_CONFIG)
 
   # Checks if this platform supported
-  if platform == 'linux' or platform == 'linux2':
+  if sys.platform == 'linux' or sys.platform == 'linux2':
     ctx.env['LLJVM_COMPILE_OS'] = 'Linux'
     ctx.env['LLJVM_COMPILE_SHLIB_SUFFIX'] = 'so'
-  elif platform == 'darwin':
+  elif sys.platform == 'darwin':
     ctx.env['LLJVM_COMPILE_OS'] = 'Mac'
     ctx.env['LLJVM_COMPILE_SHLIB_SUFFIX'] = 'dylib'
   else:
-    ctx.fatal('OS must be linux or darwin, but %s found' % platform)
+    ctx.fatal('OS must be linux or darwin, but %s found' % sys.platform)
 
   # Since we use C++ exceptions, so we explicitly set it here
   ctx.env.append_value('CXXFLAGS', ['-fcxx-exceptions'])
@@ -59,7 +60,7 @@ def configure(ctx):
   # Currently, it only support x86_64 platforms
   ctx.env['LLJVM_COMPILE_ARCH'] = 'x86_64'
 
-  # Checks the LLVM version
+  # Verifies the LLVM version
   LLVM_VERSION = re.findall("^(\d+.\d+.\d+)", llvm_config('--version')[0])[0]
   if StrictVersion(LLVM_VERSION) < StrictVersion('7.0.0'):
     ctx.fatal('LLVM version must be 7.0+, but LLVM %s found' % LLVM_VERSION)

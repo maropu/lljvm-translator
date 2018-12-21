@@ -22,32 +22,20 @@ import math
 import numpy as np
 import platform
 import scipy
+import sys
 
 from numba import cfunc, jit
+
+# Imports functions to save bitcode in a file
+sys.path.append("../../../..")
+from lljvm.io import *
 
 # LLVM v6.0.0, Python v2.7.15, Numba v0.40.0, and Scipy v1.1.0
 # were used to run this script.
 
 # A helper function to write a python function as LLVM bitcode
-# by using the `cfunc` decorator.
 def write_bitcode_with_cfunc(pyfunc, sig, filename_suffix=""):
-  with open(pyfunc.__name__ + filename_suffix + ".bc", "wb") as fout:
-    f = cfunc(sig, nopython=False, cache=False)(pyfunc)
-    # print f.inspect_llvm()
-    fout.write(f._library._final_module.as_bitcode())
-
-# TODO: Gen'd LLVM bitcode by the `jit` decorator is not supported yet
-# because we cannot resolve external references in it.
-def write_bitcode_with_jit(pyfunc, sig, filename_suffix=""):
-  with open(pyfunc.__name__ + filename_suffix + ".bc", "wb") as fout:
-    f = jit(sig)(pyfunc)
-    # print f.inspect_llvm()
-    fout.write(f.overloads[f.signatures[0]].library._final_module.as_bitcode())
-
-# Prints versions
-print("Python version: " + platform.python_version())
-print("NumPy version: " + np.__version__)
-print("SciPy version: " + scipy.__version__)
+  save_llvm_with_cfunc(pyfunc, sig, pyfunc.__name__ + filename_suffix)
 
 from add_test import *
 write_bitcode_with_cfunc(add_test, "int32(int32, int32)", "-cfunc-int32")
