@@ -320,6 +320,14 @@ JNIEXPORT jstring JNICALL Java_io_github_maropu_lljvm_LLJVMNative_asLLVMAssembly
 JNIEXPORT jboolean JNICALL Java_io_github_maropu_lljvm_LLJVMNative_verifyMemoryAddress
     (JNIEnv *env, jobject self, jlong base, jlong size) {
   // TODO: Needs more strict checks for memory accesses
+  // try {
+  //   for (int i = 0; i < size; i++) {
+  //     *((unsigned char *) base + i);
+  //   }
+  // } catch (std::exception& e) {
+  //   return false;
+  // }
+  // return true;
   return base > 0 && size > 0;
 }
 
