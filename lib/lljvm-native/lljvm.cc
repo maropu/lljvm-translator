@@ -229,6 +229,16 @@ const char *versionNumber() {
   return LLJVM_VERSION_NUMBER.c_str();
 }
 
+void printAsLLVMAssemblyCode(
+    const char *bitcode,
+    size_t size,
+    int optLevel,
+    int sizeLevel,
+    unsigned debugLevel) {
+  const std::string llvmAsm = toLLVMAssemblyCode(bitcode, size, optLevel, sizeLevel, debugLevel);
+  fprintf(stdout, "%s", llvmAsm.c_str());
+}
+
 void printAsJVMAssemblyCode(
     const char *bitcode,
     size_t size,

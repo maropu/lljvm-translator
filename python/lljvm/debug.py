@@ -41,9 +41,17 @@ def print_llvm(pyfunc, sig):
   f = cfunc(sig, nopython=False, cache=False)(pyfunc)
   print f.inspect_llvm()
 
+def print_llvm_from(filename, optLevel=0, sizeLevel=0, debugLevel=0):
+  bitcode = open(filename, "rb").read()
+  lljvmapi.printAsLLVMAssemblyCode(bitcode, len(bitcode), optLevel, sizeLevel, debugLevel)
+
 # Prints JVM assembly code (Jasmin) for a given Python function
 def print_jvm(pyfunc, sig, optLevel=0, sizeLevel=0, debugLevel=0):
   f = cfunc(sig, nopython=False, cache=False)(pyfunc)
   bitcode = f._library._final_module.as_bitcode()
+  lljvmapi.printAsJVMAssemblyCode(bitcode, len(bitcode), optLevel, sizeLevel, debugLevel)
+
+def print_jvm_from(filename, optLevel=0, sizeLevel=0, debugLevel=0):
+  bitcode = open(filename, "rb").read()
   lljvmapi.printAsJVMAssemblyCode(bitcode, len(bitcode), optLevel, sizeLevel, debugLevel)
 

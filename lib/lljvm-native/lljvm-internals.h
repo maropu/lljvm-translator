@@ -37,6 +37,13 @@ extern const std::string toLLVMAssemblyCode(
 // Visible for CPython
 extern "C" const char *versionNumber();
 
+extern "C" void printAsLLVMAssemblyCode(
+  const char *bitcode,
+  size_t size,
+  int optLevel,
+  int sizeLevel,
+  unsigned debugLevel);
+
 extern "C" void printAsJVMAssemblyCode(
   const char *bitcode,
   size_t size,
