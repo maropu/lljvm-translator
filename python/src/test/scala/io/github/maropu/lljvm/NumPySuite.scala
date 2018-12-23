@@ -198,6 +198,30 @@ class NumPySuite extends PyFuncTest {
     }
   }
 
+  test("random - rand") {
+    // float64[:](int32)
+    val result = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_random4_test-cfunc-float64.bc",
+      source = s"$basePath/numpy_random4_test.py",
+      funcName = "_cfunc__ZN18numpy_random4_test23numpy_random4_test_2457Ei",
+      argTypes = Seq(jInt.TYPE),
+      arguments = Seq(new jInt(5))
+    )
+
+    val pyArray = PyArrayHolder.create(result, 1)
+    assert(Seq("1d python array", "nitem=5", "itemsize=8", "shape=[5]", "stride=[8]")
+      .forall(pyArray.toDebugString.contains))
+    val rvalues1 = pyArray.doubleArray()
+    (0 until rvalues1.size).foreach { x =>
+      val value = rvalues1(x)
+      (x + 1 until rvalues1.size).foreach { y =>
+        assert(Math.abs(value - rvalues1(y)) > Double.MinValue)
+      }
+    }
+
+    // float64[:](int32, int32)
+  }
+
   test("ones") {
     val result1 = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_ones1_test-cfunc-float64.bc",
