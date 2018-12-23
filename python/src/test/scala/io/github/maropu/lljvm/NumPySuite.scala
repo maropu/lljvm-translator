@@ -171,7 +171,7 @@ class NumPySuite extends PyFuncTest {
     )
 
     val rvalues2 = doubleArray(result)
-    (0 until rvalues2.size).foreach { x =>
+    rvalues2.indices.foreach { x =>
       val value = rvalues2(x)
       (x + 1 until rvalues2.size).foreach { y =>
         assert(Math.abs(value - rvalues2(y)) > Double.MinValue)
@@ -180,8 +180,18 @@ class NumPySuite extends PyFuncTest {
   }
 
   test("random - randint") {
+    // int64(int32)
+    val result1 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_random9_test-cfunc-int64.bc",
+      source = s"$basePath/numpy_random9_test.py",
+      funcName = "_cfunc__ZN18numpy_random9_test23numpy_random9_test_2468Eii",
+      argTypes = Seq(jInt.TYPE, jInt.TYPE),
+      arguments = Seq(new jInt(6), new jInt(9))
+    )
+    assert(result1 - 6 < 3)
+
     // int64[:](int32, int32, int32)
-    val result = TestUtils.doTestWithFuncName[Long](
+    val result2 = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_random3_test-cfunc-int64.bc",
       source = s"$basePath/numpy_random3_test.py",
       funcName = "_cfunc__ZN18numpy_random3_test23numpy_random3_test_2456Eiii",
@@ -189,12 +199,12 @@ class NumPySuite extends PyFuncTest {
       arguments = Seq(new jInt(3), new jInt(5), new jInt(4))
     )
 
-    val pyArray = PyArrayHolder.create(result, 1)
+    val pyArray2 = PyArrayHolder.create(result2, 1)
     assert(Seq("1d python array", "nitem=4", "itemsize=8", "shape=[4]", "stride=[8]")
-      .forall(pyArray.toDebugString.contains))
-    val longArray = pyArray.longArray()
-    (0 until longArray.size).foreach { x =>
-      assert(longArray(x) - 3 < 2)
+      .forall(pyArray2.toDebugString.contains))
+    val longArray2 = pyArray2.longArray()
+    (0 until longArray2.size).foreach { x =>
+      assert(longArray2(x) - 3 < 2)
     }
   }
 
@@ -212,7 +222,7 @@ class NumPySuite extends PyFuncTest {
     assert(Seq("1d python array", "nitem=5", "itemsize=8", "shape=[5]", "stride=[8]")
       .forall(pyArray1.toDebugString.contains))
     val rvalues1 = pyArray1.doubleArray()
-    (0 until rvalues1.size).foreach { x =>
+    rvalues1.indices.foreach { x =>
       val value = rvalues1(x)
       (x + 1 until rvalues1.size).foreach { y =>
         assert(Math.abs(value - rvalues1(y)) > Double.MinValue)
@@ -228,12 +238,11 @@ class NumPySuite extends PyFuncTest {
       arguments = Seq(new jInt(3), new jInt(5))
     )
 
-    // - random - randint
     val pyArray2 = PyArrayHolder.create(result2, 2)
     assert(Seq("2d python array", "nitem=15", "itemsize=8", "shape=[3,5]", "stride=[40,8]")
       .forall(pyArray2.toDebugString.contains))
     val rvalues2 = pyArray2.doubleArray()
-    (0 until rvalues2.size).foreach { x =>
+    rvalues2.indices.foreach { x =>
       val value = rvalues2(x)
       (x + 1 until rvalues2.size).foreach { y =>
         assert(Math.abs(value - rvalues2(y)) > Double.MinValue)
@@ -243,8 +252,23 @@ class NumPySuite extends PyFuncTest {
 
   // (file=../const.cc line=138) Invalid constant value: Type=ArrayTyID
   ignore("random - randn") {
+    // float64()
+    def getRandomValue(): Double = {
+      TestUtils.doTestWithFuncName[Double](
+        bitcode = s"$basePath/numpy_random10_test-cfunc-float64.bc",
+        source = s"$basePath/numpy_random10_test.py",
+        funcName = "XXX")
+    }
+    val rvalues1 = (0 until 10).map(_ => getRandomValue())
+    rvalues1.indices.foreach { x =>
+      val value = rvalues1(x)
+      (x + 1 until rvalues1.size).foreach { y =>
+        assert(Math.abs(value - rvalues1(y)) > Double.MinValue)
+      }
+    }
+
     // float64[:](int32)
-    val result1 = TestUtils.doTestWithFuncName[Long](
+    val result2 = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_random6_test-cfunc-float64.bc",
       source = s"$basePath/numpy_random6_test.py",
       funcName = "XXX",
@@ -252,19 +276,19 @@ class NumPySuite extends PyFuncTest {
       arguments = Seq(new jInt(3))
     )
 
-    val pyArray1 = PyArrayHolder.create(result1, 1)
+    val pyArray2 = PyArrayHolder.create(result2, 1)
     assert(Seq("1d python array", "nitem=3", "itemsize=8", "shape=[3]", "stride=[8]")
       .forall(pyArray1.toDebugString.contains))
-    val rvalues1 = pyArray1.doubleArray()
-    (0 until rvalues1.size).foreach { x =>
-      val value = rvalues1(x)
-      (x + 1 until rvalues1.size).foreach { y =>
-        assert(Math.abs(value - rvalues1(y)) > Double.MinValue)
+    val rvalues2 = pyArray2.doubleArray()
+    rvalues2.indices.foreach { x =>
+      val value = rvalues2(x)
+      (x + 1 until rvalues2.size).foreach { y =>
+        assert(Math.abs(value - rvalues2(y)) > Double.MinValue)
       }
     }
 
     // float64[:,:](int32, int32)
-    val result2 = TestUtils.doTestWithFuncName[Long](
+    val result3 = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_random7_test-cfunc-float64.bc",
       source = s"$basePath/numpy_random7_test.py",
       funcName = "XXX",
@@ -272,15 +296,14 @@ class NumPySuite extends PyFuncTest {
       arguments = Seq(new jInt(4), new jInt(2))
     )
 
-    // - random - randint
-    val pyArray2 = PyArrayHolder.create(result2, 2)
+    val pyArray3 = PyArrayHolder.create(result3, 2)
     assert(Seq("2d python array", "nitem=8", "itemsize=8", "shape=[4,2]", "stride=[16,8]")
-      .forall(pyArray2.toDebugString.contains))
-    val rvalues2 = pyArray2.doubleArray()
-    (0 until rvalues2.size).foreach { x =>
-      val value = rvalues2(x)
-      (x + 1 until rvalues2.size).foreach { y =>
-        assert(Math.abs(value - rvalues2(y)) > Double.MinValue)
+      .forall(pyArray3.toDebugString.contains))
+    val rvalues3 = pyArray3.doubleArray()
+    rvalues3.indices.foreach { x =>
+      val value = rvalues3(x)
+      (x + 1 until rvalues3.size).foreach { y =>
+        assert(Math.abs(value - rvalues3(y)) > Double.MinValue)
       }
     }
   }
