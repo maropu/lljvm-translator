@@ -184,17 +184,15 @@ class NumPySuite extends PyFuncTest {
     val result = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_random3_test-cfunc-int64.bc",
       source = s"$basePath/numpy_random3_test.py",
-      funcName = "XXX",
+      funcName = "_cfunc__ZN18numpy_random3_test23numpy_random3_test_2456Eiii",
       argTypes = Seq(jInt.TYPE, jInt.TYPE, jInt.TYPE),
       arguments = Seq(new jInt(3), new jInt(5), new jInt(4))
     )
 
     val pyArray = PyArrayHolder.create(result, 1)
-    println(pyArray.toDebugString)
-    assert(Seq("2d python array", "nitem=9", "itemsize=8", "shape=[3,3]", "stride=[24,8]")
+    assert(Seq("1d python array", "nitem=4", "itemsize=8", "shape=[4]", "stride=[8]")
       .forall(pyArray.toDebugString.contains))
     val longArray = pyArray.longArray()
-    println(longArray.toSeq)
     (0 until longArray.size).foreach { x =>
       assert(longArray(x) - 3 < 2)
     }

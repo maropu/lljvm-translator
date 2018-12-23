@@ -466,4 +466,12 @@ public final class Instruction {
     final long b7 = (value >>> 56) & 0xff;
     return b0 << 56 | b1 << 48 | b2 << 40 | b3 << 32 | b4 << 24 | b5 << 16 | b6 << 8 | b7;
   }
+
+  public static int ctlz(int value, boolean is_zero_undef) {
+    return java.lang.Integer.numberOfLeadingZeros(value);
+  }
+
+  public static long ctlz(long value, boolean is_zero_undef) {
+    return java.lang.Long.numberOfLeadingZeros(value);
+  }
 }

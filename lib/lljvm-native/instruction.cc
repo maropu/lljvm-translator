@@ -1211,18 +1211,49 @@ void JVMWriter::printMathIntrinsic(const IntrinsicInst *inst) {
 }
 
 void JVMWriter::printBitIntrinsic(const IntrinsicInst *inst) {
-  // TODO: ctpop, ctlz, cttz
-  const Value *value = inst->getOperand(1);
-  const std::string typeDescriptor = getTypeDescriptor(value->getType());
   switch (inst->getIntrinsicID()) {
-    case Intrinsic::bswap:
-      printVirtualInstruction("bswap(" + typeDescriptor + ")" + typeDescriptor, value);
+    case Intrinsic::bswap: {
+      const Value *value = inst->getOperand(1);
+      const std::string TypeDescriptor = getTypeDescriptor(value->getType());
+      printVirtualInstruction("bswap(" + TypeDescriptor + ")" + TypeDescriptor, value);
       break;
+    }
+
+    case Intrinsic::ctlz: {
+      const Value *value = inst->getOperand(0);
+      const Value *is_zero_undef = inst->getOperand(1);
+
+      if (const VectorType *vecTy = dyn_cast<VectorType>(value->getType())) {
+        printSimpleInstruction("sipush", utostr(getTypeAllocSize(vecTy)));
+        printSimpleInstruction("invokestatic", "io/github/maropu/lljvm/runtime/VMemory/allocateStack(I)J");
+
+        const Type *elemTy = vecTy->getElementType();
+        const std::string TypeDescriptor = getTypeDescriptor(elemTy);
+        int elemSize = getTypeAllocSize(elemTy);
+        for (int i = 0; i < vecTy->getNumElements(); i++) {
+          printSimpleInstruction("dup2");
+          printSimpleInstruction("ldc2_w", utostr(i * elemSize));
+          printSimpleInstruction("ladd");
+
+          printValueLoad(value);
+          printSimpleInstruction("ldc2_w", utostr(i * elemSize));
+          printSimpleInstruction("ladd");
+          printIndirectLoad(elemTy);
+          printValueLoad(is_zero_undef);
+          printVirtualInstruction("ctlz(" + TypeDescriptor + "Z)" + TypeDescriptor);
+
+          printIndirectStore(elemTy);
+        }
+      } else {
+        const std::string TypeDescriptor = getTypeDescriptor(value->getType());
+        printVirtualInstruction("ctlz(" + TypeDescriptor + "Z)" + TypeDescriptor, value, is_zero_undef);
+      }
+      break;
+    }
 
     // TODO: Unsupported bit intrinsic functions below
     case Intrinsic::bitreverse:
     case Intrinsic::ctpop:
-    case Intrinsic::ctlz:
     case Intrinsic::cttz:
     case Intrinsic::fshl:
     case Intrinsic::fshr:

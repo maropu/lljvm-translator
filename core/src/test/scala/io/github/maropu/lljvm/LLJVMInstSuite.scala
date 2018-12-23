@@ -849,13 +849,26 @@ class LLJVMInstSuite extends LLJVMFuncSuite {
     }),
 
     ("intrinsics", (clazz, obj) => {
-      // math intrinsic functions
+      // math functions
       Seq(("log2", 32.0f, 5.0f), ("round", 3.8f, 4.0f)).foreach { case (func, input, expected) =>
         val method1 = LLJVMUtils.getMethod(clazz, s"_${func}_f32", Seq(jFloat.TYPE): _*)
         assert(method1.invoke(obj, Seq(new jFloat(input)): _*) === expected)
         val method2 = LLJVMUtils.getMethod(clazz, s"_${func}_f64", Seq(jDouble.TYPE): _*)
         assert(method2.invoke(obj, Seq(new jDouble(input)): _*) === expected)
       }
+
+      // bit function
+      val bit1 = LLJVMUtils.getMethod(clazz, "_ctlz_i32", Seq(jInt.TYPE): _*)
+      assert(bit1.invoke(obj, Seq(new jInt(2)): _*) === 30)
+      val bit2 = LLJVMUtils.getMethod(clazz, "_ctlz_i64", Seq(jLong.TYPE): _*)
+      assert(bit2.invoke(obj, Seq(new jLong(8)): _*) === 60)
+      val bit3 = LLJVMUtils.getMethod(clazz, "_ctlz_v2i32", Seq(jLong.TYPE): _*)
+      val args3 = Seq(new jLong(ArrayUtils.addressOf(Array(1, 2, 4, 8))))
+      val result3 = bit3.invoke(obj, args3: _*).asInstanceOf[Long]
+      assert(Platform.getInt(null, result3) === 31)
+      assert(Platform.getInt(null, result3 + 4) === 30)
+      assert(Platform.getInt(null, result3 + 8) === 29)
+      assert(Platform.getInt(null, result3 + 12) === 28)
     })
   ).foreach { case (inst, testFunc) =>
 
