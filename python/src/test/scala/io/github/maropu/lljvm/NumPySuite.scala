@@ -419,6 +419,30 @@ class NumPySuite extends PyFuncTest {
     }
   }
 
+  test("random - choice") {
+    // int64(int32)
+    def chooseValue(): Long = {
+      TestUtils.doTestWithFuncName[Long](
+        bitcode = s"$basePath/numpy_random17_test-cfunc-int64.bc",
+        source = s"$basePath/numpy_random17_test.py",
+        funcName = "_cfunc__ZN19numpy_random17_test24numpy_random17_test_2476Ei",
+        argTypes = Seq(jInt.TYPE),
+        arguments = Seq(new jInt(7))
+      )
+    }
+    assert((0 until 10).map(_ => chooseValue()).forall { v => v >= 0 && v < 7 })
+
+    // float64(float64[:])
+    val result2 = TestUtils.doTestWithFuncName[Double](
+      bitcode = s"$basePath/numpy_random18_test-cfunc-float64.bc",
+      source = s"$basePath/numpy_random18_test.py",
+      funcName = "_cfunc__ZN19numpy_random18_test24numpy_random18_test_2480E5ArrayIdLi1E1A7mutable7alignedE",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(pyArray1.`with`(Array(1.0, 2.0)).addr()))
+    )
+    assert(Seq(1.0, 2.0).contains(result2))
+  }
+
   test("ones") {
     val result1 = TestUtils.doTestWithFuncName[Long](
       bitcode = s"$basePath/numpy_ones1_test-cfunc-float64.bc",
