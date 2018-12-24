@@ -17,7 +17,7 @@
 
 package io.github.maropu.lljvm
 
-import java.lang.{Integer => jInt, Long => jLong}
+import java.lang.{Double => jDouble, Integer => jInt, Long => jLong}
 import java.lang.reflect.InvocationTargetException
 
 import io.github.maropu.lljvm.util.python.PyArrayHolder
@@ -503,6 +503,19 @@ class NumPySuite extends PyFuncTest {
     val resultArray2 = doubleArray(result2)
     assert(expected2.toSet === resultArray2.toSet)
     assert(expected2 !== resultArray2)
+  }
+
+  // TODO: Needs to fix; Can't find a function in LLJVM runtime: _sqrt(D)D
+  ignore("random - distribution - binomial") {
+    // float64(int64, float64)
+    val result = TestUtils.doTestWithFuncName[Double](
+      bitcode = s"$basePath/numpy_random21_test-cfunc-float32.bc",
+      source = s"$basePath/numpy_random21_test.py",
+      funcName = "XXX",
+      argTypes = Seq(jLong.TYPE, jDouble.TYPE),
+      arguments = Seq(new jLong(1), new jDouble(1.0))
+    )
+    assert(result > 0.0)
   }
 
   test("ones") {

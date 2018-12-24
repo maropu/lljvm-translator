@@ -173,6 +173,9 @@ from numpy_random20_test import *
 write_bitcode_with_cfunc(numpy_random20_test, "float32[:](float32[:])", "-cfunc-float32")
 write_bitcode_with_cfunc(numpy_random20_test, "float64[:,:](float64[:,:])", "-cfunc-float64")
 
+from numpy_random21_test import *
+write_bitcode_with_cfunc(numpy_random21_test, "int64(int64, float64)", "-cfunc-int64")
+
 from numpy_ones1_test import *
 write_bitcode_with_cfunc(numpy_ones1_test, "float64[:](int32)", "-cfunc-float64")
 
