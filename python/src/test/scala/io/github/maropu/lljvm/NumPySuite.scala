@@ -250,7 +250,7 @@ class NumPySuite extends PyFuncTest {
     }
   }
 
-  // (file=../const.cc line=138) Invalid constant value: Type=ArrayTyID
+  // TODO: Needs to fix; invalid constant value: Type=ArrayTyID (file=../const.cc line=138)
   ignore("random - randn") {
     // float64()
     def getRandomValue(): Double = {
@@ -441,6 +441,37 @@ class NumPySuite extends PyFuncTest {
       arguments = Seq(new jLong(pyArray1.`with`(Array(1.0, 2.0)).addr()))
     )
     assert(Seq(1.0, 2.0).contains(result2))
+  }
+
+  // TODO: Needs to fix; invalid memory access errors
+  ignore("random - shuffle") {
+    // void(float32[:])
+    val ar1 = Array(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 7.0f, 8.0f, 9.0f)
+    val result1 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_random19_test-cfunc-float32.bc",
+      source = s"$basePath/numpy_random19_test.py",
+      funcName = "_cfunc__ZN19numpy_random19_test24numpy_random19_test_2484E5ArrayIfLi1E1A7mutable7alignedE",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(pyArray1.`with`(ar1).addr()))
+    )
+    val expected1 = Array(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 7.0f, 8.0f, 9.0f)
+    val resultArray1 = floatArray(result1)
+    assert(expected1.toSet !== resultArray1.toSet)
+    assert(expected1 !== resultArray1)
+
+    // void(float64[:,:])
+    val ar2 = Array(5.0f, 7.0f, 8.0f, 9.0f)
+    val result2 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_random19_test-cfunc-float32.bc",
+      source = s"$basePath/numpy_random19_test.py",
+      funcName = "_cfunc__ZN19numpy_random19_test24numpy_random19_test_2484E5ArrayIfLi1E1A7mutable7alignedE",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(pyArray1.`with`(ar2).reshape(2, 2). addr()))
+    )
+    val expected2 = Array(5.0f, 7.0f, 8.0f, 9.0f)
+    val resultArray2 = floatArray(result2)
+    assert(expected2.toSet !== resultArray2.toSet)
+    assert(expected2 !== resultArray2)
   }
 
   test("ones") {
