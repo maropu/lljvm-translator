@@ -460,17 +460,48 @@ class NumPySuite extends PyFuncTest {
     assert(expected1 !== resultArray1)
 
     // void(float64[:,:])
-    val ar2 = Array(5.0f, 7.0f, 8.0f, 9.0f)
+    val ar2 = Array(5.0, 7.0, 8.0, 9.0)
     val result2 = TestUtils.doTestWithFuncName[Long](
-      bitcode = s"$basePath/numpy_random19_test-cfunc-float32.bc",
+      bitcode = s"$basePath/numpy_random19_test-cfunc-float64.bc",
       source = s"$basePath/numpy_random19_test.py",
-      funcName = "_cfunc__ZN19numpy_random19_test24numpy_random19_test_2484E5ArrayIfLi1E1A7mutable7alignedE",
+      funcName = "XXX",
       argTypes = Seq(jLong.TYPE),
       arguments = Seq(new jLong(pyArray1.`with`(ar2).reshape(2, 2). addr()))
     )
-    val expected2 = Array(5.0f, 7.0f, 8.0f, 9.0f)
-    val resultArray2 = floatArray(result2)
+    val expected2 = Array(5.0, 7.0, 8.0, 9.0)
+    val resultArray2 = doubleArray(result2)
     assert(expected2.toSet !== resultArray2.toSet)
+    assert(expected2 !== resultArray2)
+  }
+
+  // TODO: Needs to fix; can't find a function in LLJVM runtime: _NRT_Allocate(J)J
+  ignore("random - permutation") {
+    // void(float32[:])
+    val ar1 = Array(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 7.0f, 8.0f, 9.0f)
+    val result1 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_random20_test-cfunc-float32.bc",
+      source = s"$basePath/numpy_random20_test.py",
+      funcName = "_cfunc__ZN19numpy_random20_test24numpy_random20_test_2488E5ArrayIfLi1E1A7mutable7alignedE",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(pyArray1.`with`(ar1).addr()))
+    )
+    val expected1 = Array(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 7.0f, 8.0f, 9.0f)
+    val resultArray1 = floatArray(result1)
+    assert(expected1.toSet === resultArray1.toSet)
+    assert(expected1 !== resultArray1)
+
+    // void(float64[:,:])
+    val ar2 = Array(5.0, 7.0, 8.0, 9.0)
+    val result2 = TestUtils.doTestWithFuncName[Long](
+      bitcode = s"$basePath/numpy_random20_test-cfunc-float64.bc",
+      source = s"$basePath/numpy_random20_test.py",
+      funcName = "XXX",
+      argTypes = Seq(jLong.TYPE),
+      arguments = Seq(new jLong(pyArray1.`with`(ar2).reshape(2, 2). addr()))
+    )
+    val expected2 = Array(5.0, 7.0, 8.0, 9.0)
+    val resultArray2 = doubleArray(result2)
+    assert(expected2.toSet === resultArray2.toSet)
     assert(expected2 !== resultArray2)
   }
 
