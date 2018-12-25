@@ -34,7 +34,7 @@
 
 using namespace llvm;
 
-const std::string LLJVM_VERSION_NUMBER = "0.1.0-EXPERIMENTAL";
+const std::string LLJVM_VERSION_NUMBER = "0.2.0-EXPERIMENTAL";
 const std::string LLJVM_GENERATED_CLASSNAME_PREFIX = "GeneratedClass";
 const std::string LLJVM_MAGIC_NUMBER = "20180731HMKjwzxmew";
 

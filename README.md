@@ -246,6 +246,66 @@ try {
 }
 ```
 
+## Prints generated code in a Python interactive shell
+
+For debugging uses, you can use helper functions to print generated code in a Python interactive shell.
+To print generated code for a Python function, you can follow directions bloew;
+
+```
+$ ./bin/python
+Python 2.7.15 (default, Sep 12 2018, 20:19:07)
+[GCC 4.2.1 Compatible Apple LLVM 9.0.0 (clang-900.0.39.2)] on darwin
+
+     __   __      ___   ____  ___
+    / /  / /  __ / / | / /  |/  /
+   / /__/ /__/ // /| |/ / /|_/ /
+  /____/____/\___/ |___/_/  /_/   version 0.2.0-EXPERIMENTAL
+
+ LLJVM debugging helper functions imported:
+  - NumPy version: 1.15.2
+  - SciPy version: 1.1.0
+  - Numba version: 0.40.0
+  - LLVMLite version: 0.25.0
+  - LLVM version: 5.0.2
+
+>>> def add(a, b):
+...   return a + b
+...
+
+// When generating code for a Python function, you need to explicitly specify types
+// because Python is a dynamically typed language. Type names follow
+// the Numba specification below:
+// - https://numba.pydata.org/numba-doc/dev/reference/types.html#basic-types
+>>> print_llvm(add, "int32(int32, int32)")
+...
+; Function Attrs: norecurse nounwind readnone
+define i32 @"cfunc._ZN8__main__7add$241Eii"(i32 %.1, i32 %.2) local_unnamed_addr #1 {
+entry:
+  %.16.i = add i32 %.2, %.1
+  ret i32 %.16.i
+}
+
+>>> print_jvm(add, "int32(int32, int32)")
+...
+.method public static _cfunc__ZN8__main__7add_242Eii(II)I
+	iconst_0
+	istore 2
+begin_method:
+	invokestatic io/github/maropu/lljvm/runtime/VMemory/createStackFrame()V
+label2:
+	iload_1 ; __2
+	iload_0 ; __1
+	iadd
+	istore_2 ; __16_i
+	invokestatic io/github/maropu/lljvm/runtime/VMemory/destroyStackFrame()V
+	iload_2 ; __16_i
+	ireturn
+	.limit stack 16
+	.limit locals 3
+end_method:
+.end method
+```
+
 ## Some notes
 
  - Supports OpenJDK 8 (64bit) only
@@ -297,8 +357,8 @@ Then, you run lines below;
     $ cd ../..
     $ ./build/mvn clean package
     $ ls target
-    lljvm-core_0.1.0-EXPERIMENTAL-with-dependencies.jar
-    lljvm-core_0.1.0-EXPERIMENTAL.jar
+    lljvm-core_0.2.0-EXPERIMENTAL-with-dependencies.jar
+    lljvm-core_0.2.0-EXPERIMENTAL.jar
     ...
 
 ## Current development topics

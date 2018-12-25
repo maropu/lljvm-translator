@@ -34,7 +34,7 @@ class LLJVMNativeSuite extends LLJVMFuncSuite {
   }
 
   test("versionNumber") {
-    assert(lljvmApi.versionNumber() === "0.1.0-EXPERIMENTAL")
+    assert(lljvmApi.versionNumber() === "0.2.0-EXPERIMENTAL")
   }
 
   test("magicNumber") {

@@ -59,7 +59,7 @@ print(r"""
   - LLVMLite version: %s
   - LLVM version: %s""" % (
   # TODO: Needs to get the version from the shared library
-  '0.1.0-EXPERIMENTAL',
+  '0.2.0-EXPERIMENTAL',
   numpy.__version__,
   scipy.__version__,
   numba.__version__,
