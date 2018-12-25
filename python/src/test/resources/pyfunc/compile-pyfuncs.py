@@ -111,6 +111,10 @@ write_bitcode_with_cfunc(numpy_dot_test, "float64[:](float64[:,:], float64[:])",
 write_bitcode_with_cfunc(numpy_dot_test, "float32(float32[:], float32[:])", "-cfunc-vv-float32")
 write_bitcode_with_cfunc(numpy_dot_test, "float64(float64[:], float64[:])", "-cfunc-vv-float64")
 
+from numpy_vdot_test  import *
+write_bitcode_with_cfunc(numpy_vdot_test, "float32(float32[:], float32[:])", "-cfunc-float32")
+write_bitcode_with_cfunc(numpy_vdot_test, "float64(float64[:], float64[:])", "-cfunc-float64")
+
 from numpy_random1_test import *
 write_bitcode_with_cfunc(numpy_random1_test, "float64()", "-cfunc-float64")
 
