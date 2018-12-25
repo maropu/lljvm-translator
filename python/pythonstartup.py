@@ -29,6 +29,10 @@ import sys
 
 from lljvm.debug import *
 
+# Currently, Mac platforms only supported
+if sys.platform != 'darwin':
+  sys.exit('Mac platforms only supported now, but %s found' % sys.platform)
+
 # Verifes the Python version
 if (sys.version_info[0:2] != (2, 7)):
   sys.exit('Python version must be 2.7.x, but Python %s found' % platform.python_version())
