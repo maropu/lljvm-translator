@@ -93,14 +93,14 @@ install_llvm_from_source() {
     "llvm-${_LLVM_VERSION}.src.tar.xz" \
     "llvm-${_LLVM_VERSION}.src/configure"
 
-  # On Amazon Linux AMI (ami-0ad99772), you need to run lines below
+  # On Amazon Linux AMI ami-01e24be29428c15b2 (not Amazon Linux 2 AMI), you need to run lines below
   # before running this script:
   #
   # // Installs needed packages first
-  # $ sudo yum install -y gcc48-c++ cmake python libarchive-devel curl-devel expat-devel zlib-devel xz-devel
+  # $ sudo yum install -y gcc48-c++ clang cmake python libarchive-devel curl-devel expat-devel zlib-devel xz-devel
   #
   # // LLVM requires gcc-c++ v4.8.0+, python v2.7+, and zlib v1.2.3.4+
-  # // https://releases.llvm.org/5.0.2/docs/GettingStarted.html#software
+  # // https://releases.llvm.org/7.0.1/docs/GettingStarted.html#software
   # $ g++ -v
   # Target: x86_64-amazon-linux
   # Thread model: posix
@@ -131,6 +131,11 @@ install_llvm_from_source() {
     echo "exec: cmake" 1>&2 && mkdir ${build_dir} && cd ${build_dir} && \
     cmake -G 'Unix Makefiles' -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_TEST=OFF .. && make -j4 check-all
 
+  # Checks if the compilation finished successfully
+  [ ! -f "${binary}" ] && \
+    echo -n "ERROR: Compilation failed; please check failure reasons." && \
+    exit 2
+
   LLVM_DIR=${build_dir}
 }
 
@@ -140,6 +145,13 @@ install_llvm_from_source
 # Then, builds a native library for the current platform
 # You need to run lines below:
 # $ sudo yum install clang glibc-static zlib-static ncurses-static
+# $ clang++ -v
+# clang version 3.6.2 (tags/RELEASE_362/final)
+# Target: x86_64-amazon-linux-gnu
+# Thread model: posix
+# Found candidate GCC installation: /usr/bin/../lib/gcc/x86_64-amazon-linux/4.8.5
+# Found candidate GCC installation: /usr/lib/gcc/x86_64-amazon-linux/4.8.5
+# Selected GCC installation: /usr/bin/../lib/gcc/x86_64-amazon-linux/4.8.5
 LLVM_DIR=${LLVM_DIR} CXX=clang++ ${_DIR}/waf configure
 # LLVM_DIR=${LLVM_DIR} CXX=${LLVM_DIR}/bin/clang++ ${_DIR}/waf configure
 ${_DIR}/waf -v
