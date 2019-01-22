@@ -113,7 +113,7 @@ class NumPyLinalgSuite  extends PyFuncTest {
         jLong.TYPE, jLong.TYPE)
       method.invoke(null, new jLong(floatX.addr()), new jLong(floatY.addr()))
     }.getCause.getMessage
-    assert(errMsg.contains("Numba runtime exception <Numba C callback 'numpy_dot_test'>"))
+    assert(errMsg.contains("Numba runtime exception: <Numba C callback 'numpy_dot_test'>"))
   }
 
   test("vdot") {
