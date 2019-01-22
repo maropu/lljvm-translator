@@ -33,6 +33,7 @@ public class NumbaRuntimeLoader {
   private static final String ARCH = OSInfo.getArchName();
 
   public synchronized static NumbaRuntimeNative loadNumbaRuntimeApi() throws LLJVMRuntimeException {
+    // TODO: Check if `libpython2.7` found in runtime
     checkIfPlatformSupported();
 
     if (numbaRuntimeApi != null) {

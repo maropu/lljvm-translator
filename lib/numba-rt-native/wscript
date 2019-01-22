@@ -46,8 +46,9 @@ def configure(ctx):
   # Collects platform-dependent configurations for Python
   PYTHON_INCLUDES = ['%s' % sysconfig.get_paths()['include']]
   PYTHON_INCLUDES += ['%s' % numpy.get_include()]
-  # TODO: Is there a smarter way to search a static library for Python?
-  PYTHON_LINKFLAGS = [ctx.find_file('libpython2.7.a', ['%s/..' % sysconfig.get_paths()['stdlib']])]
+
+  # We must need to check if `libpython2.7` found in runtime
+  PYTHON_LINKFLAGS = ['-lpython2.7']
 
   ctx.check_cc(msg = 'Checking for Python configurations',
                includes = PYTHON_INCLUDES,
