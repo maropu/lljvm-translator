@@ -129,7 +129,8 @@ install_llvm_from_source() {
 
   [ ! -f "${binary}" ] && [ $(command -v cmake) ] && \
     echo "exec: cmake" 1>&2 && mkdir ${build_dir} && cd ${build_dir} && \
-    cmake -G 'Unix Makefiles' -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_TEST=OFF .. && make -j4 check-all
+    cmake -G 'Unix Makefiles' -DCMAKE_BUILD_TYPE=Release -DLLVM_BUILD_TEST=OFF .. && make -j4 check-all \
+    cd ${_DIR}
 
   # Checks if the compilation finished successfully
   [ ! -f "${binary}" ] && \
