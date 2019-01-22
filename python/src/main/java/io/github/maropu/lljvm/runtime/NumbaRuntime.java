@@ -285,11 +285,11 @@ public final class NumbaRuntime implements RuntimeInterface {
   public static void _PyErr_SetString(long errType, long errMsg) {}
 
   public static void _Py_FatalError(long errMsg) {
-    throw new LLJVMRuntimeException("Numba runtime exception " + toString(errMsg));
+    throw new LLJVMRuntimeException("Numba runtime exception: " + toString(errMsg));
   }
 
   public static void _PyErr_WriteUnraisable(long errMsg) {
-    throw new LLJVMRuntimeException("Numba runtime exception " + toString(errMsg));
+    throw new LLJVMRuntimeException("Numba runtime exception: " + toString(errMsg));
   }
 
   public static void _PyErr_Clear() {
