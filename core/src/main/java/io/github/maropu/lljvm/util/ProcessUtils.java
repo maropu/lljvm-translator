@@ -24,7 +24,7 @@ import io.github.maropu.lljvm.LLJVMRuntimeException;
 
 public class ProcessUtils {
 
-  public static void checkIfCmdInstalled(String cmd) {
+  public static void checkIfCmdInstalled(String... cmd) {
     try {
       ProcessBuilder builder = new ProcessBuilder(cmd);
       Process p = builder.start();

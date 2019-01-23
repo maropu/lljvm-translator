@@ -123,6 +123,9 @@ public class NumbaRuntimeNative {
   // Initialize a Python interpreter and the others for Numba operations
   public native void initialize() throws LLJVMRuntimeException;
 
+  // Set `path` to a list object of paths found
+  public native void setSystemPath(String path) throws LLJVMRuntimeException;
+
   // For NumPy arange
   public native int _numba_attempt_nocopy_reshape(
     long nd,

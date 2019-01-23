@@ -30,6 +30,14 @@ JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_in
   Py_Initialize();
 }
 
+JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_setSystemPath
+    (JNIEnv *env, jobject self, jstring path) {
+  PyObject *sys_path = PySys_GetObject("path");
+  const char *p = (*env)->GetStringUTFChars(env, path, NULL);
+  PyList_Insert(sys_path, 0, PyString_FromString(p));
+  (*env)->ReleaseStringUTFChars(env, path, p);
+}
+
 JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative__1numba_1attempt_1nocopy_1reshape
     (JNIEnv *env, jobject self, jlong nd, jlong dims, jlong strides, jlong newnd, jlong newdims, jlong newstrides, jlong itemsize, jint is_f_order) {
   return (jint) numba_attempt_nocopy_reshape(

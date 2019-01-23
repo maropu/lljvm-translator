@@ -17,8 +17,16 @@ JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_in
 
 /*
  * Class:     io_github_maropu_lljvm_runtime_NumbaRuntimeNative
+ * Method:    setSystemPath
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative_setSystemPath
+  (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     io_github_maropu_lljvm_runtime_NumbaRuntimeNative
  * Method:    _numba_attempt_nocopy_reshape
- * Signature: (JJJJJJJJ)I
+ * Signature: (JJJJJJJI)I
  */
 JNIEXPORT jint JNICALL Java_io_github_maropu_lljvm_runtime_NumbaRuntimeNative__1numba_1attempt_1nocopy_1reshape
   (JNIEnv *, jobject, jlong, jlong, jlong, jlong, jlong, jlong, jlong, jint);

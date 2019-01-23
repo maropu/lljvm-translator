@@ -18,13 +18,23 @@
 package io.github.maropu.lljvm.runtime;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xerial.snappy.OSInfo;
 
 import io.github.maropu.lljvm.LLJVMRuntimeException;
+import io.github.maropu.lljvm.util.ProcessUtils;
 
 public class NumbaRuntimeLoader {
+
+  private static final Logger logger = LoggerFactory.getLogger(NumbaRuntimeLoader.class);
 
   private static volatile NumbaRuntimeNative numbaRuntimeApi = null;
   private static boolean isLoaded = false;
@@ -43,6 +53,10 @@ public class NumbaRuntimeLoader {
     loadNativeLibrary();
     numbaRuntimeApi = new NumbaRuntimeNative();
     numbaRuntimeApi.initialize();
+    for (String path : getPythonSitePackagePaths()) {
+      logger.info("Adding a package path: " + path);
+      numbaRuntimeApi.setSystemPath(path);
+    }
     return numbaRuntimeApi;
   }
 
@@ -52,6 +66,42 @@ public class NumbaRuntimeLoader {
         "Unsupported platform: os.name=%s and os.arch=%s", OS, ARCH);
       throw new LLJVMRuntimeException(errMsg);
     }
+  }
+
+  private static List<String> getPythonSitePackagePaths() {
+    ProcessUtils.checkIfCmdInstalled("python", "--version");
+
+    // Fetch Python-dependent package paths
+    StringBuilder output = new StringBuilder();
+    try {
+      final String tempDir = ProcessUtils.makeTempDir();
+      final File outputFile = new File(tempDir, ProcessUtils.getTempFileName("numba-rt"));
+      final String[] commands = {"python", "-m", "site"};
+      ProcessBuilder builder = new ProcessBuilder(commands);
+      builder.redirectOutput(outputFile);
+      builder.start().waitFor(10, TimeUnit.SECONDS);
+
+      try (BufferedReader br = new BufferedReader(
+          new InputStreamReader(new FileInputStream(outputFile)))) {
+        for (String line = br.readLine(); line != null; line = br.readLine()) {
+          output.append(line);
+        }
+      }
+    } catch (Exception e) {
+      throw new LLJVMRuntimeException(e.getMessage());
+    }
+
+    List<String> buf = new ArrayList<>();
+    Pattern pattern = Pattern.compile("\'(.+?)\'");
+    Matcher matcher = pattern.matcher(output.toString());
+    while (matcher.find()) {
+      // TODO: Workaround for removing "'"
+      String path = matcher.group().replaceAll("'", "");
+      if (path.contains("site-packages")) {
+        buf.add(path);
+      }
+    }
+    return buf;
   }
 
   private synchronized static void loadNativeLibrary() {

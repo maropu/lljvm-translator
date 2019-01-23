@@ -38,17 +38,16 @@ public class ClangRunner {
       throw new LLJVMRuntimeException(e.getMessage());
     }
 
-    final String[] command = {"clang", "-c", "-O0", "-emit-llvm", "-o",
-      bitcodeFile.getAbsolutePath(), srcFile.getAbsolutePath()};
-
     StringBuilder stderr = new StringBuilder();
     try {
-      ProcessBuilder builder = new ProcessBuilder(command);
+      final String[] commands = {"clang", "-c", "-O0", "-emit-llvm", "-o",
+        bitcodeFile.getAbsolutePath(), srcFile.getAbsolutePath()};
+      ProcessBuilder builder = new ProcessBuilder(commands);
       Process p = builder.start();
       p.waitFor();
 
       try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
-        for(String line = br.readLine(); line != null; line = br.readLine()) {
+        for (String line = br.readLine(); line != null; line = br.readLine()) {
           stderr.append(line);
           stderr.append("\n");
         }
