@@ -43,8 +43,15 @@ public class NumbaRuntimeLoader {
   private static final String ARCH = OSInfo.getArchName();
 
   public synchronized static NumbaRuntimeNative loadNumbaRuntimeApi() throws LLJVMRuntimeException {
-    // TODO: Check if `libpython2.7` found in runtime
     checkIfPlatformSupported();
+
+    // try {
+    //   // Check if `libpython2.7` found in runtime
+    //   // System.load(System.mapLibraryName("python2.7"));
+    //   System.loadLibrary("python2.7");
+    // } catch (Throwable e) {
+    //   throw new LLJVMRuntimeException("libpython2.7 not found on runtime");
+    // }
 
     if (numbaRuntimeApi != null) {
       return numbaRuntimeApi;
@@ -213,8 +220,7 @@ public class NumbaRuntimeLoader {
     }
 
     // Extract and load a native library inside the jar file
-    return extractLibraryFile(
-            nativeLibraryPath, nativeLibraryName, tempFolder.getAbsolutePath());
+    return extractLibraryFile(nativeLibraryPath, nativeLibraryName, tempFolder.getAbsolutePath());
   }
 
   private static boolean hasResource(String path) {
