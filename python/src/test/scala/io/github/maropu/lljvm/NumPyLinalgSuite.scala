@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException
 // TODO: Adds more tests for NumPy linalg, see: https://docs.scipy.org/doc/numpy-1.15.1/reference/routines.linalg.html
 class NumPyLinalgSuite  extends PyFuncTest {
 
-  test("dot - vv") { // Vector * Vector case
+  testOnlyOnMac("dot - vv") { // Vector * Vector case
     Seq(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384).foreach { n =>
       // float32(float32[:], float32[:])
       // TODO: reconsiders the current API design: `.reshape(4, 1)` != `.reshape(4)`
@@ -50,7 +50,7 @@ class NumPyLinalgSuite  extends PyFuncTest {
     }
   }
 
-  test("dot - mv") { // Matrix * Vector case
+  testOnlyOnMac("dot - mv") { // Matrix * Vector case
     Seq(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048 /*, 4096 */).foreach { n =>
       // float32[:](float32[:,:], float32[:])
       // TODO: if the length is 8192+, it throws an exception because stack is not enough
@@ -77,7 +77,7 @@ class NumPyLinalgSuite  extends PyFuncTest {
     }
   }
 
-  test("dot - mm") { // Matrix * Matrix case
+  testOnlyOnMac("dot - mm") { // Matrix * Matrix case
     Seq(2, 4, 8, 16, 32, 64, 128, 256, 1024, 2048).foreach { n =>
       // float32[:,:](float32[:,:], float32[:,:])
       // TODO: if the length is 4096+, it throws an exception because stack is not enough
@@ -116,7 +116,7 @@ class NumPyLinalgSuite  extends PyFuncTest {
     assert(errMsg.contains("Numba runtime exception: <Numba C callback 'numpy_dot_test'>"))
   }
 
-  test("vdot") {
+  testOnlyOnMac("vdot") {
     Seq(2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384).foreach { n =>
       // float32(float32[:], float32[:])
       // TODO: reconsiders the current API design: `.reshape(4, 1)` != `.reshape(4)`

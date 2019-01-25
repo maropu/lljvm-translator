@@ -18,6 +18,7 @@
 package io.github.maropu.lljvm
 
 import io.github.maropu.lljvm.util.python.PyArrayHolder
+import org.xerial.snappy.OSInfo
 
 abstract class PyFuncTest extends LLJVMFuncSuite {
 
@@ -39,6 +40,16 @@ abstract class PyFuncTest extends LLJVMFuncSuite {
     pyArray2.close()
     pyArray3.close()
     super.afterAll()
+  }
+
+  private val OS = OSInfo.getOSName
+
+  protected def testOnlyOnMac(title: String)(f: => Any): Unit = {
+    if (OS.equals("Mac")) {
+      test(title)(f)
+    } else {
+      ignore(s"$title - skipped in $OS")(f)
+    }
   }
 
   def intArray(addr: Long): Array[Int] = {

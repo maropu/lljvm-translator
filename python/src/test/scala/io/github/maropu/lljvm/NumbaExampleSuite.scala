@@ -24,7 +24,7 @@ import io.github.maropu.lljvm.util.python.PyArrayHolder
 // TODO: Adds more tests for Numba examples, see: https://github.com/numba/numba/tree/master/examples
 class NumbaExampleSuite extends PyFuncTest {
 
-  test("numba - linear regression") {
+  testOnlyOnMac("numba - linear regression") {
     // float64[:](float64[:], float64[:,:], float64[:], int64, float64)
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
@@ -47,7 +47,7 @@ class NumbaExampleSuite extends PyFuncTest {
     }
   }
 
-  test("numba - logistic regression") {
+  testOnlyOnMac("numba - logistic regression") {
     // float64[:](float64[:], float64[:,:], float64[:], int64)
     val doubleX = pyArray1.`with`(Array(1.0, 1.0)).reshape(2, 1)
     val doubleY = pyArray2.`with`(Array(1.0, 1.0, 1.0, 1.0)).reshape(2, 2)
