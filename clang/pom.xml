@@ -22,7 +22,7 @@
   <parent>
     <groupId>io.github.maropu</groupId>
     <artifactId>lljvm-translator</artifactId>
-    <version>0.2.0-EXPERIMENTAL</version>
+    <version>0.3.0-EXPERIMENTAL</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
