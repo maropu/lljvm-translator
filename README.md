@@ -215,19 +215,38 @@ long[] javaArray = {1L, 2L, 3L};
 System.out.println(LLJVMUtils.invoke(clazz, ArrayUtils.addressOf(javaArray), javaArray.length));
 ```
 
-## Compilation in Java
+## NumPy-aware translation and runtime
 
-If `clang` is installed in your platform, you can say a line to get LLVM bitcode;
+Most of python users possibly write functions with `NumPy`, so it is useful to translate them for JVMs.
+Let's say that you write a function below with `NumPy` and
+you get [LLVM assembly code](./examples/numpy_logistic_regression.ll) for the function via `Numba`:
 
+```python
+import numpy as np
+
+def numpy_logistic_regression(Y, X, w, iterations):
+  for i in range(iterations):
+    w -= np.dot(((1.0 / (1.0 + np.exp(-Y * np.dot(X, w))) - 1.0) * Y), X)
+    return w
 ```
-import io.github.maropu.lljvm.util.ClangRunner;
 
-byte[] bitcode = ClangRunner.exec(
-  "#include <math.h>                     \n" +
-  "double cfunc(double a, double b) {    \n" +
-  "  return pow(2.0 * a, 2.0) + 4.0 * b; \n" +
-  "}");
-...
+Then, you invoke the bitcode of the function as follows:
+
+```java
+// Placeholders for Python arrays
+PyArrayHolder Y = new PyArrayHolder();
+PyArrayHolder X = new PyArrayHolder();
+PyArrayHolder w = new PyArrayHolder();
+
+// Loads LLVM bitcode and runs it
+Class<?> clazz = LLJVMClassLoader.currentClassLoader.loadClassFromBitcodeFile("numpy_logistic_regression.bc");
+
+LLJVMUtils.invoke(
+  clazz,
+  Y.with(double[] { 1.0, 1.0 }).addr(),
+  X.with(double[] { 1.0, 1.0, 1.0, 1.0 }).reshape(2, 2).addr(),
+  w.with(double[] { 1.0, 1.0 }).addr(),
+  1L);
 ```
 
 ## Gen'd bytecode verification
@@ -324,7 +343,7 @@ end_method:
       <scope>compile</scope>
     </dependency>
 
-## Example application
+## Example code about how-to-use
 
 See [lljvm-example](https://github.com/maropu/lljvm-example).
 
@@ -361,10 +380,6 @@ Then, you run lines below;
     lljvm-core_0.2.0-EXPERIMENTAL.jar
     ...
 
-## Current development topics
-
-You can check [a document](./resources/WIP.md) for WIP features.
-
 ## Use cases: just-in-time compiles Python UDFs for PySpark
 
 Python UDFs in [Apache Spark](https://spark.apache.org/) have well-known overheads and the recent work of
@@ -399,8 +414,6 @@ Other-related papers are lists below:
 
 ## TODO
 
- - Needs more tests to check if the translation works correctly
- - Supports NumPy-aware translation
  - Adds more platform-dependent binaries in `src/main/resources/native`
    - Uses docker images (e.g., [dockcross](https://github.com/dockcross/dockcross) and [dockbuidl](https://github.com/dockbuild/dockbuild)) to build binaries
    - Creates a script to test binaries except for Linux/x86_64 with qemu/chroot
