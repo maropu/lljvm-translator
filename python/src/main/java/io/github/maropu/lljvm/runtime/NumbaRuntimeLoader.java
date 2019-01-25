@@ -45,13 +45,14 @@ public class NumbaRuntimeLoader {
   public synchronized static NumbaRuntimeNative loadNumbaRuntimeApi() throws LLJVMRuntimeException {
     checkIfPlatformSupported();
 
-    // try {
-    //   // Check if `libpython2.7` found in runtime
-    //   // System.load(System.mapLibraryName("python2.7"));
-    //   System.loadLibrary("python2.7");
-    // } catch (Throwable e) {
-    //   throw new LLJVMRuntimeException("libpython2.7 not found on runtime");
-    // }
+    /**
+     * try {
+     *   // Check if `libpython2.7` found in runtime
+     *   System.loadLibrary("python2.7");
+     * } catch (Throwable e) {
+     *   throw new LLJVMRuntimeException("libpython2.7 not found on runtime: " + e.getMessage());
+     * }
+     */
 
     if (numbaRuntimeApi != null) {
       return numbaRuntimeApi;

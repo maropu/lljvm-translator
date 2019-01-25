@@ -44,6 +44,9 @@ abstract class PyFuncTest extends LLJVMFuncSuite {
 
   private val OS = OSInfo.getOSName
 
+  // On Linux/x86_64 platforms, it fails to import `scipy.linalg.cython_blas`.
+  // This issue seems to happen in Python v2.7, but doesn't in v3.x:
+  // https://bugzilla.redhat.com/show_bug.cgi?id=1667914
   protected def testOnlyOnMac(title: String)(f: => Any): Unit = {
     if (OS.equals("Mac")) {
       test(title)(f)

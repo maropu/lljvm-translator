@@ -79,7 +79,7 @@ download_app \
 ln -s numba-${_NUMBA_VERSION} numba
 
 # Then, builds a native library for the current platform
-# $ sudo pip install numpy
+# $ sudo pip install numpy scipy
 CC=clang ${_DIR}/waf configure
 ${_DIR}/waf -v
 
