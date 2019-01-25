@@ -3,8 +3,8 @@
   <servers>
     <server>
       <id>ossrh</id>
-      <username>Sonatype JIRA User Name</username>
-      <password>Sonatype JIRA Password</password>
+      <username>{Sonatype JIRA User Name}</username>
+      <password>{Sonatype JIRA Password}</password>
     </server>
   </servers>
   <profiles>
@@ -15,7 +15,7 @@
       </activation>
       <properties>
         <gpg.executable>gpg2</gpg.executable>
-        <gpg.passphrase>GPG Passphrase</gpg.passphrase>
+        <gpg.passphrase>{GPG Passphrase}</gpg.passphrase>
       </properties>
     </profile>
   </profiles>
