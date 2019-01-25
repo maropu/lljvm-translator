@@ -266,7 +266,7 @@ Python 2.7.15 (default, Sep 12 2018, 20:19:07)
   - SciPy version: 1.1.0
   - Numba version: 0.40.0
   - LLVMLite version: 0.25.0
-  - LLVM version: 5.0.2
+  - LLVM version: 7.0.1
 
 >>> def add(a, b):
 ...   return a + b
@@ -312,14 +312,14 @@ end_method:
  - Bundles native binaries for Linux/x86_64 and Mac/x86_64
    - For Linux, it is built by clang++ v3.6.2 (w/ glibc v2.17 and libstdc++ v4.8.5) on AWS Linux AMI (ami-0ad99772)
    - For Mac, it is built by Apple clang++ v900.0.39.2 on macOS Sierra v10.12.1
- - LLVM v5.0.2 used internally
+ - LLVM v7.0.1 used internally
 
 ## Maven dependency
 
     <dependency>
       <groupId>io.github.maropu</groupId>
       <artifactId>lljvm-core</artifactId>
-      <version>0.1.0-EXPERIMENTAL</version>
+      <version>0.2.0-EXPERIMENTAL</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -346,10 +346,10 @@ Then, you run lines below;
     // Downloads/compiles LLVM, builds a native library based on the compiled LLVM,
     // and then copys the library into a proper location.
     //
-    // Or, you can use the pre-built LLVM in http://releases.llvm.org/download.html#5.0.2;
-    //  $ wget http://releases.llvm.org/5.0.2/clang+llvm-5.0.2-<your platform>.tar.xz
-    //  $ tar xvf clang+llvm-5.0.2-<your platform>.tar.xz
-    //  $ LLVM_DIR=`pwd`/clang+llvm-5.0.2-<your platform> CXX=clang++ ./waf configure
+    // Or, you can use the pre-built LLVM in http://releases.llvm.org/download.html#7.0.1;
+    //  $ wget http://releases.llvm.org/7.0.1/clang+llvm-7.0.1-<your platform>.tar.xz
+    //  $ tar xvf clang+llvm-7.0.1-<your platform>.tar.xz
+    //  $ LLVM_DIR=`pwd`/clang+llvm-7.0.1-<your platform> CXX=clang++ ./waf configure
     //  $ ./waf -v
     $ ./build-lljvm.sh
 
@@ -405,7 +405,7 @@ Other-related papers are lists below:
    - Uses docker images (e.g., [dockcross](https://github.com/dockcross/dockcross) and [dockbuidl](https://github.com/dockbuild/dockbuild)) to build binaries
    - Creates a script to test binaries except for Linux/x86_64 with qemu/chroot
  - Statically Links BSD libc++ for native binaries
- - Upgrades LLVM to v6.x
+ - Supports Python v3.x
 
 ## Bug reports
 
